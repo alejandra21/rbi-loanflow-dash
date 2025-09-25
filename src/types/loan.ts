@@ -12,6 +12,18 @@ export interface PhaseStep {
     passed: boolean;
     details?: string;
   }[];
+  keyValueData?: Record<string, any>;
+  rawOutput?: Record<string, any>;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  timestamp: string;
+  user: string;
+  action: string;
+  phase: string;
+  details: string;
+  decision?: 'approved' | 'rejected' | 'info_requested';
 }
 
 export interface LoanApplication {
@@ -35,6 +47,7 @@ export interface LoanApplication {
     date: string;
     user: string;
   }[];
+  auditLog: AuditLogEntry[];
 }
 
 export const mockLoans: LoanApplication[] = [
@@ -47,9 +60,67 @@ export const mockLoans: LoanApplication[] = [
     lastUpdated: "2024-01-15",
     assignedReviewer: "Priya Sharma",
     phases: {
-      eligibility: { name: "Eligibility", status: "passed", completedDate: "2024-01-10" },
-      tiering: { name: "Tiering", status: "passed", completedDate: "2024-01-12" },
-      occupancy: { name: "Occupancy Verification", status: "manual", notes: "Property documents require verification" },
+      eligibility: { 
+        name: "Eligibility", 
+        status: "passed", 
+        completedDate: "2024-01-10",
+        keyValueData: {
+          "Age": "32 years",
+          "Income": "₹12,00,000 annually",
+          "Credit Score": "750",
+          "Employment": "Software Engineer",
+          "Company": "Tech Corp Ltd"
+        },
+        rawOutput: {
+          eligibility_check: {
+            age_eligible: true,
+            income_sufficient: true,
+            credit_score: 750,
+            employment_status: "employed",
+            result: "PASS"
+          }
+        }
+      },
+      tiering: { 
+        name: "Tiering", 
+        status: "passed", 
+        completedDate: "2024-01-12",
+        keyValueData: {
+          "Risk Tier": "Tier 2",
+          "Interest Rate": "8.5%",
+          "LTV Ratio": "80%",
+          "Processing Fee": "₹25,000"
+        },
+        rawOutput: {
+          tiering_result: {
+            risk_score: 68,
+            tier: "T2",
+            interest_rate: 8.5,
+            ltv_ratio: 0.8,
+            result: "APPROVED"
+          }
+        }
+      },
+      occupancy: { 
+        name: "Occupancy Verification", 
+        status: "manual", 
+        notes: "Property documents require verification",
+        keyValueData: {
+          "Property Type": "Residential Apartment",
+          "Location": "Mumbai, Maharashtra",
+          "Built Year": "2018",
+          "Sq Ft": "1,200",
+          "Current Occupancy": "Self Occupied"
+        },
+        rawOutput: {
+          occupancy_check: {
+            property_verified: false,
+            documents_uploaded: true,
+            site_visit_required: true,
+            result: "MANUAL_REVIEW"
+          }
+        }
+      },
       underwriting: { name: "Underwriting", status: "pending" },
       funding: { name: "Funding", status: "pending" }
     },
@@ -57,6 +128,32 @@ export const mockLoans: LoanApplication[] = [
       { phase: "Application", status: "Submitted", date: "2024-01-08", user: "System" },
       { phase: "Eligibility", status: "Completed", date: "2024-01-10", user: "Auto Check" },
       { phase: "Tiering", status: "Completed", date: "2024-01-12", user: "Auto Check" }
+    ],
+    auditLog: [
+      {
+        id: "audit-001",
+        timestamp: "2024-01-10T10:30:00Z",
+        user: "Auto Check",
+        action: "Phase Completed",
+        phase: "Eligibility",
+        details: "All eligibility criteria met automatically"
+      },
+      {
+        id: "audit-002", 
+        timestamp: "2024-01-12T14:45:00Z",
+        user: "Auto Check",
+        action: "Phase Completed",
+        phase: "Tiering",
+        details: "Risk assessment completed, assigned to Tier 2"
+      },
+      {
+        id: "audit-003",
+        timestamp: "2024-01-13T09:15:00Z",
+        user: "Priya Sharma",
+        action: "Manual Review Assigned",
+        phase: "Occupancy",
+        details: "Property documents uploaded for manual verification"
+      }
     ]
   },
   {
@@ -77,6 +174,24 @@ export const mockLoans: LoanApplication[] = [
       { phase: "Application", status: "Submitted", date: "2024-01-07", user: "System" },
       { phase: "Eligibility", status: "Completed", date: "2024-01-09", user: "Auto Check" },
       { phase: "Tiering", status: "Failed", date: "2024-01-14", user: "Auto Check" }
+    ],
+    auditLog: [
+      {
+        id: "audit-004",
+        timestamp: "2024-01-09T11:20:00Z",
+        user: "Auto Check",
+        action: "Phase Completed",
+        phase: "Eligibility",
+        details: "Eligibility check passed successfully"
+      },
+      {
+        id: "audit-005",
+        timestamp: "2024-01-14T16:30:00Z",
+        user: "Auto Check",
+        action: "Phase Failed",
+        phase: "Tiering",
+        details: "Credit score 680 below minimum threshold of 700"
+      }
     ]
   },
   {
@@ -100,6 +215,25 @@ export const mockLoans: LoanApplication[] = [
       { phase: "Occupancy", status: "Completed", date: "2024-01-10", user: "Manual Review" },
       { phase: "Underwriting", status: "Completed", date: "2024-01-12", user: "Underwriter" },
       { phase: "Funding", status: "Approved", date: "2024-01-13", user: "Manager" }
+    ],
+    auditLog: [
+      {
+        id: "audit-006",
+        timestamp: "2024-01-05T10:15:00Z",
+        user: "Auto Check",
+        action: "Phase Completed",
+        phase: "Eligibility",
+        details: "All eligibility requirements satisfied"
+      },
+      {
+        id: "audit-007",
+        timestamp: "2024-01-13T15:45:00Z",
+        user: "Manager",
+        action: "Loan Approved",
+        phase: "Funding",
+        details: "Final approval granted for funding disbursement",
+        decision: "approved"
+      }
     ]
   },
   {
@@ -120,6 +254,24 @@ export const mockLoans: LoanApplication[] = [
     timeline: [
       { phase: "Application", status: "Submitted", date: "2024-01-06", user: "System" },
       { phase: "Eligibility", status: "Completed", date: "2024-01-08", user: "Auto Check" }
+    ],
+    auditLog: [
+      {
+        id: "audit-008",
+        timestamp: "2024-01-08T12:30:00Z",
+        user: "Auto Check",
+        action: "Phase Completed",
+        phase: "Eligibility",
+        details: "Eligibility check completed successfully"
+      },
+      {
+        id: "audit-009",
+        timestamp: "2024-01-09T09:00:00Z",
+        user: "Rahul Gupta",
+        action: "Manual Review Assigned",
+        phase: "Tiering",
+        details: "Borderline credit score flagged for manual review"
+      }
     ]
   }
 ];
