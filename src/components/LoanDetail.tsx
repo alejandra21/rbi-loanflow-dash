@@ -75,9 +75,72 @@ export const LoanDetail = () => {
   );
 
   const EligibilityTab = ({ phase }: { phase: any }) => (
-    <div className="grid grid-cols-3 gap-6 h-full">
-      {/* Left Column - Data */}
-      <div className="col-span-2 space-y-4">
+    <div className="space-y-6">
+      {/* Actions Section */}
+      <div className="grid grid-cols-4 gap-4">
+        <div className="col-span-3"></div>
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center">
+                <Settings className="h-4 w-4 mr-2" />
+                Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button variant="outline" size="sm" className="w-full justify-start">
+                <Play className="h-4 w-4 mr-2" />
+                Re-execute Workflow
+              </Button>
+              
+              {phase.status === 'manual' && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setCurrentPhase("Eligibility Check");
+                    setSidePanelOpen(true);
+                  }}
+                >
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  Manual Validation
+                </Button>
+              )}
+              
+              <Button variant="outline" size="sm" className="w-full justify-start">
+                <Clock className="h-4 w-4 mr-2" />
+                View History
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Quick Info</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Status:</span>
+                <StatusBadge status={phase.status} size="sm" />
+              </div>
+              {phase.completedDate && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Completed:</span>
+                  <span>{phase.completedDate}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Processing Time:</span>
+                <span>2.3s</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <StatusBadge status={phase.status} />
@@ -236,67 +299,6 @@ export const LoanDetail = () => {
         {phase.rawOutput && (
           <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
         )}
-      </div>
-
-      {/* Right Column - Actions */}
-      <div className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center">
-              <Settings className="h-4 w-4 mr-2" />
-              Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Play className="h-4 w-4 mr-2" />
-              Re-execute Workflow
-            </Button>
-            
-            {phase.status === 'manual' && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start"
-                onClick={() => {
-                  setCurrentPhase("Eligibility Check");
-                  setSidePanelOpen(true);
-                }}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                Manual Validation
-              </Button>
-            )}
-            
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Clock className="h-4 w-4 mr-2" />
-              View History
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Phase-specific quick info */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Quick Info</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm space-y-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Status:</span>
-              <StatusBadge status={phase.status} size="sm" />
-            </div>
-            {phase.completedDate && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Completed:</span>
-                <span>{phase.completedDate}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Processing Time:</span>
-              <span>2.3s</span>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
