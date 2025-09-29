@@ -52,13 +52,13 @@ export interface LoanApplication {
 
 export const mockLoans: LoanApplication[] = [
   {
-    id: "RBI-2024-001",
-    applicantName: "Rajesh Kumar",
-    applicantAddress: "123 MG Road, Mumbai, Maharashtra 400001",
-    loanAmount: 5000000,
+    id: "LOA-2024-001",
+    applicantName: "John Smith",
+    applicantAddress: "123 Main Street, New York, NY 10001",
+    loanAmount: 500000,
     overallStatus: "In Progress",
     lastUpdated: "2024-01-15",
-    assignedReviewer: "Priya Sharma",
+    assignedReviewer: "Sarah Johnson",
     phases: {
       eligibility: { 
         name: "Eligibility", 
@@ -66,7 +66,7 @@ export const mockLoans: LoanApplication[] = [
         completedDate: "2024-01-10",
         keyValueData: {
           "Age": "32 years",
-          "Income": "₹12,00,000 annually",
+          "Income": "$120,000 annually",
           "Credit Score": "750",
           "Employment": "Software Engineer",
           "Company": "Tech Corp Ltd"
@@ -89,7 +89,7 @@ export const mockLoans: LoanApplication[] = [
           "Risk Tier": "Tier 2",
           "Interest Rate": "8.5%",
           "LTV Ratio": "80%",
-          "Processing Fee": "₹25,000"
+          "Processing Fee": "$2,500"
         },
         rawOutput: {
           tiering_result: {
@@ -107,7 +107,7 @@ export const mockLoans: LoanApplication[] = [
         notes: "Property documents require verification",
         keyValueData: {
           "Property Type": "Residential Apartment",
-          "Location": "Mumbai, Maharashtra",
+          "Location": "New York, NY",
           "Built Year": "2018",
           "Sq Ft": "1,200",
           "Current Occupancy": "Self Occupied"
@@ -149,7 +149,7 @@ export const mockLoans: LoanApplication[] = [
       {
         id: "audit-003",
         timestamp: "2024-01-13T09:15:00Z",
-        user: "Priya Sharma",
+        user: "Sarah Johnson",
         action: "Manual Review Assigned",
         phase: "Occupancy",
         details: "Property documents uploaded for manual verification"
@@ -157,10 +157,10 @@ export const mockLoans: LoanApplication[] = [
     ]
   },
   {
-    id: "RBI-2024-002",
-    applicantName: "Sneha Patel",
-    applicantAddress: "456 Ring Road, Ahmedabad, Gujarat 380001",
-    loanAmount: 2500000,
+    id: "LOA-2024-002",
+    applicantName: "Emily Davis",
+    applicantAddress: "456 Oak Avenue, Los Angeles, CA 90210",
+    loanAmount: 250000,
     overallStatus: "Issues Found",
     lastUpdated: "2024-01-14",
     phases: {
@@ -195,10 +195,10 @@ export const mockLoans: LoanApplication[] = [
     ]
   },
   {
-    id: "RBI-2024-003",
-    applicantName: "Arjun Singh",
-    applicantAddress: "789 Sector 15, Gurgaon, Haryana 122001",
-    loanAmount: 7500000,
+    id: "LOA-2024-003",
+    applicantName: "Michael Johnson",
+    applicantAddress: "789 Pine Street, Chicago, IL 60601",
+    loanAmount: 750000,
     overallStatus: "Completed",
     lastUpdated: "2024-01-13",
     phases: {
@@ -237,13 +237,13 @@ export const mockLoans: LoanApplication[] = [
     ]
   },
   {
-    id: "RBI-2024-004",
-    applicantName: "Maya Iyer",
-    applicantAddress: "321 Brigade Road, Bangalore, Karnataka 560001",
-    loanAmount: 3200000,
+    id: "LOA-2024-004",
+    applicantName: "Jessica Wilson",
+    applicantAddress: "321 Elm Street, Miami, FL 33101",
+    loanAmount: 320000,
     overallStatus: "Delayed",
     lastUpdated: "2024-01-11",
-    assignedReviewer: "Rahul Gupta",
+    assignedReviewer: "David Martinez",
     phases: {
       eligibility: { name: "Eligibility", status: "passed", completedDate: "2024-01-08" },
       tiering: { name: "Tiering", status: "manual", notes: "Borderline credit score requires review" },
@@ -267,7 +267,7 @@ export const mockLoans: LoanApplication[] = [
       {
         id: "audit-009",
         timestamp: "2024-01-09T09:00:00Z",
-        user: "Rahul Gupta",
+        user: "David Martinez",
         action: "Manual Review Assigned",
         phase: "Tiering",
         details: "Borderline credit score flagged for manual review"
