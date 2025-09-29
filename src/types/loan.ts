@@ -2,6 +2,27 @@ export type PhaseStatus = 'passed' | 'failed' | 'manual' | 'pending';
 export type OverallStatus = 'In Progress' | 'Completed' | 'Issues Found' | 'Delayed';
 export type UserRole = 'admin' | 'reviewer' | 'manager';
 
+export interface Signatory {
+  name: string;
+  ownershipPercentage: number;
+  citizenship: string;
+  foreignNational: boolean;
+  id: string;
+  creditScore?: number;
+}
+
+export interface EligibilityData {
+  entityName: string;
+  entityNameValid: boolean;
+  signatories: Signatory[];
+  einValidated: boolean;
+  ein: string;
+  entityActive: boolean;
+  entityInGoodStanding: boolean;
+  validationDocuments: string[];
+  documentIssuedDate: string;
+}
+
 export interface PhaseStep {
   name: string;
   status: PhaseStatus;
@@ -14,6 +35,7 @@ export interface PhaseStep {
   }[];
   keyValueData?: Record<string, any>;
   rawOutput?: Record<string, any>;
+  eligibilityData?: EligibilityData;
 }
 
 export interface AuditLogEntry {
@@ -64,19 +86,48 @@ export const mockLoans: LoanApplication[] = [
         name: "Eligibility", 
         status: "passed", 
         completedDate: "2024-01-10",
+        eligibilityData: {
+          entityName: "Tech Corp Ltd",
+          entityNameValid: true,
+          signatories: [
+            {
+              name: "John Smith",
+              ownershipPercentage: 65,
+              citizenship: "US",
+              foreignNational: false,
+              id: "SSN: ***-**-1234",
+              creditScore: 750
+            },
+            {
+              name: "Emily Chen",
+              ownershipPercentage: 35,
+              citizenship: "US",
+              foreignNational: false,
+              id: "SSN: ***-**-5678",
+              creditScore: 720
+            }
+          ],
+          einValidated: true,
+          ein: "12-3456789",
+          entityActive: true,
+          entityInGoodStanding: true,
+          validationDocuments: ["Certificate of Incorporation", "Good Standing Certificate", "Operating Agreement"],
+          documentIssuedDate: "2024-01-05"
+        },
         keyValueData: {
-          "Age": "32 years",
-          "Income": "$120,000 annually",
-          "Credit Score": "750",
-          "Employment": "Software Engineer",
-          "Company": "Tech Corp Ltd"
+          "Entity Status": "Active & Good Standing",
+          "EIN": "12-3456789",
+          "Validation Date": "2024-01-05",
+          "Total Signatories": "2",
+          "Foreign Nationals": "0"
         },
         rawOutput: {
           eligibility_check: {
-            age_eligible: true,
-            income_sufficient: true,
-            credit_score: 750,
-            employment_status: "employed",
+            entity_name_valid: true,
+            ein_validated: true,
+            entity_active: true,
+            foreign_nationals_count: 0,
+            all_credit_scores_acceptable: true,
             result: "PASS"
           }
         }
