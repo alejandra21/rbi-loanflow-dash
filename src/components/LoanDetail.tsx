@@ -77,7 +77,7 @@ export const LoanDetail = () => {
   const EligibilityTab = ({ phase }: { phase: any }) => (
     <div className="space-y-6">
       {/* Actions Section */}
-      <div className="flex justify-end">
+      <div className="flex justify-center">
         <div className="w-80 space-y-4">
           <Card>
             <CardHeader>
