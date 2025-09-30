@@ -78,7 +78,7 @@ export const LoanDetail = () => {
     <div className="space-y-6">
       {/* Actions Section */}
       <div className="flex justify-center">
-        <div className="w-80 space-y-4">
+        <div className="flex gap-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center">
