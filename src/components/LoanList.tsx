@@ -92,6 +92,7 @@ export const LoanList = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Loan ID</TableHead>
+                <TableHead>Lendingwise ID</TableHead>
                 <TableHead>Applicant Details</TableHead>
                 <TableHead>Loan Amount</TableHead>
                 <TableHead>Overall Status</TableHead>
@@ -111,10 +112,13 @@ export const LoanList = () => {
                   onClick={() => navigate(`/loan/${loan.id}`)}
                 >
                   <TableCell className="font-medium">{loan.id}</TableCell>
+                  <TableCell className="font-medium">{loan.lendingwiseId}</TableCell>
                   <TableCell>
                     <div>
+                      <div className="text-xs text-muted-foreground">Company Name</div>
                       <div className="font-medium">{loan.applicantName}</div>
-                      <div className="text-sm text-muted-foreground">{loan.applicantAddress}</div>
+                      <div className="text-xs text-muted-foreground mt-1">Property Address</div>
+                      <div className="text-sm">{loan.applicantAddress}</div>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{formatCurrency(loan.loanAmount)}</TableCell>

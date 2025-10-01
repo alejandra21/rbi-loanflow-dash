@@ -50,6 +50,7 @@ export interface AuditLogEntry {
 
 export interface LoanApplication {
   id: string;
+  lendingwiseId: string;
   applicantName: string;
   applicantAddress: string;
   loanAmount: number;
@@ -75,6 +76,7 @@ export interface LoanApplication {
 export const mockLoans: LoanApplication[] = [
   {
     id: "LOA-2024-001",
+    lendingwiseId: "LW-2024-1001",
     applicantName: "John Smith",
     applicantAddress: "123 Main Street, New York, NY 10001",
     loanAmount: 500000,
@@ -209,6 +211,7 @@ export const mockLoans: LoanApplication[] = [
   },
   {
     id: "LOA-2024-002",
+    lendingwiseId: "LW-2024-1002",
     applicantName: "Emily Davis",
     applicantAddress: "456 Oak Avenue, Los Angeles, CA 90210",
     loanAmount: 250000,
@@ -247,6 +250,7 @@ export const mockLoans: LoanApplication[] = [
   },
   {
     id: "LOA-2024-003",
+    lendingwiseId: "LW-2024-1003",
     applicantName: "Michael Johnson",
     applicantAddress: "789 Pine Street, Chicago, IL 60601",
     loanAmount: 750000,
@@ -289,6 +293,7 @@ export const mockLoans: LoanApplication[] = [
   },
   {
     id: "LOA-2024-004",
+    lendingwiseId: "LW-2024-1004",
     applicantName: "Jessica Wilson",
     applicantAddress: "321 Elm Street, Miami, FL 33101",
     loanAmount: 320000,
