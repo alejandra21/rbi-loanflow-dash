@@ -76,65 +76,41 @@ export const LoanDetail = () => {
 
   const EligibilityTab = ({ phase }: { phase: any }) => (
     <div className="space-y-6">
-      {/* Actions & Quick Info Section */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center">
-              <Settings className="h-4 w-4 mr-2" />
-              Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Play className="h-4 w-4 mr-2" />
-              Re-execute Workflow
+      {/* Actions Section */}
+      <Card className="max-w-md">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center">
+            <Settings className="h-4 w-4 mr-2" />
+            Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Button variant="outline" size="sm" className="w-full justify-start">
+            <Play className="h-4 w-4 mr-2" />
+            Re-execute Workflow
+          </Button>
+          
+          {phase.status === 'manual' && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start"
+              onClick={() => {
+                setCurrentPhase("Eligibility Check");
+                setSidePanelOpen(true);
+              }}
+            >
+              <CheckSquare className="h-4 w-4 mr-2" />
+              Manual Validation
             </Button>
-            
-            {phase.status === 'manual' && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start"
-                onClick={() => {
-                  setCurrentPhase("Eligibility Check");
-                  setSidePanelOpen(true);
-                }}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                Manual Validation
-              </Button>
-            )}
-            
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Clock className="h-4 w-4 mr-2" />
-              View History
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Quick Info</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Status:</span>
-              <StatusBadge status={phase.status} size="sm" />
-            </div>
-            {phase.completedDate && (
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Completed:</span>
-                <span className="text-sm">{phase.completedDate}</span>
-              </div>
-            )}
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Processing Time:</span>
-              <span className="text-sm">2.3s</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          )}
+          
+          <Button variant="outline" size="sm" className="w-full justify-start">
+            <Clock className="h-4 w-4 mr-2" />
+            View History
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Main Content */}
       <div className="space-y-4">
