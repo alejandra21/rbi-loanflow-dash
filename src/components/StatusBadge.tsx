@@ -53,7 +53,7 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
       return { 
         icon: FaTimesCircle, 
         variant: 'destructive' as const, 
-        label: 'Issues Found' 
+        label: 'Errors' 
       };
     case 'Manual Review':
       return { 
