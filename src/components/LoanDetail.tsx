@@ -134,7 +134,36 @@ export const LoanDetail = () => {
     );
   };
 
-  const EligibilityTab = ({ phase }: { phase: any }) => (
+  const EligibilityTab = ({ phase }: { phase: any }) => {
+    // Helper function to get certificate validation rules based on loan type
+    const getCertificateValidationRule = (loanType: string, documentIssueDate: string) => {
+      const issueDate = new Date(documentIssueDate);
+      const today = new Date();
+      const daysSinceIssue = Math.floor((today.getTime() - issueDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      const rules: Record<string, { maxDays: number; description: string }> = {
+        'Bridge': { maxDays: 90, description: 'Certificate must be issued within 90 days for Bridge loans' },
+        'DSCR': { maxDays: 180, description: 'Certificate must be issued within 180 days for DSCR loans' },
+        'Construction': { maxDays: 60, description: 'Certificate must be issued within 60 days for Construction loans' },
+        'Fix and Flip': { maxDays: 90, description: 'Certificate must be issued within 90 days for Fix and Flip loans' }
+      };
+      
+      const rule = rules[loanType] || { maxDays: 180, description: 'Certificate must be issued within 180 days' };
+      const isValid = daysSinceIssue <= rule.maxDays;
+      
+      return {
+        ...rule,
+        daysSinceIssue,
+        isValid,
+        status: isValid ? 'Valid' : 'Expired'
+      };
+    };
+
+    const certificateRule = phase.eligibilityData ? 
+      getCertificateValidationRule(loan.loanType, phase.eligibilityData.documentIssuedDate) : 
+      null;
+
+    return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -154,7 +183,7 @@ export const LoanDetail = () => {
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <Building className="h-4 w-4 mr-2" />
-                Entity Name & Type Validation
+                Entity Validations
               </div>
               <div className="flex items-center space-x-2">
                 {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
@@ -183,7 +212,7 @@ export const LoanDetail = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 bg-muted/30 rounded space-y-1">
                   <p className="text-xs text-muted-foreground">Entity Name</p>
                   <div className="flex items-center space-x-2">
@@ -208,6 +237,21 @@ export const LoanDetail = () => {
                       <CheckCircle className="h-4 w-4 text-green-600" />
                     ) : (
                       <AlertTriangle className="h-4 w-4 text-red-600" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-3 bg-muted/30 rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">EIN</p>
+                  <p className="font-medium text-sm">{phase.eligibilityData.ein}</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="font-medium text-xs">
+                      {phase.eligibilityData.einValidated ? "Valid" : "Invalid"}
+                    </p>
+                    {phase.eligibilityData.einValidated ? (
+                      <CheckCircle className="h-3 w-3 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="h-3 w-3 text-red-600" />
                     )}
                   </div>
                 </div>
@@ -264,11 +308,11 @@ export const LoanDetail = () => {
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <Users className="h-4 w-4 mr-2" />
-                Signatories
+                Ownership & Structure Review
               </div>
               <div className="flex items-center space-x-2">
                 {phase.eligibilityData.signatories.every((s: Signatory) => 
-                  s.idvDetails?.status === 'verified' && s.einVerification?.verified
+                  s.idvDetails?.status === 'verified' && s.ssnVerification?.verified && s.citizenship === 'US' && !s.ofacFlag
                 ) && (
                   <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
                     <CheckCircle className="h-4 w-4" />
@@ -276,7 +320,7 @@ export const LoanDetail = () => {
                   </Badge>
                 )}
                 {phase.eligibilityData.signatories.some((s: Signatory) => 
-                  s.idvDetails?.status !== 'verified' || !s.einVerification?.verified
+                  s.idvDetails?.status !== 'verified' || !s.ssnVerification?.verified || s.citizenship !== 'US' || s.ofacFlag
                 ) && (
                   <Badge variant="destructive" className="inline-flex items-center gap-1">
                     <AlertTriangle className="h-4 w-4" />
@@ -300,7 +344,17 @@ export const LoanDetail = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-muted/20 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">Citizenship</p>
-                      <p className="font-medium text-sm">{signatory.citizenship}</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-sm">{signatory.citizenship}</p>
+                        {signatory.citizenship !== 'US' && (
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">DOB</p>
+                      <p className="font-medium text-sm">{new Date(signatory.dob).toLocaleDateString()}</p>
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -309,6 +363,20 @@ export const LoanDetail = () => {
                         {signatory.creditScore}
                         <CreditCard className="h-4 w-4 ml-1" />
                       </p>
+                    </div>
+
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">OFAC Flag</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-sm">
+                          {signatory.ofacFlag ? 'Flagged' : 'Clear'}
+                        </p>
+                        {signatory.ofacFlag ? (
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        )}
+                      </div>
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -338,17 +406,17 @@ export const LoanDetail = () => {
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">EIN Number</p>
-                      <p className="font-medium text-sm">{phase.eligibilityData.ein}</p>
+                      <p className="text-xs text-muted-foreground">SSN</p>
+                      <p className="font-medium text-sm">{signatory.ssn}</p>
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">EIN Verification</p>
+                      <p className="text-xs text-muted-foreground">SSN Verification</p>
                       <div className="flex items-center space-x-2">
                         <p className="font-medium text-sm">
-                          {signatory.einVerification?.verified ? 'Valid' : 'Invalid'}
+                          {signatory.ssnVerification?.verified ? 'Valid' : 'Invalid'}
                         </p>
-                        {signatory.einVerification?.verified ? (
+                        {signatory.ssnVerification?.verified ? (
                           <CheckCircle className="h-4 w-4 text-green-600" />
                         ) : (
                           <AlertTriangle className="h-4 w-4 text-red-600" />
@@ -412,22 +480,22 @@ export const LoanDetail = () => {
                           </div>
                         )}
 
-                        {/* EIN Verification Details */}
-                        {signatory.einVerification && (
+                        {/* SSN Verification Details */}
+                        {signatory.ssnVerification && (
                           <div className="space-y-2 pt-3 border-t">
-                            <p className="font-medium">EIN Verification Details:</p>
+                            <p className="font-medium">SSN Verification Details:</p>
                             <div className="grid grid-cols-2 gap-2 text-xs">
                               <div>
                                 <span className="text-muted-foreground">Provider:</span>
-                                <p className="font-medium">{signatory.einVerification.provider}</p>
+                                <p className="font-medium">{signatory.ssnVerification.provider}</p>
                               </div>
                               <div>
                                 <span className="text-muted-foreground">Status:</span>
-                                <p className="font-medium">{signatory.einVerification.verified ? 'Verified' : 'Failed'}</p>
+                                <p className="font-medium">{signatory.ssnVerification.verified ? 'Verified' : 'Failed'}</p>
                               </div>
                               <div className="col-span-2">
                                 <span className="text-muted-foreground">Verification Date:</span>
-                                <p className="font-medium">{new Date(signatory.einVerification.verificationDate).toLocaleString()}</p>
+                                <p className="font-medium">{new Date(signatory.ssnVerification.verificationDate).toLocaleString()}</p>
                               </div>
                             </div>
                           </div>
@@ -451,7 +519,7 @@ export const LoanDetail = () => {
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <FileText className="h-4 w-4 mr-2" />
-                Validation Documents
+                Certificate of Good Standing Check
               </div>
               <div className="flex items-center space-x-2">
                 {phase.eligibilityData.validationDocuments.length > 0 && (
@@ -471,6 +539,33 @@ export const LoanDetail = () => {
                 <span className="text-sm text-muted-foreground">Document Issue Date:</span>
                 <span className="font-medium">{phase.eligibilityData.documentIssuedDate}</span>
               </div>
+              
+              {/* Certificate Validation Rule */}
+              {certificateRule && (
+                <div className={`p-3 rounded border ${certificateRule.isValid ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                  <div className="flex items-start space-x-2">
+                    {certificateRule.isValid ? (
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                    ) : (
+                      <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-sm">Certificate Age Validation</span>
+                        <Badge variant={certificateRule.isValid ? 'default' : 'destructive'} className="text-xs">
+                          {certificateRule.status}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2">{certificateRule.description}</p>
+                      <div className="flex items-center space-x-4 text-xs">
+                        <span className="text-muted-foreground">Days since issue: <span className="font-medium">{certificateRule.daysSinceIssue}</span></span>
+                        <span className="text-muted-foreground">Maximum allowed: <span className="font-medium">{certificateRule.maxDays} days</span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="space-y-3">
                 {phase.eligibilityData.validationDocuments.map((doc: any, index: number) => (
                   <div key={index} className="p-3 bg-muted/20 rounded">
@@ -568,20 +663,20 @@ export const LoanDetail = () => {
                 )
               ))}
 
-              {/* EIN Verifications for Signatories */}
+              {/* SSN Verifications for Signatories */}
               {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
-                signatory.einVerification && (
-                  <div key={`ein-${index}`} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
+                signatory.ssnVerification && (
+                  <div key={`ssn-${index}`} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
                     <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">EIN Verification - {signatory.name}</span>
-                        <Badge variant={signatory.einVerification.verified ? 'default' : 'destructive'} className="text-xs">
-                          {signatory.einVerification.verified ? 'Verified' : 'Failed'}
+                        <span className="font-medium">SSN Verification - {signatory.name}</span>
+                        <Badge variant={signatory.ssnVerification.verified ? 'default' : 'destructive'} className="text-xs">
+                          {signatory.ssnVerification.verified ? 'Verified' : 'Failed'}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">{new Date(signatory.einVerification.verificationDate).toLocaleString()}</p>
-                      <p className="text-xs mt-1">EIN validated via {signatory.einVerification.provider} - Match: {signatory.einVerification.matchConfidence}%</p>
+                      <p className="text-xs text-muted-foreground">{new Date(signatory.ssnVerification.verificationDate).toLocaleString()}</p>
+                      <p className="text-xs mt-1">SSN validated via {signatory.ssnVerification.provider} - Match: {signatory.ssnVerification.matchConfidence}%</p>
                     </div>
                   </div>
                 )
@@ -615,7 +710,8 @@ export const LoanDetail = () => {
         <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
       )}
     </div>
-  );
+    );
+  };
 
   const PhaseTab = ({ phase, phaseName }: { phase: any, phaseName: string }) => (
     <div className="grid grid-cols-3 gap-6 h-full">
@@ -765,7 +861,10 @@ export const LoanDetail = () => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
-            <p className="text-muted-foreground">{loan.phases.eligibility.eligibilityData?.entityName || loan.applicantName} - {formatCurrency(loan.loanAmount)}</p>
+            <p className="text-muted-foreground">
+              {loan.phases.eligibility.eligibilityData?.entityName || loan.applicantName} - {formatCurrency(loan.loanAmount)}
+              <Badge variant="outline" className="ml-3">{loan.loanType}</Badge>
+            </p>
           </div>
         </div>
         

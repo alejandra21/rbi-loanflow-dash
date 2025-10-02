@@ -8,6 +8,9 @@ export interface Signatory {
     citizenship: string;
     foreignNational: boolean;
     id: string;
+    ssn: string;
+    dob: string;
+    ofacFlag: boolean;
     creditScore?: number;
     idvVerified: boolean;
     idvDetails?: {
@@ -23,7 +26,7 @@ export interface Signatory {
         provider: string;
         status: 'completed' | 'pending' | 'failed';
     };
-    einVerification?: {
+    ssnVerification?: {
         verified: boolean;
         verificationDate: string;
         matchConfidence: number;
@@ -91,12 +94,15 @@ export interface AuditLogEntry {
     decision?: 'approved' | 'rejected' | 'info_requested';
 }
 
+export type LoanType = 'Bridge' | 'DSCR' | 'Construction' | 'Fix and Flip';
+
 export interface LoanApplication {
     id: string;
     lendingwiseId: string;
     applicantName: string;
     applicantAddress: string;
     loanAmount: number;
+    loanType: LoanType;
     overallStatus: OverallStatus;
     lastUpdated: string;
     assignedReviewer?: string;
@@ -123,6 +129,7 @@ export const mockLoans: LoanApplication[] = [
         applicantName: "Tech Corp Ltd",
         applicantAddress: "123 Main Street, New York, NY 10001",
         loanAmount: 500000,
+        loanType: "DSCR",
         overallStatus: "In Progress",
         lastUpdated: "2024-01-15",
         assignedReviewer: "Sarah Johnson",
@@ -163,6 +170,9 @@ export const mockLoans: LoanApplication[] = [
                             citizenship: "US",
                             foreignNational: false,
                             id: "SSN: ***-**-1234",
+                            ssn: "***-**-1234",
+                            dob: "1985-03-15",
+                            ofacFlag: false,
                             creditScore: 750,
                             idvVerified: true,
                             idvDetails: {
@@ -178,11 +188,11 @@ export const mockLoans: LoanApplication[] = [
                                 provider: "Experian",
                                 status: "completed"
                             },
-                            einVerification: {
+                            ssnVerification: {
                                 verified: true,
                                 verificationDate: "2024-01-05T10:45:00Z",
                                 matchConfidence: 100,
-                                provider: "IRS EIN Verification API"
+                                provider: "SSA Verification API"
                             }
                         },
                         {
@@ -191,6 +201,9 @@ export const mockLoans: LoanApplication[] = [
                             citizenship: "US",
                             foreignNational: false,
                             id: "SSN: ***-**-5678",
+                            ssn: "***-**-5678",
+                            dob: "1990-07-22",
+                            ofacFlag: false,
                             creditScore: 720,
                             idvVerified: true,
                             idvDetails: {
@@ -206,11 +219,11 @@ export const mockLoans: LoanApplication[] = [
                                 provider: "Experian",
                                 status: "completed"
                             },
-                            einVerification: {
+                            ssnVerification: {
                                 verified: true,
                                 verificationDate: "2024-01-05T10:50:00Z",
                                 matchConfidence: 100,
-                                provider: "IRS EIN Verification API"
+                                provider: "SSA Verification API"
                             }
                         }
                     ],
@@ -347,6 +360,7 @@ export const mockLoans: LoanApplication[] = [
         applicantName: "Real Estate Corp",
         applicantAddress: "456 Oak Avenue, Los Angeles, CA 90210",
         loanAmount: 250000,
+        loanType: "Bridge",
         overallStatus: "Manual Review",
         lastUpdated: "2024-01-14",
         phases: {
@@ -386,6 +400,9 @@ export const mockLoans: LoanApplication[] = [
                             citizenship: "US",
                             foreignNational: false,
                             id: "SSN: ***-**-1234",
+                            ssn: "***-**-1234",
+                            dob: "1985-03-15",
+                            ofacFlag: false,
                             creditScore: 750,
                             idvVerified: false,
                             idvDetails: {
@@ -401,19 +418,22 @@ export const mockLoans: LoanApplication[] = [
                                 provider: "Experian",
                                 status: "completed"
                             },
-                            einVerification: {
+                            ssnVerification: {
                                 verified: false,
                                 verificationDate: "2024-01-05T10:45:00Z",
                                 matchConfidence: 100,
-                                provider: "IRS EIN Verification API"
+                                provider: "SSA Verification API"
                             }
                         },
                         {
                             name: "Emily Chen",
                             ownershipPercentage: 35,
-                            citizenship: "US",
-                            foreignNational: false,
+                            citizenship: "Canada",
+                            foreignNational: true,
                             id: "SSN: ***-**-5678",
+                            ssn: "***-**-5678",
+                            dob: "1990-07-22",
+                            ofacFlag: true,
                             creditScore: 720,
                             idvVerified: false,
                             idvDetails: {
@@ -429,11 +449,11 @@ export const mockLoans: LoanApplication[] = [
                                 provider: "Experian",
                                 status: "completed"
                             },
-                            einVerification: {
+                            ssnVerification: {
                                 verified: false,
                                 verificationDate: "2024-01-05T10:50:00Z",
                                 matchConfidence: 100,
-                                provider: "IRS EIN Verification API"
+                                provider: "SSA Verification API"
                             }
                         }
                     ],
@@ -562,6 +582,7 @@ export const mockLoans: LoanApplication[] = [
         applicantName: "Johnson LLC",
         applicantAddress: "789 Pine Street, Chicago, IL 60601",
         loanAmount: 750000,
+        loanType: "Construction",
         overallStatus: "Completed",
         lastUpdated: "2024-01-13",
         phases: {
@@ -605,6 +626,7 @@ export const mockLoans: LoanApplication[] = [
         applicantName: "Wilson LLC",
         applicantAddress: "321 Elm Street, Miami, FL 33101",
         loanAmount: 320000,
+        loanType: "Fix and Flip",
         overallStatus: "Issues Found",
         lastUpdated: "2024-01-11",
         assignedReviewer: "David Martinez",
@@ -645,6 +667,9 @@ export const mockLoans: LoanApplication[] = [
                             citizenship: "US",
                             foreignNational: false,
                             id: "SSN: ***-**-1234",
+                            ssn: "***-**-1234",
+                            dob: "1985-03-15",
+                            ofacFlag: false,
                             creditScore: 750,
                             idvVerified: false,
                             idvDetails: {
@@ -660,11 +685,11 @@ export const mockLoans: LoanApplication[] = [
                                 provider: "Experian",
                                 status: "completed"
                             },
-                            einVerification: {
+                            ssnVerification: {
                                 verified: false,
                                 verificationDate: "2024-01-05T10:45:00Z",
                                 matchConfidence: 100,
-                                provider: "IRS EIN Verification API"
+                                provider: "SSA Verification API"
                             }
                         },
                         {
@@ -673,6 +698,9 @@ export const mockLoans: LoanApplication[] = [
                             citizenship: "US",
                             foreignNational: false,
                             id: "SSN: ***-**-5678",
+                            ssn: "***-**-5678",
+                            dob: "1990-07-22",
+                            ofacFlag: false,
                             creditScore: 720,
                             idvVerified: false,
                             idvDetails: {
@@ -688,11 +716,11 @@ export const mockLoans: LoanApplication[] = [
                                 provider: "Experian",
                                 status: "completed"
                             },
-                            einVerification: {
+                            ssnVerification: {
                                 verified: false,
                                 verificationDate: "2024-01-05T10:50:00Z",
                                 matchConfidence: 100,
-                                provider: "IRS EIN Verification API"
+                                provider: "SSA Verification API"
                             }
                         }
                     ],
