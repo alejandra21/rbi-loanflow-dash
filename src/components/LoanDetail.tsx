@@ -148,12 +148,10 @@ export const LoanDetail = () => {
               </div>
               <div className="flex items-center space-x-2">
                 {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
-                  <>
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <Badge variant="default" className="bg-green-600 hover:bg-green-600">
-                      Validated
-                    </Badge>
-                  </>
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Validated
+                  </Badge>
                 )}
                 {(!phase.eligibilityData.entityNameValid || !phase.eligibilityData.entityTypeValid) && (
                   <>
@@ -261,12 +259,10 @@ export const LoanDetail = () => {
               {phase.eligibilityData.signatories.every((s: Signatory) => 
                 s.idvDetails?.status === 'verified' && s.einVerification?.verified
               ) && (
-                <>
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <Badge variant="default" className="bg-green-600 hover:bg-green-600">
-                    Validated
-                  </Badge>
-                </>
+                <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4" />
+                  Validated
+                </Badge>
               )}
             </CardTitle>
           </CardHeader>
@@ -432,12 +428,10 @@ export const LoanDetail = () => {
                 Validation Documents
               </div>
               {phase.eligibilityData.validationDocuments.length > 0 && (
-                <>
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <Badge variant="default" className="bg-green-600 hover:bg-green-600">
-                    Validated
-                  </Badge>
-                </>
+                <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4" />
+                  Validated
+                </Badge>
               )}
             </CardTitle>
           </CardHeader>
