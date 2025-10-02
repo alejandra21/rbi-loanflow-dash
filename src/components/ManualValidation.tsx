@@ -151,11 +151,9 @@ export const ManualValidation = () => {
                         
                         {!loan.assignedReviewer && (
                           <Select>
-                            <SelectTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <UserCheck className="h-4 w-4 mr-1" />
-                                Assign
-                              </Button>
+                            <SelectTrigger className="h-9 w-auto">
+                              <UserCheck className="h-4 w-4 mr-1" />
+                              <SelectValue placeholder="Assign" />
                             </SelectTrigger>
                             <SelectContent>
                               {reviewers.map((reviewer) => (
