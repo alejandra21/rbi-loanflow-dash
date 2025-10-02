@@ -27,7 +27,7 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
       return { 
         icon: AlertTriangle, 
         variant: 'warning' as const, 
-        label: 'Manual Review', 
+        label: '⚠', 
         tooltip: 'Manual validation needed' 
       };
     case 'pending':
