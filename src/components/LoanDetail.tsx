@@ -248,7 +248,7 @@ export const LoanDetail = () => {
           <CardHeader>
             <CardTitle className="text-base flex items-center">
               <Users className="h-4 w-4 mr-2" />
-              Signatories & IDV Verification
+              Signatories
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -257,128 +257,137 @@ export const LoanDetail = () => {
                 <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
                   <div className="flex items-center justify-between">
                     <h4 className="font-medium">{signatory.name}</h4>
-                    <div className="flex items-center space-x-2">
-                      {signatory.foreignNational && (
-                        <Badge variant="destructive" className="text-xs">Foreign National - Review Required</Badge>
-                      )}
-                      <Badge variant="outline">{signatory.ownershipPercentage}% ownership</Badge>
-                    </div>
+                    <Badge variant="outline">{signatory.ownershipPercentage}% ownership</Badge>
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Citizenship:</span>
-                      <p className="font-medium">{signatory.citizenship}</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Citizenship</p>
+                      <p className="font-medium text-sm">{signatory.citizenship}</p>
                     </div>
-                    <div>
-                      <span className="text-muted-foreground">ID:</span>
-                      <p className="font-medium">{signatory.id}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Credit Score:</span>
-                      <p className="font-medium flex items-center">
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Credit Score</p>
+                      <p className="font-medium text-sm flex items-center">
                         {signatory.creditScore}
                         <CreditCard className="h-4 w-4 ml-1" />
                       </p>
                     </div>
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">ID Verification</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-sm">
+                          {signatory.idvDetails?.status === 'verified' ? 'Valid' : 'Invalid'}
+                        </p>
+                        {signatory.idvDetails?.status === 'verified' ? (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">ID Document</p>
+                      <p className="font-medium text-sm">
+                        {signatory.idvDetails?.documentType} - {signatory.idvDetails?.documentNumber}
+                      </p>
+                    </div>
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">EIN Verification</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-sm">
+                          {signatory.einVerification?.verified ? 'Valid' : 'Invalid'}
+                        </p>
+                        {signatory.einVerification?.verified ? (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* IDV Verification */}
-                  {signatory.idvDetails && (
-                    <div className="p-3 bg-muted/20 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="font-medium text-sm">ID Verification</p>
-                        <div className="flex items-center space-x-2">
-                          {signatory.idvDetails.status === 'verified' ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
-                          )}
-                          <Badge variant={signatory.idvDetails.status === 'verified' ? 'default' : 'destructive'} className="text-xs">
-                            {signatory.idvDetails.status}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                          <span className="text-muted-foreground">Document Type:</span>
-                          <p className="font-medium">{signatory.idvDetails.documentType}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Document Number:</span>
-                          <p className="font-medium">{signatory.idvDetails.documentNumber}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Provider:</span>
-                          <p className="font-medium">{signatory.idvDetails.provider}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Confidence:</span>
-                          <p className="font-medium">{signatory.idvDetails.confidence}%</p>
-                        </div>
-                        <div className="col-span-2">
-                          <span className="text-muted-foreground">Verified:</span>
-                          <p className="font-medium">{new Date(signatory.idvDetails.verificationDate).toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" size="sm" className="w-full justify-between">
+                        <span>View Validation Details</span>
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-3">
+                      <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                        {/* IDV Verification Details */}
+                        {signatory.idvDetails && (
+                          <div className="space-y-2">
+                            <p className="font-medium">ID Verification Details:</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-muted-foreground">Status:</span>
+                                <p className="font-medium">{signatory.idvDetails.status}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Provider:</span>
+                                <p className="font-medium">{signatory.idvDetails.provider}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Confidence:</span>
+                                <p className="font-medium">{signatory.idvDetails.confidence}%</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Verified:</span>
+                                <p className="font-medium">{new Date(signatory.idvDetails.verificationDate).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
-                  {/* Credit Score Request */}
-                  {signatory.creditScoreRequest && (
-                    <div className="p-3 bg-muted/20 rounded">
-                      <p className="font-medium text-sm mb-2">Credit Score Request</p>
-                      <div className="grid grid-cols-3 gap-2 text-xs">
-                        <div>
-                          <span className="text-muted-foreground">Provider:</span>
-                          <p className="font-medium">{signatory.creditScoreRequest.provider}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Status:</span>
-                          <Badge variant={signatory.creditScoreRequest.status === 'completed' ? 'default' : 'secondary'} className="text-xs">
-                            {signatory.creditScoreRequest.status}
-                          </Badge>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Request Date:</span>
-                          <p className="font-medium">{new Date(signatory.creditScoreRequest.requestDate).toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                        {/* Credit Score Request Details */}
+                        {signatory.creditScoreRequest && (
+                          <div className="space-y-2 pt-3 border-t">
+                            <p className="font-medium">Credit Score Request:</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-muted-foreground">Provider:</span>
+                                <p className="font-medium">{signatory.creditScoreRequest.provider}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Status:</span>
+                                <p className="font-medium">{signatory.creditScoreRequest.status}</p>
+                              </div>
+                              <div className="col-span-2">
+                                <span className="text-muted-foreground">Request Date:</span>
+                                <p className="font-medium">{new Date(signatory.creditScoreRequest.requestDate).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
-                  {/* EIN Verification */}
-                  {signatory.einVerification && (
-                    <div className="p-3 bg-muted/20 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="font-medium text-sm">EIN Verification</p>
-                        <div className="flex items-center space-x-2">
-                          {signatory.einVerification.verified ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
-                          )}
-                          <Badge variant={signatory.einVerification.verified ? 'default' : 'destructive'} className="text-xs">
-                            {signatory.einVerification.verified ? 'Verified' : 'Failed'}
-                          </Badge>
-                        </div>
+                        {/* EIN Verification Details */}
+                        {signatory.einVerification && (
+                          <div className="space-y-2 pt-3 border-t">
+                            <p className="font-medium">EIN Verification Details:</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-muted-foreground">Provider:</span>
+                                <p className="font-medium">{signatory.einVerification.provider}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Status:</span>
+                                <p className="font-medium">{signatory.einVerification.verified ? 'Verified' : 'Failed'}</p>
+                              </div>
+                              <div className="col-span-2">
+                                <span className="text-muted-foreground">Verification Date:</span>
+                                <p className="font-medium">{new Date(signatory.einVerification.verificationDate).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="grid grid-cols-3 gap-2 text-xs">
-                        <div>
-                          <span className="text-muted-foreground">Provider:</span>
-                          <p className="font-medium">{signatory.einVerification.provider}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Match:</span>
-                          <p className="font-medium">{signatory.einVerification.matchConfidence}%</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Date:</span>
-                          <p className="font-medium">{new Date(signatory.einVerification.verificationDate).toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
               ))}
             </div>
