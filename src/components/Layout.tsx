@@ -15,7 +15,7 @@ const Navigation = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <img src={rbiLogo} alt="RBI Private Lending" className="h-8" />
+            <img src={rbiLogo} alt="RBI Private Lending" className="h-12" />
             <nav className="flex space-x-4">
               {navItems.map(item => {
               const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
