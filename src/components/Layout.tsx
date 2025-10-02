@@ -35,9 +35,7 @@ const Navigation = () => {
             </nav>
           </div>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <span>Role: Manager</span>
-            <span>•</span>
-            <span>Admin Portal</span>
+            <span>User #1234</span>
           </div>
         </div>
       </div>
