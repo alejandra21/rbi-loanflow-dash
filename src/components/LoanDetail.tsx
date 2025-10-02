@@ -114,7 +114,7 @@ export const LoanDetail = () => {
               Re-execute Workflow
             </Button>
             
-            {currentPhaseData.phase.status === 'manual' && (
+            {(currentPhaseData.phase.status === 'manual' || currentPhaseData.phase.status === 'failed') && (
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -703,7 +703,7 @@ export const LoanDetail = () => {
               Re-execute Workflow
             </Button>
             
-            {phase.status === 'manual' && (
+            {(phase.status === 'manual' || phase.status === 'failed') && (
               <Button 
                 variant="outline" 
                 size="sm" 
