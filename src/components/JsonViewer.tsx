@@ -64,11 +64,5 @@ export const JsonViewer = ({ data, title = "Raw Output" }: JsonViewerProps) => {
 
   if (!data) return null;
 
-  return (
-    <div className="border rounded-md">
-      <div className="p-4 bg-slate-50 dark:bg-slate-900 font-mono text-sm overflow-x-auto">
-        {renderValue(data, 'root')}
-      </div>
-    </div>
-  );
+  return null;
 };
