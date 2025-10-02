@@ -709,12 +709,6 @@ export const LoanDetail = () => {
         
         <div className="flex items-center space-x-4">
           <StatusBadge status={loan.overallStatus} />
-          {loan.assignedReviewer && (
-            <div className="flex items-center space-x-2 text-sm">
-              <User className="h-4 w-4" />
-              <span>Assigned to: {loan.assignedReviewer}</span>
-            </div>
-          )}
         </div>
       </div>
 
