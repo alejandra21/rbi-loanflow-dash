@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans, LoanApplication } from "@/types/loan";
-import { Search, Filter, RotateCw } from "lucide-react";
+import { FaSearch, FaFilter, FaRedoAlt } from "react-icons/fa";
 import { toast } from "@/hooks/use-toast";
 
 export const LoanList = () => {
@@ -54,7 +54,7 @@ export const LoanList = () => {
             <span>Loan Applications</span>
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by name or loan ID..."
                   value={searchTerm}
@@ -64,7 +64,7 @@ export const LoanList = () => {
               </div>
               
               <div className="flex items-center space-x-2">
-                <Filter className="h-4 w-4 text-muted-foreground" />
+                <FaFilter className="h-4 w-4 text-muted-foreground" />
                 
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-40">
@@ -158,7 +158,7 @@ export const LoanList = () => {
                       onClick={(e) => handleRerunWorkflow(e, loan.id)}
                       className="gap-2"
                     >
-                      <RotateCw className="h-4 w-4" />
+                      <FaRedoAlt className="h-4 w-4" />
                       Re-Execute
                     </Button>
                   </TableCell>

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, AlertTriangle, Clock } from "lucide-react";
+import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaClock } from "react-icons/fa";
 import { PhaseStatus, OverallStatus } from "@/types/loan";
 
 interface StatusBadgeProps {
@@ -11,59 +11,59 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
   switch (status) {
     case 'passed':
       return { 
-        icon: CheckCircle, 
+        icon: FaCheckCircle, 
         variant: 'success' as const, 
         label: '✓', 
         tooltip: 'Passed' 
       };
     case 'failed':
       return { 
-        icon: XCircle, 
+        icon: FaTimesCircle, 
         variant: 'destructive' as const, 
         label: '✗', 
         tooltip: 'Failed' 
       };
     case 'manual':
       return { 
-        icon: AlertTriangle, 
+        icon: FaExclamationTriangle, 
         variant: 'warning' as const, 
         label: 'Manual Review', 
         tooltip: 'Manual validation needed' 
       };
     case 'pending':
       return { 
-        icon: Clock, 
+        icon: FaClock, 
         variant: 'secondary' as const, 
         label: '○', 
         tooltip: 'Pending' 
       };
     case 'In Progress':
       return { 
-        icon: Clock, 
+        icon: FaClock, 
         variant: 'secondary' as const, 
         label: 'In Progress' 
       };
     case 'Completed':
       return { 
-        icon: CheckCircle, 
+        icon: FaCheckCircle, 
         variant: 'success' as const, 
         label: 'Completed' 
       };
     case 'Issues Found':
       return { 
-        icon: XCircle, 
+        icon: FaTimesCircle, 
         variant: 'destructive' as const, 
         label: 'Issues Found' 
       };
     case 'Manual Review':
       return { 
-        icon: AlertTriangle, 
+        icon: FaExclamationTriangle, 
         variant: 'warning' as const, 
         label: 'Manual Review' 
       };
     default:
       return { 
-        icon: Clock, 
+        icon: FaClock, 
         variant: 'secondary' as const, 
         label: String(status), 
         tooltip: String(status) 
