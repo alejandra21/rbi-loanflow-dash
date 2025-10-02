@@ -154,16 +154,10 @@ export const LoanDetail = () => {
                   </Badge>
                 )}
                 {(!phase.eligibilityData.entityNameValid || !phase.eligibilityData.entityTypeValid) && (
-                  <>
-                    {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 text-red-600" />
-                    )}
-                    <Badge variant={phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "default" : "destructive"}>
-                      {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "Valid" : "Requires Review"}
-                    </Badge>
-                  </>
+                  <Badge variant="destructive" className="inline-flex items-center gap-1">
+                    <AlertTriangle className="h-4 w-4" />
+                    Requires Review
+                  </Badge>
                 )}
               </div>
             </CardTitle>
