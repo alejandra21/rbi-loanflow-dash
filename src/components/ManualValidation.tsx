@@ -148,22 +148,6 @@ export const ManualValidation = () => {
                           <Eye className="h-4 w-4 mr-1" />
                           Review
                         </Button>
-                        
-                        {!loan.assignedReviewer && (
-                          <Select>
-                            <SelectTrigger className="h-9 w-auto">
-                              <UserCheck className="h-4 w-4 mr-1" />
-                              <SelectValue placeholder="Assign" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {reviewers.map((reviewer) => (
-                                <SelectItem key={reviewer} value={reviewer}>
-                                  {reviewer}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
                       </div>
                     </TableCell>
                   </TableRow>
