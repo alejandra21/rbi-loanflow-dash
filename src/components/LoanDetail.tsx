@@ -703,7 +703,7 @@ export const LoanDetail = () => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
-            <p className="text-muted-foreground">{loan.applicantName} - {formatCurrency(loan.loanAmount)}</p>
+            <p className="text-muted-foreground">{loan.phases.eligibility.eligibilityData?.entityName || loan.applicantName} - {formatCurrency(loan.loanAmount)}</p>
           </div>
         </div>
         
