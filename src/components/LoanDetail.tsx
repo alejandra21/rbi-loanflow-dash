@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { mockLoans, Signatory } from "@/types/loan";
-import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown } from "lucide-react";
+import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
 
 export const LoanDetail = () => {
@@ -275,6 +275,18 @@ export const LoanDetail = () => {
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">ID Document</p>
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium text-sm">
+                          {signatory.idvDetails?.documentType} - {signatory.idvDetails?.documentNumber}
+                        </p>
+                        <Button variant="ghost" size="sm" className="h-7 px-2">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">ID Verification</p>
                       <div className="flex items-center space-x-2">
                         <p className="font-medium text-sm">
@@ -289,10 +301,8 @@ export const LoanDetail = () => {
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">ID Document</p>
-                      <p className="font-medium text-sm">
-                        {signatory.idvDetails?.documentType} - {signatory.idvDetails?.documentNumber}
-                      </p>
+                      <p className="text-xs text-muted-foreground">EIN Number</p>
+                      <p className="font-medium text-sm">{phase.eligibilityData.ein}</p>
                     </div>
                     
                     <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -307,6 +317,11 @@ export const LoanDetail = () => {
                           <AlertTriangle className="h-4 w-4 text-red-600" />
                         )}
                       </div>
+                    </div>
+                    
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Ownership %</p>
+                      <p className="font-medium text-sm">{signatory.ownershipPercentage}%</p>
                     </div>
                   </div>
 
