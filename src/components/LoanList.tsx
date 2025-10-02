@@ -7,7 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans, LoanApplication } from "@/types/loan";
-import { FaSearch, FaFilter, FaRedoAlt } from "react-icons/fa";
+import { FaSearch, FaFilter } from "react-icons/fa";
+import { Play } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
 
 export const LoanList = () => {
@@ -152,14 +154,23 @@ export const LoanList = () => {
                   </TableCell>
                   <TableCell>{loan.lastUpdated}</TableCell>
                   <TableCell className="text-center">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => handleRerunWorkflow(e, loan.id)}
-                      className="gap-2"
-                    >
-                      <FaRedoAlt className="h-4 w-4" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => handleRerunWorkflow(e, loan.id)}
+                            className="gap-2"
+                          >
+                            <Play className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Re-Execute</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                 </TableRow>
               ))}
