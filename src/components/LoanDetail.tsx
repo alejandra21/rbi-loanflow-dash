@@ -269,10 +269,16 @@ export const LoanDetail = () => {
                 <span className="font-medium">{phase.eligibilityData.documentIssuedDate}</span>
               </div>
               <div className="space-y-2">
-                {phase.eligibilityData.validationDocuments.map((doc: string, index: number) => (
-                  <div key={index} className="flex items-center space-x-2 p-2 bg-muted/20 rounded">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-sm">{doc}</span>
+                {phase.eligibilityData.validationDocuments.map((doc: { name: string; proof: string; verificationMethod: string }, index: number) => (
+                  <div key={index} className="p-3 bg-muted/20 rounded-lg space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium">{doc.name}</span>
+                    </div>
+                    <div className="ml-6 space-y-1 text-xs text-muted-foreground">
+                      <p><span className="font-medium">Method:</span> {doc.verificationMethod}</p>
+                      <p><span className="font-medium">Proof:</span> {doc.proof}</p>
+                    </div>
                   </div>
                 ))}
               </div>
