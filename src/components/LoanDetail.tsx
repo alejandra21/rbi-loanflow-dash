@@ -802,39 +802,6 @@ export const LoanDetail = () => {
         </CardContent>
       </Card>
 
-      {/* Audit Log */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Audit Log</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Phase</TableHead>
-                <TableHead>Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loan.auditLog.map((entry) => (
-                <TableRow key={entry.id}>
-                  <TableCell className="text-sm">
-                    {new Date(entry.timestamp).toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-sm font-medium">{entry.user}</TableCell>
-                  <TableCell className="text-sm">{entry.action}</TableCell>
-                  <TableCell className="text-sm">{entry.phase}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{entry.details}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
       <ValidationSidePanel
         isOpen={sidePanelOpen}
         onClose={() => setSidePanelOpen(false)}
