@@ -27,7 +27,7 @@ export const ManualValidation = () => {
   const getManualPhases = (loan: any) => {
     return Object.entries(loan.phases)
       .filter(([_, phase]: [string, any]) => phase.status === 'manual' || phase.status === 'failed')
-      .map(([key, _]) => key);
+      .map(([key, phase]: [string, any]) => ({ key, status: phase.status }));
   };
 
   return (
@@ -79,10 +79,14 @@ export const ManualValidation = () => {
                       <div className="flex flex-wrap gap-1">
                         {manualPhases.map((phase) => (
                           <span 
-                            key={phase}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-warning/50 text-warning-foreground font-medium"
+                            key={phase.key}
+                            className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                              phase.status === 'failed' 
+                                ? 'bg-destructive/50 text-destructive-foreground' 
+                                : 'bg-warning/50 text-warning-foreground'
+                            }`}
                           >
-                            {phase.charAt(0).toUpperCase() + phase.slice(1)}
+                            {phase.key.charAt(0).toUpperCase() + phase.key.slice(1)}
                           </span>
                         ))}
                       </div>
