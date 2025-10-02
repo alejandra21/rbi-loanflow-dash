@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans, LoanApplication } from "@/types/loan";
-import { Search, Filter, Play } from "lucide-react";
+import { Search, Filter, RotateCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export const LoanList = () => {
@@ -153,12 +153,13 @@ export const LoanList = () => {
                   <TableCell>{loan.lastUpdated}</TableCell>
                   <TableCell className="text-center">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={(e) => handleRerunWorkflow(e, loan.id)}
-                      title="Re-run workflow"
+                      className="gap-2"
                     >
-                      <Play className="h-4 w-4" />
+                      <RotateCw className="h-4 w-4" />
+                      Re-Execute
                     </Button>
                   </TableCell>
                 </TableRow>
