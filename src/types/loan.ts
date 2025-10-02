@@ -609,9 +609,185 @@ export const mockLoans: LoanApplication[] = [
         lastUpdated: "2024-01-11",
         assignedReviewer: "David Martinez",
         phases: {
-            eligibility: { name: "Eligibility", status: "failed", completedDate: "2024-01-08" },
-            tiering: { name: "Tiering", status: "pending", notes: "Borderline credit score requires review" },
-            occupancy: { name: "Occupancy Verification", status: "pending" },
+            eligibility: {
+                name: "Eligibility",
+                status: "manual",
+                completedDate: "2024-01-10",
+                eligibilityData: {
+                    entityName: "Real Estate Corp",
+                    entityNameValid: false,
+                    entityNameValidation: {
+                        provider: "SOS API",
+                        validationDate: "2024-01-05T09:30:00Z",
+                        apiResponse: {
+                            entity_name: "Real Estate Corp",
+                            status: "INACTIVE",
+                            match_score: 100,
+                            registration_date: "2020-03-15"
+                        },
+                        matchConfidence: 10
+                    },
+                    entityType: "LLC",
+                    entityTypeValid: false,
+                    entityTypeValidation: {
+                        provider: "SOS API",
+                        validationDate: "2024-01-05T09:30:00Z",
+                        apiResponse: {
+                            entity_type: "Limited Liability Company",
+                            formation_state: "Delaware",
+                            verified: false
+                        }
+                    },
+                    signatories: [
+                        {
+                            name: "John Smith",
+                            ownershipPercentage: 65,
+                            citizenship: "US",
+                            foreignNational: false,
+                            id: "SSN: ***-**-1234",
+                            creditScore: 750,
+                            idvVerified: false,
+                            idvDetails: {
+                                provider: "Persona",
+                                verificationDate: "2024-01-05T10:15:00Z",
+                                documentType: "Driver's License",
+                                documentNumber: "DL-NY-****1234",
+                                status: "failed",
+                                confidence: 98
+                            },
+                            creditScoreRequest: {
+                                requestDate: "2024-01-05T10:30:00Z",
+                                provider: "Experian",
+                                status: "completed"
+                            },
+                            einVerification: {
+                                verified: false,
+                                verificationDate: "2024-01-05T10:45:00Z",
+                                matchConfidence: 100,
+                                provider: "IRS EIN Verification API"
+                            }
+                        },
+                        {
+                            name: "Emily Chen",
+                            ownershipPercentage: 35,
+                            citizenship: "US",
+                            foreignNational: false,
+                            id: "SSN: ***-**-5678",
+                            creditScore: 720,
+                            idvVerified: false,
+                            idvDetails: {
+                                provider: "Persona",
+                                verificationDate: "2024-01-05T10:20:00Z",
+                                documentType: "Passport",
+                                documentNumber: "PP-US-****5678",
+                                status: "failed",
+                                confidence: 95
+                            },
+                            creditScoreRequest: {
+                                requestDate: "2024-01-05T10:35:00Z",
+                                provider: "Experian",
+                                status: "completed"
+                            },
+                            einVerification: {
+                                verified: false,
+                                verificationDate: "2024-01-05T10:50:00Z",
+                                matchConfidence: 100,
+                                provider: "IRS EIN Verification API"
+                            }
+                        }
+                    ],
+                    einValidated: false,
+                    ein: "12-3456789",
+                    einVerification: {
+                        provider: "IRS EIN Verification API",
+                        verificationDate: "2024-01-05T09:45:00Z",
+                        apiResponse: {
+                            ein: "12-3456789",
+                            entity_name: "Tech Corp Ltd",
+                            status: "ACTIVE",
+                            verified: false
+                        },
+                        status: "verified"
+                    },
+                    entityActive: true,
+                    entityInGoodStanding: true,
+                    validationDocuments: [
+                        {
+                            name: "Certificate of Incorporation",
+                            proof: "Document verified via Delaware SOS database, File #7234892, issued 2020-03-15",
+                            verificationMethod: "SOS Database Cross-Reference"
+                        },
+                        {
+                            name: "Good Standing Certificate",
+                            proof: "Current status verified via SOS API, last checked 2024-01-05, no outstanding issues",
+                            verificationMethod: "Real-time SOS API Verification"
+                        },
+                        {
+                            name: "Operating Agreement",
+                            proof: "Document authenticated via digital signature validation, signed by all members 2020-03-20",
+                            verificationMethod: "Digital Signature Validation"
+                        }
+                    ],
+                    documentIssuedDate: "2024-01-05"
+                },
+                keyValueData: {
+                    "Entity Status": "Active & Good Standing",
+                    "EIN": "12-3456789",
+                    "Validation Date": "2024-01-05",
+                    "Total Signatories": "2",
+                    "Foreign Nationals": "0"
+                },
+                rawOutput: {
+                    eligibility_check: {
+                        entity_name_valid: true,
+                        ein_validated: true,
+                        entity_active: true,
+                        foreign_nationals_count: 0,
+                        all_credit_scores_acceptable: true,
+                        result: "PASS"
+                    }
+                }
+            },
+            tiering: {
+                name: "Tiering",
+                status: "pending",
+                completedDate: "2024-01-12",
+                keyValueData: {
+                    "Risk Tier": "Tier 2",
+                    "Interest Rate": "8.5%",
+                    "LTV Ratio": "80%",
+                    "Processing Fee": "$2,500"
+                },
+                rawOutput: {
+                    tiering_result: {
+                        risk_score: 68,
+                        tier: "T2",
+                        interest_rate: 8.5,
+                        ltv_ratio: 0.8,
+                        result: "APPROVED"
+                    }
+                }
+            },
+            occupancy: {
+                name: "Occupancy Verification",
+                status: "pending",
+                notes: "Property documents require verification",
+                keyValueData: {
+                    "Property Type": "Residential Apartment",
+                    "Location": "New York, NY",
+                    "Built Year": "2018",
+                    "Sq Ft": "1,200",
+                    "Current Occupancy": "Self Occupied"
+                },
+                rawOutput: {
+                    occupancy_check: {
+                        property_verified: false,
+                        documents_uploaded: true,
+                        site_visit_required: true,
+                        result: "MANUAL_REVIEW"
+                    }
+                }
+            },
             underwriting: { name: "Underwriting", status: "pending" },
             funding: { name: "Funding", status: "pending" }
         },
