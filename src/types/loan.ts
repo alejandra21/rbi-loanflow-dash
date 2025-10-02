@@ -352,7 +352,7 @@ export const mockLoans: LoanApplication[] = [
         phases: {
             eligibility: {
                 name: "Eligibility",
-                status: "manual",
+                status: "failed",
                 completedDate: "2024-01-10",
                 eligibilityData: {
                     entityName: "Real Estate Corp",
@@ -393,7 +393,7 @@ export const mockLoans: LoanApplication[] = [
                                 verificationDate: "2024-01-05T10:15:00Z",
                                 documentType: "Driver's License",
                                 documentNumber: "DL-NY-****1234",
-                                status: "verified",
+                                status: "failed",
                                 confidence: 98
                             },
                             creditScoreRequest: {
@@ -421,7 +421,7 @@ export const mockLoans: LoanApplication[] = [
                                 verificationDate: "2024-01-05T10:20:00Z",
                                 documentType: "Passport",
                                 documentNumber: "PP-US-****5678",
-                                status: "verified",
+                                status: "failed",
                                 confidence: 95
                             },
                             creditScoreRequest: {
