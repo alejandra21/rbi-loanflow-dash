@@ -145,6 +145,7 @@ export const mockLoans: LoanApplication[] = [
             matchConfidence: 100
           },
           entityType: "LLC",
+          entityTypeValid: true,
           entityTypeValidation: {
             provider: "SOS API",
             validationDate: "2024-01-05T09:30:00Z",
