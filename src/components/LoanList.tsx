@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans, LoanApplication } from "@/types/loan";
 import { FaSearch, FaFilter } from "react-icons/fa";
@@ -106,6 +107,7 @@ export const LoanList = () => {
                 <TableHead>Lendingwise ID</TableHead>
                 <TableHead>Applicant Details</TableHead>
                 <TableHead>Loan Amount</TableHead>
+                <TableHead>Loan Type</TableHead>
                 <TableHead>Overall Status</TableHead>
                 <TableHead className="text-center">Eligibility</TableHead>
                 <TableHead className="text-center">Tiering</TableHead>
@@ -134,6 +136,9 @@ export const LoanList = () => {
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{formatCurrency(loan.loanAmount)}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{loan.loanType}</Badge>
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={loan.overallStatus} size="sm" />
                   </TableCell>
