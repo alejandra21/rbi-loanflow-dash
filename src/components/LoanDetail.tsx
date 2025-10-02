@@ -146,24 +146,24 @@ export const LoanDetail = () => {
                 <Building className="h-4 w-4 mr-2" />
                 Entity Name & Type Validation
               </div>
-              <Badge variant={phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "default" : "destructive"}>
-                {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "Valid" : "Requires Review"}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="font-medium text-base">{phase.eligibilityData.entityName}</p>
-                  {phase.eligibilityData.entityType && (
-                    <p className="text-sm text-muted-foreground">Type: {phase.eligibilityData.entityType}</p>
-                  )}
-                </div>
+              <div className="flex items-center space-x-2">
                 {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? (
                   <CheckCircle className="h-5 w-5 text-green-600" />
                 ) : (
                   <AlertTriangle className="h-5 w-5 text-red-600" />
+                )}
+                <Badge variant={phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "default" : "destructive"}>
+                  {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "Valid" : "Requires Review"}
+                </Badge>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <p className="font-medium text-base">{phase.eligibilityData.entityName}</p>
+                {phase.eligibilityData.entityType && (
+                  <p className="text-sm text-muted-foreground">Type: {phase.eligibilityData.entityType}</p>
                 )}
               </div>
 
