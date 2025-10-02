@@ -78,7 +78,7 @@ export const StatusBadge = ({ status, size = "default" }: StatusBadgeProps) => {
   return (
     <Badge 
       variant={config.variant} 
-      className={`inline-flex items-center justify-center gap-1 ${size === 'sm' ? 'text-xs px-2 py-1' : ''}`}
+      className={`gap-1 ${size === 'sm' ? 'text-xs px-2 py-1' : ''}`}
       title={config.tooltip}
     >
       <IconComponent className={size === 'sm' ? 'h-3 w-3' : 'h-4 w-4'} />
