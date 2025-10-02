@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { StatusBadge } from "@/components/StatusBadge";
 import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { mockLoans, Signatory } from "@/types/loan";
-import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText } from "lucide-react";
+import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 export const LoanDetail = () => {
@@ -151,94 +152,93 @@ export const LoanDetail = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-              <div>
-                <p className="font-medium">{phase.eligibilityData.entityName}</p>
-                <p className="text-sm text-muted-foreground">Entity Name</p>
-                {phase.eligibilityData.entityType && (
-                  <p className="text-xs text-muted-foreground mt-1">Type: {phase.eligibilityData.entityType}</p>
-                )}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="font-medium text-base">{phase.eligibilityData.entityName}</p>
+                  {phase.eligibilityData.entityType && (
+                    <p className="text-sm text-muted-foreground">Type: {phase.eligibilityData.entityType}</p>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                  )}
+                  <Badge variant={phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "default" : "destructive"}>
+                    {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "Valid" : "Requires Review"}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                {phase.eligibilityData.entityNameValid ? (
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                ) : (
-                  <AlertTriangle className="h-5 w-5 text-red-600" />
-                )}
-                <Badge variant={phase.eligibilityData.entityNameValid ? "default" : "destructive"}>
-                  {phase.eligibilityData.entityNameValid ? "Valid" : "Requires Review"}
-                </Badge>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-muted/30 rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Entity Name</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="font-medium text-sm">
+                      {phase.eligibilityData.entityNameValid ? "Valid" : "Invalid"}
+                    </p>
+                    {phase.eligibilityData.entityNameValid ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                    )}
+                  </div>
+                </div>
+                
+                <div className="p-3 bg-muted/30 rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Entity Type</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="font-medium text-sm">
+                      {phase.eligibilityData.entityTypeValid ? "Valid" : "Invalid"}
+                    </p>
+                    {phase.eligibilityData.entityTypeValid ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             
             {phase.eligibilityData.entityNameValidation && (
-              <div className="p-3 bg-muted/20 rounded text-sm">
-                <p className="font-medium mb-2">Validation Details:</p>
-                <div className="space-y-1 text-xs">
-                  <p><span className="text-muted-foreground">Provider:</span> {phase.eligibilityData.entityNameValidation.provider}</p>
-                  <p><span className="text-muted-foreground">Date:</span> {new Date(phase.eligibilityData.entityNameValidation.validationDate).toLocaleString()}</p>
-                  <p><span className="text-muted-foreground">Match Confidence:</span> {phase.eligibilityData.entityNameValidation.matchConfidence}%</p>
-                  <div className="mt-2 p-2 bg-muted/30 rounded">
-                    <p className="font-medium mb-1">API Response:</p>
-                    <pre className="text-xs overflow-auto">{JSON.stringify(phase.eligibilityData.entityNameValidation.apiResponse, null, 2)}</pre>
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full justify-between">
+                    <span>View Validation Details</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3">
+                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                    <div>
+                      <p className="font-medium mb-2">Verification Summary:</p>
+                      <p className="text-xs text-muted-foreground">
+                        {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid 
+                          ? "Both entity name and type validations passed successfully."
+                          : !phase.eligibilityData.entityNameValid && !phase.eligibilityData.entityTypeValid
+                          ? "Both entity name and type validations failed. Manual review required."
+                          : !phase.eligibilityData.entityNameValid
+                          ? "Entity name validation failed. Entity type is valid."
+                          : "Entity type validation failed. Entity name is valid."
+                        }
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <p><span className="text-muted-foreground">Provider:</span> {phase.eligibilityData.entityNameValidation.provider}</p>
+                      <p><span className="text-muted-foreground">Date:</span> {new Date(phase.eligibilityData.entityNameValidation.validationDate).toLocaleString()}</p>
+                      <p><span className="text-muted-foreground">Match Confidence:</span> {phase.eligibilityData.entityNameValidation.matchConfidence}%</p>
+                      <div className="mt-2 p-2 bg-muted/30 rounded">
+                        <p className="font-medium mb-1">API Response:</p>
+                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify(phase.eligibilityData.entityNameValidation.apiResponse, null, 2)}</pre>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                <div>
-                  <p className="font-medium">{phase.eligibilityData.ein}</p>
-                  <p className="text-sm text-muted-foreground">EIN</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {phase.eligibilityData.einValidated ? (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                  )}
-                  <Badge variant={phase.eligibilityData.einValidated ? "default" : "destructive"}>
-                    {phase.eligibilityData.einValidated ? "Validated" : "Requires Review"}
-                  </Badge>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                <div>
-                  <p className="font-medium">
-                    {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding 
-                      ? "Active & Good Standing" 
-                      : "Issues Found"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Entity Status</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                  )}
-                  <Badge variant={phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? "default" : "destructive"}>
-                    {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? "Verified" : "Requires Review"}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            {phase.eligibilityData.einVerification && (
-              <div className="p-3 bg-muted/20 rounded text-sm">
-                <p className="font-medium mb-2">EIN Verification Details:</p>
-                <div className="space-y-1 text-xs">
-                  <p><span className="text-muted-foreground">Provider:</span> {phase.eligibilityData.einVerification.provider}</p>
-                  <p><span className="text-muted-foreground">Date:</span> {new Date(phase.eligibilityData.einVerification.verificationDate).toLocaleString()}</p>
-                  <p><span className="text-muted-foreground">Status:</span> <Badge variant={phase.eligibilityData.einVerification.status === 'verified' ? 'default' : 'destructive'} className="text-xs">{phase.eligibilityData.einVerification.status}</Badge></p>
-                  <div className="mt-2 p-2 bg-muted/30 rounded">
-                    <p className="font-medium mb-1">API Response:</p>
-                    <pre className="text-xs overflow-auto">{JSON.stringify(phase.eligibilityData.einVerification.apiResponse, null, 2)}</pre>
-                  </div>
-                </div>
-              </div>
+                </CollapsibleContent>
+              </Collapsible>
             )}
           </CardContent>
         </Card>
