@@ -275,7 +275,7 @@ export const LoanDetail = () => {
                         <p className="font-medium text-sm">
                           {signatory.idvDetails?.documentType} - {signatory.idvDetails?.documentNumber}
                         </p>
-                        <Button variant="ghost" size="sm" className="h-7 px-2">
+                        <Button variant="outline" size="sm" className="h-8 px-3 bg-primary/10 hover:bg-primary/20 border-primary/30">
                           <Download className="h-4 w-4" />
                         </Button>
                       </div>
