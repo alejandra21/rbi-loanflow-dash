@@ -20,7 +20,7 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
       return { 
         icon: FaTimesCircle, 
         variant: 'destructive' as const, 
-        label: '✗', 
+        label: 'Errors', 
         tooltip: 'Failed' 
       };
     case 'manual':
