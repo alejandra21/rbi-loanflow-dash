@@ -89,6 +89,15 @@ export const StatusBadge = ({ status, size = "default" }: StatusBadgeProps) => {
 
 export const StatusIcon = ({ status }: { status: PhaseStatus }) => {
   const config = getStatusConfig(status);
+  const IconComponent = config.icon;
+  
+  if (status === 'manual') {
+    return (
+      <span className="inline-flex items-center justify-center" title={config.tooltip}>
+        <IconComponent className="h-5 w-5 text-warning" />
+      </span>
+    );
+  }
   
   return (
     <span 

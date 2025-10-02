@@ -7,7 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans, LoanApplication } from "@/types/loan";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Play } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export const LoanList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,6 +36,14 @@ export const LoanList = () => {
       currency: 'USD',
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const handleRerunWorkflow = (e: React.MouseEvent, loanId: string) => {
+    e.stopPropagation();
+    toast({
+      title: "Workflow Started",
+      description: `Re-running validation workflow for loan ${loanId}`,
+    });
   };
 
   return (
@@ -102,6 +111,7 @@ export const LoanList = () => {
                 <TableHead className="text-center">Underwriting</TableHead>
                 <TableHead className="text-center">Funding</TableHead>
                 <TableHead>Last Updated</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -141,6 +151,16 @@ export const LoanList = () => {
                     <StatusIcon status={loan.phases.funding.status} />
                   </TableCell>
                   <TableCell>{loan.lastUpdated}</TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => handleRerunWorkflow(e, loan.id)}
+                      title="Re-run workflow"
+                    >
+                      <Play className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
