@@ -8,6 +8,7 @@ import { LoanList } from "./components/LoanList";
 import { LoanDetail } from "./components/LoanDetail";
 import { ManualValidation } from "./components/ManualValidation";
 import NotFound from "./pages/NotFound";
+import IconPreview from "./pages/IconPreview";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
             <Route index element={<LoanList />} />
             <Route path="loan/:id" element={<LoanDetail />} />
             <Route path="validation" element={<ManualValidation />} />
+            <Route path="icon-preview" element={<IconPreview />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
