@@ -9,36 +9,45 @@ import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans, LoanApplication } from "@/types/loan";
 import { FaSearch, FaFilter, FaRedoAlt } from "react-icons/fa";
 import { toast } from "@/hooks/use-toast";
+
 export const LoanList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [phaseFilter, setPhaseFilter] = useState("all");
   const navigate = useNavigate();
-  const filteredLoans = mockLoans.filter(loan => {
-    const matchesSearch = loan.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) || loan.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const filteredLoans = mockLoans.filter((loan) => {
+    const matchesSearch = loan.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         loan.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || loan.overallStatus === statusFilter;
+    
     let matchesPhase = true;
     if (phaseFilter !== "all") {
       const phaseKey = phaseFilter as keyof LoanApplication['phases'];
       matchesPhase = loan.phases[phaseKey].status === 'manual' || loan.phases[phaseKey].status === 'failed';
     }
+    
     return matchesSearch && matchesStatus && matchesPhase;
   });
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount);
   };
+
   const handleRerunWorkflow = (e: React.MouseEvent, loanId: string) => {
     e.stopPropagation();
     toast({
       title: "Workflow Started",
-      description: `Re-running validation workflow for loan ${loanId}`
+      description: `Re-running validation workflow for loan ${loanId}`,
     });
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -46,7 +55,12 @@ export const LoanList = () => {
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search by name or loan ID..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 w-80" />
+                <Input
+                  placeholder="Search by name or loan ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-80"
+                />
               </div>
               
               <div className="flex items-center space-x-2">
@@ -101,7 +115,12 @@ export const LoanList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLoans.map(loan => <TableRow key={loan.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/loan/${loan.id}`)}>
+              {filteredLoans.map((loan) => (
+                <TableRow 
+                  key={loan.id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => navigate(`/loan/${loan.id}`)}
+                >
                   <TableCell className="font-medium">{loan.id}</TableCell>
                   <TableCell className="font-medium">{loan.lendingwiseId}</TableCell>
                   <TableCell>
@@ -133,19 +152,28 @@ export const LoanList = () => {
                   </TableCell>
                   <TableCell>{loan.lastUpdated}</TableCell>
                   <TableCell className="text-center">
-                    <Button variant="outline" size="sm" onClick={e => handleRerunWorkflow(e, loan.id)} className="gap-2 font-light text-sm text-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => handleRerunWorkflow(e, loan.id)}
+                      className="gap-2"
+                    >
                       <FaRedoAlt className="h-4 w-4" />
                       Re-Execute
                     </Button>
                   </TableCell>
-                </TableRow>)}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
           
-          {filteredLoans.length === 0 && <div className="text-center py-8 text-muted-foreground">
+          {filteredLoans.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
               No loans match your current filters
-            </div>}
+            </div>
+          )}
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };

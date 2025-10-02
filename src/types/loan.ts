@@ -1,499 +1,641 @@
 export type PhaseStatus = 'passed' | 'failed' | 'manual' | 'pending';
-export type OverallStatus = 'In Progress' | 'Completed' | 'Issues Found' | 'Manual Review' | 'Delayed';
-
-export interface IDVDetails {
-  status: string;
-  provider: string;
-  confidence: number;
-  verificationDate: string;
-  documentType: string;
-  documentNumber: string;
-}
-
-export interface EINVerification {
-  verified: boolean;
-  provider: string;
-  verificationDate: string;
-  matchConfidence?: number;
-}
-
-export interface CreditScoreRequest {
-  provider: string;
-  status: string;
-  requestDate: string;
-}
+export type OverallStatus = 'In Progress' | 'Completed' | 'Issues Found' | 'Manual Review';
+export type UserRole = 'admin' | 'reviewer' | 'manager';
 
 export interface Signatory {
-  name: string;
-  title: string;
-  email: string;
-  status: PhaseStatus;
-  ownershipPercentage?: number;
-  citizenship?: string;
-  creditScore?: number;
-  idvDetails?: IDVDetails;
-  einVerification?: EINVerification;
-  creditScoreRequest?: CreditScoreRequest;
+    name: string;
+    ownershipPercentage: number;
+    citizenship: string;
+    foreignNational: boolean;
+    id: string;
+    creditScore?: number;
+    idvVerified: boolean;
+    idvDetails?: {
+        provider: string;
+        verificationDate: string;
+        documentType: string;
+        documentNumber: string;
+        status: 'verified' | 'failed' | 'pending';
+        confidence: number;
+    };
+    creditScoreRequest?: {
+        requestDate: string;
+        provider: string;
+        status: 'completed' | 'pending' | 'failed';
+    };
+    einVerification?: {
+        verified: boolean;
+        verificationDate: string;
+        matchConfidence: number;
+        provider: string;
+    };
 }
 
 export interface EligibilityData {
-  entityName: string;
-  entityType: string;
-  entityNameValid: boolean;
-  entityTypeValid: boolean;
-  ein: string;
-  signatories: Signatory[];
-  validationDocuments: Array<string | { name: string; proof: string; verificationMethod: string }>;
-  documentIssuedDate: string;
-  entityNameValidation?: {
-    provider: string;
-    validationDate: string;
-    matchConfidence: number;
-    apiResponse: any;
-  };
-  einVerification?: {
-    status: string;
-    provider: string;
-    verificationDate: string;
-  };
+    entityName: string;
+    entityNameValid: boolean;
+    entityNameValidation?: {
+        provider: string;
+        validationDate: string;
+        apiResponse: Record<string, any>;
+        matchConfidence: number;
+    };
+    entityType?: string;
+    entityTypeValid?: boolean;
+    entityTypeValidation?: {
+        provider: string;
+        validationDate: string;
+        apiResponse: Record<string, any>;
+    };
+    signatories: Signatory[];
+    einValidated: boolean;
+    ein: string;
+    einVerification?: {
+        provider: string;
+        verificationDate: string;
+        apiResponse: Record<string, any>;
+        status: 'verified' | 'failed' | 'pending';
+    };
+    entityActive: boolean;
+    entityInGoodStanding: boolean;
+    validationDocuments: Array<{
+        name: string;
+        proof: string;
+        verificationMethod: string;
+    }>;
+    documentIssuedDate: string;
 }
 
-export interface Phase {
-  status: PhaseStatus;
-  completedAt?: string;
-  completedDate?: string;
-  notes?: string;
-  data?: Record<string, any>;
-  eligibilityData?: EligibilityData;
-  rawOutput?: any;
-  keyValueData?: Record<string, any>;
-  conditions?: Array<{
+export interface PhaseStep {
     name: string;
-    passed: boolean;
-    details?: string;
-  }>;
+    status: PhaseStatus;
+    completedDate?: string;
+    notes?: string;
+    conditions?: {
+        name: string;
+        passed: boolean;
+        details?: string;
+    }[];
+    keyValueData?: Record<string, any>;
+    rawOutput?: Record<string, any>;
+    eligibilityData?: EligibilityData;
 }
 
-export interface TimelineEvent {
-  phase: string;
-  status: string;
-  date: string;
-  user?: string;
+export interface AuditLogEntry {
+    id: string;
+    timestamp: string;
+    user: string;
+    action: string;
+    phase: string;
+    details: string;
+    decision?: 'approved' | 'rejected' | 'info_requested';
 }
 
 export interface LoanApplication {
-  id: string;
-  lendingwiseId: string;
-  applicantName: string;
-  applicantAddress: string;
-  loanAmount: number;
-  overallStatus: OverallStatus;
-  lastUpdated: string;
-  phases: {
-    eligibility: Phase;
-    tiering: Phase;
-    occupancy: Phase;
-    underwriting: Phase;
-    funding: Phase;
-  };
-  timeline: TimelineEvent[];
-  signatories?: Signatory[];
-  assignedReviewer?: string;
-  priority?: 'High' | 'Medium' | 'Low';
+    id: string;
+    lendingwiseId: string;
+    applicantName: string;
+    applicantAddress: string;
+    loanAmount: number;
+    overallStatus: OverallStatus;
+    lastUpdated: string;
+    assignedReviewer?: string;
+    phases: {
+        eligibility: PhaseStep;
+        tiering: PhaseStep;
+        occupancy: PhaseStep;
+        underwriting: PhaseStep;
+        funding: PhaseStep;
+    };
+    timeline: {
+        phase: string;
+        status: string;
+        date: string;
+        user: string;
+    }[];
+    auditLog: AuditLogEntry[];
 }
 
 export const mockLoans: LoanApplication[] = [
-  {
-    id: 'LN-2024-001',
-    lendingwiseId: 'LW-45678-2024',
-    applicantName: 'Acme Corporation',
-    applicantAddress: '123 Business Park, Austin, TX 78701',
-    loanAmount: 500000,
-    overallStatus: 'Manual Review',
-    lastUpdated: '2024-03-15',
-    timeline: [
-      { phase: 'Application Received', status: 'completed', date: '2024-03-08', user: 'System' },
-      { phase: 'Eligibility Check', status: 'completed', date: '2024-03-10', user: 'System' },
-      { phase: 'Credit Tiering', status: 'completed', date: '2024-03-12', user: 'System' },
-      { phase: 'Occupancy Verification', status: 'manual', date: '2024-03-15', user: 'Sarah Johnson' },
-      { phase: 'Underwriting Review', status: 'pending', date: '-' },
-      { phase: 'Funding', status: 'pending', date: '-' }
-    ],
-    phases: {
-      eligibility: {
-        status: 'passed',
-        completedAt: '2024-03-10',
-        completedDate: '2024-03-10',
-        eligibilityData: {
-          entityName: 'Acme Corporation',
-          entityType: 'LLC',
-          entityNameValid: true,
-          entityTypeValid: true,
-          ein: '12-3456789',
-          documentIssuedDate: '2024-03-08',
-          signatories: [
-            {
-              name: 'John Smith',
-              title: 'CEO',
-              email: 'john@acme.com',
-              status: 'passed',
-              ownershipPercentage: 60,
-              citizenship: 'US Citizen',
-              creditScore: 750,
-              idvDetails: {
-                status: 'verified',
-                provider: 'Socure',
-                confidence: 98,
-                verificationDate: '2024-03-09T10:30:00Z',
-                documentType: 'Driver License',
-                documentNumber: 'TX-123456789'
-              },
-              einVerification: {
-                verified: true,
-                provider: 'IRS Verification Service',
-                verificationDate: '2024-03-09T11:00:00Z',
-                matchConfidence: 100
-              },
-              creditScoreRequest: {
-                provider: 'Experian',
-                status: 'completed',
-                requestDate: '2024-03-09T09:00:00Z'
-              }
+    {
+        id: "LOA-2024-001",
+        lendingwiseId: "LW-2024-1001",
+        applicantName: "Tech Corp Ltd",
+        applicantAddress: "123 Main Street, New York, NY 10001",
+        loanAmount: 500000,
+        overallStatus: "In Progress",
+        lastUpdated: "2024-01-15",
+        assignedReviewer: "Sarah Johnson",
+        phases: {
+            eligibility: {
+                name: "Eligibility",
+                status: "passed",
+                completedDate: "2024-01-10",
+                eligibilityData: {
+                    entityName: "Tech Corp Ltd",
+                    entityNameValid: true,
+                    entityNameValidation: {
+                        provider: "SOS API",
+                        validationDate: "2024-01-05T09:30:00Z",
+                        apiResponse: {
+                            entity_name: "Tech Corp Ltd",
+                            status: "ACTIVE",
+                            match_score: 100,
+                            registration_date: "2020-03-15"
+                        },
+                        matchConfidence: 100
+                    },
+                    entityType: "LLC",
+                    entityTypeValid: true,
+                    entityTypeValidation: {
+                        provider: "SOS API",
+                        validationDate: "2024-01-05T09:30:00Z",
+                        apiResponse: {
+                            entity_type: "Limited Liability Company",
+                            formation_state: "Delaware",
+                            verified: true
+                        }
+                    },
+                    signatories: [
+                        {
+                            name: "John Smith",
+                            ownershipPercentage: 65,
+                            citizenship: "US",
+                            foreignNational: false,
+                            id: "SSN: ***-**-1234",
+                            creditScore: 750,
+                            idvVerified: true,
+                            idvDetails: {
+                                provider: "Persona",
+                                verificationDate: "2024-01-05T10:15:00Z",
+                                documentType: "Driver's License",
+                                documentNumber: "DL-NY-****1234",
+                                status: "verified",
+                                confidence: 98
+                            },
+                            creditScoreRequest: {
+                                requestDate: "2024-01-05T10:30:00Z",
+                                provider: "Experian",
+                                status: "completed"
+                            },
+                            einVerification: {
+                                verified: true,
+                                verificationDate: "2024-01-05T10:45:00Z",
+                                matchConfidence: 100,
+                                provider: "IRS EIN Verification API"
+                            }
+                        },
+                        {
+                            name: "Emily Chen",
+                            ownershipPercentage: 35,
+                            citizenship: "US",
+                            foreignNational: false,
+                            id: "SSN: ***-**-5678",
+                            creditScore: 720,
+                            idvVerified: true,
+                            idvDetails: {
+                                provider: "Persona",
+                                verificationDate: "2024-01-05T10:20:00Z",
+                                documentType: "Passport",
+                                documentNumber: "PP-US-****5678",
+                                status: "verified",
+                                confidence: 95
+                            },
+                            creditScoreRequest: {
+                                requestDate: "2024-01-05T10:35:00Z",
+                                provider: "Experian",
+                                status: "completed"
+                            },
+                            einVerification: {
+                                verified: true,
+                                verificationDate: "2024-01-05T10:50:00Z",
+                                matchConfidence: 100,
+                                provider: "IRS EIN Verification API"
+                            }
+                        }
+                    ],
+                    einValidated: true,
+                    ein: "12-3456789",
+                    einVerification: {
+                        provider: "IRS EIN Verification API",
+                        verificationDate: "2024-01-05T09:45:00Z",
+                        apiResponse: {
+                            ein: "12-3456789",
+                            entity_name: "Tech Corp Ltd",
+                            status: "ACTIVE",
+                            verified: true
+                        },
+                        status: "verified"
+                    },
+                    entityActive: true,
+                    entityInGoodStanding: true,
+                    validationDocuments: [
+                        {
+                            name: "Certificate of Incorporation",
+                            proof: "Document verified via Delaware SOS database, File #7234892, issued 2020-03-15",
+                            verificationMethod: "SOS Database Cross-Reference"
+                        },
+                        {
+                            name: "Good Standing Certificate",
+                            proof: "Current status verified via SOS API, last checked 2024-01-05, no outstanding issues",
+                            verificationMethod: "Real-time SOS API Verification"
+                        },
+                        {
+                            name: "Operating Agreement",
+                            proof: "Document authenticated via digital signature validation, signed by all members 2020-03-20",
+                            verificationMethod: "Digital Signature Validation"
+                        }
+                    ],
+                    documentIssuedDate: "2024-01-05"
+                },
+                keyValueData: {
+                    "Entity Status": "Active & Good Standing",
+                    "EIN": "12-3456789",
+                    "Validation Date": "2024-01-05",
+                    "Total Signatories": "2",
+                    "Foreign Nationals": "0"
+                },
+                rawOutput: {
+                    eligibility_check: {
+                        entity_name_valid: true,
+                        ein_validated: true,
+                        entity_active: true,
+                        foreign_nationals_count: 0,
+                        all_credit_scores_acceptable: true,
+                        result: "PASS"
+                    }
+                }
             },
-            {
-              name: 'Jane Doe',
-              title: 'CFO',
-              email: 'jane@acme.com',
-              status: 'passed',
-              ownershipPercentage: 40,
-              citizenship: 'US Citizen',
-              creditScore: 780,
-              idvDetails: {
-                status: 'verified',
-                provider: 'Socure',
-                confidence: 96,
-                verificationDate: '2024-03-09T10:45:00Z',
-                documentType: 'Passport',
-                documentNumber: 'US-987654321'
-              },
-              einVerification: {
-                verified: true,
-                provider: 'IRS Verification Service',
-                verificationDate: '2024-03-09T11:15:00Z',
-                matchConfidence: 100
-              },
-              creditScoreRequest: {
-                provider: 'Experian',
-                status: 'completed',
-                requestDate: '2024-03-09T09:15:00Z'
-              }
-            }
-          ],
-          validationDocuments: [
-            {
-              name: 'Articles of Organization',
-              proof: 'Document verified through state registry',
-              verificationMethod: 'State Business Registry API'
+            tiering: {
+                name: "Tiering",
+                status: "pending",
+                completedDate: "2024-01-12",
+                keyValueData: {
+                    "Risk Tier": "Tier 2",
+                    "Interest Rate": "8.5%",
+                    "LTV Ratio": "80%",
+                    "Processing Fee": "$2,500"
+                },
+                rawOutput: {
+                    tiering_result: {
+                        risk_score: 68,
+                        tier: "T2",
+                        interest_rate: 8.5,
+                        ltv_ratio: 0.8,
+                        result: "APPROVED"
+                    }
+                }
             },
-            {
-              name: 'EIN Confirmation Letter',
-              proof: 'IRS verification successful',
-              verificationMethod: 'IRS e-Services'
-            }
-          ],
-          entityNameValidation: {
-            provider: 'State Business Registry',
-            validationDate: '2024-03-09T08:00:00Z',
-            matchConfidence: 100,
-            apiResponse: {
-              entity_found: true,
-              exact_match: true,
-              status: 'active'
-            }
-          },
-          einVerification: {
-            status: 'verified',
-            provider: 'IRS Verification Service',
-            verificationDate: '2024-03-09T11:30:00Z'
-          }
+            occupancy: {
+                name: "Occupancy Verification",
+                status: "pending",
+                notes: "Property documents require verification",
+                keyValueData: {
+                    "Property Type": "Residential Apartment",
+                    "Location": "New York, NY",
+                    "Built Year": "2018",
+                    "Sq Ft": "1,200",
+                    "Current Occupancy": "Self Occupied"
+                },
+                rawOutput: {
+                    occupancy_check: {
+                        property_verified: false,
+                        documents_uploaded: true,
+                        site_visit_required: true,
+                        result: "MANUAL_REVIEW"
+                    }
+                }
+            },
+            underwriting: { name: "Underwriting", status: "pending" },
+            funding: { name: "Funding", status: "pending" }
         },
-        rawOutput: {
-          workflow_id: 'wf_eligibility_001',
-          execution_time: '2.3s',
-          api_calls: 5,
-          result: 'passed'
-        }
-      },
-      tiering: {
-        status: 'passed',
-        completedAt: '2024-03-12',
-        completedDate: '2024-03-12',
-        keyValueData: {
-          'Credit Tier': 'Tier A',
-          'Interest Rate': '5.25%',
-          'Approval Status': 'Approved'
-        },
-        conditions: [
-          { name: 'Credit Score > 700', passed: true, details: 'Average: 765' },
-          { name: 'Debt-to-Income < 43%', passed: true, details: 'Calculated: 38%' },
-          { name: 'No Recent Delinquencies', passed: true }
+        timeline: [
+            { phase: "Application", status: "Submitted", date: "2024-01-08", user: "System" },
+            { phase: "Eligibility", status: "Completed", date: "2024-01-10", user: "Auto Check" },
+            { phase: "Tiering", status: "Completed", date: "2024-01-12", user: "Auto Check" }
         ],
-        rawOutput: {
-          tier: 'A',
-          rate: 5.25,
-          approved: true
-        }
-      },
-      occupancy: {
-        status: 'manual',
-        notes: 'Requires manual review of occupancy documentation',
-        keyValueData: {
-          'Property Type': 'Commercial',
-          'Occupancy Rate': '85%',
-          'Verification Status': 'Pending Review'
-        }
-      },
-      underwriting: { status: 'pending' },
-      funding: { status: 'pending' }
-    },
-    signatories: [
-      {
-        name: 'John Smith',
-        title: 'CEO',
-        email: 'john@acme.com',
-        status: 'passed',
-        ownershipPercentage: 60,
-        citizenship: 'US Citizen',
-        creditScore: 750
-      },
-      {
-        name: 'Jane Doe',
-        title: 'CFO',
-        email: 'jane@acme.com',
-        status: 'passed',
-        ownershipPercentage: 40,
-        citizenship: 'US Citizen',
-        creditScore: 780
-      }
-    ],
-    assignedReviewer: 'Sarah Johnson',
-    priority: 'High'
-  },
-  {
-    id: 'LN-2024-002',
-    lendingwiseId: 'LW-45679-2024',
-    applicantName: 'Tech Innovations LLC',
-    applicantAddress: '456 Innovation Drive, San Francisco, CA 94102',
-    loanAmount: 750000,
-    overallStatus: 'Issues Found',
-    lastUpdated: '2024-03-14',
-    timeline: [
-      { phase: 'Application Received', status: 'completed', date: '2024-03-06', user: 'System' },
-      { phase: 'Eligibility Check', status: 'completed', date: '2024-03-08', user: 'System' },
-      { phase: 'Credit Tiering', status: 'failed', date: '2024-03-10', user: 'System' },
-      { phase: 'Occupancy Verification', status: 'pending', date: '-' },
-      { phase: 'Underwriting Review', status: 'pending', date: '-' },
-      { phase: 'Funding', status: 'pending', date: '-' }
-    ],
-    phases: {
-      eligibility: {
-        status: 'passed',
-        completedAt: '2024-03-08',
-        completedDate: '2024-03-08'
-      },
-      tiering: {
-        status: 'failed',
-        notes: 'Credit score below threshold',
-        completedAt: '2024-03-10',
-        completedDate: '2024-03-10',
-        keyValueData: {
-          'Credit Tier': 'Below Threshold',
-          'Interest Rate': 'N/A',
-          'Approval Status': 'Rejected'
-        },
-        conditions: [
-          { name: 'Credit Score > 700', passed: false, details: 'Average: 650' },
-          { name: 'Debt-to-Income < 43%', passed: true, details: 'Calculated: 40%' }
+        auditLog: [
+            {
+                id: "audit-001",
+                timestamp: "2024-01-10T10:30:00Z",
+                user: "Auto Check",
+                action: "Phase Completed",
+                phase: "Eligibility",
+                details: "All eligibility criteria met automatically"
+            },
+            {
+                id: "audit-002",
+                timestamp: "2024-01-12T14:45:00Z",
+                user: "Auto Check",
+                action: "Phase Completed",
+                phase: "Tiering",
+                details: "Risk assessment completed, assigned to Tier 2"
+            },
+            {
+                id: "audit-003",
+                timestamp: "2024-01-13T09:15:00Z",
+                user: "Sarah Johnson",
+                action: "Manual Review Assigned",
+                phase: "Occupancy",
+                details: "Property documents uploaded for manual verification"
+            }
         ]
-      },
-      occupancy: { status: 'pending' },
-      underwriting: { status: 'pending' },
-      funding: { status: 'pending' }
     },
-    signatories: [
-      {
-        name: 'Mike Wilson',
-        title: 'Founder',
-        email: 'mike@techinno.com',
-        status: 'passed',
-        creditScore: 650
-      }
-    ],
-    priority: 'Medium'
-  },
-  {
-    id: 'LN-2024-003',
-    lendingwiseId: 'LW-45680-2024',
-    applicantName: 'Green Energy Solutions',
-    applicantAddress: '789 Eco Street, Portland, OR 97201',
-    loanAmount: 1000000,
-    overallStatus: 'Manual Review',
-    lastUpdated: '2024-03-16',
-    timeline: [
-      { phase: 'Application Received', status: 'completed', date: '2024-03-09', user: 'System' },
-      { phase: 'Eligibility Check', status: 'completed', date: '2024-03-11', user: 'System' },
-      { phase: 'Credit Tiering', status: 'completed', date: '2024-03-13', user: 'System' },
-      { phase: 'Occupancy Verification', status: 'completed', date: '2024-03-14', user: 'System' },
-      { phase: 'Underwriting Review', status: 'manual', date: '2024-03-16', user: 'Michael Chen' },
-      { phase: 'Funding', status: 'pending', date: '-' }
-    ],
-    phases: {
-      eligibility: {
-        status: 'passed',
-        completedAt: '2024-03-11',
-        completedDate: '2024-03-11'
-      },
-      tiering: {
-        status: 'passed',
-        completedAt: '2024-03-13',
-        completedDate: '2024-03-13',
-        keyValueData: {
-          'Credit Tier': 'Tier B',
-          'Interest Rate': '6.25%',
-          'Approval Status': 'Approved'
-        }
-      },
-      occupancy: {
-        status: 'passed',
-        completedAt: '2024-03-14',
-        completedDate: '2024-03-14'
-      },
-      underwriting: {
-        status: 'manual',
-        notes: 'Complex financial structure requires review'
-      },
-      funding: { status: 'pending' }
+    {
+        id: "LOA-2024-002",
+        lendingwiseId: "LW-2024-1002",
+        applicantName: "Real Estate Corp",
+        applicantAddress: "456 Oak Avenue, Los Angeles, CA 90210",
+        loanAmount: 250000,
+        overallStatus: "Manual Review",
+        lastUpdated: "2024-01-14",
+        phases: {
+            eligibility: {
+                name: "Eligibility",
+                status: "manual",
+                completedDate: "2024-01-10",
+                eligibilityData: {
+                    entityName: "Real Estate Corp",
+                    entityNameValid: false,
+                    entityNameValidation: {
+                        provider: "SOS API",
+                        validationDate: "2024-01-05T09:30:00Z",
+                        apiResponse: {
+                            entity_name: "Real Estate Corp",
+                            status: "INACTIVE",
+                            match_score: 100,
+                            registration_date: "2020-03-15"
+                        },
+                        matchConfidence: 10
+                    },
+                    entityType: "LLC",
+                    entityTypeValid: false,
+                    entityTypeValidation: {
+                        provider: "SOS API",
+                        validationDate: "2024-01-05T09:30:00Z",
+                        apiResponse: {
+                            entity_type: "Limited Liability Company",
+                            formation_state: "Delaware",
+                            verified: false
+                        }
+                    },
+                    signatories: [
+                        {
+                            name: "John Smith",
+                            ownershipPercentage: 65,
+                            citizenship: "US",
+                            foreignNational: false,
+                            id: "SSN: ***-**-1234",
+                            creditScore: 750,
+                            idvVerified: false,
+                            idvDetails: {
+                                provider: "Persona",
+                                verificationDate: "2024-01-05T10:15:00Z",
+                                documentType: "Driver's License",
+                                documentNumber: "DL-NY-****1234",
+                                status: "failed",
+                                confidence: 98
+                            },
+                            creditScoreRequest: {
+                                requestDate: "2024-01-05T10:30:00Z",
+                                provider: "Experian",
+                                status: "completed"
+                            },
+                            einVerification: {
+                                verified: false,
+                                verificationDate: "2024-01-05T10:45:00Z",
+                                matchConfidence: 100,
+                                provider: "IRS EIN Verification API"
+                            }
+                        },
+                        {
+                            name: "Emily Chen",
+                            ownershipPercentage: 35,
+                            citizenship: "US",
+                            foreignNational: false,
+                            id: "SSN: ***-**-5678",
+                            creditScore: 720,
+                            idvVerified: false,
+                            idvDetails: {
+                                provider: "Persona",
+                                verificationDate: "2024-01-05T10:20:00Z",
+                                documentType: "Passport",
+                                documentNumber: "PP-US-****5678",
+                                status: "failed",
+                                confidence: 95
+                            },
+                            creditScoreRequest: {
+                                requestDate: "2024-01-05T10:35:00Z",
+                                provider: "Experian",
+                                status: "completed"
+                            },
+                            einVerification: {
+                                verified: false,
+                                verificationDate: "2024-01-05T10:50:00Z",
+                                matchConfidence: 100,
+                                provider: "IRS EIN Verification API"
+                            }
+                        }
+                    ],
+                    einValidated: false,
+                    ein: "12-3456789",
+                    einVerification: {
+                        provider: "IRS EIN Verification API",
+                        verificationDate: "2024-01-05T09:45:00Z",
+                        apiResponse: {
+                            ein: "12-3456789",
+                            entity_name: "Tech Corp Ltd",
+                            status: "ACTIVE",
+                            verified: false
+                        },
+                        status: "verified"
+                    },
+                    entityActive: true,
+                    entityInGoodStanding: true,
+                    validationDocuments: [
+                        {
+                            name: "Certificate of Incorporation",
+                            proof: "Document verified via Delaware SOS database, File #7234892, issued 2020-03-15",
+                            verificationMethod: "SOS Database Cross-Reference"
+                        },
+                        {
+                            name: "Good Standing Certificate",
+                            proof: "Current status verified via SOS API, last checked 2024-01-05, no outstanding issues",
+                            verificationMethod: "Real-time SOS API Verification"
+                        },
+                        {
+                            name: "Operating Agreement",
+                            proof: "Document authenticated via digital signature validation, signed by all members 2020-03-20",
+                            verificationMethod: "Digital Signature Validation"
+                        }
+                    ],
+                    documentIssuedDate: "2024-01-05"
+                },
+                keyValueData: {
+                    "Entity Status": "Active & Good Standing",
+                    "EIN": "12-3456789",
+                    "Validation Date": "2024-01-05",
+                    "Total Signatories": "2",
+                    "Foreign Nationals": "0"
+                },
+                rawOutput: {
+                    eligibility_check: {
+                        entity_name_valid: true,
+                        ein_validated: true,
+                        entity_active: true,
+                        foreign_nationals_count: 0,
+                        all_credit_scores_acceptable: true,
+                        result: "PASS"
+                    }
+                }
+            },
+            tiering: {
+                name: "Tiering",
+                status: "pending",
+                completedDate: "2024-01-12",
+                keyValueData: {
+                    "Risk Tier": "Tier 2",
+                    "Interest Rate": "8.5%",
+                    "LTV Ratio": "80%",
+                    "Processing Fee": "$2,500"
+                },
+                rawOutput: {
+                    tiering_result: {
+                        risk_score: 68,
+                        tier: "T2",
+                        interest_rate: 8.5,
+                        ltv_ratio: 0.8,
+                        result: "APPROVED"
+                    }
+                }
+            },
+            occupancy: {
+                name: "Occupancy Verification",
+                status: "pending",
+                notes: "Property documents require verification",
+                keyValueData: {
+                    "Property Type": "Residential Apartment",
+                    "Location": "New York, NY",
+                    "Built Year": "2018",
+                    "Sq Ft": "1,200",
+                    "Current Occupancy": "Self Occupied"
+                },
+                rawOutput: {
+                    occupancy_check: {
+                        property_verified: false,
+                        documents_uploaded: true,
+                        site_visit_required: true,
+                        result: "MANUAL_REVIEW"
+                    }
+                }
+            },
+            underwriting: { name: "Underwriting", status: "pending" },
+            funding: { name: "Funding", status: "pending" }
+        },
+        timeline: [
+            { phase: "Application", status: "Submitted", date: "2024-01-07", user: "System" },
+            { phase: "Eligibility", status: "Failed", date: "2024-01-09", user: "Auto Check" },
+            { phase: "Tiering", status: "Pending", date: "2024-01-09", user: "-" }
+        ],
+        auditLog: [
+            {
+                id: "audit-004",
+                timestamp: "2024-01-09T11:20:00Z",
+                user: "Auto Check",
+                action: "Phase Completed",
+                phase: "Eligibility",
+                details: "Eligibility check passed successfully"
+            },
+            {
+                id: "audit-005",
+                timestamp: "2024-01-14T16:30:00Z",
+                user: "Auto Check",
+                action: "Phase Failed",
+                phase: "Tiering",
+                details: "Credit score 680 below minimum threshold of 700"
+            }
+        ]
     },
-    signatories: [
-      {
-        name: 'Emily Chen',
-        title: 'President',
-        email: 'emily@greenenergy.com',
-        status: 'passed',
-        creditScore: 720
-      },
-      {
-        name: 'David Park',
-        title: 'COO',
-        email: 'david@greenenergy.com',
-        status: 'manual',
-        creditScore: 710
-      }
-    ],
-    assignedReviewer: 'Michael Chen',
-    priority: 'High'
-  },
-  {
-    id: 'LN-2024-004',
-    lendingwiseId: 'LW-45681-2024',
-    applicantName: 'Retail Plus Inc',
-    applicantAddress: '321 Commerce Blvd, Chicago, IL 60601',
-    loanAmount: 350000,
-    overallStatus: 'Completed',
-    lastUpdated: '2024-03-13',
-    timeline: [
-      { phase: 'Application Received', status: 'completed', date: '2024-03-03', user: 'System' },
-      { phase: 'Eligibility Check', status: 'completed', date: '2024-03-05', user: 'System' },
-      { phase: 'Credit Tiering', status: 'completed', date: '2024-03-07', user: 'System' },
-      { phase: 'Occupancy Verification', status: 'completed', date: '2024-03-09', user: 'System' },
-      { phase: 'Underwriting Review', status: 'completed', date: '2024-03-11', user: 'Alex Martinez' },
-      { phase: 'Funding', status: 'completed', date: '2024-03-13', user: 'System' }
-    ],
-    phases: {
-      eligibility: {
-        status: 'passed',
-        completedAt: '2024-03-05',
-        completedDate: '2024-03-05'
-      },
-      tiering: {
-        status: 'passed',
-        completedAt: '2024-03-07',
-        completedDate: '2024-03-07'
-      },
-      occupancy: {
-        status: 'passed',
-        completedAt: '2024-03-09',
-        completedDate: '2024-03-09'
-      },
-      underwriting: {
-        status: 'passed',
-        completedAt: '2024-03-11',
-        completedDate: '2024-03-11'
-      },
-      funding: {
-        status: 'passed',
-        completedAt: '2024-03-13',
-        completedDate: '2024-03-13'
-      }
+    {
+        id: "LOA-2024-003",
+        lendingwiseId: "LW-2024-1003",
+        applicantName: "Johnson LLC",
+        applicantAddress: "789 Pine Street, Chicago, IL 60601",
+        loanAmount: 750000,
+        overallStatus: "Completed",
+        lastUpdated: "2024-01-13",
+        phases: {
+            eligibility: { name: "Eligibility", status: "passed", completedDate: "2024-01-05" },
+            tiering: { name: "Tiering", status: "passed", completedDate: "2024-01-07" },
+            occupancy: { name: "Occupancy Verification", status: "passed", completedDate: "2024-01-10" },
+            underwriting: { name: "Underwriting", status: "passed", completedDate: "2024-01-12" },
+            funding: { name: "Funding", status: "passed", completedDate: "2024-01-13" }
+        },
+        timeline: [
+            { phase: "Application", status: "Submitted", date: "2024-01-03", user: "System" },
+            { phase: "Eligibility", status: "Completed", date: "2024-01-05", user: "Auto Check" },
+            { phase: "Tiering", status: "Completed", date: "2024-01-07", user: "Auto Check" },
+            { phase: "Occupancy", status: "Completed", date: "2024-01-10", user: "Manual Review" },
+            { phase: "Underwriting", status: "Completed", date: "2024-01-12", user: "Underwriter" },
+            { phase: "Funding", status: "Approved", date: "2024-01-13", user: "Manager" }
+        ],
+        auditLog: [
+            {
+                id: "audit-006",
+                timestamp: "2024-01-05T10:15:00Z",
+                user: "Auto Check",
+                action: "Phase Completed",
+                phase: "Eligibility",
+                details: "All eligibility requirements satisfied"
+            },
+            {
+                id: "audit-007",
+                timestamp: "2024-01-13T15:45:00Z",
+                user: "Manager",
+                action: "Loan Approved",
+                phase: "Funding",
+                details: "Final approval granted for funding disbursement",
+                decision: "approved"
+            }
+        ]
     },
-    signatories: [
-      {
-        name: 'Robert Taylor',
-        title: 'Owner',
-        email: 'robert@retailplus.com',
-        status: 'passed',
-        creditScore: 800
-      }
-    ],
-    priority: 'Low'
-  },
-  {
-    id: 'LN-2024-005',
-    lendingwiseId: 'LW-45682-2024',
-    applicantName: 'Construction Pro LLC',
-    applicantAddress: '555 Builder Lane, Denver, CO 80202',
-    loanAmount: 900000,
-    overallStatus: 'In Progress',
-    lastUpdated: '2024-03-15',
-    timeline: [
-      { phase: 'Application Received', status: 'completed', date: '2024-03-07', user: 'System' },
-      { phase: 'Eligibility Check', status: 'completed', date: '2024-03-09', user: 'System' },
-      { phase: 'Credit Tiering', status: 'manual', date: '2024-03-15', user: 'Alex Martinez' },
-      { phase: 'Occupancy Verification', status: 'pending', date: '-' },
-      { phase: 'Underwriting Review', status: 'pending', date: '-' },
-      { phase: 'Funding', status: 'pending', date: '-' }
-    ],
-    phases: {
-      eligibility: {
-        status: 'passed',
-        completedAt: '2024-03-09',
-        completedDate: '2024-03-09'
-      },
-      tiering: {
-        status: 'manual',
-        notes: 'Industry risk assessment needed'
-      },
-      occupancy: { status: 'pending' },
-      underwriting: { status: 'pending' },
-      funding: { status: 'pending' }
-    },
-    signatories: [
-      {
-        name: 'James Anderson',
-        title: 'Managing Partner',
-        email: 'james@constructionpro.com',
-        status: 'passed',
-        creditScore: 730
-      },
-      {
-        name: 'Lisa Brown',
-        title: 'Financial Director',
-        email: 'lisa@constructionpro.com',
-        status: 'passed',
-        creditScore: 745
-      }
-    ],
-    assignedReviewer: 'Alex Martinez',
-    priority: 'Medium'
-  }
+    {
+        id: "LOA-2024-004",
+        lendingwiseId: "LW-2024-1004",
+        applicantName: "Wilson LLC",
+        applicantAddress: "321 Elm Street, Miami, FL 33101",
+        loanAmount: 320000,
+        overallStatus: "Manual Review",
+        lastUpdated: "2024-01-11",
+        assignedReviewer: "David Martinez",
+        phases: {
+            eligibility: { name: "Eligibility", status: "passed", completedDate: "2024-01-08" },
+            tiering: { name: "Tiering", status: "manual", notes: "Borderline credit score requires review" },
+            occupancy: { name: "Occupancy Verification", status: "pending" },
+            underwriting: { name: "Underwriting", status: "pending" },
+            funding: { name: "Funding", status: "pending" }
+        },
+        timeline: [
+            { phase: "Application", status: "Submitted", date: "2024-01-06", user: "System" },
+            { phase: "Eligibility", status: "Completed", date: "2024-01-08", user: "Auto Check" }
+        ],
+        auditLog: [
+            {
+                id: "audit-008",
+                timestamp: "2024-01-08T12:30:00Z",
+                user: "Auto Check",
+                action: "Phase Completed",
+                phase: "Eligibility",
+                details: "Eligibility check completed successfully"
+            },
+            {
+                id: "audit-009",
+                timestamp: "2024-01-09T09:00:00Z",
+                user: "David Martinez",
+                action: "Manual Review Assigned",
+                phase: "Tiering",
+                details: "Borderline credit score flagged for manual review"
+            }
+        ]
+    }
 ];
