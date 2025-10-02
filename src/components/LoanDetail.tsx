@@ -145,6 +145,9 @@ export const LoanDetail = () => {
               <div className="flex items-center">
                 <Building className="h-4 w-4 mr-2" />
                 Entity Name & Type Validation
+                {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
+                  <CheckCircle className="h-4 w-4 ml-2 text-green-600" />
+                )}
               </div>
               <div className="flex items-center space-x-2">
                 {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? (
@@ -244,6 +247,11 @@ export const LoanDetail = () => {
             <CardTitle className="text-base flex items-center">
               <Users className="h-4 w-4 mr-2" />
               Signatories
+              {phase.eligibilityData.signatories.every((s: Signatory) => 
+                s.idvDetails?.status === 'verified' && s.einVerification?.verified
+              ) && (
+                <CheckCircle className="h-4 w-4 ml-2 text-green-600" />
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -405,6 +413,9 @@ export const LoanDetail = () => {
             <CardTitle className="text-base flex items-center">
               <FileText className="h-4 w-4 mr-2" />
               Validation Documents
+              {phase.eligibilityData.validationDocuments.length > 0 && (
+                <CheckCircle className="h-4 w-4 ml-2 text-green-600" />
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
