@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { mockLoans, Signatory } from "@/types/loan";
-import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download } from "lucide-react";
+import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle } from "lucide-react";
 import { useState } from "react";
 
 export const LoanDetail = () => {
@@ -780,10 +780,54 @@ export const LoanDetail = () => {
         <CardContent className="pt-6">
           <Tabs defaultValue="eligibility" className="h-full" onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="eligibility">Eligibility</TabsTrigger>
-              <TabsTrigger value="tiering">Tiering</TabsTrigger>
-              <TabsTrigger value="occupancy">Occupancy</TabsTrigger>
-              <TabsTrigger value="underwriting">Underwriting</TabsTrigger>
+              <TabsTrigger value="eligibility" className="relative">
+                Eligibility
+                {loan.phases.eligibility.status === 'failed' && (
+                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+                )}
+                {loan.phases.eligibility.status === 'manual' && (
+                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                )}
+                {loan.phases.eligibility.status === 'passed' && (
+                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="tiering" className="relative">
+                Tiering
+                {loan.phases.tiering.status === 'failed' && (
+                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+                )}
+                {loan.phases.tiering.status === 'manual' && (
+                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                )}
+                {loan.phases.tiering.status === 'passed' && (
+                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="occupancy" className="relative">
+                Occupancy
+                {loan.phases.occupancy.status === 'failed' && (
+                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+                )}
+                {loan.phases.occupancy.status === 'manual' && (
+                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                )}
+                {loan.phases.occupancy.status === 'passed' && (
+                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="underwriting" className="relative">
+                Underwriting
+                {loan.phases.underwriting.status === 'failed' && (
+                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+                )}
+                {loan.phases.underwriting.status === 'manual' && (
+                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                )}
+                {loan.phases.underwriting.status === 'passed' && (
+                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                )}
+              </TabsTrigger>
             </TabsList>
             
             <div className="mt-6">
