@@ -92,7 +92,9 @@ export const LoanDetail = () => {
                   <span className="font-medium">{event.phase}</span>
                   <Badge variant="outline" className="text-xs">{event.status}</Badge>
                   <span className="text-muted-foreground">{event.date}</span>
-                  <span className="text-muted-foreground">by {event.user}</span>
+                  {event.status !== 'pending' && (
+                    <span className="text-muted-foreground">by {event.user}</span>
+                  )}
                 </div>
               ))}
             </div>
