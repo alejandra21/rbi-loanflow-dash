@@ -91,20 +91,41 @@ export const StatusIcon = ({ status }: { status: PhaseStatus }) => {
   const config = getStatusConfig(status);
   const IconComponent = config.icon;
   
-  if (status === 'manual') {
-    return (
-      <span className="inline-flex items-center justify-center" title={config.tooltip}>
-        <IconComponent className="h-5 w-5 text-warning" />
-      </span>
-    );
-  }
+  const getBackgroundColor = () => {
+    switch (status) {
+      case 'passed':
+        return 'bg-green-500/20';
+      case 'failed':
+        return 'bg-red-500/20';
+      case 'manual':
+        return 'bg-yellow-500/20';
+      case 'pending':
+        return 'bg-blue-500/20';
+      default:
+        return 'bg-gray-500/20';
+    }
+  };
+  
+  const getIconColor = () => {
+    switch (status) {
+      case 'passed':
+        return 'text-green-600 dark:text-green-400';
+      case 'failed':
+        return 'text-red-600 dark:text-red-400';
+      case 'manual':
+        return 'text-yellow-600 dark:text-yellow-400';
+      case 'pending':
+        return 'text-blue-600 dark:text-blue-400';
+      default:
+        return 'text-gray-600 dark:text-gray-400';
+    }
+  };
   
   return (
-    <span 
-      className="text-lg cursor-help" 
-      title={config.tooltip}
-    >
-      {config.label}
-    </span>
+    <div className="inline-flex items-center justify-center" title={config.tooltip}>
+      <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${getBackgroundColor()}`}>
+        <IconComponent className={`h-5 w-5 ${getIconColor()}`} />
+      </div>
+    </div>
   );
 };
