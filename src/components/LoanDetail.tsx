@@ -140,7 +140,7 @@ export const LoanDetail = () => {
         <div className="flex items-center space-x-3">
           <StatusBadge status={phase.status} />
           <span className="font-medium">Eligibility Check</span>
-          {phase.completedDate && (
+          {phase.completedDate && phase.status !== 'Manual Review' && (
             <span className="text-sm text-muted-foreground">
               Completed: {phase.completedDate}
             </span>
