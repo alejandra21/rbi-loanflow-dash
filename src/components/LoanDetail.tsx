@@ -116,11 +116,6 @@ export const LoanDetail = () => {
                 Manual Validation
               </Button>
             )}
-            
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Clock className="h-4 w-4 mr-2" />
-              View History
-            </Button>
           </CardContent>
         </Card>
       </div>
