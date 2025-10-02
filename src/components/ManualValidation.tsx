@@ -78,7 +78,6 @@ export const ManualValidation = () => {
                 <TableHead>Amount</TableHead>
                 <TableHead>Phases Requiring Validation</TableHead>
                 <TableHead>Assigned Reviewer</TableHead>
-                <TableHead>Priority</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -106,7 +105,7 @@ export const ManualValidation = () => {
                         {manualPhases.map((phase) => (
                           <span 
                             key={phase}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-warning/20 text-warning-foreground"
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-warning/50 text-warning-foreground font-medium"
                           >
                             {phase.charAt(0).toUpperCase() + phase.slice(1)}
                           </span>
@@ -121,21 +120,6 @@ export const ManualValidation = () => {
                         </div>
                       ) : (
                         <span className="text-sm text-muted-foreground">Unassigned</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {daysSinceUpdate > 3 ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-destructive/20 text-destructive-foreground">
-                          High
-                        </span>
-                      ) : daysSinceUpdate > 1 ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-warning/20 text-warning-foreground">
-                          Medium
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-success/20 text-success-foreground">
-                          Normal
-                        </span>
                       )}
                     </TableCell>
                     <TableCell>
