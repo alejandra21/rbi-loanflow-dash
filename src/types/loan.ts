@@ -534,8 +534,8 @@ export const mockLoans: LoanApplication[] = [
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-07", user: "System" },
-            { phase: "Eligibility", status: "Completed", date: "2024-01-09", user: "Auto Check" },
-            { phase: "Tiering", status: "Failed", date: "2024-01-14", user: "Auto Check" }
+            { phase: "Eligibility", status: "Failed", date: "2024-01-09", user: "Auto Check" },
+            { phase: "Tiering", status: "Pending", date: "2024-01-14", user: "Auto Check" }
         ],
         auditLog: [
             {
