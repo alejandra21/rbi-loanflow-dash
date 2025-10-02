@@ -55,11 +55,18 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
         variant: 'destructive' as const, 
         label: 'Issues Found' 
       };
-    case 'Delayed':
+    case 'Manual Review':
       return { 
         icon: AlertTriangle, 
         variant: 'warning' as const, 
-        label: 'Delayed' 
+        label: 'Manual Review' 
+      };
+    default:
+      return { 
+        icon: Clock, 
+        variant: 'secondary' as const, 
+        label: String(status), 
+        tooltip: String(status) 
       };
   }
 };
