@@ -159,7 +159,6 @@ export const LoanList = () => {
                       className="gap-2"
                     >
                       <FaRedoAlt className="h-4 w-4" />
-                      Re-Execute
                     </Button>
                   </TableCell>
                 </TableRow>
