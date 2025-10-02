@@ -268,7 +268,7 @@ export const mockLoans: LoanApplication[] = [
             },
             tiering: {
                 name: "Tiering",
-                status: "passed",
+                status: "pending",
                 completedDate: "2024-01-12",
                 keyValueData: {
                     "Risk Tier": "Tier 2",
@@ -288,7 +288,7 @@ export const mockLoans: LoanApplication[] = [
             },
             occupancy: {
                 name: "Occupancy Verification",
-                status: "manual",
+                status: "pending",
                 notes: "Property documents require verification",
                 keyValueData: {
                     "Property Type": "Residential Apartment",
