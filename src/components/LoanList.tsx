@@ -154,7 +154,7 @@ export const LoanList = () => {
                   <TableCell className="text-center">
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="xs"
                       onClick={(e) => handleRerunWorkflow(e, loan.id)}
                       className="gap-2"
                     >
