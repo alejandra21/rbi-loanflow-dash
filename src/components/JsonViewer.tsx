@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import React from 'react';
 
 interface JsonViewerProps {
   data: any;
@@ -7,7 +6,6 @@ interface JsonViewerProps {
 }
 
 export const JsonViewer = ({ data, title = "Raw Output" }: JsonViewerProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const renderValue = (value: any, key: string, depth: number = 0): JSX.Element => {
     const indent = depth * 16;
@@ -68,25 +66,9 @@ export const JsonViewer = ({ data, title = "Raw Output" }: JsonViewerProps) => {
 
   return (
     <div className="border rounded-md">
-      <div 
-        className="flex items-center justify-between p-3 bg-muted/50 border-b cursor-pointer hover:bg-muted/70"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div className="flex items-center space-x-2">
-          {isExpanded ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4" />
-          )}
-          <span className="font-medium text-sm">{title}</span>
-        </div>
+      <div className="p-4 bg-slate-50 dark:bg-slate-900 font-mono text-sm overflow-x-auto">
+        {renderValue(data, 'root')}
       </div>
-      
-      {isExpanded && (
-        <div className="p-4 bg-slate-50 dark:bg-slate-900 font-mono text-sm overflow-x-auto">
-          {renderValue(data, 'root')}
-        </div>
-      )}
     </div>
   );
 };
