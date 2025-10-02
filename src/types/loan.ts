@@ -605,19 +605,19 @@ export const mockLoans: LoanApplication[] = [
         applicantName: "Wilson LLC",
         applicantAddress: "321 Elm Street, Miami, FL 33101",
         loanAmount: 320000,
-        overallStatus: "Manual Review",
+        overallStatus: "Issues Found",
         lastUpdated: "2024-01-11",
         assignedReviewer: "David Martinez",
         phases: {
-            eligibility: { name: "Eligibility", status: "passed", completedDate: "2024-01-08" },
-            tiering: { name: "Tiering", status: "manual", notes: "Borderline credit score requires review" },
+            eligibility: { name: "Eligibility", status: "failed", completedDate: "2024-01-08" },
+            tiering: { name: "Tiering", status: "pending", notes: "Borderline credit score requires review" },
             occupancy: { name: "Occupancy Verification", status: "pending" },
             underwriting: { name: "Underwriting", status: "pending" },
             funding: { name: "Funding", status: "pending" }
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-06", user: "System" },
-            { phase: "Eligibility", status: "Completed", date: "2024-01-08", user: "Auto Check" }
+            { phase: "Eligibility", status: "Error", date: "2024-01-08", user: "Auto Check" }
         ],
         auditLog: [
             {
