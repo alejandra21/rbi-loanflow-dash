@@ -41,7 +41,7 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
       return { 
         icon: FaClock, 
         variant: 'secondary' as const, 
-        label: 'In Progress' 
+        label: 'Pending' 
       };
     case 'Completed':
       return { 
