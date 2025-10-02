@@ -145,19 +145,25 @@ export const LoanDetail = () => {
               <div className="flex items-center">
                 <Building className="h-4 w-4 mr-2" />
                 Entity Name & Type Validation
-                {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
-                  <CheckCircle className="h-4 w-4 ml-2 text-green-600" />
-                )}
               </div>
               <div className="flex items-center space-x-2">
-                {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? (
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                ) : (
-                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600">
+                    Validated
+                  </Badge>
                 )}
-                <Badge variant={phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "default" : "destructive"}>
-                  {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "Valid" : "Requires Review"}
-                </Badge>
+                {(!phase.eligibilityData.entityNameValid || !phase.eligibilityData.entityTypeValid) && (
+                  <>
+                    {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? (
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="h-5 w-5 text-red-600" />
+                    )}
+                    <Badge variant={phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "default" : "destructive"}>
+                      {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid ? "Valid" : "Requires Review"}
+                    </Badge>
+                  </>
+                )}
               </div>
             </CardTitle>
           </CardHeader>
@@ -244,13 +250,17 @@ export const LoanDetail = () => {
         {/* Signatories */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center">
-              <Users className="h-4 w-4 mr-2" />
-              Signatories
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <Users className="h-4 w-4 mr-2" />
+                Signatories
+              </div>
               {phase.eligibilityData.signatories.every((s: Signatory) => 
                 s.idvDetails?.status === 'verified' && s.einVerification?.verified
               ) && (
-                <CheckCircle className="h-4 w-4 ml-2 text-green-600" />
+                <Badge variant="default" className="bg-green-600 hover:bg-green-600">
+                  Validated
+                </Badge>
               )}
             </CardTitle>
           </CardHeader>
@@ -410,11 +420,15 @@ export const LoanDetail = () => {
         {/* Validation Documents */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center">
-              <FileText className="h-4 w-4 mr-2" />
-              Validation Documents
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <FileText className="h-4 w-4 mr-2" />
+                Validation Documents
+              </div>
               {phase.eligibilityData.validationDocuments.length > 0 && (
-                <CheckCircle className="h-4 w-4 ml-2 text-green-600" />
+                <Badge variant="default" className="bg-green-600 hover:bg-green-600">
+                  Validated
+                </Badge>
               )}
             </CardTitle>
           </CardHeader>
