@@ -559,7 +559,7 @@ export const mockLoans: LoanApplication[] = [
     {
         id: "LOA-2024-003",
         lendingwiseId: "LW-2024-1003",
-        applicantName: "Michael Johnson",
+        applicantName: "Johnson LLC",
         applicantAddress: "789 Pine Street, Chicago, IL 60601",
         loanAmount: 750000,
         overallStatus: "Completed",
