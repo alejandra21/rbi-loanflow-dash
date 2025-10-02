@@ -139,7 +139,14 @@ export const LoanDetail = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Eligibility Check</span>
-          <StatusBadge status={phase.status} />
+          {phase.status === 'failed' ? (
+            <Badge variant="destructive" className="gap-1">
+              <AlertTriangle className="h-4 w-4" />
+              Errors
+            </Badge>
+          ) : (
+            <StatusBadge status={phase.status} />
+          )}
         </div>
       </div>
 
