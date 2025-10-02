@@ -16,6 +16,7 @@ export const LoanDetail = () => {
   const navigate = useNavigate();
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [currentPhase, setCurrentPhase] = useState("");
+  const [activeTab, setActiveTab] = useState("eligibility");
   
   const loan = mockLoans.find(l => l.id === id);
   
@@ -42,237 +43,249 @@ export const LoanDetail = () => {
     return (completed / phases.length) * 100;
   };
 
-  const StatusTimeline = () => (
-    <Card className="mb-6">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Processing Timeline</span>
-          <div className="flex items-center space-x-2">
-            <div className="w-64 bg-muted rounded-full h-2">
-              <div 
-                className="bg-primary h-2 rounded-full transition-all"
-                style={{ width: `${getProgressPercentage()}%` }}
-              />
+  const getCurrentPhase = () => {
+    const phaseMap: { [key: string]: { phase: any; name: string } } = {
+      eligibility: { phase: loan.phases.eligibility, name: "Eligibility Check" },
+      tiering: { phase: loan.phases.tiering, name: "Credit Tiering" },
+      occupancy: { phase: loan.phases.occupancy, name: "Occupancy Verification" },
+      underwriting: { phase: loan.phases.underwriting, name: "Underwriting Review" },
+    };
+    return phaseMap[activeTab] || phaseMap.eligibility;
+  };
+
+  const StatusTimeline = () => {
+    const currentPhaseData = getCurrentPhase();
+    
+    return (
+      <div className="grid grid-cols-3 gap-6 mb-6">
+        <Card className="col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Processing Timeline</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-64 bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all"
+                    style={{ width: `${getProgressPercentage()}%` }}
+                  />
+                </div>
+                <span className="text-sm text-muted-foreground">{Math.round(getProgressPercentage())}%</span>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {loan.timeline.map((event, index) => (
+                <div key={index} className="flex items-center space-x-3 text-sm">
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <span className="font-medium">{event.phase}</span>
+                  <Badge variant="outline" className="text-xs">{event.status}</Badge>
+                  <span className="text-muted-foreground">{event.date}</span>
+                  <span className="text-muted-foreground">by {event.user}</span>
+                </div>
+              ))}
             </div>
-            <span className="text-sm text-muted-foreground">{Math.round(getProgressPercentage())}%</span>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {loan.timeline.map((event, index) => (
-            <div key={index} className="flex items-center space-x-3 text-sm">
-              <div className="w-2 h-2 bg-primary rounded-full" />
-              <span className="font-medium">{event.phase}</span>
-              <Badge variant="outline" className="text-xs">{event.status}</Badge>
-              <span className="text-muted-foreground">{event.date}</span>
-              <span className="text-muted-foreground">by {event.user}</span>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center">
+              <Settings className="h-4 w-4 mr-2" />
+              Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button variant="outline" size="sm" className="w-full justify-start">
+              <Play className="h-4 w-4 mr-2" />
+              Re-execute Workflow
+            </Button>
+            
+            {currentPhaseData.phase.status === 'manual' && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start"
+                onClick={() => {
+                  setCurrentPhase(currentPhaseData.name);
+                  setSidePanelOpen(true);
+                }}
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Manual Validation
+              </Button>
+            )}
+            
+            <Button variant="outline" size="sm" className="w-full justify-start">
+              <Clock className="h-4 w-4 mr-2" />
+              View History
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   const EligibilityTab = ({ phase }: { phase: any }) => (
-    <div className="space-y-6">
-      {/* Actions Section */}
-      <Card className="max-w-md">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center">
-            <Settings className="h-4 w-4 mr-2" />
-            Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <Play className="h-4 w-4 mr-2" />
-            Re-execute Workflow
-          </Button>
-          
-          {phase.status === 'manual' && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full justify-start"
-              onClick={() => {
-                setCurrentPhase("Eligibility Check");
-                setSidePanelOpen(true);
-              }}
-            >
-              <CheckSquare className="h-4 w-4 mr-2" />
-              Manual Validation
-            </Button>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <StatusBadge status={phase.status} />
+          <span className="font-medium">Eligibility Check</span>
+          {phase.completedDate && (
+            <span className="text-sm text-muted-foreground">
+              Completed: {phase.completedDate}
+            </span>
           )}
-          
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <Clock className="h-4 w-4 mr-2" />
-            View History
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Main Content */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <StatusBadge status={phase.status} />
-            <span className="font-medium">Eligibility Check</span>
-            {phase.completedDate && (
-              <span className="text-sm text-muted-foreground">
-                Completed: {phase.completedDate}
-              </span>
-            )}
-          </div>
         </div>
-
-        {phase.eligibilityData && (
-          <>
-            {/* Entity Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center">
-                  <Building className="h-4 w-4 mr-2" />
-                  Entity Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                  <div>
-                    <p className="font-medium">{phase.eligibilityData.entityName}</p>
-                    <p className="text-sm text-muted-foreground">Entity Name</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {phase.eligibilityData.entityNameValid ? (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 text-red-600" />
-                    )}
-                    <Badge variant={phase.eligibilityData.entityNameValid ? "default" : "destructive"}>
-                      {phase.eligibilityData.entityNameValid ? "Valid" : "Requires Review"}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                    <div>
-                      <p className="font-medium">{phase.eligibilityData.ein}</p>
-                      <p className="text-sm text-muted-foreground">EIN</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {phase.eligibilityData.einValidated ? (
-                        <CheckCircle className="h-5 w-5 text-green-600" />
-                      ) : (
-                        <AlertTriangle className="h-5 w-5 text-red-600" />
-                      )}
-                      <Badge variant={phase.eligibilityData.einValidated ? "default" : "destructive"}>
-                        {phase.eligibilityData.einValidated ? "Validated" : "Requires Review"}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                    <div>
-                      <p className="font-medium">
-                        {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding 
-                          ? "Active & Good Standing" 
-                          : "Issues Found"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">Entity Status</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? (
-                        <CheckCircle className="h-5 w-5 text-green-600" />
-                      ) : (
-                        <AlertTriangle className="h-5 w-5 text-red-600" />
-                      )}
-                      <Badge variant={phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? "default" : "destructive"}>
-                        {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? "Verified" : "Requires Review"}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Signatories */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center">
-                  <Users className="h-4 w-4 mr-2" />
-                  Signatories & Ownership
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
-                    <div key={index} className="p-4 bg-muted/30 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{signatory.name}</h4>
-                        <div className="flex items-center space-x-2">
-                          {signatory.foreignNational && (
-                            <Badge variant="destructive" className="text-xs">Foreign National - Review Required</Badge>
-                          )}
-                          <Badge variant="outline">{signatory.ownershipPercentage}% ownership</Badge>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Citizenship:</span>
-                          <p className="font-medium">{signatory.citizenship}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">ID:</span>
-                          <p className="font-medium">{signatory.id}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Credit Score:</span>
-                          <p className="font-medium flex items-center">
-                            {signatory.creditScore}
-                            <CreditCard className="h-4 w-4 ml-1" />
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Validation Documents */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Validation Documents
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                    <span className="text-sm text-muted-foreground">Document Issue Date:</span>
-                    <span className="font-medium">{phase.eligibilityData.documentIssuedDate}</span>
-                  </div>
-                  <div className="space-y-2">
-                    {phase.eligibilityData.validationDocuments.map((doc: string, index: number) => (
-                      <div key={index} className="flex items-center space-x-2 p-2 bg-muted/20 rounded">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm">{doc}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-
-        {/* JSON Viewer */}
-        {phase.rawOutput && (
-          <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
-        )}
       </div>
+
+      {phase.eligibilityData && (
+          <>
+        {/* Entity Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center">
+              <Building className="h-4 w-4 mr-2" />
+              Entity Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
+              <div>
+                <p className="font-medium">{phase.eligibilityData.entityName}</p>
+                <p className="text-sm text-muted-foreground">Entity Name</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                {phase.eligibilityData.entityNameValid ? (
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                )}
+                <Badge variant={phase.eligibilityData.entityNameValid ? "default" : "destructive"}>
+                  {phase.eligibilityData.entityNameValid ? "Valid" : "Requires Review"}
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
+                <div>
+                  <p className="font-medium">{phase.eligibilityData.ein}</p>
+                  <p className="text-sm text-muted-foreground">EIN</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {phase.eligibilityData.einValidated ? (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                  )}
+                  <Badge variant={phase.eligibilityData.einValidated ? "default" : "destructive"}>
+                    {phase.eligibilityData.einValidated ? "Validated" : "Requires Review"}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
+                <div>
+                  <p className="font-medium">
+                    {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding 
+                      ? "Active & Good Standing" 
+                      : "Issues Found"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Entity Status</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                  )}
+                  <Badge variant={phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? "default" : "destructive"}>
+                    {phase.eligibilityData.entityActive && phase.eligibilityData.entityInGoodStanding ? "Verified" : "Requires Review"}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Signatories */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center">
+              <Users className="h-4 w-4 mr-2" />
+              Signatories & Ownership
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
+                <div key={index} className="p-4 bg-muted/30 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">{signatory.name}</h4>
+                    <div className="flex items-center space-x-2">
+                      {signatory.foreignNational && (
+                        <Badge variant="destructive" className="text-xs">Foreign National - Review Required</Badge>
+                      )}
+                      <Badge variant="outline">{signatory.ownershipPercentage}% ownership</Badge>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Citizenship:</span>
+                      <p className="font-medium">{signatory.citizenship}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">ID:</span>
+                      <p className="font-medium">{signatory.id}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Credit Score:</span>
+                      <p className="font-medium flex items-center">
+                        {signatory.creditScore}
+                        <CreditCard className="h-4 w-4 ml-1" />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Validation Documents */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Validation Documents
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
+                <span className="text-sm text-muted-foreground">Document Issue Date:</span>
+                <span className="font-medium">{phase.eligibilityData.documentIssuedDate}</span>
+              </div>
+              <div className="space-y-2">
+                {phase.eligibilityData.validationDocuments.map((doc: string, index: number) => (
+                  <div key={index} className="flex items-center space-x-2 p-2 bg-muted/20 rounded">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-sm">{doc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </>
+      )}
+
+      {/* JSON Viewer */}
+      {phase.rawOutput && (
+        <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
+      )}
     </div>
   );
 
@@ -443,7 +456,7 @@ export const LoanDetail = () => {
 
       <Card>
         <CardContent className="pt-6">
-          <Tabs defaultValue="eligibility" className="h-full">
+          <Tabs defaultValue="eligibility" className="h-full" onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="eligibility">Eligibility</TabsTrigger>
               <TabsTrigger value="tiering">Tiering</TabsTrigger>
