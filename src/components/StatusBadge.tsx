@@ -82,6 +82,7 @@ export const StatusBadge = ({ status, size = "default" }: StatusBadgeProps) => {
       title={config.tooltip}
     >
       <IconComponent className={size === 'sm' ? 'h-3 w-3' : 'h-4 w-4'} />
+      {config.label}
     </Badge>
   );
 };
