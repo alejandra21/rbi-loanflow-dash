@@ -611,7 +611,7 @@ export const mockLoans: LoanApplication[] = [
         phases: {
             eligibility: {
                 name: "Eligibility",
-                status: "manual",
+                status: "failed",
                 completedDate: "2024-01-10",
                 eligibilityData: {
                     entityName: "Real Estate Corp",
