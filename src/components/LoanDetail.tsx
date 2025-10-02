@@ -18,6 +18,16 @@ export const LoanDetail = () => {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [currentPhase, setCurrentPhase] = useState("");
   const [activeTab, setActiveTab] = useState("eligibility");
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
+    entity: true,
+    signatories: true,
+    documents: true,
+    auditLog: true,
+  });
+
+  const toggleCard = (cardId: string) => {
+    setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
+  };
   
   const loan = mockLoans.find(l => l.id === id);
   
@@ -140,7 +150,10 @@ export const LoanDetail = () => {
           <>
         {/* Entity Information */}
         <Card>
-          <CardHeader>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('entity')}
+          >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <Building className="h-4 w-4 mr-2" />
@@ -159,10 +172,12 @@ export const LoanDetail = () => {
                     Requires Review
                   </Badge>
                 )}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.entity ? '' : '-rotate-90'}`} />
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          {expandedCards.entity && (
+            <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="space-y-1">
                 <p className="font-medium text-base">{phase.eligibilityData.entityName}</p>
@@ -240,27 +255,35 @@ export const LoanDetail = () => {
               </Collapsible>
             )}
           </CardContent>
+          )}
         </Card>
 
         {/* Signatories */}
         <Card>
-          <CardHeader>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('signatories')}
+          >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <Users className="h-4 w-4 mr-2" />
                 Signatories
               </div>
-              {phase.eligibilityData.signatories.every((s: Signatory) => 
-                s.idvDetails?.status === 'verified' && s.einVerification?.verified
-              ) && (
-                <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                  <CheckCircle className="h-4 w-4" />
-                  Validated
-                </Badge>
-              )}
+              <div className="flex items-center space-x-2">
+                {phase.eligibilityData.signatories.every((s: Signatory) => 
+                  s.idvDetails?.status === 'verified' && s.einVerification?.verified
+                ) && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Validated
+                  </Badge>
+                )}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.signatories ? '' : '-rotate-90'}`} />
+              </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          {expandedCards.signatories && (
+            <CardContent>
             <div className="space-y-4">
               {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
                 <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
@@ -411,25 +434,33 @@ export const LoanDetail = () => {
               ))}
             </div>
           </CardContent>
+          )}
         </Card>
 
         {/* Validation Documents */}
         <Card>
-          <CardHeader>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('documents')}
+          >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <FileText className="h-4 w-4 mr-2" />
                 Validation Documents
               </div>
-              {phase.eligibilityData.validationDocuments.length > 0 && (
-                <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                  <CheckCircle className="h-4 w-4" />
-                  Validated
-                </Badge>
-              )}
+              <div className="flex items-center space-x-2">
+                {phase.eligibilityData.validationDocuments.length > 0 && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Validated
+                  </Badge>
+                )}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.documents ? '' : '-rotate-90'}`} />
+              </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          {expandedCards.documents && (
+            <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
                 <span className="text-sm text-muted-foreground">Document Issue Date:</span>
@@ -459,17 +490,25 @@ export const LoanDetail = () => {
               </div>
             </div>
           </CardContent>
+          )}
         </Card>
 
         {/* Eligibility Audit Log */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center">
-              <Clock className="h-4 w-4 mr-2" />
-              Eligibility Phase Audit Log
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('auditLog')}
+          >
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 mr-2" />
+                Eligibility Phase Audit Log
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? '' : '-rotate-90'}`} />
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          {expandedCards.auditLog && (
+            <CardContent>
             <div className="space-y-3">
               {/* Entity Validation */}
               {phase.eligibilityData.entityNameValidation && (
@@ -561,6 +600,7 @@ export const LoanDetail = () => {
               )}
             </div>
           </CardContent>
+          )}
         </Card>
       </>
       )}
