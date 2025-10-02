@@ -6,22 +6,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { mockLoans } from "@/types/loan";
-import { UserCheck, Eye, AlertTriangle } from "lucide-react";
+import { Eye, AlertTriangle } from "lucide-react";
 
 export const ManualValidation = () => {
   const navigate = useNavigate();
-  const [assigneeFilter, setAssigneeFilter] = useState("all");
 
-  // Filter loans that need manual validation
+  // Filter loans that need manual validation or have errors
   const manualValidationLoans = mockLoans.filter(loan => 
-    Object.values(loan.phases).some(phase => phase.status === 'manual')
+    Object.values(loan.phases).some(phase => phase.status === 'manual' || phase.status === 'failed')
   );
-
-  const filteredLoans = manualValidationLoans.filter(loan => {
-    if (assigneeFilter === "all") return true;
-    if (assigneeFilter === "unassigned") return !loan.assignedReviewer;
-    return loan.assignedReviewer === assigneeFilter;
-  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -33,11 +26,9 @@ export const ManualValidation = () => {
 
   const getManualPhases = (loan: any) => {
     return Object.entries(loan.phases)
-      .filter(([_, phase]: [string, any]) => phase.status === 'manual')
+      .filter(([_, phase]: [string, any]) => phase.status === 'manual' || phase.status === 'failed')
       .map(([key, _]) => key);
   };
-
-  const reviewers = ['Priya Sharma', 'Rahul Gupta', 'Anjali Singh', 'Vikram Patel'];
 
   return (
     <div className="space-y-6">
@@ -48,23 +39,8 @@ export const ManualValidation = () => {
               <AlertTriangle className="h-5 w-5 text-warning" />
               <span>Manual Validation Required</span>
               <span className="text-sm text-muted-foreground">
-                ({filteredLoans.length} items)
+                ({manualValidationLoans.length} items)
               </span>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filter by assignee" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Assignments</SelectItem>
-                  <SelectItem value="unassigned">Unassigned</SelectItem>
-                  {reviewers.map((reviewer) => (
-                    <SelectItem key={reviewer} value={reviewer}>{reviewer}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </CardTitle>
         </CardHeader>
@@ -77,12 +53,11 @@ export const ManualValidation = () => {
                 <TableHead>Applicant</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Phases Requiring Validation</TableHead>
-                <TableHead>Assigned Reviewer</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLoans.map((loan) => {
+              {manualValidationLoans.map((loan) => {
                 const manualPhases = getManualPhases(loan);
                 const daysSinceUpdate = Math.floor(
                   (new Date().getTime() - new Date(loan.lastUpdated).getTime()) / (1000 * 3600 * 24)
@@ -113,16 +88,6 @@ export const ManualValidation = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {loan.assignedReviewer ? (
-                        <div className="flex items-center space-x-1">
-                          <UserCheck className="h-4 w-4" />
-                          <span className="text-sm">{loan.assignedReviewer}</span>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">Unassigned</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
                       <div className="flex space-x-2">
                         <Button 
                           variant="outline" 
@@ -140,7 +105,7 @@ export const ManualValidation = () => {
             </TableBody>
           </Table>
           
-          {filteredLoans.length === 0 && (
+          {manualValidationLoans.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No loans requiring manual validation
             </div>
