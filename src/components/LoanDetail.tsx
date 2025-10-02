@@ -318,11 +318,6 @@ export const LoanDetail = () => {
                         )}
                       </div>
                     </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Ownership %</p>
-                      <p className="font-medium text-sm">{signatory.ownershipPercentage}%</p>
-                    </div>
                   </div>
 
                   <Collapsible>
