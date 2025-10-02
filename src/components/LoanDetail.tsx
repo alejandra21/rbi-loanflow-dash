@@ -278,6 +278,14 @@ export const LoanDetail = () => {
                     Validated
                   </Badge>
                 )}
+                {phase.eligibilityData.signatories.some((s: Signatory) => 
+                  s.idvDetails?.status !== 'verified' || !s.einVerification?.verified
+                ) && (
+                  <Badge variant="destructive" className="inline-flex items-center gap-1">
+                    <AlertTriangle className="h-4 w-4" />
+                    Requires Review
+                  </Badge>
+                )}
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.signatories ? '' : '-rotate-90'}`} />
               </div>
             </CardTitle>
