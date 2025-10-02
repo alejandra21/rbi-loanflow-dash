@@ -27,7 +27,7 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
       return { 
         icon: FaExclamationTriangle, 
         variant: 'warning' as const, 
-        label: 'Manual Review', 
+        label: 'Review', 
         tooltip: 'Manual validation needed' 
       };
     case 'pending':
@@ -59,7 +59,7 @@ const getStatusConfig = (status: PhaseStatus | OverallStatus) => {
       return { 
         icon: FaExclamationTriangle, 
         variant: 'warning' as const, 
-        label: 'Manual Review' 
+        label: 'Review' 
       };
     default:
       return { 
