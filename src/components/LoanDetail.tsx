@@ -19,10 +19,10 @@ export const LoanDetail = () => {
   const [currentPhase, setCurrentPhase] = useState("");
   const [activeTab, setActiveTab] = useState("eligibility");
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
-    entity: true,
-    signatories: true,
-    documents: true,
-    auditLog: true,
+    entity: false,
+    signatories: false,
+    documents: false,
+    auditLog: false,
   });
 
   const toggleCard = (cardId: string) => {
