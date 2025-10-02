@@ -9,17 +9,59 @@ export interface Signatory {
   foreignNational: boolean;
   id: string;
   creditScore?: number;
+  idvVerified: boolean;
+  idvDetails?: {
+    provider: string;
+    verificationDate: string;
+    documentType: string;
+    documentNumber: string;
+    status: 'verified' | 'failed' | 'pending';
+    confidence: number;
+  };
+  creditScoreRequest?: {
+    requestDate: string;
+    provider: string;
+    status: 'completed' | 'pending' | 'failed';
+  };
+  einVerification?: {
+    verified: boolean;
+    verificationDate: string;
+    matchConfidence: number;
+    provider: string;
+  };
 }
 
 export interface EligibilityData {
   entityName: string;
   entityNameValid: boolean;
+  entityNameValidation?: {
+    provider: string;
+    validationDate: string;
+    apiResponse: Record<string, any>;
+    matchConfidence: number;
+  };
+  entityType?: string;
+  entityTypeValidation?: {
+    provider: string;
+    validationDate: string;
+    apiResponse: Record<string, any>;
+  };
   signatories: Signatory[];
   einValidated: boolean;
   ein: string;
+  einVerification?: {
+    provider: string;
+    verificationDate: string;
+    apiResponse: Record<string, any>;
+    status: 'verified' | 'failed' | 'pending';
+  };
   entityActive: boolean;
   entityInGoodStanding: boolean;
-  validationDocuments: string[];
+  validationDocuments: Array<{
+    name: string;
+    proof: string;
+    verificationMethod: string;
+  }>;
   documentIssuedDate: string;
 }
 
@@ -91,6 +133,27 @@ export const mockLoans: LoanApplication[] = [
         eligibilityData: {
           entityName: "Tech Corp Ltd",
           entityNameValid: true,
+          entityNameValidation: {
+            provider: "SOS API",
+            validationDate: "2024-01-05T09:30:00Z",
+            apiResponse: {
+              entity_name: "Tech Corp Ltd",
+              status: "ACTIVE",
+              match_score: 100,
+              registration_date: "2020-03-15"
+            },
+            matchConfidence: 100
+          },
+          entityType: "LLC",
+          entityTypeValidation: {
+            provider: "SOS API",
+            validationDate: "2024-01-05T09:30:00Z",
+            apiResponse: {
+              entity_type: "Limited Liability Company",
+              formation_state: "Delaware",
+              verified: true
+            }
+          },
           signatories: [
             {
               name: "John Smith",
@@ -98,7 +161,27 @@ export const mockLoans: LoanApplication[] = [
               citizenship: "US",
               foreignNational: false,
               id: "SSN: ***-**-1234",
-              creditScore: 750
+              creditScore: 750,
+              idvVerified: true,
+              idvDetails: {
+                provider: "Persona",
+                verificationDate: "2024-01-05T10:15:00Z",
+                documentType: "Driver's License",
+                documentNumber: "DL-NY-****1234",
+                status: "verified",
+                confidence: 98
+              },
+              creditScoreRequest: {
+                requestDate: "2024-01-05T10:30:00Z",
+                provider: "Experian",
+                status: "completed"
+              },
+              einVerification: {
+                verified: true,
+                verificationDate: "2024-01-05T10:45:00Z",
+                matchConfidence: 100,
+                provider: "IRS EIN Verification API"
+              }
             },
             {
               name: "Emily Chen",
@@ -106,14 +189,61 @@ export const mockLoans: LoanApplication[] = [
               citizenship: "US",
               foreignNational: false,
               id: "SSN: ***-**-5678",
-              creditScore: 720
+              creditScore: 720,
+              idvVerified: true,
+              idvDetails: {
+                provider: "Persona",
+                verificationDate: "2024-01-05T10:20:00Z",
+                documentType: "Passport",
+                documentNumber: "PP-US-****5678",
+                status: "verified",
+                confidence: 95
+              },
+              creditScoreRequest: {
+                requestDate: "2024-01-05T10:35:00Z",
+                provider: "Experian",
+                status: "completed"
+              },
+              einVerification: {
+                verified: true,
+                verificationDate: "2024-01-05T10:50:00Z",
+                matchConfidence: 100,
+                provider: "IRS EIN Verification API"
+              }
             }
           ],
           einValidated: true,
           ein: "12-3456789",
+          einVerification: {
+            provider: "IRS EIN Verification API",
+            verificationDate: "2024-01-05T09:45:00Z",
+            apiResponse: {
+              ein: "12-3456789",
+              entity_name: "Tech Corp Ltd",
+              status: "ACTIVE",
+              verified: true
+            },
+            status: "verified"
+          },
           entityActive: true,
           entityInGoodStanding: true,
-          validationDocuments: ["Certificate of Incorporation", "Good Standing Certificate", "Operating Agreement"],
+          validationDocuments: [
+            {
+              name: "Certificate of Incorporation",
+              proof: "Document verified via Delaware SOS database, File #7234892, issued 2020-03-15",
+              verificationMethod: "SOS Database Cross-Reference"
+            },
+            {
+              name: "Good Standing Certificate",
+              proof: "Current status verified via SOS API, last checked 2024-01-05, no outstanding issues",
+              verificationMethod: "Real-time SOS API Verification"
+            },
+            {
+              name: "Operating Agreement",
+              proof: "Document authenticated via digital signature validation, signed by all members 2020-03-20",
+              verificationMethod: "Digital Signature Validation"
+            }
+          ],
           documentIssuedDate: "2024-01-05"
         },
         keyValueData: {
