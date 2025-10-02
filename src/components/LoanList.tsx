@@ -158,7 +158,7 @@ export const LoanList = () => {
                       onClick={(e) => handleRerunWorkflow(e, loan.id)}
                       className="gap-2"
                     >
-                      <FaRedoAlt className="h-4 w-4" />
+                      <FaRedoAlt className="h-5 w-5" />
                       Re-Execute
                     </Button>
                   </TableCell>
