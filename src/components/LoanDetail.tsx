@@ -114,6 +114,23 @@ export const LoanDetail = () => {
               Re-execute Workflow
             </Button>
             
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start"
+              onClick={() => {
+                const phase = currentPhaseData.name;
+                console.log(`Re-executing phase: ${phase}`);
+                // Add toast notification
+                window.dispatchEvent(new CustomEvent('toast', {
+                  detail: { title: 'Phase Re-execution', description: `Re-executing ${phase} phase...` }
+                }));
+              }}
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Re-execute Current Phase
+            </Button>
+            
             {(currentPhaseData.phase.status === 'manual' || currentPhaseData.phase.status === 'failed') && (
               <Button 
                 variant="outline" 
