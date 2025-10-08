@@ -163,6 +163,46 @@ export const LoanDetail = () => {
       getCertificateValidationRule(loan.loanType, phase.eligibilityData.documentIssuedDate) : 
       null;
 
+    const downloadEligibilityData = () => {
+      const eligibilityData = {
+        loanId: loan.id,
+        applicantName: loan.applicantName,
+        loanAmount: loan.loanAmount,
+        loanType: loan.loanType,
+        phase: 'Eligibility',
+        status: phase.status,
+        completedAt: phase.completedAt,
+        entityValidations: {
+          entityName: phase.eligibilityData.entityName,
+          entityType: phase.eligibilityData.entityType,
+          entityNameValid: phase.eligibilityData.entityNameValid,
+          entityTypeValid: phase.eligibilityData.entityTypeValid,
+          ein: phase.eligibilityData.ein,
+          einValidated: phase.eligibilityData.einValidated
+        },
+        ownershipAndStructure: {
+          signatories: phase.eligibilityData.signatories
+        },
+        certificateOfGoodStanding: {
+          document: phase.eligibilityData.validationDocument,
+          issuedDate: phase.eligibilityData.documentIssuedDate,
+          validationRule: certificateRule
+        },
+        auditLog: phase.auditLog
+      };
+
+      const dataStr = JSON.stringify(eligibilityData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${loan.id}-eligibility-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+
     return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -170,6 +210,15 @@ export const LoanDetail = () => {
           <span className="font-medium">Eligibility Check</span>
           <StatusBadge status={phase.status} />
         </div>
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={downloadEligibilityData}
+          className="flex items-center gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Download Data
+        </Button>
       </div>
 
       {phase.eligibilityData && (
