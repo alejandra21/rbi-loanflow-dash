@@ -107,11 +107,17 @@ export interface LoanApplication {
     lastUpdated: string;
     assignedReviewer?: string;
     phases: {
-        eligibility: PhaseStep;
-        tiering: PhaseStep;
-        occupancy: PhaseStep;
-        underwriting: PhaseStep;
-        funding: PhaseStep;
+        borrowerEligibility: PhaseStep;
+        experienceTiering: PhaseStep;
+        creditReview: PhaseStep;
+        nonOwnerOccupancy: PhaseStep;
+        collateralReview: PhaseStep;
+        dscrCashFlow: PhaseStep;
+        titleInsurance: PhaseStep;
+        closingProtection: PhaseStep;
+        insurancePolicy: PhaseStep;
+        assetVerification: PhaseStep;
+        finalApproval: PhaseStep;
     };
     timeline: {
         phase: string;
@@ -134,8 +140,8 @@ export const mockLoans: LoanApplication[] = [
         lastUpdated: "2024-01-15",
         assignedReviewer: "Sarah Johnson",
         phases: {
-            eligibility: {
-                name: "Eligibility",
+            borrowerEligibility: {
+                name: "Borrower Eligibility",
                 status: "passed",
                 completedDate: "2024-01-10",
                 eligibilityData: {
@@ -279,48 +285,42 @@ export const mockLoans: LoanApplication[] = [
                     }
                 }
             },
-            tiering: {
-                name: "Tiering",
-                status: "pending",
+            experienceTiering: {
+                name: "Experience Tiering",
+                status: "passed",
                 completedDate: "2024-01-12",
                 keyValueData: {
-                    "Risk Tier": "Tier 2",
-                    "Interest Rate": "8.5%",
-                    "LTV Ratio": "80%",
-                    "Processing Fee": "$2,500"
-                },
-                rawOutput: {
-                    tiering_result: {
-                        risk_score: 68,
-                        tier: "T2",
-                        interest_rate: 8.5,
-                        ltv_ratio: 0.8,
-                        result: "APPROVED"
-                    }
+                    "Experience Tier": "Tier 2",
+                    "Years Experience": "5",
+                    "Previous Deals": "12"
                 }
             },
-            occupancy: {
-                name: "Occupancy Verification",
+            creditReview: {
+                name: "Credit Review",
+                status: "passed",
+                completedDate: "2024-01-13",
+                keyValueData: {
+                    "Credit Score": "750",
+                    "Credit Status": "Approved"
+                }
+            },
+            nonOwnerOccupancy: {
+                name: "Non-Owner Occupancy Verification",
                 status: "pending",
                 notes: "Property documents require verification",
                 keyValueData: {
                     "Property Type": "Residential Apartment",
                     "Location": "New York, NY",
-                    "Built Year": "2018",
-                    "Sq Ft": "1,200",
-                    "Current Occupancy": "Self Occupied"
-                },
-                rawOutput: {
-                    occupancy_check: {
-                        property_verified: false,
-                        documents_uploaded: true,
-                        site_visit_required: true,
-                        result: "MANUAL_REVIEW"
-                    }
+                    "Occupancy Status": "Non-Owner Occupied"
                 }
             },
-            underwriting: { name: "Underwriting", status: "pending" },
-            funding: { name: "Funding", status: "pending" }
+            collateralReview: { name: "Collateral Review", status: "pending" },
+            dscrCashFlow: { name: "DSCR-Specific Cash Flow Review", status: "pending" },
+            titleInsurance: { name: "Title Insurance Verification", status: "pending" },
+            closingProtection: { name: "Closing Protection Letter", status: "pending" },
+            insurancePolicy: { name: "Insurance Policy Review", status: "pending" },
+            assetVerification: { name: "Asset Verification", status: "pending" },
+            finalApproval: { name: "Final Approval", status: "pending" }
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-08", user: "System" },
@@ -364,8 +364,8 @@ export const mockLoans: LoanApplication[] = [
         overallStatus: "Manual Review",
         lastUpdated: "2024-01-14",
         phases: {
-            eligibility: {
-                name: "Eligibility",
+            borrowerEligibility: {
+                name: "Borrower Eligibility",
                 status: "manual",
                 completedDate: "2024-01-10",
                 eligibilityData: {
@@ -497,60 +497,18 @@ export const mockLoans: LoanApplication[] = [
                     "Validation Date": "2024-01-05",
                     "Total Signatories": "2",
                     "Foreign Nationals": "0"
-                },
-                rawOutput: {
-                    eligibility_check: {
-                        entity_name_valid: true,
-                        ein_validated: true,
-                        entity_active: true,
-                        foreign_nationals_count: 0,
-                        all_credit_scores_acceptable: true,
-                        result: "PASS"
-                    }
                 }
             },
-            tiering: {
-                name: "Tiering",
-                status: "pending",
-                completedDate: "2024-01-12",
-                keyValueData: {
-                    "Risk Tier": "Tier 2",
-                    "Interest Rate": "8.5%",
-                    "LTV Ratio": "80%",
-                    "Processing Fee": "$2,500"
-                },
-                rawOutput: {
-                    tiering_result: {
-                        risk_score: 68,
-                        tier: "T2",
-                        interest_rate: 8.5,
-                        ltv_ratio: 0.8,
-                        result: "APPROVED"
-                    }
-                }
-            },
-            occupancy: {
-                name: "Occupancy Verification",
-                status: "pending",
-                notes: "Property documents require verification",
-                keyValueData: {
-                    "Property Type": "Residential Apartment",
-                    "Location": "New York, NY",
-                    "Built Year": "2018",
-                    "Sq Ft": "1,200",
-                    "Current Occupancy": "Self Occupied"
-                },
-                rawOutput: {
-                    occupancy_check: {
-                        property_verified: false,
-                        documents_uploaded: true,
-                        site_visit_required: true,
-                        result: "MANUAL_REVIEW"
-                    }
-                }
-            },
-            underwriting: { name: "Underwriting", status: "pending" },
-            funding: { name: "Funding", status: "pending" }
+            experienceTiering: { name: "Experience Tiering", status: "pending" },
+            creditReview: { name: "Credit Review", status: "pending" },
+            nonOwnerOccupancy: { name: "Non-Owner Occupancy Verification", status: "pending" },
+            collateralReview: { name: "Collateral Review", status: "pending" },
+            dscrCashFlow: { name: "DSCR-Specific Cash Flow Review", status: "pending" },
+            titleInsurance: { name: "Title Insurance Verification", status: "pending" },
+            closingProtection: { name: "Closing Protection Letter", status: "pending" },
+            insurancePolicy: { name: "Insurance Policy Review", status: "pending" },
+            assetVerification: { name: "Asset Verification", status: "pending" },
+            finalApproval: { name: "Final Approval", status: "pending" }
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-07", user: "System" },
@@ -586,11 +544,17 @@ export const mockLoans: LoanApplication[] = [
         overallStatus: "Completed",
         lastUpdated: "2024-01-13",
         phases: {
-            eligibility: { name: "Eligibility", status: "passed", completedDate: "2024-01-05" },
-            tiering: { name: "Tiering", status: "passed", completedDate: "2024-01-07" },
-            occupancy: { name: "Occupancy Verification", status: "passed", completedDate: "2024-01-10" },
-            underwriting: { name: "Underwriting", status: "passed", completedDate: "2024-01-12" },
-            funding: { name: "Funding", status: "passed", completedDate: "2024-01-13" }
+            borrowerEligibility: { name: "Borrower Eligibility", status: "passed", completedDate: "2024-01-05" },
+            experienceTiering: { name: "Experience Tiering", status: "passed", completedDate: "2024-01-06" },
+            creditReview: { name: "Credit Review", status: "passed", completedDate: "2024-01-07" },
+            nonOwnerOccupancy: { name: "Non-Owner Occupancy Verification", status: "passed", completedDate: "2024-01-08" },
+            collateralReview: { name: "Collateral Review", status: "passed", completedDate: "2024-01-09" },
+            dscrCashFlow: { name: "DSCR-Specific Cash Flow Review", status: "passed", completedDate: "2024-01-10" },
+            titleInsurance: { name: "Title Insurance Verification", status: "passed", completedDate: "2024-01-11" },
+            closingProtection: { name: "Closing Protection Letter", status: "passed", completedDate: "2024-01-12" },
+            insurancePolicy: { name: "Insurance Policy Review", status: "passed", completedDate: "2024-01-12" },
+            assetVerification: { name: "Asset Verification", status: "passed", completedDate: "2024-01-13" },
+            finalApproval: { name: "Final Approval", status: "passed", completedDate: "2024-01-13" }
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-03", user: "System" },
@@ -631,8 +595,8 @@ export const mockLoans: LoanApplication[] = [
         lastUpdated: "2024-01-11",
         assignedReviewer: "David Martinez",
         phases: {
-            eligibility: {
-                name: "Eligibility",
+            borrowerEligibility: {
+                name: "Borrower Eligibility",
                 status: "failed",
                 completedDate: "2024-01-10",
                 eligibilityData: {
@@ -757,67 +721,18 @@ export const mockLoans: LoanApplication[] = [
                         }
                     ],
                     documentIssuedDate: "2024-01-05"
-                },
-                keyValueData: {
-                    "Entity Status": "Active & Good Standing",
-                    "EIN": "12-3456789",
-                    "Validation Date": "2024-01-05",
-                    "Total Signatories": "2",
-                    "Foreign Nationals": "0"
-                },
-                rawOutput: {
-                    eligibility_check: {
-                        entity_name_valid: true,
-                        ein_validated: true,
-                        entity_active: true,
-                        foreign_nationals_count: 0,
-                        all_credit_scores_acceptable: true,
-                        result: "PASS"
-                    }
                 }
             },
-            tiering: {
-                name: "Tiering",
-                status: "pending",
-                completedDate: "2024-01-12",
-                keyValueData: {
-                    "Risk Tier": "Tier 2",
-                    "Interest Rate": "8.5%",
-                    "LTV Ratio": "80%",
-                    "Processing Fee": "$2,500"
-                },
-                rawOutput: {
-                    tiering_result: {
-                        risk_score: 68,
-                        tier: "T2",
-                        interest_rate: 8.5,
-                        ltv_ratio: 0.8,
-                        result: "APPROVED"
-                    }
-                }
-            },
-            occupancy: {
-                name: "Occupancy Verification",
-                status: "pending",
-                notes: "Property documents require verification",
-                keyValueData: {
-                    "Property Type": "Residential Apartment",
-                    "Location": "New York, NY",
-                    "Built Year": "2018",
-                    "Sq Ft": "1,200",
-                    "Current Occupancy": "Self Occupied"
-                },
-                rawOutput: {
-                    occupancy_check: {
-                        property_verified: false,
-                        documents_uploaded: true,
-                        site_visit_required: true,
-                        result: "MANUAL_REVIEW"
-                    }
-                }
-            },
-            underwriting: { name: "Underwriting", status: "pending" },
-            funding: { name: "Funding", status: "pending" }
+            experienceTiering: { name: "Experience Tiering", status: "pending" },
+            creditReview: { name: "Credit Review", status: "pending" },
+            nonOwnerOccupancy: { name: "Non-Owner Occupancy Verification", status: "pending" },
+            collateralReview: { name: "Collateral Review", status: "pending" },
+            dscrCashFlow: { name: "DSCR-Specific Cash Flow Review", status: "pending" },
+            titleInsurance: { name: "Title Insurance Verification", status: "pending" },
+            closingProtection: { name: "Closing Protection Letter", status: "pending" },
+            insurancePolicy: { name: "Insurance Policy Review", status: "pending" },
+            assetVerification: { name: "Asset Verification", status: "pending" },
+            finalApproval: { name: "Final Approval", status: "pending" }
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-06", user: "System" },

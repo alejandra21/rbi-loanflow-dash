@@ -88,10 +88,17 @@ export const LoanList = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Phases</SelectItem>
-                    <SelectItem value="eligibility">Eligibility Issues</SelectItem>
-                    <SelectItem value="tiering">Tiering Issues</SelectItem>
-                    <SelectItem value="occupancy">Occupancy Issues</SelectItem>
-                    <SelectItem value="underwriting">Underwriting Issues</SelectItem>
+                    <SelectItem value="borrowerEligibility">Borrower Eligibility Issues</SelectItem>
+                    <SelectItem value="experienceTiering">Experience Tiering Issues</SelectItem>
+                    <SelectItem value="creditReview">Credit Review Issues</SelectItem>
+                    <SelectItem value="nonOwnerOccupancy">Non-Owner Occupancy Issues</SelectItem>
+                    <SelectItem value="collateralReview">Collateral Review Issues</SelectItem>
+                    <SelectItem value="dscrCashFlow">DSCR Cash Flow Issues</SelectItem>
+                    <SelectItem value="titleInsurance">Title Insurance Issues</SelectItem>
+                    <SelectItem value="closingProtection">Closing Protection Issues</SelectItem>
+                    <SelectItem value="insurancePolicy">Insurance Policy Issues</SelectItem>
+                    <SelectItem value="assetVerification">Asset Verification Issues</SelectItem>
+                    <SelectItem value="finalApproval">Final Approval Issues</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -109,11 +116,17 @@ export const LoanList = () => {
                 <TableHead>Loan Amount</TableHead>
                 <TableHead>Loan Type</TableHead>
                 <TableHead>Overall Status</TableHead>
-                <TableHead className="text-center">Eligibility</TableHead>
-                <TableHead className="text-center">Tiering</TableHead>
-                <TableHead className="text-center">Occupancy</TableHead>
-                <TableHead className="text-center">Underwriting</TableHead>
-                <TableHead className="text-center">Funding</TableHead>
+                <TableHead className="text-center text-xs">Borrower Eligibility</TableHead>
+                <TableHead className="text-center text-xs">Experience Tiering</TableHead>
+                <TableHead className="text-center text-xs">Credit Review</TableHead>
+                <TableHead className="text-center text-xs">Non-Owner Occupancy</TableHead>
+                <TableHead className="text-center text-xs">Collateral Review</TableHead>
+                <TableHead className="text-center text-xs">DSCR Cash Flow</TableHead>
+                <TableHead className="text-center text-xs">Title Insurance</TableHead>
+                <TableHead className="text-center text-xs">Closing Protection</TableHead>
+                <TableHead className="text-center text-xs">Insurance Policy</TableHead>
+                <TableHead className="text-center text-xs">Asset Verification</TableHead>
+                <TableHead className="text-center text-xs">Final Approval</TableHead>
                 <TableHead>Last Updated</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
               </TableRow>
@@ -143,19 +156,37 @@ export const LoanList = () => {
                     <StatusBadge status={loan.overallStatus} size="sm" />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.eligibility.status} />
+                    <StatusIcon status={loan.phases.borrowerEligibility.status} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.tiering.status} />
+                    <StatusIcon status={loan.phases.experienceTiering.status} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.occupancy.status} />
+                    <StatusIcon status={loan.phases.creditReview.status} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.underwriting.status} />
+                    <StatusIcon status={loan.phases.nonOwnerOccupancy.status} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.funding.status} />
+                    <StatusIcon status={loan.phases.collateralReview.status} />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StatusIcon status={loan.phases.dscrCashFlow.status} />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StatusIcon status={loan.phases.titleInsurance.status} />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StatusIcon status={loan.phases.closingProtection.status} />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StatusIcon status={loan.phases.insurancePolicy.status} />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StatusIcon status={loan.phases.assetVerification.status} />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StatusIcon status={loan.phases.finalApproval.status} />
                   </TableCell>
                   <TableCell>{loan.lastUpdated}</TableCell>
                   <TableCell className="text-center">

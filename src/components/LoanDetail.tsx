@@ -56,12 +56,19 @@ export const LoanDetail = () => {
 
   const getCurrentPhase = () => {
     const phaseMap: { [key: string]: { phase: any; name: string } } = {
-      eligibility: { phase: loan.phases.eligibility, name: "Eligibility Check" },
-      tiering: { phase: loan.phases.tiering, name: "Credit Tiering" },
-      occupancy: { phase: loan.phases.occupancy, name: "Occupancy Verification" },
-      underwriting: { phase: loan.phases.underwriting, name: "Underwriting Review" },
+      borrowerEligibility: { phase: loan.phases.borrowerEligibility, name: "Borrower Eligibility" },
+      experienceTiering: { phase: loan.phases.experienceTiering, name: "Experience Tiering" },
+      creditReview: { phase: loan.phases.creditReview, name: "Credit Review" },
+      nonOwnerOccupancy: { phase: loan.phases.nonOwnerOccupancy, name: "Non-Owner Occupancy Verification" },
+      collateralReview: { phase: loan.phases.collateralReview, name: "Collateral Review" },
+      dscrCashFlow: { phase: loan.phases.dscrCashFlow, name: "DSCR-Specific Cash Flow Review" },
+      titleInsurance: { phase: loan.phases.titleInsurance, name: "Title Insurance Verification" },
+      closingProtection: { phase: loan.phases.closingProtection, name: "Closing Protection Letter" },
+      insurancePolicy: { phase: loan.phases.insurancePolicy, name: "Insurance Policy Review" },
+      assetVerification: { phase: loan.phases.assetVerification, name: "Asset Verification" },
+      finalApproval: { phase: loan.phases.finalApproval, name: "Final Approval" },
     };
-    return phaseMap[activeTab] || phaseMap.eligibility;
+    return phaseMap[activeTab] || phaseMap.borrowerEligibility;
   };
 
   const StatusTimeline = () => {
@@ -928,7 +935,7 @@ export const LoanDetail = () => {
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
             <p className="text-muted-foreground">
-              {loan.phases.eligibility.eligibilityData?.entityName || loan.applicantName} - {formatCurrency(loan.loanAmount)}
+              {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} - {formatCurrency(loan.loanAmount)}
               <Badge variant="outline" className="ml-3">{loan.loanType}</Badge>
             </p>
           </div>
@@ -943,73 +950,185 @@ export const LoanDetail = () => {
 
       <Card>
         <CardContent className="pt-6">
-          <Tabs defaultValue="eligibility" className="h-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="eligibility" className="relative">
-                Eligibility
-                {loan.phases.eligibility.status === 'failed' && (
-                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+          <Tabs defaultValue="borrowerEligibility" className="h-full" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-11 gap-1">
+              <TabsTrigger value="borrowerEligibility" className="relative text-xs px-2">
+                Borrower Eligibility
+                {loan.phases.borrowerEligibility.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.eligibility.status === 'manual' && (
-                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                {loan.phases.borrowerEligibility.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.eligibility.status === 'passed' && (
-                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="tiering" className="relative">
-                Tiering
-                {loan.phases.tiering.status === 'failed' && (
-                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
-                )}
-                {loan.phases.tiering.status === 'manual' && (
-                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
-                )}
-                {loan.phases.tiering.status === 'passed' && (
-                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                {loan.phases.borrowerEligibility.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="occupancy" className="relative">
-                Occupancy
-                {loan.phases.occupancy.status === 'failed' && (
-                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+              <TabsTrigger value="experienceTiering" className="relative text-xs px-2">
+                Experience Tiering
+                {loan.phases.experienceTiering.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.occupancy.status === 'manual' && (
-                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                {loan.phases.experienceTiering.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.occupancy.status === 'passed' && (
-                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                {loan.phases.experienceTiering.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="underwriting" className="relative">
-                Underwriting
-                {loan.phases.underwriting.status === 'failed' && (
-                  <AlertCircle className="h-4 w-4 ml-2 text-destructive" />
+              <TabsTrigger value="creditReview" className="relative text-xs px-2">
+                Credit Review
+                {loan.phases.creditReview.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.underwriting.status === 'manual' && (
-                  <AlertTriangle className="h-4 w-4 ml-2 text-warning" />
+                {loan.phases.creditReview.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.underwriting.status === 'passed' && (
-                  <CheckCircle className="h-4 w-4 ml-2 text-success" />
+                {loan.phases.creditReview.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="nonOwnerOccupancy" className="relative text-xs px-2">
+                Non-Owner Occupancy
+                {loan.phases.nonOwnerOccupancy.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.nonOwnerOccupancy.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.nonOwnerOccupancy.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="collateralReview" className="relative text-xs px-2">
+                Collateral Review
+                {loan.phases.collateralReview.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.collateralReview.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.collateralReview.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="dscrCashFlow" className="relative text-xs px-2">
+                DSCR Cash Flow
+                {loan.phases.dscrCashFlow.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.dscrCashFlow.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.dscrCashFlow.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="titleInsurance" className="relative text-xs px-2">
+                Title Insurance
+                {loan.phases.titleInsurance.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.titleInsurance.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.titleInsurance.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="closingProtection" className="relative text-xs px-2">
+                Closing Protection
+                {loan.phases.closingProtection.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.closingProtection.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.closingProtection.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="insurancePolicy" className="relative text-xs px-2">
+                Insurance Policy
+                {loan.phases.insurancePolicy.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.insurancePolicy.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.insurancePolicy.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="assetVerification" className="relative text-xs px-2">
+                Asset Verification
+                {loan.phases.assetVerification.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.assetVerification.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.assetVerification.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="finalApproval" className="relative text-xs px-2">
+                Final Approval
+                {loan.phases.finalApproval.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.finalApproval.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.finalApproval.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
             </TabsList>
             
             <div className="mt-6">
-              <TabsContent value="eligibility" className="mt-0">
-                <EligibilityTab phase={loan.phases.eligibility} />
+              <TabsContent value="borrowerEligibility" className="mt-0">
+                <EligibilityTab phase={loan.phases.borrowerEligibility} />
               </TabsContent>
               
-              <TabsContent value="tiering" className="mt-0">
-                <PhaseTab phase={loan.phases.tiering} phaseName="Credit Tiering" />
+              <TabsContent value="experienceTiering" className="mt-0">
+                <PhaseTab phase={loan.phases.experienceTiering} phaseName="Experience Tiering" />
               </TabsContent>
               
-              <TabsContent value="occupancy" className="mt-0">
-                <PhaseTab phase={loan.phases.occupancy} phaseName="Occupancy Verification" />
+              <TabsContent value="creditReview" className="mt-0">
+                <PhaseTab phase={loan.phases.creditReview} phaseName="Credit Review" />
               </TabsContent>
               
-              <TabsContent value="underwriting" className="mt-0">
-                <PhaseTab phase={loan.phases.underwriting} phaseName="Underwriting Review" />
+              <TabsContent value="nonOwnerOccupancy" className="mt-0">
+                <PhaseTab phase={loan.phases.nonOwnerOccupancy} phaseName="Non-Owner Occupancy Verification" />
+              </TabsContent>
+              
+              <TabsContent value="collateralReview" className="mt-0">
+                <PhaseTab phase={loan.phases.collateralReview} phaseName="Collateral Review" />
+              </TabsContent>
+              
+              <TabsContent value="dscrCashFlow" className="mt-0">
+                <PhaseTab phase={loan.phases.dscrCashFlow} phaseName="DSCR-Specific Cash Flow Review" />
+              </TabsContent>
+              
+              <TabsContent value="titleInsurance" className="mt-0">
+                <PhaseTab phase={loan.phases.titleInsurance} phaseName="Title Insurance Verification" />
+              </TabsContent>
+              
+              <TabsContent value="closingProtection" className="mt-0">
+                <PhaseTab phase={loan.phases.closingProtection} phaseName="Closing Protection Letter" />
+              </TabsContent>
+              
+              <TabsContent value="insurancePolicy" className="mt-0">
+                <PhaseTab phase={loan.phases.insurancePolicy} phaseName="Insurance Policy Review" />
+              </TabsContent>
+              
+              <TabsContent value="assetVerification" className="mt-0">
+                <PhaseTab phase={loan.phases.assetVerification} phaseName="Asset Verification" />
+              </TabsContent>
+              
+              <TabsContent value="finalApproval" className="mt-0">
+                <PhaseTab phase={loan.phases.finalApproval} phaseName="Final Approval" />
               </TabsContent>
             </div>
           </Tabs>
