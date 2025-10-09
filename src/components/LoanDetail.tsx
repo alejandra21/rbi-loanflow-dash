@@ -951,7 +951,7 @@ export const LoanDetail = () => {
       <Card>
         <CardContent className="pt-6">
           <Tabs defaultValue="borrowerEligibility" className="h-full" onValueChange={setActiveTab}>
-            <TabsList className="flex w-full overflow-x-auto gap-2 p-2 h-auto flex-wrap">
+            <TabsList className="flex w-full overflow-x-auto gap-2 p-3 h-auto flex-wrap bg-card border border-border rounded-lg">
               <TabsTrigger value="borrowerEligibility" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Borrower Eligibility
                 {loan.phases.borrowerEligibility.status === 'failed' && (
