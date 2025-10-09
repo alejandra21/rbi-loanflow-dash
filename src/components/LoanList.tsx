@@ -27,7 +27,7 @@ export const LoanList = () => {
     let matchesPhase = true;
     if (phaseFilter !== "all") {
       const phaseKey = phaseFilter as keyof LoanApplication['phases'];
-      matchesPhase = loan.phases[phaseKey].status === 'manual' || loan.phases[phaseKey].status === 'failed';
+      matchesPhase = loan.phases[phaseKey]?.status === 'manual' || loan.phases[phaseKey]?.status === 'failed';
     }
     
     return matchesSearch && matchesStatus && matchesPhase;
@@ -156,37 +156,37 @@ export const LoanList = () => {
                     <StatusBadge status={loan.overallStatus} size="sm" />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.borrowerEligibility.status} />
+                    <StatusIcon status={loan.phases.borrowerEligibility?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.experienceTiering.status} />
+                    <StatusIcon status={loan.phases.experienceTiering?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.creditReview.status} />
+                    <StatusIcon status={loan.phases.creditReview?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.nonOwnerOccupancy.status} />
+                    <StatusIcon status={loan.phases.nonOwnerOccupancy?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.collateralReview.status} />
+                    <StatusIcon status={loan.phases.collateralReview?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.dscrCashFlow.status} />
+                    <StatusIcon status={loan.phases.dscrCashFlow?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.titleInsurance.status} />
+                    <StatusIcon status={loan.phases.titleInsurance?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.closingProtection.status} />
+                    <StatusIcon status={loan.phases.closingProtection?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.insurancePolicy.status} />
+                    <StatusIcon status={loan.phases.insurancePolicy?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.assetVerification.status} />
+                    <StatusIcon status={loan.phases.assetVerification?.status || 'pending'} />
                   </TableCell>
                   <TableCell className="text-center">
-                    <StatusIcon status={loan.phases.finalApproval.status} />
+                    <StatusIcon status={loan.phases.finalApproval?.status || 'pending'} />
                   </TableCell>
                   <TableCell>{loan.lastUpdated}</TableCell>
                   <TableCell className="text-center">
