@@ -951,8 +951,8 @@ export const LoanDetail = () => {
       <Card>
         <CardContent className="pt-6">
           <Tabs defaultValue="borrowerEligibility" className="h-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-11 gap-1">
-              <TabsTrigger value="borrowerEligibility" className="relative text-xs px-2">
+            <TabsList className="flex w-full overflow-x-auto gap-2 p-2 h-auto flex-wrap">
+              <TabsTrigger value="borrowerEligibility" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Borrower Eligibility
                 {loan.phases.borrowerEligibility.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -964,7 +964,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="experienceTiering" className="relative text-xs px-2">
+              <TabsTrigger value="experienceTiering" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Experience Tiering
                 {loan.phases.experienceTiering.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -976,7 +976,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="creditReview" className="relative text-xs px-2">
+              <TabsTrigger value="creditReview" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Credit Review
                 {loan.phases.creditReview.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -988,7 +988,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="nonOwnerOccupancy" className="relative text-xs px-2">
+              <TabsTrigger value="nonOwnerOccupancy" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Non-Owner Occupancy
                 {loan.phases.nonOwnerOccupancy.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1000,7 +1000,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="collateralReview" className="relative text-xs px-2">
+              <TabsTrigger value="collateralReview" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Collateral Review
                 {loan.phases.collateralReview.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1012,7 +1012,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="dscrCashFlow" className="relative text-xs px-2">
+              <TabsTrigger value="dscrCashFlow" className="relative text-sm px-4 py-2 flex-shrink-0">
                 DSCR Cash Flow
                 {loan.phases.dscrCashFlow.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1024,7 +1024,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="titleInsurance" className="relative text-xs px-2">
+              <TabsTrigger value="titleInsurance" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Title Insurance
                 {loan.phases.titleInsurance.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1036,7 +1036,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="closingProtection" className="relative text-xs px-2">
+              <TabsTrigger value="closingProtection" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Closing Protection
                 {loan.phases.closingProtection.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1048,7 +1048,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="insurancePolicy" className="relative text-xs px-2">
+              <TabsTrigger value="insurancePolicy" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Insurance Policy
                 {loan.phases.insurancePolicy.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1060,7 +1060,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="assetVerification" className="relative text-xs px-2">
+              <TabsTrigger value="assetVerification" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Asset Verification
                 {loan.phases.assetVerification.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
@@ -1072,7 +1072,7 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="finalApproval" className="relative text-xs px-2">
+              <TabsTrigger value="finalApproval" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Final Approval
                 {loan.phases.finalApproval.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
