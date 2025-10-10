@@ -1263,35 +1263,6 @@ export const LoanDetail = () => {
           </Card>
         )}
 
-        {/* Audit Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Workflow Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Ran At</p>
-                <p className="font-medium text-sm">
-                  {new Date(data.ran_at).toLocaleString()}
-                </p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Ran By</p>
-                <p className="font-medium text-sm">{data.ran_by}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Source</p>
-                <p className="font-medium text-sm">{data.source}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Loan ID</p>
-                <p className="font-medium text-sm">{data.loan_id}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Phase Log */}
         <Card>
           <CardHeader 
