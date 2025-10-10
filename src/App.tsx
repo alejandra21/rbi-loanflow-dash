@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import { LoanList } from "./components/LoanList";
 import { LoanDetail } from "./components/LoanDetail";
 import { ManualValidation } from "./components/ManualValidation";
+import ExperienceTiering from "./pages/ExperienceTiering";
 import NotFound from "./pages/NotFound";
 import IconPreview from "./pages/IconPreview";
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<LoanList />} />
             <Route path="loan/:id" element={<LoanDetail />} />
+            <Route path="experience-tiering" element={<ExperienceTiering />} />
             <Route path="validation" element={<ManualValidation />} />
             <Route path="icon-preview" element={<IconPreview />} />
           </Route>
