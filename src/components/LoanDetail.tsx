@@ -30,6 +30,7 @@ export const LoanDetail = () => {
     checks: false,
     discrepancies: false,
     manualValidation: false,
+    phaseLog: false,
   });
 
   const toggleCard = (cardId: string) => {
@@ -911,6 +912,43 @@ export const LoanDetail = () => {
                   </p>
                 </div>
               </div>
+              
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full justify-between">
+                    <span>View Validation Details</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3">
+                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                    <div>
+                      <p className="font-medium mb-2">Entity Search Summary:</p>
+                      <p className="text-xs text-muted-foreground">
+                        The entity matching process successfully identified "{data.entity_match?.entityName}" 
+                        using {data.entity_match?.method === 'entity_search' ? 'direct entity search' : 'property search fallback method'} 
+                        with a confidence score of {data.entity_match?.confidence}%.
+                        {data.entity_match?.alternativesCount && ` ${data.entity_match.alternativesCount} alternative matches were found.`}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <p><span className="text-muted-foreground">Provider:</span> PrequalDat</p>
+                      <p><span className="text-muted-foreground">Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
+                      <p><span className="text-muted-foreground">Match Confidence:</span> {data.entity_match?.confidence}%</p>
+                      <div className="mt-2 p-2 bg-muted/30 rounded">
+                        <p className="font-medium mb-1">API Response:</p>
+                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify({
+                          entity_name: data.entity_match?.entityName,
+                          confidence: data.entity_match?.confidence,
+                          method: data.entity_match?.method,
+                          status: 'matched'
+                        }, null, 2)}</pre>
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           )}
         </Card>
@@ -943,7 +981,7 @@ export const LoanDetail = () => {
             </CardTitle>
           </CardHeader>
           {expandedCards.ownership && (
-            <CardContent>
+            <CardContent className="space-y-3">
               <div className="p-3 bg-muted/30 rounded">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Owner/Key Member Confirmed:</span>
@@ -952,6 +990,42 @@ export const LoanDetail = () => {
                   </span>
                 </div>
               </div>
+              
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full justify-between">
+                    <span>View Validation Details</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3">
+                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                    <div>
+                      <p className="font-medium mb-2">Verification Summary:</p>
+                      <p className="text-xs text-muted-foreground">
+                        {data.ownership_verified 
+                          ? 'Borrower/guarantor has been confirmed as a listed owner or key member through OpenCorporates verification. The ownership structure meets all requirements.'
+                          : 'Ownership verification failed. The borrower/guarantor could not be confirmed as a listed owner or key member.'}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <p><span className="text-muted-foreground">Provider:</span> PrequalDat (OpenCorporates)</p>
+                      <p><span className="text-muted-foreground">Verification Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
+                      <p><span className="text-muted-foreground">Status:</span> {data.ownership_verified ? 'Verified' : 'Failed'}</p>
+                      <div className="mt-2 p-2 bg-muted/30 rounded">
+                        <p className="font-medium mb-1">API Response:</p>
+                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify({
+                          ownership_verified: data.ownership_verified,
+                          entity: data.entity_match?.entityName,
+                          verification_method: 'opencorporates_api',
+                          status: data.ownership_verified ? 'confirmed' : 'not_confirmed'
+                        }, null, 2)}</pre>
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           )}
         </Card>
@@ -971,7 +1045,7 @@ export const LoanDetail = () => {
             </CardTitle>
           </CardHeader>
           {expandedCards.checks && (
-            <CardContent>
+            <CardContent className="space-y-3">
               <div className="space-y-2">
                 {data.checks.map((check: any, idx: number) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-muted/20 rounded">
@@ -987,6 +1061,41 @@ export const LoanDetail = () => {
                   </div>
                 ))}
               </div>
+
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full justify-between">
+                    <span>View Validation Details</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3">
+                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                    <div>
+                      <p className="font-medium mb-2">Validation Check Summary:</p>
+                      <p className="text-xs text-muted-foreground">
+                        A comprehensive series of {data.checks.length} validation checks were performed to assess 
+                        entity matching, ownership verification, exit history, and evaluation logic. 
+                        {data.checks.every((c: any) => c.ok) 
+                          ? ' All checks passed successfully.' 
+                          : ` ${data.checks.filter((c: any) => !c.ok).length} check(s) failed and require attention.`}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <p><span className="text-muted-foreground">Provider:</span> PrequalDat</p>
+                      <p><span className="text-muted-foreground">Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
+                      <p><span className="text-muted-foreground">Total Checks:</span> {data.checks.length}</p>
+                      <p><span className="text-muted-foreground">Passed:</span> {data.checks.filter((c: any) => c.ok).length}</p>
+                      <p><span className="text-muted-foreground">Failed:</span> {data.checks.filter((c: any) => !c.ok).length}</p>
+                      <div className="mt-2 p-2 bg-muted/30 rounded">
+                        <p className="font-medium mb-1">Full Check Results:</p>
+                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify(data.checks, null, 2)}</pre>
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           )}
         </Card>
@@ -1115,6 +1224,64 @@ export const LoanDetail = () => {
               </div>
             </div>
           </CardContent>
+        </Card>
+
+        {/* Phase Log */}
+        <Card>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('phaseLog')}
+          >
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 mr-2" />
+                Phase Log
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.phaseLog ? '' : '-rotate-90'}`} />
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.phaseLog && (
+            <CardContent>
+              <div className="space-y-3">
+                {phase.auditLog && phase.auditLog.length > 0 ? (
+                  phase.auditLog.map((entry: any) => (
+                    <div key={entry.id} className="p-3 bg-muted/30 rounded-lg space-y-2 border-l-4 border-primary">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <User className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-sm font-medium">{entry.user}</span>
+                            <span className="text-xs text-muted-foreground">•</span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(entry.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="text-sm font-medium text-foreground mb-1">{entry.action}</div>
+                          <div className="text-xs text-muted-foreground">{entry.details}</div>
+                        </div>
+                        {entry.decision && (
+                          <Badge 
+                            variant={
+                              entry.decision === 'approved' ? 'default' : 
+                              entry.decision === 'rejected' ? 'destructive' : 
+                              'outline'
+                            }
+                            className="text-xs"
+                          >
+                            {entry.decision}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 bg-muted/20 rounded text-center text-sm text-muted-foreground">
+                    No phase log entries available
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          )}
         </Card>
       </div>
     );

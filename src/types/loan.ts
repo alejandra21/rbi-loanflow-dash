@@ -83,6 +83,7 @@ export interface PhaseStep {
     rawOutput?: Record<string, any>;
     eligibilityData?: EligibilityData;
     experienceTieringData?: any;
+    auditLog?: AuditLogEntry[];
 }
 
 export interface AuditLogEntry {
@@ -318,7 +319,42 @@ export const mockLoans: LoanApplication[] = [
                     },
                     ownership_verified: true,
                     evaluation_outcome: 'Pass'
-                }
+                },
+                auditLog: [
+                    {
+                        id: "et-audit-001",
+                        timestamp: "2024-01-12T14:30:00Z",
+                        user: "System",
+                        action: "Workflow Initiated",
+                        phase: "Experience Tiering",
+                        details: "Experience Tiering workflow started for LOA-2024-001"
+                    },
+                    {
+                        id: "et-audit-002",
+                        timestamp: "2024-01-12T14:35:00Z",
+                        user: "PrequalDat API",
+                        action: "Entity Match Completed",
+                        phase: "Experience Tiering",
+                        details: "Entity 'Tech Corp Ltd' matched with 95% confidence"
+                    },
+                    {
+                        id: "et-audit-003",
+                        timestamp: "2024-01-12T14:40:00Z",
+                        user: "PrequalDat API",
+                        action: "Exit Verification Completed",
+                        phase: "Experience Tiering",
+                        details: "Verified 8 exits totaling $3.2M in last 36 months"
+                    },
+                    {
+                        id: "et-audit-004",
+                        timestamp: "2024-01-12T14:45:00Z",
+                        user: "Auto Check",
+                        action: "Tier Assigned",
+                        phase: "Experience Tiering",
+                        details: "Gold tier assigned based on verified metrics",
+                        decision: "approved"
+                    }
+                ]
             },
             creditReview: {
                 name: "Credit Review",
