@@ -82,6 +82,7 @@ export interface PhaseStep {
     keyValueData?: Record<string, any>;
     rawOutput?: Record<string, any>;
     eligibilityData?: EligibilityData;
+    experienceTieringData?: any;
 }
 
 export interface AuditLogEntry {
@@ -289,10 +290,34 @@ export const mockLoans: LoanApplication[] = [
                 name: "Experience Tiering",
                 status: "passed",
                 completedDate: "2024-01-12",
-                keyValueData: {
-                    "Experience Tier": "Tier 2",
-                    "Years Experience": "5",
-                    "Previous Deals": "12"
+                experienceTieringData: {
+                    loan_id: "LOA-2024-001",
+                    stage_code: 'experienceTiering',
+                    status: 'pass',
+                    assigned_tier: 'Gold',
+                    metrics: {
+                        verified_exits_count: 8,
+                        verified_volume_usd: 3200000,
+                        lookback_months: 36
+                    },
+                    checks: [
+                        { name: 'entity_match', ok: true, detail: 'Matched entity "Tech Corp Ltd" with 95% confidence via entity search' },
+                        { name: 'ownership_verification', ok: true, detail: 'Borrower confirmed as key member through OpenCorporates verification' },
+                        { name: 'exit_verification', ok: true, detail: 'Verified 8 exits totaling $3,200,000 in last 36 months' },
+                        { name: 'evaluation_logic', ok: true, detail: 'Pass: DSCR evaluation completed' }
+                    ],
+                    discrepancies: [],
+                    manual_validation: { required: false },
+                    ran_at: "2024-01-12T14:45:00Z",
+                    ran_by: "Auto Check",
+                    source: 'PrequalDat',
+                    entity_match: {
+                        entityName: "Tech Corp Ltd",
+                        confidence: 95,
+                        method: 'entity_search'
+                    },
+                    ownership_verified: true,
+                    evaluation_outcome: 'Pass'
                 }
             },
             creditReview: {

@@ -9,7 +9,8 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { mockLoans, Signatory } from "@/types/loan";
-import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle } from "lucide-react";
+import type { TierLevel } from "@/types/experienceTiering";
+import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp } from "lucide-react";
 import { useState } from "react";
 
 export const LoanDetail = () => {
@@ -23,6 +24,12 @@ export const LoanDetail = () => {
     signatories: false,
     documents: false,
     auditLog: false,
+    tierSummary: false,
+    entityMatch: false,
+    ownership: false,
+    checks: false,
+    discrepancies: false,
+    manualValidation: false,
   });
 
   const toggleCard = (cardId: string) => {
@@ -739,6 +746,380 @@ export const LoanDetail = () => {
     );
   };
 
+  const ExperienceTieringTab = ({ phase }: { phase: any }) => {
+    const data = phase.experienceTieringData;
+    
+    if (!data) {
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <span className="font-medium">Experience Tiering</span>
+            <StatusBadge status={phase.status} />
+          </div>
+          <div className="bg-muted/50 p-4 rounded-lg">
+            <p className="text-sm">No experience tiering data available.</p>
+          </div>
+        </div>
+      );
+    }
+
+    const getTierColor = (tier: TierLevel | null): string => {
+      if (!tier) return "";
+      const colors: Record<TierLevel, string> = {
+        'Platinum': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
+        'Gold': 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white',
+        'Silver': 'bg-gradient-to-r from-gray-300 to-gray-500 text-white',
+        'Bronze': 'bg-gradient-to-r from-orange-400 to-orange-600 text-white'
+      };
+      return colors[tier];
+    };
+
+    const downloadExperienceTieringData = () => {
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${loan.id}-experience-tiering-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <span className="font-medium">Experience Tiering Check</span>
+            <StatusBadge status={phase.status} />
+            {data.assigned_tier && (
+              <Badge className={getTierColor(data.assigned_tier)}>
+                {data.assigned_tier}
+              </Badge>
+            )}
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={downloadExperienceTieringData}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Download Report
+          </Button>
+        </div>
+
+        {/* Status Summary */}
+        <Card>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('tierSummary')}
+          >
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Tier Assignment & Evaluation
+              </div>
+              <div className="flex items-center space-x-2">
+                {data.status === 'pass' && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Passed
+                  </Badge>
+                )}
+                {data.status === 'warn' && (
+                  <Badge variant="warning" className="inline-flex items-center gap-1">
+                    <AlertTriangle className="h-4 w-4" />
+                    Manual Review
+                  </Badge>
+                )}
+                {data.status === 'fail' && (
+                  <Badge variant="destructive" className="inline-flex items-center gap-1">
+                    <XCircle className="h-4 w-4" />
+                    Failed
+                  </Badge>
+                )}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tierSummary ? '' : '-rotate-90'}`} />
+              </div>
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.tierSummary && (
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-muted/30 rounded-lg">
+                <div className="text-sm text-muted-foreground mb-2">Evaluation Outcome</div>
+                <div className="text-lg font-semibold text-foreground">{data.evaluation_outcome || 'N/A'}</div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{data.metrics.verified_exits_count}</div>
+                  <div className="text-xs text-muted-foreground mt-1">Verified Exits</div>
+                </div>
+                <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">
+                    ${(data.metrics.verified_volume_usd / 1000000).toFixed(1)}M
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">Verified Volume</div>
+                </div>
+                <div className="text-center p-3 bg-muted/30 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{data.metrics.lookback_months}</div>
+                  <div className="text-xs text-muted-foreground mt-1">Lookback (Months)</div>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Entity Matching */}
+        <Card>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('entityMatch')}
+          >
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <Building className="h-4 w-4 mr-2" />
+                Entity Matching
+              </div>
+              <div className="flex items-center space-x-2">
+                {data.entity_match && (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Matched
+                  </Badge>
+                )}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.entityMatch ? '' : '-rotate-90'}`} />
+              </div>
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.entityMatch && (
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-muted/30 rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Matched Entity</p>
+                  <p className="font-medium text-sm">{data.entity_match?.entityName}</p>
+                </div>
+                <div className="p-3 bg-muted/30 rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Confidence</p>
+                  <p className="font-medium text-sm">{data.entity_match?.confidence}%</p>
+                </div>
+                <div className="p-3 bg-muted/30 rounded space-y-1 col-span-2">
+                  <p className="text-xs text-muted-foreground">Method</p>
+                  <p className="font-medium text-sm">
+                    {data.entity_match?.method === 'entity_search' ? 'Entity Search' : 'Property Search Fallback'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Ownership Verification */}
+        <Card>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('ownership')}
+          >
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <Users className="h-4 w-4 mr-2" />
+                Ownership Verification
+              </div>
+              <div className="flex items-center space-x-2">
+                {data.ownership_verified ? (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Verified
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive" className="inline-flex items-center gap-1">
+                    <XCircle className="h-4 w-4" />
+                    Not Verified
+                  </Badge>
+                )}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.ownership ? '' : '-rotate-90'}`} />
+              </div>
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.ownership && (
+            <CardContent>
+              <div className="p-3 bg-muted/30 rounded">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Owner/Key Member Confirmed:</span>
+                  <span className="font-medium text-sm text-foreground">
+                    {data.ownership_verified ? 'Yes' : 'No'}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Validation Checks */}
+        <Card>
+          <CardHeader 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleCard('checks')}
+          >
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center">
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Validation Checks
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.checks ? '' : '-rotate-90'}`} />
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.checks && (
+            <CardContent>
+              <div className="space-y-2">
+                {data.checks.map((check: any, idx: number) => (
+                  <div key={idx} className="flex items-start gap-3 p-3 bg-muted/20 rounded">
+                    {check.ok ? (
+                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    )}
+                    <div className="flex-1">
+                      <div className="font-medium text-sm text-foreground">{check.name.replace(/_/g, ' ')}</div>
+                      <div className="text-xs text-muted-foreground mt-1">{check.detail}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Discrepancies */}
+        {data.discrepancies && data.discrepancies.length > 0 && (
+          <Card>
+            <CardHeader 
+              className="cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => toggleCard('discrepancies')}
+            >
+              <CardTitle className="text-base flex items-center justify-between">
+                <div className="flex items-center">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Discrepancies
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="warning" className="inline-flex items-center gap-1">
+                    {data.discrepancies.length} Found
+                  </Badge>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.discrepancies ? '' : '-rotate-90'}`} />
+                </div>
+              </CardTitle>
+            </CardHeader>
+            {expandedCards.discrepancies && (
+              <CardContent>
+                <div className="space-y-2">
+                  {data.discrepancies.map((discrepancy: any, idx: number) => (
+                    <div key={idx} className="p-3 bg-warning/10 border border-warning/20 rounded">
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-xs font-medium text-muted-foreground uppercase">
+                            {discrepancy.type.replace(/_/g, ' ')}
+                          </div>
+                          <div className="text-sm text-foreground mt-1">{discrepancy.message}</div>
+                          {discrepancy.severity && (
+                            <Badge variant="outline" className="mt-2 text-xs">
+                              Severity: {discrepancy.severity}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        )}
+
+        {/* Manual Validation */}
+        {data.manual_validation?.required && (
+          <Card>
+            <CardHeader 
+              className="cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => toggleCard('manualValidation')}
+            >
+              <CardTitle className="text-base flex items-center justify-between">
+                <div className="flex items-center">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Manual Validation Record
+                </div>
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.manualValidation ? '' : '-rotate-90'}`} />
+              </CardTitle>
+            </CardHeader>
+            {expandedCards.manualValidation && (
+              <CardContent>
+                <div className="space-y-3">
+                  {data.manual_validation.reason && (
+                    <div className="p-3 bg-muted/30 rounded">
+                      <p className="text-xs text-muted-foreground mb-1">Reason</p>
+                      <p className="text-sm font-medium">{data.manual_validation.reason}</p>
+                    </div>
+                  )}
+                  {data.manual_validation.comment && (
+                    <div className="p-3 bg-muted/30 rounded">
+                      <p className="text-xs text-muted-foreground mb-1">Comment</p>
+                      <p className="text-sm">{data.manual_validation.comment}</p>
+                    </div>
+                  )}
+                  {data.manual_validation.validatedBy && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Validated By:</span>
+                      <span className="font-medium">{data.manual_validation.validatedBy}</span>
+                    </div>
+                  )}
+                  {data.manual_validation.validatedAt && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Validated At:</span>
+                      <span className="font-medium">
+                        {new Date(data.manual_validation.validatedAt).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        )}
+
+        {/* Audit Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Workflow Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Ran At</p>
+                <p className="font-medium text-sm">
+                  {new Date(data.ran_at).toLocaleString()}
+                </p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Ran By</p>
+                <p className="font-medium text-sm">{data.ran_by}</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Source</p>
+                <p className="font-medium text-sm">{data.source}</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Loan ID</p>
+                <p className="font-medium text-sm">{data.loan_id}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
+
   const PhaseTab = ({ phase, phaseName }: { phase: any, phaseName: string }) => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -981,7 +1362,7 @@ export const LoanDetail = () => {
               </TabsContent>
               
               <TabsContent value="experienceTiering" className="mt-0">
-                <PhaseTab phase={loan.phases.experienceTiering} phaseName="Experience Tiering" />
+                <ExperienceTieringTab phase={loan.phases.experienceTiering} />
               </TabsContent>
               
               <TabsContent value="creditReview" className="mt-0">
