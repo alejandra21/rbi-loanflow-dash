@@ -83,38 +83,61 @@ export const LoanDetail = () => {
     const currentPhaseData = getCurrentPhase();
     
     return (
-      <div className="mb-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Processing Timeline</span>
-              <div className="flex items-center space-x-2">
-                <div className="w-64 bg-muted rounded-full h-2">
-                  <div 
-                    className="bg-primary h-2 rounded-full transition-all"
-                    style={{ width: `${getProgressPercentage()}%` }}
-                  />
+      <div className="mb-6 grid grid-cols-3 gap-6">
+        <div className="col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Processing Timeline</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-64 bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all"
+                      style={{ width: `${getProgressPercentage()}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-muted-foreground">{Math.round(getProgressPercentage())}%</span>
                 </div>
-                <span className="text-sm text-muted-foreground">{Math.round(getProgressPercentage())}%</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {loan.timeline.map((event, index) => (
+                  <div key={index} className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full" />
+                    <span className="font-medium">{event.phase}</span>
+                    <Badge variant="outline" className="text-xs">{event.status}</Badge>
+                    <span className="text-muted-foreground">{event.date}</span>
+                    {event.status !== 'pending' && (
+                      <span className="text-muted-foreground">by {event.user}</span>
+                    )}
+                  </div>
+                ))}
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {loan.timeline.map((event, index) => (
-                <div key={index} className="flex items-center space-x-3 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full" />
-                  <span className="font-medium">{event.phase}</span>
-                  <Badge variant="outline" className="text-xs">{event.status}</Badge>
-                  <span className="text-muted-foreground">{event.date}</span>
-                  {event.status !== 'pending' && (
-                    <span className="text-muted-foreground">by {event.user}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center">
+                <Settings className="h-4 w-4 mr-2" />
+                Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button variant="outline" className="w-full justify-start" size="sm">
+                <Play className="h-4 w-4 mr-2" />
+                Re-execute Workflow
+              </Button>
+              <Button variant="outline" className="w-full justify-start" size="sm">
+                <Play className="h-4 w-4 mr-2" />
+                Re-execute Current Phase
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   };
@@ -868,6 +891,49 @@ export const LoanDetail = () => {
                   <div className="text-xs text-muted-foreground mt-1">Lookback (Months)</div>
                 </div>
               </div>
+
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full justify-between">
+                    <span>View Validation Details</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3">
+                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                    <div>
+                      <p className="font-medium mb-2">Tier Assignment Summary:</p>
+                      <p className="text-xs text-muted-foreground">
+                        The borrower has been assigned to the <strong>{data.assigned_tier}</strong> tier based on verified transaction history. 
+                        Over the past {data.metrics.lookback_months} months, {data.metrics.verified_exits_count} exits have been verified 
+                        with a total volume of ${(data.metrics.verified_volume_usd / 1000000).toFixed(2)}M USD.
+                        {data.evaluation_outcome === 'Pass' && ' The evaluation passed all required criteria.'}
+                        {data.evaluation_outcome === 'Manual Review' && ' Manual review is required for final approval.'}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <p><span className="text-muted-foreground">Evaluation Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
+                      <p><span className="text-muted-foreground">Loan Type:</span> {loan.loanType}</p>
+                      <p><span className="text-muted-foreground">Tier Thresholds:</span></p>
+                      <div className="ml-4 mt-1 space-y-1">
+                        <p>• Platinum: ≥10 exits OR ≥$5M volume</p>
+                        <p>• Gold: 5-9 exits OR $2-5M volume</p>
+                        <p>• Silver: 2-4 exits OR $500K-$2M volume</p>
+                        <p>• Bronze: 0-1 exits OR &lt;$500K volume</p>
+                      </div>
+                      <div className="mt-2 p-2 bg-muted/30 rounded">
+                        <p className="font-medium mb-1">Metrics Data:</p>
+                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify({
+                          assigned_tier: data.assigned_tier,
+                          evaluation_outcome: data.evaluation_outcome,
+                          metrics: data.metrics
+                        }, null, 2)}</pre>
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           )}
         </Card>
@@ -1235,7 +1301,7 @@ export const LoanDetail = () => {
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <Clock className="h-4 w-4 mr-2" />
-                Phase Log
+                Experience Tiering Phase Log
               </div>
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.phaseLog ? '' : '-rotate-90'}`} />
             </CardTitle>
@@ -1245,32 +1311,26 @@ export const LoanDetail = () => {
               <div className="space-y-3">
                 {phase.auditLog && phase.auditLog.length > 0 ? (
                   phase.auditLog.map((entry: any) => (
-                    <div key={entry.id} className="p-3 bg-muted/30 rounded-lg space-y-2 border-l-4 border-primary">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <User className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-sm font-medium">{entry.user}</span>
-                            <span className="text-xs text-muted-foreground">•</span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(entry.timestamp).toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="text-sm font-medium text-foreground mb-1">{entry.action}</div>
-                          <div className="text-xs text-muted-foreground">{entry.details}</div>
+                    <div key={entry.id} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium">{entry.action}</span>
+                          {entry.decision && (
+                            <Badge 
+                              variant={
+                                entry.decision === 'approved' ? 'default' : 
+                                entry.decision === 'rejected' ? 'destructive' : 
+                                'outline'
+                              }
+                              className="text-xs"
+                            >
+                              {entry.decision}
+                            </Badge>
+                          )}
                         </div>
-                        {entry.decision && (
-                          <Badge 
-                            variant={
-                              entry.decision === 'approved' ? 'default' : 
-                              entry.decision === 'rejected' ? 'destructive' : 
-                              'outline'
-                            }
-                            className="text-xs"
-                          >
-                            {entry.decision}
-                          </Badge>
-                        )}
+                        <p className="text-xs text-muted-foreground">{new Date(entry.timestamp).toLocaleString()}</p>
+                        <p className="text-xs mt-1">{entry.details} - by {entry.user}</p>
                       </div>
                     </div>
                   ))
