@@ -75,8 +75,8 @@ export const LoanDetail = () => {
     const currentPhaseData = getCurrentPhase();
     
     return (
-      <div className="grid grid-cols-3 gap-6 mb-6">
-        <Card className="col-span-2">
+      <div className="mb-6">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Processing Timeline</span>
@@ -105,53 +105,6 @@ export const LoanDetail = () => {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center">
-              <Settings className="h-4 w-4 mr-2" />
-              Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Play className="h-4 w-4 mr-2" />
-              Re-execute Workflow
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full justify-start"
-              onClick={() => {
-                const phase = currentPhaseData.name;
-                console.log(`Re-executing phase: ${phase}`);
-                // Add toast notification
-                window.dispatchEvent(new CustomEvent('toast', {
-                  detail: { title: 'Phase Re-execution', description: `Re-executing ${phase} phase...` }
-                }));
-              }}
-            >
-              <Play className="h-4 w-4 mr-2" />
-              Re-execute Current Phase
-            </Button>
-            
-            {(currentPhaseData.phase.status === 'manual' || currentPhaseData.phase.status === 'failed') && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start"
-                onClick={() => {
-                  setCurrentPhase(currentPhaseData.name);
-                  setSidePanelOpen(true);
-                }}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                Manual Validation
-              </Button>
-            )}
           </CardContent>
         </Card>
       </div>
@@ -787,136 +740,72 @@ export const LoanDetail = () => {
   };
 
   const PhaseTab = ({ phase, phaseName }: { phase: any, phaseName: string }) => (
-    <div className="grid grid-cols-3 gap-6 h-full">
-      {/* Left Column - Data */}
-      <div className="col-span-2 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <StatusBadge status={phase.status} />
-            <span className="font-medium">{phaseName}</span>
-            {phase.completedDate && (
-              <span className="text-sm text-muted-foreground">
-                Completed: {phase.completedDate}
-              </span>
-            )}
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <StatusBadge status={phase.status} />
+          <span className="font-medium">{phaseName}</span>
+          {phase.completedDate && (
+            <span className="text-sm text-muted-foreground">
+              Completed: {phase.completedDate}
+            </span>
+          )}
         </div>
-
-        {phase.notes && (
-          <div className="bg-muted/50 p-4 rounded-lg">
-            <p className="text-sm font-medium mb-2">Notes:</p>
-            <p className="text-sm">{phase.notes}</p>
-          </div>
-        )}
-
-        {/* Key-Value Data */}
-        {phase.keyValueData && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Phase Data</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                {Object.entries(phase.keyValueData).map(([key, value]) => (
-                  <div key={key} className="border-b pb-2">
-                    <dt className="text-sm font-medium text-muted-foreground">{key}</dt>
-                    <dd className="text-sm font-semibold">{String(value)}</dd>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* JSON Viewer */}
-        {phase.rawOutput && (
-          <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
-        )}
-
-        {phase.conditions && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Conditions Checked</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {phase.conditions.map((condition: any, index: number) => (
-                  <div key={index} className="flex items-center space-x-2 p-2 bg-muted/30 rounded">
-                    <span className={condition.passed ? "text-green-600" : "text-red-600"}>
-                      {condition.passed ? "✓" : "✗"}
-                    </span>
-                    <span className="text-sm">{condition.name}</span>
-                    {condition.details && (
-                      <span className="text-xs text-muted-foreground">- {condition.details}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
-      {/* Right Column - Actions */}
-      <div className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center">
-              <Settings className="h-4 w-4 mr-2" />
-              Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Play className="h-4 w-4 mr-2" />
-              Re-execute Workflow
-            </Button>
-            
-            {(phase.status === 'manual' || phase.status === 'failed') && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start"
-                onClick={() => {
-                  setCurrentPhase(phaseName);
-                  setSidePanelOpen(true);
-                }}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                Manual Validation
-              </Button>
-            )}
-            
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <Clock className="h-4 w-4 mr-2" />
-              View History
-            </Button>
-          </CardContent>
-        </Card>
+      {phase.notes && (
+        <div className="bg-muted/50 p-4 rounded-lg">
+          <p className="text-sm font-medium mb-2">Notes:</p>
+          <p className="text-sm">{phase.notes}</p>
+        </div>
+      )}
 
-        {/* Phase-specific quick info */}
+      {/* Key-Value Data */}
+      {phase.keyValueData && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Quick Info</CardTitle>
+            <CardTitle className="text-base">Phase Data</CardTitle>
           </CardHeader>
-          <CardContent className="text-sm space-y-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Status:</span>
-              <StatusBadge status={phase.status} size="sm" />
-            </div>
-            {phase.completedDate && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Completed:</span>
-                <span>{phase.completedDate}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Processing Time:</span>
-              <span>2.3s</span>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(phase.keyValueData).map(([key, value]) => (
+                <div key={key} className="border-b pb-2">
+                  <dt className="text-sm font-medium text-muted-foreground">{key}</dt>
+                  <dd className="text-sm font-semibold">{String(value)}</dd>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
-      </div>
+      )}
+
+      {/* JSON Viewer */}
+      {phase.rawOutput && (
+        <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
+      )}
+
+      {phase.conditions && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Conditions Checked</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {phase.conditions.map((condition: any, index: number) => (
+                <div key={index} className="flex items-center space-x-2 p-2 bg-muted/30 rounded">
+                  <span className={condition.passed ? "text-green-600" : "text-red-600"}>
+                    {condition.passed ? "✓" : "✗"}
+                  </span>
+                  <span className="text-sm">{condition.name}</span>
+                  {condition.details && (
+                    <span className="text-xs text-muted-foreground">- {condition.details}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 
