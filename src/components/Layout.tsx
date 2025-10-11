@@ -8,9 +8,6 @@ const Navigation = () => {
     label: "Loan List",
     exact: true
   }, {
-    path: "/experience-tiering",
-    label: "Experience Tiering"
-  }, {
     path: "/validation",
     label: "Manual Validation"
   }];
