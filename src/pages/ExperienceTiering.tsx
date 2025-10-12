@@ -54,45 +54,109 @@ const ExperienceTiering = () => {
     }
   };
 
-  const calculateTier = (exits: number, volume: number): TierLevel => {
-    if (exits >= 10 || volume >= 5000000) return 'Platinum';
-    if (exits >= 5 || volume >= 2000000) return 'Gold';
-    if (exits >= 2 || volume >= 500000) return 'Silver';
-    return 'Bronze';
+  const calculateTierWithScores = (
+    borrowerScore: number,
+    guarantorScore: number,
+    liquidityScore: number,
+    performanceScore: number
+  ): { tier: TierLevel; confidence: number; exposureLimit: number; ltcCap: number; arvCap: number } => {
+    // Weighted calculation
+    const totalScore = 
+      (borrowerScore * 0.6) + 
+      (guarantorScore * 0.2) + 
+      (liquidityScore * 0.1) + 
+      (performanceScore * 0.1);
+    
+    const confidence = totalScore / 100;
+    
+    let tier: TierLevel;
+    let exposureLimit: number;
+    let ltcCap: number;
+    let arvCap: number;
+    
+    if (totalScore >= 85) {
+      tier = 'Platinum';
+      exposureLimit = 10000000;
+      ltcCap = 90;
+      arvCap = 75;
+    } else if (totalScore >= 70) {
+      tier = 'Gold';
+      exposureLimit = 5000000;
+      ltcCap = 85;
+      arvCap = 70;
+    } else if (totalScore >= 50) {
+      tier = 'Silver';
+      exposureLimit = 2000000;
+      ltcCap = 80;
+      arvCap = 65;
+    } else {
+      tier = 'Bronze';
+      exposureLimit = 1000000;
+      ltcCap = 75;
+      arvCap = 60;
+    }
+    
+    return { tier, confidence, exposureLimit, ltcCap, arvCap };
   };
 
-  const evaluateLoanType = (loanType: string, exits: number, volume: number, rehabCost?: number, totalCost?: number): { outcome: string; tier: TierLevel | null } => {
-    const tier = calculateTier(exits, volume);
+  const evaluateLoanType = (
+    loanType: string, 
+    exits: number, 
+    volume: number, 
+    borrowerScore: number,
+    guarantorScore: number,
+    liquidityScore: number,
+    performanceScore: number,
+    rehabCost?: number, 
+    totalCost?: number
+  ): { 
+    outcome: string; 
+    tierData: ReturnType<typeof calculateTierWithScores>; 
+    exceptionFlag: boolean; 
+    exceptionReason?: string 
+  } => {
+    const tierData = calculateTierWithScores(borrowerScore, guarantorScore, liquidityScore, performanceScore);
+    let exceptionFlag = false;
+    let exceptionReason: string | undefined;
+    
+    // Check for exceptions
+    if (liquidityScore < 30) {
+      exceptionFlag = true;
+      exceptionReason = 'Liquidity Below Threshold';
+    } else if (tierData.tier === 'Bronze' && volume > 3000000) {
+      exceptionFlag = true;
+      exceptionReason = 'Tier Override - High Volume';
+    }
     
     if (loanType === 'Fix and Flip') {
-      if (rehabCost && rehabCost > 250000) {
-        return { outcome: 'Pass', tier };
-      } else if (rehabCost && rehabCost <= 250000) {
-        return { outcome: 'Manual Review', tier };
+      if (rehabCost && rehabCost > 250000 && exits >= 2) {
+        return { outcome: 'Pass', tierData, exceptionFlag, exceptionReason };
+      } else if (rehabCost && rehabCost <= 250000 && exits >= 1) {
+        return { outcome: 'Manual Review', tierData, exceptionFlag, exceptionReason };
       } else if (exits > 0 && volume > 0) {
-        return { outcome: 'Pass', tier };
+        return { outcome: 'Pass', tierData, exceptionFlag, exceptionReason };
       }
-      return { outcome: 'Manual Review', tier: null };
+      return { outcome: 'Manual Review', tierData, exceptionFlag, exceptionReason: exceptionReason || 'Insufficient Experience' };
     }
     
     if (loanType === 'Construction') {
-      if (exits >= 1 && volume > 0) {
-        return { outcome: 'Pass', tier };
+      if (exits >= 2 && volume >= 500000) {
+        return { outcome: 'Pass', tierData, exceptionFlag, exceptionReason };
       }
       if (rehabCost && totalCost && rehabCost > 250000 && Math.abs(rehabCost - totalCost) < totalCost * 0.2) {
-        return { outcome: 'Pass', tier };
+        return { outcome: 'Pass', tierData, exceptionFlag, exceptionReason };
       }
-      return { outcome: 'Manual Review', tier: null };
+      return { outcome: 'Manual Review', tierData, exceptionFlag, exceptionReason: exceptionReason || 'Insufficient Construction Experience' };
     }
     
     if (loanType === 'DSCR') {
-      if (exits >= 2 || volume >= 500000) {
-        return { outcome: 'Pass', tier };
+      if (exits >= 3 || volume >= 1000000) {
+        return { outcome: 'Pass', tierData, exceptionFlag, exceptionReason };
       }
-      return { outcome: 'Manual Review', tier: null };
+      return { outcome: 'Manual Review', tierData, exceptionFlag, exceptionReason: exceptionReason || 'Insufficient Rental Experience' };
     }
     
-    return { outcome: 'Manual Review', tier: null };
+    return { outcome: 'Manual Review', tierData, exceptionFlag, exceptionReason: exceptionReason || 'Unknown Loan Type' };
   };
 
   const runWorkflow = async () => {
@@ -104,22 +168,48 @@ const ExperienceTiering = () => {
       // Simulate API calls with delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Mock data - in production, this would come from POS and PrequalDat APIs
+      // Mock data - in production, this would come from POS, PrequalDat, and LiquiDat APIs
       const mockExits = Math.floor(Math.random() * 15);
       const mockVolume = Math.floor(Math.random() * 8000000);
       const rehabCost = selectedLoan.loanType === 'Fix and Flip' ? 300000 : undefined;
       
-      const evaluation = evaluateLoanType(selectedLoan.loanType, mockExits, mockVolume, rehabCost, selectedLoan.loanAmount);
+      // Calculate component scores
+      const borrowerScore = Math.min(100, (mockExits / 15) * 100 + Math.random() * 10);
+      const guarantorScore = 60 + Math.random() * 35;
+      const liquidityScore = 40 + Math.random() * 50;
+      const performanceScore = 70 + Math.random() * 25;
+      
+      const evaluation = evaluateLoanType(
+        selectedLoan.loanType, 
+        mockExits, 
+        mockVolume, 
+        borrowerScore,
+        guarantorScore,
+        liquidityScore,
+        performanceScore,
+        rehabCost, 
+        selectedLoan.loanAmount
+      );
       
       const mockResult: ExperienceTieringResult = {
         loan_id: selectedLoan.id,
         stage_code: 'experienceTiering',
         status: evaluation.outcome === 'Pass' ? 'pass' : evaluation.outcome === 'Fail' ? 'fail' : 'warn',
-        assigned_tier: evaluation.tier,
+        assigned_tier: evaluation.tierData.tier,
+        confidence_score: evaluation.tierData.confidence,
+        exposure_limit_usd: evaluation.tierData.exposureLimit,
+        recommended_ltc_cap: evaluation.tierData.ltcCap,
+        recommended_arv_cap: evaluation.tierData.arvCap,
+        exception_flag: evaluation.exceptionFlag,
+        exception_reason: evaluation.exceptionReason,
         metrics: {
           verified_exits_count: mockExits,
           verified_volume_usd: mockVolume,
-          lookback_months: 36
+          lookback_months: 36,
+          borrower_experience_score: borrowerScore,
+          guarantor_record_score: guarantorScore,
+          liquidity_ratio: liquidityScore,
+          performance_record_score: performanceScore
         },
         checks: [
           {
@@ -440,9 +530,119 @@ const ExperienceTiering = () => {
               </div>
             </Card>
 
-            {/* Evaluation Logic Result */}
+            {/* Tier Assignment & Evaluation */}
             <Card className="p-4">
-              <h3 className="font-semibold text-foreground mb-3">Evaluation Logic Result</h3>
+              <h3 className="font-semibold text-foreground mb-3">Tier Assignment & Evaluation</h3>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex justify-between p-3 bg-muted/20 rounded">
+                    <span className="text-muted-foreground">Evaluation Outcome:</span>
+                    <Badge variant={result.evaluation_outcome === 'Pass' ? 'success' : result.evaluation_outcome === 'Fail' ? 'destructive' : 'warning'}>
+                      {result.evaluation_outcome}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between p-3 bg-muted/20 rounded">
+                    <span className="text-muted-foreground">Assigned Tier:</span>
+                    <Badge className={getTierColor(result.assigned_tier)}>
+                      {result.assigned_tier || 'None'}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3 bg-muted/20 rounded">
+                    <div className="text-xs text-muted-foreground mb-1">Verified Exits</div>
+                    <div className="text-xl font-bold text-foreground">{result.metrics.verified_exits_count}</div>
+                  </div>
+                  <div className="p-3 bg-muted/20 rounded">
+                    <div className="text-xs text-muted-foreground mb-1">Verified Volume</div>
+                    <div className="text-xl font-bold text-foreground">
+                      ${(result.metrics.verified_volume_usd / 1000000).toFixed(1)}M
+                    </div>
+                  </div>
+                  <div className="p-3 bg-muted/20 rounded">
+                    <div className="text-xs text-muted-foreground mb-1">Lookback Period</div>
+                    <div className="text-xl font-bold text-foreground">{result.metrics.lookback_months} mo</div>
+                  </div>
+                </div>
+
+                <Accordion type="single" collapsible className="border rounded-lg">
+                  <AccordionItem value="validation-details" className="border-0">
+                    <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                      <span className="font-medium">View Validation Details</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground">Confidence Score</div>
+                            <div className="text-2xl font-bold text-primary">{(result.confidence_score * 100).toFixed(1)}%</div>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground">Exposure Limit</div>
+                            <div className="text-2xl font-bold text-primary">
+                              ${(result.exposure_limit_usd / 1000000).toFixed(1)}M
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground">Recommended LTC Cap</div>
+                            <div className="text-xl font-bold text-foreground">{result.recommended_ltc_cap}%</div>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground">Recommended ARV Cap</div>
+                            <div className="text-xl font-bold text-foreground">{result.recommended_arv_cap}%</div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 pt-2 border-t">
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground">Exception Flag</div>
+                            <Badge variant={result.exception_flag ? 'warning' : 'success'}>
+                              {result.exception_flag ? 'Yes' : 'No'}
+                            </Badge>
+                          </div>
+                          {result.exception_reason && (
+                            <div className="space-y-2">
+                              <div className="text-xs font-medium text-muted-foreground">Exception Reason</div>
+                              <div className="text-sm text-foreground">{result.exception_reason}</div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="pt-2 border-t">
+                          <div className="text-xs font-medium text-muted-foreground mb-3">Component Scores</div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="flex justify-between p-2 bg-muted/30 rounded">
+                              <span className="text-xs text-muted-foreground">Borrower Experience (60%)</span>
+                              <span className="text-sm font-semibold">{result.metrics.borrower_experience_score.toFixed(1)}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-muted/30 rounded">
+                              <span className="text-xs text-muted-foreground">Guarantor Record (20%)</span>
+                              <span className="text-sm font-semibold">{result.metrics.guarantor_record_score.toFixed(1)}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-muted/30 rounded">
+                              <span className="text-xs text-muted-foreground">Liquidity Ratio (10%)</span>
+                              <span className="text-sm font-semibold">{result.metrics.liquidity_ratio.toFixed(1)}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-muted/30 rounded">
+                              <span className="text-xs text-muted-foreground">Performance Record (10%)</span>
+                              <span className="text-sm font-semibold">{result.metrics.performance_record_score.toFixed(1)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            </Card>
+
+            {/* Validation Checks */}
+            <Card className="p-4">
+              <h3 className="font-semibold text-foreground mb-3">Validation Checks</h3>
               <div className="space-y-2">
                 {result.checks.map((check, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-muted/20 rounded">

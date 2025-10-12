@@ -900,36 +900,77 @@ export const LoanDetail = () => {
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-3">
-                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                  <div className="p-3 bg-muted/20 rounded text-sm space-y-4">
                     <div>
                       <p className="font-medium mb-2">Tier Assignment Summary:</p>
                       <p className="text-xs text-muted-foreground">
-                        The borrower has been assigned to the <strong>{data.assigned_tier}</strong> tier based on verified transaction history. 
-                        Over the past {data.metrics.lookback_months} months, {data.metrics.verified_exits_count} exits have been verified 
-                        with a total volume of ${(data.metrics.verified_volume_usd / 1000000).toFixed(2)}M USD.
+                        The borrower has been assigned to the <strong>{data.assigned_tier}</strong> tier based on verified transaction history 
+                        and comprehensive evaluation. Over the past {data.metrics.lookback_months} months, {data.metrics.verified_exits_count} exits 
+                        have been verified with a total volume of ${(data.metrics.verified_volume_usd / 1000000).toFixed(2)}M USD.
                         {data.evaluation_outcome === 'Pass' && ' The evaluation passed all required criteria.'}
                         {data.evaluation_outcome === 'Manual Review' && ' Manual review is required for final approval.'}
                       </p>
                     </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-2 bg-muted/30 rounded">
+                        <p className="text-xs text-muted-foreground mb-1">Confidence Score</p>
+                        <p className="text-lg font-bold text-foreground">{((data.confidence_score || 0) * 100).toFixed(1)}%</p>
+                      </div>
+                      <div className="p-2 bg-muted/30 rounded">
+                        <p className="text-xs text-muted-foreground mb-1">Exposure Limit</p>
+                        <p className="text-lg font-bold text-foreground">${((data.exposure_limit_usd || 0) / 1000000).toFixed(1)}M</p>
+                      </div>
+                      <div className="p-2 bg-muted/30 rounded">
+                        <p className="text-xs text-muted-foreground mb-1">Recommended LTC Cap</p>
+                        <p className="text-lg font-bold text-foreground">{data.recommended_ltc_cap || 0}%</p>
+                      </div>
+                      <div className="p-2 bg-muted/30 rounded">
+                        <p className="text-xs text-muted-foreground mb-1">Recommended ARV Cap</p>
+                        <p className="text-lg font-bold text-foreground">{data.recommended_arv_cap || 0}%</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-medium text-muted-foreground">Exception Flag</p>
+                        <Badge variant={data.exception_flag ? 'warning' : 'success'}>
+                          {data.exception_flag ? 'Yes' : 'No'}
+                        </Badge>
+                      </div>
+                      {data.exception_reason && (
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Reason:</strong> {data.exception_reason}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-2 border-t">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Component Scores (Weighted)</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
+                          <span className="text-muted-foreground">Borrower Experience (60%)</span>
+                          <span className="font-semibold">{(data.metrics.borrower_experience_score || 0).toFixed(1)}</span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
+                          <span className="text-muted-foreground">Guarantor Record (20%)</span>
+                          <span className="font-semibold">{(data.metrics.guarantor_record_score || 0).toFixed(1)}</span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
+                          <span className="text-muted-foreground">Liquidity Ratio (10%)</span>
+                          <span className="font-semibold">{(data.metrics.liquidity_ratio || 0).toFixed(1)}</span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
+                          <span className="text-muted-foreground">Performance Record (10%)</span>
+                          <span className="font-semibold">{(data.metrics.performance_record_score || 0).toFixed(1)}</span>
+                        </div>
+                      </div>
+                    </div>
                     
-                    <div className="space-y-1 text-xs">
+                    <div className="pt-2 border-t space-y-1 text-xs">
                       <p><span className="text-muted-foreground">Evaluation Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
                       <p><span className="text-muted-foreground">Loan Type:</span> {loan.loanType}</p>
-                      <p><span className="text-muted-foreground">Tier Thresholds:</span></p>
-                      <div className="ml-4 mt-1 space-y-1">
-                        <p>• Platinum: ≥10 exits OR ≥$5M volume</p>
-                        <p>• Gold: 5-9 exits OR $2-5M volume</p>
-                        <p>• Silver: 2-4 exits OR $500K-$2M volume</p>
-                        <p>• Bronze: 0-1 exits OR &lt;$500K volume</p>
-                      </div>
-                      <div className="mt-2 p-2 bg-muted/30 rounded">
-                        <p className="font-medium mb-1">Metrics Data:</p>
-                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify({
-                          assigned_tier: data.assigned_tier,
-                          evaluation_outcome: data.evaluation_outcome,
-                          metrics: data.metrics
-                        }, null, 2)}</pre>
-                      </div>
+                      <p><span className="text-muted-foreground">Evaluated By:</span> {data.ran_by}</p>
                     </div>
                   </div>
                 </CollapsibleContent>

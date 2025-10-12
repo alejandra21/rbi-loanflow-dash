@@ -296,10 +296,19 @@ export const mockLoans: LoanApplication[] = [
                     stage_code: 'experienceTiering',
                     status: 'pass',
                     assigned_tier: 'Gold',
+                    confidence_score: 0.78,
+                    exposure_limit_usd: 5000000,
+                    recommended_ltc_cap: 85,
+                    recommended_arv_cap: 70,
+                    exception_flag: false,
                     metrics: {
                         verified_exits_count: 8,
                         verified_volume_usd: 3200000,
-                        lookback_months: 36
+                        lookback_months: 36,
+                        borrower_experience_score: 75.5,
+                        guarantor_record_score: 82.0,
+                        liquidity_ratio: 68.0,
+                        performance_record_score: 88.5
                     },
                     checks: [
                         { name: 'entity_match', ok: true, detail: 'Matched entity "Tech Corp Ltd" with 95% confidence via entity search' },

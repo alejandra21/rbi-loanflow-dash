@@ -42,6 +42,10 @@ export interface ExperienceTieringMetrics {
   verified_exits_count: number;
   verified_volume_usd: number;
   lookback_months: number;
+  borrower_experience_score: number; // 0-100 (60% weight)
+  guarantor_record_score: number; // 0-100 (20% weight)
+  liquidity_ratio: number; // 0-100 (10% weight)
+  performance_record_score: number; // 0-100 (10% weight)
 }
 
 export interface ExperienceTieringResult {
@@ -49,6 +53,12 @@ export interface ExperienceTieringResult {
   stage_code: 'experienceTiering';
   status: ValidationStatus;
   assigned_tier: TierLevel | null;
+  confidence_score: number; // 0-1.0
+  exposure_limit_usd: number;
+  recommended_ltc_cap: number; // percentage
+  recommended_arv_cap: number; // percentage
+  exception_flag: boolean;
+  exception_reason?: string;
   metrics: ExperienceTieringMetrics;
   checks: ValidationCheck[];
   discrepancies: Discrepancy[];
