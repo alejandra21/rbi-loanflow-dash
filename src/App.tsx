@@ -10,6 +10,7 @@ import { ManualValidation } from "./components/ManualValidation";
 import ExperienceTiering from "./pages/ExperienceTiering";
 import NotFound from "./pages/NotFound";
 import IconPreview from "./pages/IconPreview";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<Login />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<LoanList />} />
             <Route path="loan/:id" element={<LoanDetail />} />
