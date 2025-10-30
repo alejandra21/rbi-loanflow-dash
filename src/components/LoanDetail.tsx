@@ -19,6 +19,8 @@ export const LoanDetail = () => {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [currentPhase, setCurrentPhase] = useState("");
   const [activeTab, setActiveTab] = useState("eligibility");
+  const [isPolling, setIsPolling] = useState(false);
+  const [pollingProgress, setPollingProgress] = useState(0);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     entity: false,
     signatories: false,
@@ -79,6 +81,27 @@ export const LoanDetail = () => {
     return phaseMap[activeTab] || phaseMap.borrowerEligibility;
   };
 
+  const handlePollingAction = async (actionType: 'workflow' | 'phase') => {
+    setIsPolling(true);
+    setPollingProgress(0);
+    
+    // Random duration between 40-60 seconds
+    const duration = Math.floor(Math.random() * (60000 - 40000) + 40000);
+    const startTime = Date.now();
+    
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min((elapsed / duration) * 100, 100);
+      setPollingProgress(progress);
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        setIsPolling(false);
+        setPollingProgress(0);
+      }
+    }, 100);
+  };
+
   const StatusTimeline = () => {
     const currentPhaseData = getCurrentPhase();
     
@@ -126,14 +149,52 @@ export const LoanDetail = () => {
                 Actions
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start" size="sm">
-                <Play className="h-4 w-4 mr-2" />
-                Re-execute Workflow
+            <CardContent className="space-y-3">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start" 
+                size="sm"
+                onClick={() => handlePollingAction('workflow')}
+                disabled={isPolling}
+              >
+                {isPolling ? (
+                  <>
+                    <Clock className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4 mr-2" />
+                    Re-execute Workflow
+                  </>
+                )}
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm">
-                <Play className="h-4 w-4 mr-2" />
-                Re-execute Current Phase
+              {isPolling && (
+                <div className="w-full bg-muted rounded-full h-1.5">
+                  <div 
+                    className="bg-primary h-1.5 rounded-full transition-all"
+                    style={{ width: `${pollingProgress}%` }}
+                  />
+                </div>
+              )}
+              <Button 
+                variant="outline" 
+                className="w-full justify-start" 
+                size="sm"
+                onClick={() => handlePollingAction('phase')}
+                disabled={isPolling}
+              >
+                {isPolling ? (
+                  <>
+                    <Clock className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4 mr-2" />
+                    Re-execute Current Phase
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>
@@ -1485,6 +1546,18 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
+              <TabsTrigger value="experienceTieringCopy" className="relative text-sm px-4 py-2 flex-shrink-0">
+                Experience Tiering Copy
+                {loan.phases.experienceTiering.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.experienceTiering.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.experienceTiering.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
               <TabsTrigger value="creditReview" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Credit Review
                 {loan.phases.creditReview.status === 'failed' && (
@@ -1601,6 +1674,10 @@ export const LoanDetail = () => {
               </TabsContent>
               
               <TabsContent value="experienceTiering" className="mt-0">
+                <ExperienceTieringTab phase={loan.phases.experienceTiering} />
+              </TabsContent>
+              
+              <TabsContent value="experienceTieringCopy" className="mt-0">
                 <ExperienceTieringTab phase={loan.phases.experienceTiering} />
               </TabsContent>
               
