@@ -16,6 +16,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     overview: false,
     external: false,
     internal: false,
+    contractor: false,
     confidence: false,
     enforcement: false,
     exceptions: false,
@@ -327,61 +328,49 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </div>
                   </div>
                 </div>
-
-                <div className="space-y-3">
-                  <p className="text-sm font-medium">Weighted Metrics</p>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Metric</TableHead>
-                        <TableHead>Source</TableHead>
-                        <TableHead>Value</TableHead>
-                        <TableHead>Target</TableHead>
-                        <TableHead>Weight</TableHead>
-                        <TableHead>Contribution</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {weightedMetrics.map((metric, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell className="font-medium">{metric.metric}</TableCell>
-                          <TableCell className="text-sm text-muted-foreground">{metric.source}</TableCell>
-                          <TableCell className="font-semibold">{metric.value}</TableCell>
-                          <TableCell className="text-sm">{metric.target}</TableCell>
-                          <TableCell><Badge variant="outline">{metric.weight}</Badge></TableCell>
-                          <TableCell className="text-success font-semibold">{metric.contribution}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-
-                <div className="space-y-3">
-                  <p className="text-sm font-medium">Contractor Validation</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">GC Name</p>
-                      <p className="font-medium">{contractorData.gcName}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Project Type</p>
-                      <p className="font-medium">{contractorData.projectType}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Completion Ratio</p>
-                      <p className="text-xl font-bold">{contractorData.completionRatio}%</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Validation Status</p>
-                      {getStatusBadge(contractorData.validationStatus)}
-                    </div>
-                  </div>
-                </div>
           </CardContent>
         )}
       </Card>
 
-      {/* Section 3: AI Confidence */}
+      {/* Section 3: Contractor Validation */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('contractor')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <Building className="h-4 w-4 mr-2" />
+              Contractor Validation
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.contractor ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.contractor && (
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">GC Name</p>
+                <p className="font-medium">{contractorData.gcName}</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Project Type</p>
+                <p className="font-medium">{contractorData.projectType}</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Completion Ratio</p>
+                <p className="text-xl font-bold">{contractorData.completionRatio}%</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Validation Status</p>
+                {getStatusBadge(contractorData.validationStatus)}
+              </div>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {/* Section 4: AI Confidence */}
       <Card>
         <CardHeader 
           className="cursor-pointer hover:bg-muted/50 transition-colors"
@@ -446,7 +435,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         )}
       </Card>
 
-      {/* Section 4: Product Enforcement */}
+      {/* Section 5: Product Enforcement */}
       <Card>
         <CardHeader 
           className="cursor-pointer hover:bg-muted/50 transition-colors"
