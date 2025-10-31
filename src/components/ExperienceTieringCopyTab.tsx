@@ -24,6 +24,8 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     phaseLog: false,
   });
 
+  const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
   };
@@ -137,10 +139,66 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
   ];
 
   const exceptions = [
-    { exception: "TrackRecord_Mismatch", source: "Forecasa vs Document", severity: "high", owner: "UW Manager", sla: "48h", status: "pending" },
-    { exception: "LiquiDat_BelowThreshold", source: "LiquiDat API", severity: "medium", owner: "Credit", sla: "24h", status: "review" },
-    { exception: "Contractor_NotVerified", source: "BuildCheckPro", severity: "medium", owner: "Ops", sla: "48h", status: "pending" },
-    { exception: "AI_Output_Failed", source: "TierLogic Engine", severity: "critical", owner: "Tech", sla: "4h", status: "escalated" }
+    { 
+      exception: "TrackRecord_Mismatch", 
+      tags: ["forecasa_validation", "document_check"],
+      link: "/logs/track-record-001"
+    },
+    { 
+      exception: "LiquiDat_BelowThreshold", 
+      tags: ["liquidity_check", "threshold_validation"],
+      link: "/logs/liquiDat-002"
+    },
+    { 
+      exception: "Contractor_NotVerified", 
+      tags: ["contractor_validation", "buildcheck"],
+      link: "/logs/contractor-003"
+    }
+  ];
+
+  const phaseLogData = [
+    {
+      id: "log-001",
+      tag: "cogs",
+      timestamp: "31/10/2025, 16:17:09",
+      description: "COGS Issued Date vs. Actual Closing Date Rule",
+      exceptionTag: "retool_date_comparator",
+      status: "completed",
+      jsonData: {
+        is_valid: true,
+        loan_type: "Bridge Loan",
+        days_to_compare: 180,
+        cogs_issued_date: "2025-08-13",
+        actual_closing_date: "2025-10-31"
+      }
+    },
+    {
+      id: "log-002",
+      tag: "forecasa",
+      timestamp: "31/10/2025, 16:15:22",
+      description: "External Data Validation Check",
+      exceptionTag: "data_verification",
+      status: "completed",
+      jsonData: {
+        verified_exits: 8,
+        total_volume: 2450000,
+        confidence: 0.87,
+        source: "Forecasa API"
+      }
+    },
+    {
+      id: "log-003",
+      tag: "liquiDat",
+      timestamp: "31/10/2025, 16:14:05",
+      description: "Liquidity Ratio Calculation",
+      exceptionTag: "liquidity_check",
+      status: "warning",
+      jsonData: {
+        liquidity_ratio: 1.35,
+        min_required: 1.25,
+        meets_threshold: true
+      }
+    }
   ];
 
   const getTierColor = (tier: string): string => {
@@ -202,11 +260,11 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
   };
 
   const getExceptionsStatus = () => {
-    const hasCritical = exceptions.some(item => item.severity === 'critical' || item.status === 'escalated');
-    const hasHigh = exceptions.some(item => item.severity === 'high' || item.status === 'pending');
-    if (hasCritical) return 'fail';
-    if (hasHigh) return 'warn';
-    return 'pass';
+    return exceptions.length > 0 ? 'warn' : 'pass';
+  };
+
+  const toggleLog = (logId: string) => {
+    setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
   };
 
   return (
@@ -370,38 +428,36 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Exceptions & Tag Manager
+              Exceptions
               {getStatusBadge(getExceptionsStatus())}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.exceptions ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.exceptions && (
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Exception</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Severity</TableHead>
-                      <TableHead>Owner</TableHead>
-                      <TableHead>SLA</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {exceptions.map((item, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{item.exception}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{item.source}</TableCell>
-                        <TableCell>{getSeverityBadge(item.severity)}</TableCell>
-                        <TableCell className="text-sm">{item.owner}</TableCell>
-                        <TableCell className="text-sm">{item.sla}</TableCell>
-                        <TableCell>{getStatusBadge(item.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+          <CardContent>
+            <div className="space-y-3">
+              {exceptions.map((item, idx) => (
+                <div key={idx} className="p-3 border rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{item.exception}</span>
+                    <div className="flex items-center gap-2">
+                      {item.tags.map((tag, tagIdx) => (
+                        <Badge key={tagIdx} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <a 
+                    href={item.link} 
+                    className="text-xs text-primary hover:underline inline-flex items-center gap-1"
+                  >
+                    View Log →
+                  </a>
+                </div>
+              ))}
+            </div>
           </CardContent>
         )}
       </Card>
@@ -773,36 +829,44 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         {expandedCards.phaseLog && (
           <CardContent>
             <div className="space-y-3">
-              {phase.auditLog && phase.auditLog.length > 0 ? (
-                phase.auditLog.map((entry: any) => (
-                  <div key={entry.id} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
+              {phaseLogData.map((log) => (
+                <div key={log.id} className="border rounded-lg">
+                  <div 
+                    className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
+                    onClick={() => toggleLog(log.id)}
+                  >
                     <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">{entry.action}</span>
-                        {entry.decision && (
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <span className="font-medium text-sm">{log.tag}</span>
+                          <p className="text-xs text-muted-foreground mt-0.5">{log.timestamp}</p>
+                          <p className="text-sm mt-1">{log.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Badge variant="outline" className="text-xs">
+                            {log.exceptionTag}
+                          </Badge>
                           <Badge 
-                            variant={
-                              entry.decision === 'approved' ? 'default' : 
-                              entry.decision === 'rejected' ? 'destructive' : 
-                              'outline'
-                            }
+                            variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'}
                             className="text-xs"
                           >
-                            {entry.decision}
+                            {log.status}
                           </Badge>
-                        )}
+                          <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
+                        </div>
                       </div>
-                      <p className="text-xs text-muted-foreground">{new Date(entry.timestamp).toLocaleString()}</p>
-                      <p className="text-xs mt-1">{entry.details} - by {entry.user}</p>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="p-4 bg-muted/20 rounded text-center text-sm text-muted-foreground">
-                  No phase log entries available
+                  {expandedLogs[log.id] && (
+                    <div className="px-3 pb-3 border-t bg-muted/20">
+                      <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
+                        {JSON.stringify(log.jsonData, null, 2)}
+                      </pre>
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
           </CardContent>
         )}
