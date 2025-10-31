@@ -542,6 +542,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       <Button 
                         onClick={handleValidateExternalData}
                         size="sm"
+                        variant="outline"
                         className="gap-2"
                       >
                         <CheckCircle className="h-4 w-4" />
