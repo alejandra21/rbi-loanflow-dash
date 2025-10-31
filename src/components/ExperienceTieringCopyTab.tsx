@@ -184,6 +184,10 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
   };
 
   // Helper to get overall status for sections
+  const getTieringEvaluationStatus = () => {
+    return tieringOverview.exceptionFlag ? 'warn' : 'pass';
+  };
+
   const getTieringRulesStatus = () => {
     const hasWarnings = productEnforcement.some(item => item.status === 'warn');
     const hasFails = productEnforcement.some(item => item.status === 'fail');
@@ -228,9 +232,10 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           onClick={() => toggleCard('overview')}
         >
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center">
-              <TrendingUp className="h-4 w-4 mr-2" />
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
               Tiering Evaluation Overview
+              {getStatusBadge(getTieringEvaluationStatus())}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.overview ? '' : '-rotate-90'}`} />
           </CardTitle>
