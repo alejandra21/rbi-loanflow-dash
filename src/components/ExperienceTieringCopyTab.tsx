@@ -437,49 +437,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         )}
       </Card>
 
-      {/* Section 4: Exceptions */}
-      <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('exceptions')}
-        >
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              Exceptions
-              {getStatusBadge(getExceptionsStatus())}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.exceptions ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.exceptions && (
-          <CardContent>
-            <div className="space-y-3">
-              {exceptions.map((item, idx) => (
-                <div key={idx} className="p-3 border rounded-lg space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{item.exception}</span>
-                    <div className="flex items-center gap-2">
-                      {item.tags.map((tag, tagIdx) => (
-                        <Badge key={tagIdx} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <a 
-                    href={item.link} 
-                    className="text-xs text-primary hover:underline inline-flex items-center gap-1"
-                  >
-                    View Log →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        )}
-      </Card>
-
       {/* Section 5: External Data */}
       <Card>
         <CardHeader 
