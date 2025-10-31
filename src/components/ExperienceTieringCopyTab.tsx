@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { StatusBadge } from "@/components/StatusBadge";
-import { Download, CheckCircle, AlertTriangle, XCircle, RefreshCw, ChevronDown, Clock, TrendingUp, Building, FileText, CheckSquare } from "lucide-react";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, Clock, TrendingUp, Building, FileText, CheckSquare } from "lucide-react";
 import { useState } from "react";
 
 interface ExperienceTieringCopyTabProps {
@@ -18,7 +18,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     internal: false,
     confidence: false,
     enforcement: false,
-    integration: false,
     exceptions: false,
     phaseLog: false,
   });
@@ -99,13 +98,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     { product: "Fix & Flip (Borrower-Funded)", allowedTiers: "Gold+", logic: "Tier < Gold → Block", status: "pass" },
     { product: "Ground-Up Construction", allowedTiers: "Gold+", logic: "Tier < Gold → Exception", status: "warn" },
     { product: "DSCR", allowedTiers: "All", logic: "LiquiDat < 1.0 → Conditional Approval", status: "pass" }
-  ];
-
-  const integrationData = [
-    { output: "Tier Classification", destination: "Collateral Engine", status: "sent", lastSent: "2025-10-31 14:21" },
-    { output: "Exposure Cap", destination: "Collateral Engine", status: "sent", lastSent: "2025-10-31 14:21" },
-    { output: "LiquiDat Ratio", destination: "Collateral Engine", status: "sent", lastSent: "2025-10-31 14:21" },
-    { output: "Contractor Data", destination: "Collateral Engine", status: "pending", lastSent: "—" }
   ];
 
   const exceptions = [
@@ -486,50 +478,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                         <TableCell><Badge variant="outline">{item.allowedTiers}</Badge></TableCell>
                         <TableCell className="text-sm text-muted-foreground">{item.logic}</TableCell>
                         <TableCell>{getStatusBadge(item.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-          </CardContent>
-        )}
-      </Card>
-
-      {/* Section 5: Phase 3 Integration */}
-      <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('integration')}
-        >
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Phase 3 Integration Tracker
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.integration ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.integration && (
-              <CardContent className="space-y-3">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <RefreshCw className="h-4 w-4" />
-                  Re-sync Data
-                </Button>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Output</TableHead>
-                      <TableHead>Destination</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Last Sent</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {integrationData.map((item, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{item.output}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{item.destination}</TableCell>
-                        <TableCell>{getStatusBadge(item.status)}</TableCell>
-                        <TableCell className="text-sm">{item.lastSent}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
