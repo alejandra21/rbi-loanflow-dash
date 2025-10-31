@@ -995,7 +995,7 @@ export const LoanDetail = () => {
 
                     <div className="pt-2 border-t">
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                        <div className="p-3 bg-muted/30 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">Tiering & Product Type Rules</p>
                           <div className="flex items-center space-x-2">
                             <p className="font-medium text-sm">
@@ -1009,7 +1009,7 @@ export const LoanDetail = () => {
                           </div>
                         </div>
                         
-                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                        <div className="p-3 bg-muted/30 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">Contractor Validation</p>
                           <div className="flex items-center space-x-2">
                             <p className="font-medium text-sm">
@@ -1024,7 +1024,7 @@ export const LoanDetail = () => {
                         </div>
                       </div>
                       {data.exception_reason && (
-                        <div className="mt-3 p-3 bg-muted/20 rounded">
+                        <div className="mt-3 p-3 bg-muted/30 rounded">
                           <p className="text-xs text-muted-foreground mb-1">Exception Reason</p>
                           <p className="text-sm font-medium">{data.exception_reason}</p>
                         </div>
