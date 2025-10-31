@@ -76,7 +76,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     entityType: "Borrower",
     loanType: "Fix & Flip",
     guarantors: "John Doe, Jane Smith",
-    inputIdentifier: "SSN: ***-**-1234"
+    inputIdentifier: "john.doe@summitcapital.com"
   };
 
   const experienceCriteria = {
