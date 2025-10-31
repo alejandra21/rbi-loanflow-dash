@@ -634,7 +634,33 @@ export const ExperienceTieringCopyTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 3: Tiering & Product Type Rules */}
+      {/* Section 3: Contractor Validation */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('contractor')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4" />
+              Contractor Validation
+              {getStatusBadge(getContractorValidationStatus())}
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.contractor ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.contractor && <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">GC Name</p>
+                <p className="font-medium">{contractorData.gcName}</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Validation Status</p>
+                {getStatusBadge(contractorData.validationStatus)}
+              </div>
+            </div>
+          </CardContent>}
+      </Card>
+
+      {/* Section 4: Tiering & Product Type Rules */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('enforcement')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -669,32 +695,6 @@ export const ExperienceTieringCopyTab = ({
                         </TableRow>)}
                   </TableBody>
                 </Table>
-          </CardContent>}
-      </Card>
-
-      {/* Section 4: Contractor Validation */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('contractor')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Building className="h-4 w-4" />
-              Contractor Validation
-              {getStatusBadge(getContractorValidationStatus())}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.contractor ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.contractor && <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">GC Name</p>
-                <p className="font-medium">{contractorData.gcName}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Validation Status</p>
-                {getStatusBadge(contractorData.validationStatus)}
-              </div>
-            </div>
           </CardContent>}
       </Card>
 
