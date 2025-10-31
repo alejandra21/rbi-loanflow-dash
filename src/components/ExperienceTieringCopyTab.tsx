@@ -160,7 +160,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <Building className="h-4 w-4 mr-2" />
-              🟦 External Data (Forecasa & Track Record)
+              External Data (Forecasa & Track Record)
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -224,7 +224,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <TrendingUp className="h-4 w-4 mr-2" />
-              🟩 Internal Data (WhoDat / LiquiDat / AI Engine)
+              Internal Data (WhoDat / LiquiDat / AI Engine)
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.internal ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -323,7 +323,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <CheckSquare className="h-4 w-4 mr-2" />
-              🟨 AI Confidence & Explainability
+              AI Confidence & Explainability
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.confidence ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -388,7 +388,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <FileText className="h-4 w-4 mr-2" />
-              🟧 Product Enforcement
+              Product Enforcement
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -428,7 +428,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <RefreshCw className="h-4 w-4 mr-2" />
-              🟪 Phase 3 Integration Tracker
+              Phase 3 Integration Tracker
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.integration ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -472,7 +472,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 mr-2" />
-              🟥 Exceptions & Tag Manager
+              Exceptions & Tag Manager
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.exceptions ? '' : '-rotate-90'}`} />
           </CardTitle>
