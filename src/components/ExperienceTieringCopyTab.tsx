@@ -174,10 +174,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     <span className="text-xs text-muted-foreground">Upload Date</span>
                     <span className="text-sm font-medium">{trackRecordDoc.uploadDate}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">File Size</span>
-                    <span className="text-sm font-medium">{trackRecordDoc.fileSize}</span>
-                  </div>
                 </div>
                 <Button variant="outline" className="w-full gap-2">
                   <Download className="h-4 w-4" />
