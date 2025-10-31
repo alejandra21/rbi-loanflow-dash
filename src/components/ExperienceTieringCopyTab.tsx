@@ -7,12 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, Clock, TrendingUp, Building, FileText, CheckSquare } from "lucide-react";
 import { useState } from "react";
-
 interface ExperienceTieringCopyTabProps {
   phase: any;
 }
-
-export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProps) => {
+export const ExperienceTieringCopyTab = ({
+  phase
+}: ExperienceTieringCopyTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     overview: false,
     external: false,
@@ -21,26 +21,25 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     confidence: false,
     enforcement: false,
     exceptions: false,
-    phaseLog: false,
+    phaseLog: false
   });
-
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
-  
   const [externalDataValidation, setExternalDataValidation] = useState({
     isValidated: false,
     validatedBy: "",
     validatedAt: ""
   });
-
   const toggleCard = (cardId: string) => {
-    setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
+    setExpandedCards(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
   };
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
@@ -54,20 +53,20 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     exceptionFlag: false,
     exceptionReason: "Tier Override"
   };
-
   const forecasaMetrics = {
     verifiedExits: 8,
     totalVolume: 2450000,
     avgSalePrice: 306250,
-    managementExperience: { properties: 12, duration: "3.5 years" }
+    managementExperience: {
+      properties: 12,
+      duration: "3.5 years"
+    }
   };
-
   const trackRecordDoc = {
     fileName: "borrower_experience_2025Q1.pdf",
     uploadDate: "2025-10-28",
     fileSize: "2.4 MB"
   };
-
   const tierSummary = {
     tier: "Gold",
     confidenceScore: 0.87,
@@ -76,7 +75,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     maxLTC: 85,
     maxARV: 75
   };
-
   const borrowerInput = {
     entityName: "Summit Capital Holdings LLC",
     entityType: "Borrower",
@@ -84,147 +82,171 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     guarantors: "John Doe, Jane Smith",
     inputIdentifier: "john.doe@summitcapital.com"
   };
-
   const experienceCriteria = {
     paidOffLoans: 12,
     totalVolume: 3450000,
     verifiedVolumeSource: "WhoDat / Forecasa",
     trackRecordVerified: true
   };
-
   const creditLiquidity = {
     fico: 710,
     liquidityRatio: 1.35,
     liquidityRatioMinRequired: 1.25,
     liquidityVerified: "verified"
   };
-
   const performanceBehavior = {
     defaults: 0,
     extensions: 2,
     performanceStatus: "meets"
   };
-
   const exposureCapLogic = {
     exposureLimit: 5000000,
     ltcCap: 85,
     arvCap: 70
   };
-
-  const weightedMetrics = [
-    { metric: "Verified Exits", source: "Forecasa + WhoDat", value: "8", target: "≥5", weight: "60%", contribution: "+0.52" },
-    { metric: "Liquidity Ratio", source: "LiquiDat", value: "1.35x", target: "≥1.25x", weight: "10%", contribution: "+0.09" },
-    { metric: "FICO", source: "WhoDat", value: "710", target: "≥680", weight: "10%", contribution: "+0.06" },
-    { metric: "Guarantor Exposure", source: "WhoDat", value: "$2.1MM", target: "≤$5MM", weight: "20%", contribution: "+0.20" }
-  ];
-
+  const weightedMetrics = [{
+    metric: "Verified Exits",
+    source: "Forecasa + WhoDat",
+    value: "8",
+    target: "≥5",
+    weight: "60%",
+    contribution: "+0.52"
+  }, {
+    metric: "Liquidity Ratio",
+    source: "LiquiDat",
+    value: "1.35x",
+    target: "≥1.25x",
+    weight: "10%",
+    contribution: "+0.09"
+  }, {
+    metric: "FICO",
+    source: "WhoDat",
+    value: "710",
+    target: "≥680",
+    weight: "10%",
+    contribution: "+0.06"
+  }, {
+    metric: "Guarantor Exposure",
+    source: "WhoDat",
+    value: "$2.1MM",
+    target: "≤$5MM",
+    weight: "20%",
+    contribution: "+0.20"
+  }];
   const contractorData = {
     gcName: "BuildPro Construction LLC",
     projectType: "Heavy Rehab",
     completionRatio: 92,
     validationStatus: "verified"
   };
-
   const tierLogic = {
     version: "v2.3",
     timestamp: "2025-10-31 14:21",
     confidenceScore: 0.87
   };
-
-  const confidenceBreakdown = [
-    { metric: "Verified Exits", weight: "0.60", contribution: "+0.52" },
-    { metric: "Liquidity Ratio", weight: "0.10", contribution: "+0.09" },
-    { metric: "Guarantor Exposure", weight: "0.20", contribution: "+0.20" },
-    { metric: "Performance", weight: "0.10", contribution: "+0.06" }
-  ];
-
-  const productEnforcement = [
-    { product: "Fix & Flip (Borrower-Funded)", allowedTiers: "Gold+", logic: "Tier < Gold → Block", status: "pass" },
-    { product: "Ground-Up Construction", allowedTiers: "Gold+", logic: "Tier < Gold → Exception", status: "warn" },
-    { product: "DSCR", allowedTiers: "All", logic: "LiquiDat < 1.0 → Conditional Approval", status: "pass" }
-  ];
-
-  const exceptions = [
-    { 
-      exception: "TrackRecord_Mismatch", 
-      tags: ["forecasa_validation", "document_check"],
-      link: "/logs/track-record-001"
-    },
-    { 
-      exception: "LiquiDat_BelowThreshold", 
-      tags: ["liquidity_check", "threshold_validation"],
-      link: "/logs/liquiDat-002"
-    },
-    { 
-      exception: "Contractor_NotVerified", 
-      tags: ["contractor_validation", "buildcheck"],
-      link: "/logs/contractor-003"
+  const confidenceBreakdown = [{
+    metric: "Verified Exits",
+    weight: "0.60",
+    contribution: "+0.52"
+  }, {
+    metric: "Liquidity Ratio",
+    weight: "0.10",
+    contribution: "+0.09"
+  }, {
+    metric: "Guarantor Exposure",
+    weight: "0.20",
+    contribution: "+0.20"
+  }, {
+    metric: "Performance",
+    weight: "0.10",
+    contribution: "+0.06"
+  }];
+  const productEnforcement = [{
+    product: "Fix & Flip (Borrower-Funded)",
+    allowedTiers: "Gold+",
+    logic: "Tier < Gold → Block",
+    status: "pass"
+  }, {
+    product: "Ground-Up Construction",
+    allowedTiers: "Gold+",
+    logic: "Tier < Gold → Exception",
+    status: "warn"
+  }, {
+    product: "DSCR",
+    allowedTiers: "All",
+    logic: "LiquiDat < 1.0 → Conditional Approval",
+    status: "pass"
+  }];
+  const exceptions = [{
+    exception: "TrackRecord_Mismatch",
+    tags: ["forecasa_validation", "document_check"],
+    link: "/logs/track-record-001"
+  }, {
+    exception: "LiquiDat_BelowThreshold",
+    tags: ["liquidity_check", "threshold_validation"],
+    link: "/logs/liquiDat-002"
+  }, {
+    exception: "Contractor_NotVerified",
+    tags: ["contractor_validation", "buildcheck"],
+    link: "/logs/contractor-003"
+  }];
+  const phaseLogData = [{
+    id: "log-001",
+    tag: "cogs",
+    timestamp: "31/10/2025, 16:17:09",
+    description: "COGS Issued Date vs. Actual Closing Date Rule",
+    exceptionTag: "retool_date_comparator",
+    exceptionType: null,
+    status: "completed",
+    jsonData: {
+      is_valid: true,
+      loan_type: "Bridge Loan",
+      days_to_compare: 180,
+      cogs_issued_date: "2025-08-13",
+      actual_closing_date: "2025-10-31"
     }
-  ];
-
-  const phaseLogData = [
-    {
-      id: "log-001",
-      tag: "cogs",
-      timestamp: "31/10/2025, 16:17:09",
-      description: "COGS Issued Date vs. Actual Closing Date Rule",
-      exceptionTag: "retool_date_comparator",
-      exceptionType: null,
-      status: "completed",
-      jsonData: {
-        is_valid: true,
-        loan_type: "Bridge Loan",
-        days_to_compare: 180,
-        cogs_issued_date: "2025-08-13",
-        actual_closing_date: "2025-10-31"
-      }
-    },
-    {
-      id: "log-002",
-      tag: "forecasa",
-      timestamp: "31/10/2025, 16:15:22",
-      description: "External Data Validation Check",
-      exceptionTag: "data_verification",
-      exceptionType: "TrackRecord_Mismatch",
-      status: "completed",
-      jsonData: {
-        verified_exits: 8,
-        total_volume: 2450000,
-        confidence: 0.87,
-        source: "Forecasa API"
-      }
-    },
-    {
-      id: "log-003",
-      tag: "liquiDat",
-      timestamp: "31/10/2025, 16:14:05",
-      description: "Liquidity Ratio Calculation",
-      exceptionTag: "liquidity_check",
-      exceptionType: "LiquiDat_BelowThreshold",
-      status: "warning",
-      jsonData: {
-        liquidity_ratio: 1.35,
-        min_required: 1.25,
-        meets_threshold: true
-      }
-    },
-    {
-      id: "log-004",
-      tag: "contractor",
-      timestamp: "31/10/2025, 16:12:33",
-      description: "Contractor Validation Process",
-      exceptionTag: "contractor_validation",
-      exceptionType: "Contractor_NotVerified",
-      status: "warning",
-      jsonData: {
-        gc_name: "BuildPro Construction LLC",
-        validation_source: "BuildCheckPro",
-        verified: false,
-        reason: "Pending verification"
-      }
+  }, {
+    id: "log-002",
+    tag: "forecasa",
+    timestamp: "31/10/2025, 16:15:22",
+    description: "External Data Validation Check",
+    exceptionTag: "data_verification",
+    exceptionType: "TrackRecord_Mismatch",
+    status: "completed",
+    jsonData: {
+      verified_exits: 8,
+      total_volume: 2450000,
+      confidence: 0.87,
+      source: "Forecasa API"
     }
-  ];
-
+  }, {
+    id: "log-003",
+    tag: "liquiDat",
+    timestamp: "31/10/2025, 16:14:05",
+    description: "Liquidity Ratio Calculation",
+    exceptionTag: "liquidity_check",
+    exceptionType: "LiquiDat_BelowThreshold",
+    status: "warning",
+    jsonData: {
+      liquidity_ratio: 1.35,
+      min_required: 1.25,
+      meets_threshold: true
+    }
+  }, {
+    id: "log-004",
+    tag: "contractor",
+    timestamp: "31/10/2025, 16:12:33",
+    description: "Contractor Validation Process",
+    exceptionTag: "contractor_validation",
+    exceptionType: "Contractor_NotVerified",
+    status: "warning",
+    jsonData: {
+      gc_name: "BuildPro Construction LLC",
+      validation_source: "BuildCheckPro",
+      verified: false,
+      reason: "Pending verification"
+    }
+  }];
   const getTierColor = (tier: string): string => {
     const colors: Record<string, string> = {
       'Platinum': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
@@ -234,7 +256,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     };
     return colors[tier] || '';
   };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pass":
@@ -252,7 +273,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case "critical":
@@ -269,7 +289,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
   const getTieringEvaluationStatus = () => {
     return tieringOverview.exceptionFlag ? 'warn' : 'pass';
   };
-
   const getTieringRulesStatus = () => {
     const filteredItems = productEnforcement.filter(item => item.product.includes(borrowerInput.loanType));
     const hasWarnings = filteredItems.some(item => item.status === 'warn');
@@ -278,19 +297,18 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     if (hasWarnings) return 'warn';
     return 'pass';
   };
-
   const getContractorValidationStatus = () => {
     return contractorData.validationStatus;
   };
-
   const getExceptionsStatus = () => {
     return exceptions.length > 0 ? 'warn' : 'pass';
   };
-
   const toggleLog = (logId: string) => {
-    setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
+    setExpandedLogs(prev => ({
+      ...prev,
+      [logId]: !prev[logId]
+    }));
   };
-
   const handleValidateExternalData = () => {
     setExternalDataValidation({
       isValidated: true,
@@ -298,19 +316,13 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
       validatedAt: new Date().toLocaleString()
     });
   };
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Experience Tiering Check (Redesigned)</span>
           <StatusBadge status={phase.status} />
         </div>
-        <Button 
-          variant="outline" 
-          size="sm"
-          className="flex items-center gap-2"
-        >
+        <Button variant="outline" size="sm" className="flex items-center gap-2">
           <Download className="h-4 w-4" />
           Download Report
         </Button>
@@ -318,10 +330,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
 
       {/* Tiering Evaluation Overview */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('overview')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('overview')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -331,8 +340,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.overview ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.overview && (
-          <CardContent>
+        {expandedCards.overview && <CardContent>
             <div className="p-4 border-2 border-primary/20 rounded-lg bg-primary/5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-background rounded space-y-1">
@@ -341,24 +349,18 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     {tieringOverview.exceptionFlag ? 'Yes' : 'No'}
                   </Badge>
                 </div>
-                {tieringOverview.exceptionFlag && (
-                  <div className="p-3 bg-background rounded space-y-1 col-span-2">
+                {tieringOverview.exceptionFlag && <div className="p-3 bg-background rounded space-y-1 col-span-2">
                     <p className="text-xs text-muted-foreground">Exception Reason</p>
                     <p className="text-sm font-medium">{tieringOverview.exceptionReason}</p>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 2: Tiering & Product Type Rules */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('enforcement')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('enforcement')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -368,8 +370,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.enforcement && (
-              <CardContent>
+        {expandedCards.enforcement && <CardContent>
                 <div className="mb-3 p-2 bg-muted/30 rounded text-sm">
                   <span className="text-muted-foreground">Filtered by Product Type: </span>
                   <span className="font-medium">{borrowerInput.loanType}</span>
@@ -384,28 +385,20 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {productEnforcement
-                      .filter(item => item.product.includes(borrowerInput.loanType))
-                      .map((item, idx) => (
-                        <TableRow key={idx}>
+                    {productEnforcement.filter(item => item.product.includes(borrowerInput.loanType)).map((item, idx) => <TableRow key={idx}>
                           <TableCell className="font-medium">{item.product}</TableCell>
                           <TableCell><Badge variant="outline">{item.allowedTiers}</Badge></TableCell>
                           <TableCell className="text-sm text-muted-foreground">{item.logic}</TableCell>
                           <TableCell>{getStatusBadge(item.status)}</TableCell>
-                        </TableRow>
-                      ))}
+                        </TableRow>)}
                   </TableBody>
                 </Table>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 3: Contractor Validation */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('contractor')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('contractor')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building className="h-4 w-4" />
@@ -415,8 +408,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.contractor ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.contractor && (
-          <CardContent>
+        {expandedCards.contractor && <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 bg-muted/30 rounded space-y-1">
                 <p className="text-xs text-muted-foreground">GC Name</p>
@@ -427,33 +419,24 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                 {getStatusBadge(contractorData.validationStatus)}
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 5: External Data */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('external')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('external')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building className="h-4 w-4" />
               External Data (Forecasa & Track Record)
-              {externalDataValidation.isValidated ? (
-                getStatusBadge('verified')
-              ) : (
-                <Badge variant="warning" className="gap-1">
+              {externalDataValidation.isValidated ? getStatusBadge('verified') : <Badge variant="warning" className="gap-1">
                   <AlertTriangle className="h-3 w-3" /> Review
-                </Badge>
-              )}
+                </Badge>}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.external && (
-              <CardContent className="space-y-4">
+        {expandedCards.external && <CardContent className="space-y-4">
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -503,8 +486,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                 {/* Manual Validation */}
                 <div className="p-4 border-2 rounded-lg bg-muted/20 space-y-3">
                   <p className="text-sm font-medium">Manual Validation</p>
-                  {externalDataValidation.isValidated ? (
-                    <div className="space-y-2">
+                  {externalDataValidation.isValidated ? <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-success" />
                         <span className="text-sm text-success font-medium">Data Validated</span>
@@ -513,33 +495,22 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                         <p>Validated by: <span className="font-medium">{externalDataValidation.validatedBy}</span></p>
                         <p>Validated at: <span className="font-medium">{externalDataValidation.validatedAt}</span></p>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
+                    </div> : <div className="space-y-2">
                       <p className="text-xs text-muted-foreground">
                         This data requires manual validation by operations team.
                       </p>
-                      <Button 
-                        onClick={handleValidateExternalData}
-                        size="sm"
-                        className="gap-2"
-                      >
+                      <Button onClick={handleValidateExternalData} size="sm" className="gap-2">
                         <CheckCircle className="h-4 w-4" />
                         Mark as Validated
                       </Button>
-                    </div>
-                  )}
+                    </div>}
                 </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 2: Internal Data */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('internal')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('internal')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -549,8 +520,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.internal ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.internal && (
-              <CardContent className="space-y-6">
+        {expandedCards.internal && <CardContent className="space-y-6">
                 {/* Tier Summary - Highlighted */}
                 <div className="p-4 border-2 border-primary/20 rounded-lg bg-primary/5 space-y-3">
                   <p className="text-base font-semibold flex items-center gap-2">
@@ -577,11 +547,11 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       <p className="text-lg font-semibold">{formatCurrency(tierSummary.exposureLimit)}</p>
                     </div>
                     <div className="p-3 bg-background rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Max LTC</p>
+                      <p className="text-xs text-muted-foreground">Recommended LTC</p>
                       <p className="text-lg font-semibold">{tierSummary.maxLTC}%</p>
                     </div>
                     <div className="p-3 bg-background rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Max ARV</p>
+                      <p className="text-xs text-muted-foreground">Recommended ARV</p>
                       <p className="text-lg font-semibold">{tierSummary.maxARV}%</p>
                     </div>
                   </div>
@@ -754,16 +724,12 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </Table>
                   </div>
                 </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 6: Confidence Formula */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('confidence')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('confidence')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <CheckSquare className="h-4 w-4 mr-2" />
@@ -772,8 +738,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.confidence ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.confidence && (
-              <CardContent className="space-y-4">
+        {expandedCards.confidence && <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <p className="text-sm font-medium">TierLogic Engine</p>
                   <div className="grid grid-cols-2 gap-4">
@@ -806,29 +771,23 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {confidenceBreakdown.map((item, idx) => (
-                        <TableRow key={idx}>
+                      {confidenceBreakdown.map((item, idx) => <TableRow key={idx}>
                           <TableCell className="font-medium">{item.metric}</TableCell>
                           <TableCell><Badge variant="outline">{item.weight}</Badge></TableCell>
                           <TableCell className="text-right text-success font-semibold">{item.contribution}</TableCell>
-                        </TableRow>
-                      ))}
+                        </TableRow>)}
                     </TableBody>
                   </Table>
                   <p className="text-xs text-muted-foreground mt-4">
                     Formula: Σ(weight × normalized metric), threshold = 0.75
                   </p>
                 </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Phase Log */}
       <Card>
-        <CardHeader 
-          className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => toggleCard('phaseLog')}
-        >
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('phaseLog')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-2" />
@@ -837,15 +796,10 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.phaseLog ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.phaseLog && (
-          <CardContent>
+        {expandedCards.phaseLog && <CardContent>
             <div className="space-y-3">
-              {phaseLogData.map((log) => (
-                <div key={log.id} className="border rounded-lg">
-                  <div 
-                    className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
-                    onClick={() => toggleLog(log.id)}
-                  >
+              {phaseLogData.map(log => <div key={log.id} className="border rounded-lg">
+                  <div className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
                     <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
@@ -858,15 +812,10 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                           <Badge variant="outline" className="text-xs">
                             {log.exceptionTag}
                           </Badge>
-                          {log.exceptionType && (
-                            <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
+                          {log.exceptionType && <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
                               {log.exceptionType}
-                            </Badge>
-                          )}
-                          <Badge 
-                            variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'}
-                            className="text-xs"
-                          >
+                            </Badge>}
+                          <Badge variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'} className="text-xs">
                             {log.status}
                           </Badge>
                           <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
@@ -874,19 +823,14 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       </div>
                     </div>
                   </div>
-                  {expandedLogs[log.id] && (
-                    <div className="px-3 pb-3 border-t bg-muted/20">
+                  {expandedLogs[log.id] && <div className="px-3 pb-3 border-t bg-muted/20">
                       <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
                         {JSON.stringify(log.jsonData, null, 2)}
                       </pre>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    </div>}
+                </div>)}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
-    </div>
-  );
+    </div>;
 };
