@@ -8,6 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { StatusBadge } from "@/components/StatusBadge";
 import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
+import { ExperienceTieringCopyTab } from "@/components/ExperienceTieringCopyTab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp } from "lucide-react";
@@ -1678,7 +1679,7 @@ export const LoanDetail = () => {
               </TabsContent>
               
               <TabsContent value="experienceTieringCopy" className="mt-0">
-                <ExperienceTieringTab phase={loan.phases.experienceTiering} />
+                <ExperienceTieringCopyTab phase={loan.phases.experienceTiering} />
               </TabsContent>
               
               <TabsContent value="creditReview" className="mt-0">
