@@ -354,14 +354,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                 <p className="font-medium">{contractorData.gcName}</p>
               </div>
               <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Project Type</p>
-                <p className="font-medium">{contractorData.projectType}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Completion Ratio</p>
-                <p className="text-xl font-bold">{contractorData.completionRatio}%</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
                 <p className="text-xs text-muted-foreground">Validation Status</p>
                 {getStatusBadge(contractorData.validationStatus)}
               </div>
