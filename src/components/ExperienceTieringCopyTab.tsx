@@ -216,39 +216,41 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         </CardHeader>
         {expandedCards.overview && (
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Tier</p>
-                <Badge className={getTierColor(tieringOverview.tier)}>{tieringOverview.tier}</Badge>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Tier Confidence Score</p>
-                <p className="text-xl font-bold">{tieringOverview.confidenceScore}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Exposure Limit</p>
-                <p className="text-lg font-semibold">{formatCurrency(tieringOverview.exposureLimit)}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Recommended Max LTC</p>
-                <p className="text-lg font-semibold">{tieringOverview.maxLTC}%</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Recommended Max ARV</p>
-                <p className="text-lg font-semibold">{tieringOverview.maxARV}%</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Exception Flag</p>
-                <Badge variant={tieringOverview.exceptionFlag ? 'warning' : 'success'}>
-                  {tieringOverview.exceptionFlag ? 'Yes' : 'No'}
-                </Badge>
-              </div>
-              {tieringOverview.exceptionFlag && (
-                <div className="p-3 bg-muted/30 rounded space-y-1 col-span-2">
-                  <p className="text-xs text-muted-foreground">Exception Reason</p>
-                  <p className="text-sm font-medium">{tieringOverview.exceptionReason}</p>
+            <div className="p-4 border-2 border-primary/20 rounded-lg bg-primary/5">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-background rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Tier</p>
+                  <Badge className={getTierColor(tieringOverview.tier)}>{tieringOverview.tier}</Badge>
                 </div>
-              )}
+                <div className="p-3 bg-background rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Tier Confidence Score</p>
+                  <p className="text-xl font-bold">{tieringOverview.confidenceScore}</p>
+                </div>
+                <div className="p-3 bg-background rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Exposure Limit</p>
+                  <p className="text-lg font-semibold">{formatCurrency(tieringOverview.exposureLimit)}</p>
+                </div>
+                <div className="p-3 bg-background rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Recommended Max LTC</p>
+                  <p className="text-lg font-semibold">{tieringOverview.maxLTC}%</p>
+                </div>
+                <div className="p-3 bg-background rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Recommended Max ARV</p>
+                  <p className="text-lg font-semibold">{tieringOverview.maxARV}%</p>
+                </div>
+                <div className="p-3 bg-background rounded space-y-1">
+                  <p className="text-xs text-muted-foreground">Exception Flag</p>
+                  <Badge variant={tieringOverview.exceptionFlag ? 'warning' : 'success'}>
+                    {tieringOverview.exceptionFlag ? 'Yes' : 'No'}
+                  </Badge>
+                </div>
+                {tieringOverview.exceptionFlag && (
+                  <div className="p-3 bg-background rounded space-y-1 col-span-2">
+                    <p className="text-xs text-muted-foreground">Exception Reason</p>
+                    <p className="text-sm font-medium">{tieringOverview.exceptionReason}</p>
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         )}
