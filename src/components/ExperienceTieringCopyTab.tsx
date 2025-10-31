@@ -1,12 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { StatusBadge } from "@/components/StatusBadge";
-import { Download, CheckCircle, AlertTriangle, XCircle, RefreshCw, ChevronDown, Clock, TrendingUp, Building, Users, FileText, CheckSquare } from "lucide-react";
+import { Download, CheckCircle, AlertTriangle, XCircle, RefreshCw, ChevronDown, Clock, TrendingUp, Building, FileText, CheckSquare } from "lucide-react";
 import { useState } from "react";
 
 interface ExperienceTieringCopyTabProps {
@@ -153,32 +151,21 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         </Button>
       </div>
 
-      <Tabs defaultValue="external" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="external">🟦 External Data</TabsTrigger>
-          <TabsTrigger value="internal">🟩 Internal Data</TabsTrigger>
-          <TabsTrigger value="confidence">🟨 AI Confidence</TabsTrigger>
-          <TabsTrigger value="enforcement">🟧 Product Rules</TabsTrigger>
-          <TabsTrigger value="integration">🟪 Phase 3</TabsTrigger>
-          <TabsTrigger value="exceptions">🟥 Exceptions</TabsTrigger>
-        </TabsList>
-
-        {/* Tab 1: External Data */}
-        <TabsContent value="external" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader 
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('external')}
-            >
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <Building className="h-4 w-4 mr-2" />
-                  External Data (Forecasa & Track Record)
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
-              </CardTitle>
-            </CardHeader>
-            {expandedCards.external && (
+      {/* Section 1: External Data */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('external')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <Building className="h-4 w-4 mr-2" />
+              🟦 External Data (Forecasa & Track Record)
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.external && (
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -224,27 +211,25 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </p>
                   </div>
                 </div>
-              </CardContent>
-            )}
-          </Card>
-        </TabsContent>
+          </CardContent>
+        )}
+      </Card>
 
-        {/* Tab 2: Internal Data */}
-        <TabsContent value="internal" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader 
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('internal')}
-            >
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Internal Data (WhoDat / LiquiDat / AI Engine)
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.internal ? '' : '-rotate-90'}`} />
-              </CardTitle>
-            </CardHeader>
-            {expandedCards.internal && (
+      {/* Section 2: Internal Data */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('internal')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              🟩 Internal Data (WhoDat / LiquiDat / AI Engine)
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.internal ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.internal && (
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Tier Summary</p>
@@ -325,27 +310,25 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            )}
-          </Card>
-        </TabsContent>
+          </CardContent>
+        )}
+      </Card>
 
-        {/* Tab 3: AI Confidence */}
-        <TabsContent value="confidence" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader 
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('confidence')}
-            >
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <CheckSquare className="h-4 w-4 mr-2" />
-                  AI Confidence & Explainability
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.confidence ? '' : '-rotate-90'}`} />
-              </CardTitle>
-            </CardHeader>
-            {expandedCards.confidence && (
+      {/* Section 3: AI Confidence */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('confidence')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <CheckSquare className="h-4 w-4 mr-2" />
+              🟨 AI Confidence & Explainability
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.confidence ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.confidence && (
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <p className="text-sm font-medium">TierLogic Engine</p>
@@ -392,27 +375,25 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     Formula: Σ(weight × normalized metric), threshold = 0.75
                   </p>
                 </div>
-              </CardContent>
-            )}
-          </Card>
-        </TabsContent>
+          </CardContent>
+        )}
+      </Card>
 
-        {/* Tab 4: Product Enforcement */}
-        <TabsContent value="enforcement" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader 
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('enforcement')}
-            >
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Product Enforcement
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
-              </CardTitle>
-            </CardHeader>
-            {expandedCards.enforcement && (
+      {/* Section 4: Product Enforcement */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('enforcement')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              🟧 Product Enforcement
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.enforcement && (
               <CardContent>
                 <Table>
                   <TableHeader>
@@ -434,27 +415,25 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     ))}
                   </TableBody>
                 </Table>
-              </CardContent>
-            )}
-          </Card>
-        </TabsContent>
+          </CardContent>
+        )}
+      </Card>
 
-        {/* Tab 5: Phase 3 Integration */}
-        <TabsContent value="integration" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader 
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('integration')}
-            >
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Phase 3 Integration Tracker
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.integration ? '' : '-rotate-90'}`} />
-              </CardTitle>
-            </CardHeader>
-            {expandedCards.integration && (
+      {/* Section 5: Phase 3 Integration */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('integration')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              🟪 Phase 3 Integration Tracker
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.integration ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.integration && (
               <CardContent className="space-y-3">
                 <Button variant="outline" size="sm" className="gap-2">
                   <RefreshCw className="h-4 w-4" />
@@ -480,27 +459,25 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     ))}
                   </TableBody>
                 </Table>
-              </CardContent>
-            )}
-          </Card>
-        </TabsContent>
+          </CardContent>
+        )}
+      </Card>
 
-        {/* Tab 6: Exceptions */}
-        <TabsContent value="exceptions" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader 
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('exceptions')}
-            >
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <AlertTriangle className="h-4 w-4 mr-2" />
-                  Exceptions & Tag Manager
-                </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.exceptions ? '' : '-rotate-90'}`} />
-              </CardTitle>
-            </CardHeader>
-            {expandedCards.exceptions && (
+      {/* Section 6: Exceptions */}
+      <Card>
+        <CardHeader 
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard('exceptions')}
+        >
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              🟥 Exceptions & Tag Manager
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.exceptions ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.exceptions && (
               <CardContent>
                 <Table>
                   <TableHeader>
@@ -526,11 +503,9 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     ))}
                   </TableBody>
                 </Table>
-              </CardContent>
-            )}
-          </Card>
-        </TabsContent>
-      </Tabs>
+          </CardContent>
+        )}
+      </Card>
 
       {/* Phase Log */}
       <Card>
