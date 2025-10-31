@@ -567,8 +567,10 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       <p className="text-xl font-bold">{tierSummary.confidenceScore}</p>
                     </div>
                     <div className="p-3 bg-background rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Risk Grade</p>
-                      <p className="text-xl font-bold">{tierSummary.riskGrade}</p>
+                      <p className="text-xs text-muted-foreground">Exception Flag</p>
+                      <Badge variant={tieringOverview.exceptionFlag ? 'warning' : 'success'}>
+                        {tieringOverview.exceptionFlag ? 'Yes' : 'No'}
+                      </Badge>
                     </div>
                     <div className="p-3 bg-background rounded space-y-1">
                       <p className="text-xs text-muted-foreground">Exposure Limit</p>
