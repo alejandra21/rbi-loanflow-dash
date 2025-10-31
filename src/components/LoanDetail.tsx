@@ -878,12 +878,12 @@ export const LoanDetail = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <span className="font-medium">Experience Tiering Check</span>
-            <StatusBadge status={phase.status} />
             {data.assigned_tier && (
-              <Badge className={getTierColor(data.assigned_tier)}>
+              <Badge className={`${getTierColor(data.assigned_tier)} px-3 py-1`}>
                 {data.assigned_tier}
               </Badge>
             )}
+            <StatusBadge status={phase.status} />
           </div>
           <Button 
             variant="outline" 
