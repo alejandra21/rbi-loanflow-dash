@@ -163,6 +163,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
       timestamp: "31/10/2025, 16:17:09",
       description: "COGS Issued Date vs. Actual Closing Date Rule",
       exceptionTag: "retool_date_comparator",
+      exceptionType: null,
       status: "completed",
       jsonData: {
         is_valid: true,
@@ -178,6 +179,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
       timestamp: "31/10/2025, 16:15:22",
       description: "External Data Validation Check",
       exceptionTag: "data_verification",
+      exceptionType: "TrackRecord_Mismatch",
       status: "completed",
       jsonData: {
         verified_exits: 8,
@@ -192,11 +194,27 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
       timestamp: "31/10/2025, 16:14:05",
       description: "Liquidity Ratio Calculation",
       exceptionTag: "liquidity_check",
+      exceptionType: "LiquiDat_BelowThreshold",
       status: "warning",
       jsonData: {
         liquidity_ratio: 1.35,
         min_required: 1.25,
         meets_threshold: true
+      }
+    },
+    {
+      id: "log-004",
+      tag: "contractor",
+      timestamp: "31/10/2025, 16:12:33",
+      description: "Contractor Validation Process",
+      exceptionTag: "contractor_validation",
+      exceptionType: "Contractor_NotVerified",
+      status: "warning",
+      jsonData: {
+        gc_name: "BuildPro Construction LLC",
+        validation_source: "BuildCheckPro",
+        verified: false,
+        reason: "Pending verification"
       }
     }
   ];
@@ -843,10 +861,15 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                           <p className="text-xs text-muted-foreground mt-0.5">{log.timestamp}</p>
                           <p className="text-sm mt-1">{log.description}</p>
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
+                        <div className="flex items-center gap-2 ml-4 flex-wrap justify-end">
                           <Badge variant="outline" className="text-xs">
                             {log.exceptionTag}
                           </Badge>
+                          {log.exceptionType && (
+                            <Badge variant="secondary" className="text-xs">
+                              {log.exceptionType}
+                            </Badge>
+                          )}
                           <Badge 
                             variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'}
                             className="text-xs"
