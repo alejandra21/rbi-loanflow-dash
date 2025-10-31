@@ -455,11 +455,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
       <Card>
         <CardHeader 
           className="cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={(e) => {
-            if (!(e.target as HTMLElement).closest('button')) {
-              toggleCard('external');
-            }
-          }}
+          onClick={() => toggleCard('external')}
         >
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -473,29 +469,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                 </Badge>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              {externalDataValidation.isValidated ? (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mr-2">
-                  <span>By {externalDataValidation.validatedBy}</span>
-                  <span>•</span>
-                  <span>{externalDataValidation.validatedAt}</span>
-                </div>
-              ) : (
-                <Button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleValidateExternalData();
-                  }}
-                  size="sm"
-                  variant="default"
-                  className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  Validate Data
-                </Button>
-              )}
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
-            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.external && (
@@ -544,6 +518,37 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       Note: No automatic comparison — data shown for manual Ops review only.
                     </p>
                   </div>
+                </div>
+
+                {/* Manual Validation */}
+                <div className="p-4 border-2 rounded-lg bg-muted/20 space-y-3">
+                  <p className="text-sm font-medium">Manual Validation</p>
+                  {externalDataValidation.isValidated ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-success" />
+                        <span className="text-sm text-success font-medium">Data Validated</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <p>Validated by: <span className="font-medium">{externalDataValidation.validatedBy}</span></p>
+                        <p>Validated at: <span className="font-medium">{externalDataValidation.validatedAt}</span></p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">
+                        This data requires manual validation by operations team.
+                      </p>
+                      <Button 
+                        onClick={handleValidateExternalData}
+                        size="sm"
+                        className="gap-2"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        Mark as Validated
+                      </Button>
+                    </div>
+                  )}
                 </div>
           </CardContent>
         )}
