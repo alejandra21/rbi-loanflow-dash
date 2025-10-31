@@ -316,69 +316,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </p>
                   </div>
                 </div>
-
-                <Separator />
-
-                {/* Tier Matrix Reference Table */}
-                <div className="space-y-3">
-                  <p className="text-sm font-medium">Tier Matrix Reference Table (read-only)</p>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="font-semibold">Tier</TableHead>
-                          <TableHead className="font-semibold">Experience Criteria</TableHead>
-                          <TableHead className="font-semibold">Volume / Track Record</TableHead>
-                          <TableHead className="font-semibold">Credit / Liquidity</TableHead>
-                          <TableHead className="font-semibold">Performance Behavior</TableHead>
-                          <TableHead className="font-semibold">Exposure Cap Logic</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell>
-                            <Badge className={getTierColor('Platinum')}>Platinum</Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">≥10 exits or ≥$5MM volume</TableCell>
-                          <TableCell className="text-sm">≥$5MM verified</TableCell>
-                          <TableCell className="text-sm">Min 700 FICO, ≥1.50x LiquiDat</TableCell>
-                          <TableCell className="text-sm">No defaults, ≤1 extension</TableCell>
-                          <TableCell className="text-sm">Up to $10MM; 90% LTC / 75% ARV</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <Badge className={getTierColor('Gold')}>Gold</Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">5–9 exits or $2MM–$4.9MM</TableCell>
-                          <TableCell className="text-sm">≥$2MM verified</TableCell>
-                          <TableCell className="text-sm">Min 680 FICO, ≥1.25x LiquiDat</TableCell>
-                          <TableCell className="text-sm">≤1 extension, no defaults</TableCell>
-                          <TableCell className="text-sm">Up to $5MM; 85% LTC / 70% ARV</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <Badge className={getTierColor('Silver')}>Silver</Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">2–4 exits or $500K–$1.9MM</TableCell>
-                          <TableCell className="text-sm">≥$500K verified</TableCell>
-                          <TableCell className="text-sm">Min 660 FICO, ≥1.10x LiquiDat</TableCell>
-                          <TableCell className="text-sm">≤1 extension, no defaults</TableCell>
-                          <TableCell className="text-sm">Up to $2MM; 80% LTC / 65% ARV</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <Badge className={getTierColor('Bronze')}>Bronze</Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">0–1 exit</TableCell>
-                          <TableCell className="text-sm">Limited data</TableCell>
-                          <TableCell className="text-sm">Min 640 FICO, ≥1.00x LiquiDat</TableCell>
-                          <TableCell className="text-sm">No defaults</TableCell>
-                          <TableCell className="text-sm">Up to $1MM; 75% LTC / 60% ARV</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
           </CardContent>
         )}
       </Card>
@@ -535,6 +472,69 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       <p className="text-xs text-muted-foreground">% ARV (After-Repair-Value Cap)</p>
                       <p className="text-xl font-bold">{exposureCapLogic.arvCap}%</p>
                     </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Tier Matrix Reference Table */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Tier Matrix Reference Table (read-only)</p>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-semibold">Tier</TableHead>
+                          <TableHead className="font-semibold">Experience Criteria</TableHead>
+                          <TableHead className="font-semibold">Volume / Track Record</TableHead>
+                          <TableHead className="font-semibold">Credit / Liquidity</TableHead>
+                          <TableHead className="font-semibold">Performance Behavior</TableHead>
+                          <TableHead className="font-semibold">Exposure Cap Logic</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            <Badge className={getTierColor('Platinum')}>Platinum</Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">≥10 exits or ≥$5MM volume</TableCell>
+                          <TableCell className="text-sm">≥$5MM verified</TableCell>
+                          <TableCell className="text-sm">Min 700 FICO, ≥1.50x LiquiDat</TableCell>
+                          <TableCell className="text-sm">No defaults, ≤1 extension</TableCell>
+                          <TableCell className="text-sm">Up to $10MM; 90% LTC / 75% ARV</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Badge className={getTierColor('Gold')}>Gold</Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">5–9 exits or $2MM–$4.9MM</TableCell>
+                          <TableCell className="text-sm">≥$2MM verified</TableCell>
+                          <TableCell className="text-sm">Min 680 FICO, ≥1.25x LiquiDat</TableCell>
+                          <TableCell className="text-sm">≤1 extension, no defaults</TableCell>
+                          <TableCell className="text-sm">Up to $5MM; 85% LTC / 70% ARV</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Badge className={getTierColor('Silver')}>Silver</Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">2–4 exits or $500K–$1.9MM</TableCell>
+                          <TableCell className="text-sm">≥$500K verified</TableCell>
+                          <TableCell className="text-sm">Min 660 FICO, ≥1.10x LiquiDat</TableCell>
+                          <TableCell className="text-sm">≤1 extension, no defaults</TableCell>
+                          <TableCell className="text-sm">Up to $2MM; 80% LTC / 65% ARV</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Badge className={getTierColor('Bronze')}>Bronze</Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">0–1 exit</TableCell>
+                          <TableCell className="text-sm">Limited data</TableCell>
+                          <TableCell className="text-sm">Min 640 FICO, ≥1.00x LiquiDat</TableCell>
+                          <TableCell className="text-sm">No defaults</TableCell>
+                          <TableCell className="text-sm">Up to $1MM; 75% LTC / 60% ARV</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
                   </div>
                 </div>
           </CardContent>
