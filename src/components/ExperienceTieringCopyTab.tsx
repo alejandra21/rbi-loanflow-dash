@@ -363,6 +363,40 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                   </div>
                 </div>
 
+                {/* Tier Summary - Highlighted */}
+                <div className="p-4 border-2 border-primary/20 rounded-lg bg-primary/5 space-y-3">
+                  <p className="text-base font-semibold flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Tier Summary
+                  </p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="p-3 bg-background rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Tier</p>
+                      <Badge className={getTierColor(tierSummary.tier)}>{tierSummary.tier}</Badge>
+                    </div>
+                    <div className="p-3 bg-background rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Confidence Score</p>
+                      <p className="text-xl font-bold">{tierSummary.confidenceScore}</p>
+                    </div>
+                    <div className="p-3 bg-background rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Risk Grade</p>
+                      <p className="text-xl font-bold">{tierSummary.riskGrade}</p>
+                    </div>
+                    <div className="p-3 bg-background rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Exposure Limit</p>
+                      <p className="text-lg font-semibold">{formatCurrency(tierSummary.exposureLimit)}</p>
+                    </div>
+                    <div className="p-3 bg-background rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Max LTC</p>
+                      <p className="text-lg font-semibold">{tierSummary.maxLTC}%</p>
+                    </div>
+                    <div className="p-3 bg-background rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Max ARV</p>
+                      <p className="text-lg font-semibold">{tierSummary.maxARV}%</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Borrower Input Summary */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Borrower Input Summary</p>
@@ -402,21 +436,13 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       <p className="text-xs text-muted-foreground">Total Volume</p>
                       <p className="text-xl font-bold">{formatCurrency(experienceCriteria.totalVolume)}</p>
                     </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Verified Volume Source</p>
-                      <p className="font-medium">{experienceCriteria.verifiedVolumeSource}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Track Record Verified</p>
-                      <span className="text-lg">{experienceCriteria.trackRecordVerified ? '✅' : '🚫'}</span>
-                    </div>
                   </div>
                 </div>
 
                 {/* Credit & Liquidity */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Credit & Liquidity</p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <div className="p-3 bg-muted/30 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">FICO (Guarantor)</p>
                       <p className="text-xl font-bold">{creditLiquidity.fico}</p>
@@ -429,20 +455,13 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                       <p className="text-xs text-muted-foreground">Liquidity Ratio Minimum Required</p>
                       <p className="font-medium">{creditLiquidity.liquidityRatioMinRequired}x</p>
                     </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Liquidity Verified</p>
-                      <span className="text-lg">
-                        {creditLiquidity.liquidityVerified === 'verified' ? '✅' : 
-                         creditLiquidity.liquidityVerified === 'warning' ? '⚠️' : '🚫'}
-                      </span>
-                    </div>
                   </div>
                 </div>
 
                 {/* Performance Behavior */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Performance Behavior</p>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-muted/30 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">Defaults (lifetime)</p>
                       <p className="text-xl font-bold">{performanceBehavior.defaults}</p>
@@ -450,15 +469,6 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     <div className="p-3 bg-muted/30 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">Extensions (last 12 months)</p>
                       <p className="text-xl font-bold">{performanceBehavior.extensions}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Performance Status</p>
-                      <div className="flex items-center gap-1">
-                        <span className="text-lg">{performanceBehavior.performanceStatus === 'meets' ? '✅' : '⚠️'}</span>
-                        <span className="text-sm font-medium">
-                          {performanceBehavior.performanceStatus === 'meets' ? 'Meets Criteria' : 'Review'}
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>
