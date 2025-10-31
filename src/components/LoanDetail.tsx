@@ -876,10 +876,10 @@ export const LoanDetail = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
             <span className="font-medium">Experience Tiering Check</span>
             {data.assigned_tier && (
-              <Badge className={`${getTierColor(data.assigned_tier)} px-3 py-1`}>
+              <Badge className={`${getTierColor(data.assigned_tier)} px-3 py-1 text-sm font-semibold`}>
                 {data.assigned_tier}
               </Badge>
             )}
