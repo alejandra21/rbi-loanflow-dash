@@ -328,35 +328,6 @@ export const ExperienceTieringCopyTab = ({
         </Button>
       </div>
 
-      {/* Tiering Evaluation Overview */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('overview')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Tiering Evaluation Overview
-              {getStatusBadge(getTieringEvaluationStatus())}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.overview ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.overview && <CardContent>
-            <div className="p-4 border-2 border-primary/20 rounded-lg bg-primary/5">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-background rounded space-y-1">
-                  <p className="text-xs text-muted-foreground">Exception Flag</p>
-                  <Badge variant={tieringOverview.exceptionFlag ? 'warning' : 'success'}>
-                    {tieringOverview.exceptionFlag ? 'Yes' : 'No'}
-                  </Badge>
-                </div>
-                {tieringOverview.exceptionFlag && <div className="p-3 bg-background rounded space-y-1 col-span-2">
-                    <p className="text-xs text-muted-foreground">Exception Reason</p>
-                    <p className="text-sm font-medium">{tieringOverview.exceptionReason}</p>
-                  </div>}
-              </div>
-            </div>
-          </CardContent>}
-      </Card>
 
       {/* Section 2: Tiering & Product Type Rules */}
       <Card>
