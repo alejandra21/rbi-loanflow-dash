@@ -329,71 +329,7 @@ export const ExperienceTieringCopyTab = ({
       </div>
 
 
-      {/* Section 2: Tiering & Product Type Rules */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('enforcement')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Tiering & Product Type Rules
-              {getStatusBadge(getTieringRulesStatus())}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.enforcement && <CardContent>
-                <div className="mb-3 p-2 bg-muted/30 rounded text-sm">
-                  <span className="text-muted-foreground">Filtered by Product Type: </span>
-                  <span className="font-medium">{borrowerInput.loanType}</span>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product Type</TableHead>
-                      <TableHead>Allowed Tiers</TableHead>
-                      <TableHead>Enforcement Logic</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {productEnforcement.filter(item => item.product.includes(borrowerInput.loanType)).map((item, idx) => <TableRow key={idx}>
-                          <TableCell className="font-medium">{item.product}</TableCell>
-                          <TableCell><Badge variant="outline">{item.allowedTiers}</Badge></TableCell>
-                          <TableCell className="text-sm text-muted-foreground">{item.logic}</TableCell>
-                          <TableCell>{getStatusBadge(item.status)}</TableCell>
-                        </TableRow>)}
-                  </TableBody>
-                </Table>
-          </CardContent>}
-      </Card>
-
-      {/* Section 3: Contractor Validation */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('contractor')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Building className="h-4 w-4" />
-              Contractor Validation
-              {getStatusBadge(getContractorValidationStatus())}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.contractor ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.contractor && <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">GC Name</p>
-                <p className="font-medium">{contractorData.gcName}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded space-y-1">
-                <p className="text-xs text-muted-foreground">Validation Status</p>
-                {getStatusBadge(contractorData.validationStatus)}
-              </div>
-            </div>
-          </CardContent>}
-      </Card>
-
-      {/* Section 5: External Data */}
+      {/* Section 1: External Data */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('external')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -698,7 +634,71 @@ export const ExperienceTieringCopyTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 6: Confidence Formula */}
+      {/* Section 3: Tiering & Product Type Rules */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('enforcement')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Tiering & Product Type Rules
+              {getStatusBadge(getTieringRulesStatus())}
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.enforcement && <CardContent>
+                <div className="mb-3 p-2 bg-muted/30 rounded text-sm">
+                  <span className="text-muted-foreground">Filtered by Product Type: </span>
+                  <span className="font-medium">{borrowerInput.loanType}</span>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product Type</TableHead>
+                      <TableHead>Allowed Tiers</TableHead>
+                      <TableHead>Enforcement Logic</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {productEnforcement.filter(item => item.product.includes(borrowerInput.loanType)).map((item, idx) => <TableRow key={idx}>
+                          <TableCell className="font-medium">{item.product}</TableCell>
+                          <TableCell><Badge variant="outline">{item.allowedTiers}</Badge></TableCell>
+                          <TableCell className="text-sm text-muted-foreground">{item.logic}</TableCell>
+                          <TableCell>{getStatusBadge(item.status)}</TableCell>
+                        </TableRow>)}
+                  </TableBody>
+                </Table>
+          </CardContent>}
+      </Card>
+
+      {/* Section 4: Contractor Validation */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('contractor')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4" />
+              Contractor Validation
+              {getStatusBadge(getContractorValidationStatus())}
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.contractor ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.contractor && <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">GC Name</p>
+                <p className="font-medium">{contractorData.gcName}</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded space-y-1">
+                <p className="text-xs text-muted-foreground">Validation Status</p>
+                {getStatusBadge(contractorData.validationStatus)}
+              </div>
+            </div>
+          </CardContent>}
+      </Card>
+
+      {/* Section 5: Confidence Formula */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('confidence')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -756,7 +756,7 @@ export const ExperienceTieringCopyTab = ({
           </CardContent>}
       </Card>
 
-      {/* Phase Log */}
+      {/* Section 6: Phase Log */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('phaseLog')}>
           <CardTitle className="text-base flex items-center justify-between">
