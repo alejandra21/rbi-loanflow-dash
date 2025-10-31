@@ -866,7 +866,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                             {log.exceptionTag}
                           </Badge>
                           {log.exceptionType && (
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
                               {log.exceptionType}
                             </Badge>
                           )}
