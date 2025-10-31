@@ -994,16 +994,40 @@ export const LoanDetail = () => {
                     </div>
 
                     <div className="pt-2 border-t">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-muted-foreground">Exception Flag</p>
-                        <Badge variant={data.exception_flag ? 'warning' : 'success'}>
-                          {data.exception_flag ? 'Yes' : 'No'}
-                        </Badge>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Tiering & Product Type Rules</p>
+                          <div className="flex items-center space-x-2">
+                            <p className="font-medium text-sm">
+                              {data.exception_flag ? 'Exception' : 'Compliant'}
+                            </p>
+                            {data.exception_flag ? (
+                              <AlertTriangle className="h-4 w-4 text-orange-600" />
+                            ) : (
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Contractor Validation</p>
+                          <div className="flex items-center space-x-2">
+                            <p className="font-medium text-sm">
+                              {data.exception_flag ? 'Required' : 'Not Required'}
+                            </p>
+                            {data.exception_flag ? (
+                              <AlertTriangle className="h-4 w-4 text-orange-600" />
+                            ) : (
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                            )}
+                          </div>
+                        </div>
                       </div>
                       {data.exception_reason && (
-                        <p className="text-xs text-muted-foreground">
-                          <strong>Reason:</strong> {data.exception_reason}
-                        </p>
+                        <div className="mt-3 p-3 bg-muted/20 rounded">
+                          <p className="text-xs text-muted-foreground mb-1">Exception Reason</p>
+                          <p className="text-sm font-medium">{data.exception_reason}</p>
+                        </div>
                       )}
                     </div>
 
