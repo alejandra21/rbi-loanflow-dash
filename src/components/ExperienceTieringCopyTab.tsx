@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, Clock, TrendingUp, Building, FileText, CheckSquare } from "lucide-react";
 import { useState } from "react";
@@ -332,37 +333,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           </CardTitle>
         </CardHeader>
         {expandedCards.internal && (
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <p className="text-sm font-medium">Tier Summary</p>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Tier</p>
-                      <Badge variant="default" className="text-lg px-3 py-1">{tierSummary.tier}</Badge>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Confidence Score</p>
-                      <p className="text-xl font-bold">{tierSummary.confidenceScore}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Risk Grade</p>
-                      <p className="text-xl font-bold">{tierSummary.riskGrade}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Exposure Limit</p>
-                      <p className="text-lg font-semibold">{formatCurrency(tierSummary.exposureLimit)}</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Max LTC</p>
-                      <p className="text-lg font-semibold">{tierSummary.maxLTC}%</p>
-                    </div>
-                    <div className="p-3 bg-muted/30 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Max ARV</p>
-                      <p className="text-lg font-semibold">{tierSummary.maxARV}%</p>
-                    </div>
-                  </div>
-                </div>
-
+              <CardContent className="space-y-6">
                 {/* Tier Summary - Highlighted */}
                 <div className="p-4 border-2 border-primary/20 rounded-lg bg-primary/5 space-y-3">
                   <p className="text-base font-semibold flex items-center gap-2">
@@ -397,6 +368,8 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                   </div>
                 </div>
 
+                <Separator />
+
                 {/* Borrower Input Summary */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Borrower Input Summary</p>
@@ -424,6 +397,8 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                   </div>
                 </div>
 
+                <Separator />
+
                 {/* Experience Criteria */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Experience Criteria</p>
@@ -438,6 +413,8 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </div>
                   </div>
                 </div>
+
+                <Separator />
 
                 {/* Credit & Liquidity */}
                 <div className="space-y-3">
@@ -458,6 +435,8 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                   </div>
                 </div>
 
+                <Separator />
+
                 {/* Performance Behavior */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">Performance Behavior</p>
@@ -472,6 +451,8 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </div>
                   </div>
                 </div>
+
+                <Separator />
 
                 {/* Exposure Cap Logic */}
                 <div className="space-y-3">
