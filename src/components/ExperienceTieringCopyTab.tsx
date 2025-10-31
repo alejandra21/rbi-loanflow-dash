@@ -25,6 +25,12 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
   });
 
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+  
+  const [externalDataValidation, setExternalDataValidation] = useState({
+    isValidated: false,
+    validatedBy: "",
+    validatedAt: ""
+  });
 
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
@@ -285,6 +291,14 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
   };
 
+  const handleValidateExternalData = () => {
+    setExternalDataValidation({
+      isValidated: true,
+      validatedBy: "Operations Team",
+      validatedAt: new Date().toLocaleString()
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -444,15 +458,53 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           onClick={() => toggleCard('external')}
         >
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center">
-              <Building className="h-4 w-4 mr-2" />
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4" />
               External Data (Forecasa & Track Record)
+              {externalDataValidation.isValidated ? (
+                getStatusBadge('verified')
+              ) : (
+                <Badge variant="warning" className="gap-1">
+                  <AlertTriangle className="h-3 w-3" /> Review
+                </Badge>
+              )}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.external ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.external && (
               <CardContent className="space-y-4">
+                {/* Validation Control */}
+                <div className="p-4 border-2 rounded-lg bg-muted/20 space-y-3">
+                  <p className="text-sm font-medium">Manual Validation</p>
+                  {externalDataValidation.isValidated ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-success" />
+                        <span className="text-sm text-success font-medium">Data Validated</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <p>Validated by: <span className="font-medium">{externalDataValidation.validatedBy}</span></p>
+                        <p>Validated at: <span className="font-medium">{externalDataValidation.validatedAt}</span></p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">
+                        This data requires manual validation by operations team.
+                      </p>
+                      <Button 
+                        onClick={handleValidateExternalData}
+                        size="sm"
+                        className="gap-2"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        Mark as Validated
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <p className="text-sm font-medium">Forecasa Metrics</p>
@@ -722,7 +774,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         )}
       </Card>
 
-      {/* Section 6: AI Confidence */}
+      {/* Section 6: Confidence Formula */}
       <Card>
         <CardHeader 
           className="cursor-pointer hover:bg-muted/50 transition-colors"
@@ -731,7 +783,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <CheckSquare className="h-4 w-4 mr-2" />
-              AI Confidence & Explainability
+              Confidence Formula
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.confidence ? '' : '-rotate-90'}`} />
           </CardTitle>
