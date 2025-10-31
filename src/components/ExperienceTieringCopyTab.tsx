@@ -189,8 +189,9 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
   };
 
   const getTieringRulesStatus = () => {
-    const hasWarnings = productEnforcement.some(item => item.status === 'warn');
-    const hasFails = productEnforcement.some(item => item.status === 'fail');
+    const filteredItems = productEnforcement.filter(item => item.product.includes(borrowerInput.loanType));
+    const hasWarnings = filteredItems.some(item => item.status === 'warn');
+    const hasFails = filteredItems.some(item => item.status === 'fail');
     if (hasFails) return 'fail';
     if (hasWarnings) return 'warn';
     return 'pass';
