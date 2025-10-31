@@ -1324,42 +1324,55 @@ export const LoanDetail = () => {
               onClick={() => toggleCard('manualValidation')}
             >
               <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Manual Validation Record
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <FileText className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-semibold">Manual Validation Record</div>
+                    <div className="text-xs text-muted-foreground font-normal">Review details and approval status</div>
+                  </div>
                 </div>
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.manualValidation ? '' : '-rotate-90'}`} />
               </CardTitle>
             </CardHeader>
             {expandedCards.manualValidation && (
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {data.manual_validation.reason && (
-                    <div className="p-3 bg-muted/30 rounded">
-                      <p className="text-xs text-muted-foreground mb-1">Reason</p>
-                      <p className="text-sm font-medium">{data.manual_validation.reason}</p>
+                    <div className="border-l-4 border-primary pl-4 py-2">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary" className="text-xs">Reason</Badge>
+                      </div>
+                      <p className="text-sm font-medium leading-relaxed">{data.manual_validation.reason}</p>
                     </div>
                   )}
+                  
                   {data.manual_validation.comment && (
-                    <div className="p-3 bg-muted/30 rounded">
-                      <p className="text-xs text-muted-foreground mb-1">Comment</p>
-                      <p className="text-sm">{data.manual_validation.comment}</p>
+                    <div className="p-4 bg-muted/50 rounded-lg border border-border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs">Comment</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{data.manual_validation.comment}</p>
                     </div>
                   )}
-                  {data.manual_validation.validatedBy && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Validated By:</span>
-                      <span className="font-medium">{data.manual_validation.validatedBy}</span>
-                    </div>
-                  )}
-                  {data.manual_validation.validatedAt && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Validated At:</span>
-                      <span className="font-medium">
-                        {new Date(data.manual_validation.validatedAt).toLocaleString()}
-                      </span>
-                    </div>
-                  )}
+                  
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    {data.manual_validation.validatedBy && (
+                      <div className="p-3 rounded-lg bg-background border border-border">
+                        <p className="text-xs text-muted-foreground mb-1">Validated By</p>
+                        <p className="text-sm font-semibold">{data.manual_validation.validatedBy}</p>
+                      </div>
+                    )}
+                    {data.manual_validation.validatedAt && (
+                      <div className="p-3 rounded-lg bg-background border border-border">
+                        <p className="text-xs text-muted-foreground mb-1">Validated At</p>
+                        <p className="text-sm font-semibold">
+                          {new Date(data.manual_validation.validatedAt).toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             )}
