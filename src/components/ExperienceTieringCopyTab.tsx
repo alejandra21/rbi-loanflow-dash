@@ -282,7 +282,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         )}
       </Card>
 
-      {/* Section 2: Tiering Rules */}
+      {/* Section 2: Tiering & Product Type Rules */}
       <Card>
         <CardHeader 
           className="cursor-pointer hover:bg-muted/50 transition-colors"
@@ -291,7 +291,7 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Tiering Rules
+              Tiering & Product Type Rules
               {getStatusBadge(getTieringRulesStatus())}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.enforcement ? '' : '-rotate-90'}`} />
@@ -299,6 +299,10 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
         </CardHeader>
         {expandedCards.enforcement && (
               <CardContent>
+                <div className="mb-3 p-2 bg-muted/30 rounded text-sm">
+                  <span className="text-muted-foreground">Filtered by Product Type: </span>
+                  <span className="font-medium">{borrowerInput.loanType}</span>
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -309,14 +313,16 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {productEnforcement.map((item, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{item.product}</TableCell>
-                        <TableCell><Badge variant="outline">{item.allowedTiers}</Badge></TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{item.logic}</TableCell>
-                        <TableCell>{getStatusBadge(item.status)}</TableCell>
-                      </TableRow>
-                    ))}
+                    {productEnforcement
+                      .filter(item => item.product.includes(borrowerInput.loanType))
+                      .map((item, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{item.product}</TableCell>
+                          <TableCell><Badge variant="outline">{item.allowedTiers}</Badge></TableCell>
+                          <TableCell className="text-sm text-muted-foreground">{item.logic}</TableCell>
+                          <TableCell>{getStatusBadge(item.status)}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
           </CardContent>
