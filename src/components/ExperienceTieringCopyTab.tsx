@@ -68,6 +68,40 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
     maxARV: 75
   };
 
+  const borrowerInput = {
+    entityName: "Summit Capital Holdings LLC",
+    entityType: "Borrower",
+    loanType: "Fix & Flip",
+    guarantors: "John Doe, Jane Smith",
+    inputIdentifier: "SSN: ***-**-1234"
+  };
+
+  const experienceCriteria = {
+    paidOffLoans: 12,
+    totalVolume: 3450000,
+    verifiedVolumeSource: "WhoDat / Forecasa",
+    trackRecordVerified: true
+  };
+
+  const creditLiquidity = {
+    fico: 710,
+    liquidityRatio: 1.35,
+    liquidityRatioMinRequired: 1.25,
+    liquidityVerified: "verified"
+  };
+
+  const performanceBehavior = {
+    defaults: 0,
+    extensions: 2,
+    performanceStatus: "meets"
+  };
+
+  const exposureCapLogic = {
+    exposureLimit: 5000000,
+    ltcCap: 85,
+    arvCap: 70
+  };
+
   const weightedMetrics = [
     { metric: "Verified Exits", source: "Forecasa + WhoDat", value: "8", target: "≥5", weight: "60%", contribution: "+0.52" },
     { metric: "Liquidity Ratio", source: "LiquiDat", value: "1.35x", target: "≥1.25x", weight: "10%", contribution: "+0.09" },
@@ -325,6 +359,125 @@ export const ExperienceTieringCopyTab = ({ phase }: ExperienceTieringCopyTabProp
                     <div className="p-3 bg-muted/30 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">Max ARV</p>
                       <p className="text-lg font-semibold">{tierSummary.maxARV}%</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Borrower Input Summary */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Borrower Input Summary</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Entity Name</p>
+                      <p className="font-medium">{borrowerInput.entityName}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Entity Type</p>
+                      <p className="font-medium">{borrowerInput.entityType}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Loan Type</p>
+                      <p className="font-medium">{borrowerInput.loanType}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Guarantors</p>
+                      <p className="font-medium">{borrowerInput.guarantors}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1 col-span-2">
+                      <p className="text-xs text-muted-foreground">Input Identifier</p>
+                      <p className="font-medium">{borrowerInput.inputIdentifier}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Experience Criteria */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Experience Criteria</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Paid-off Loans</p>
+                      <p className="text-xl font-bold">{experienceCriteria.paidOffLoans}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Total Volume</p>
+                      <p className="text-xl font-bold">{formatCurrency(experienceCriteria.totalVolume)}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Verified Volume Source</p>
+                      <p className="font-medium">{experienceCriteria.verifiedVolumeSource}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Track Record Verified</p>
+                      <span className="text-lg">{experienceCriteria.trackRecordVerified ? '✅' : '🚫'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Credit & Liquidity */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Credit & Liquidity</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">FICO (Guarantor)</p>
+                      <p className="text-xl font-bold">{creditLiquidity.fico}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Liquidity Ratio</p>
+                      <p className="text-xl font-bold">{creditLiquidity.liquidityRatio}x</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Liquidity Ratio Minimum Required</p>
+                      <p className="font-medium">{creditLiquidity.liquidityRatioMinRequired}x</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Liquidity Verified</p>
+                      <span className="text-lg">
+                        {creditLiquidity.liquidityVerified === 'verified' ? '✅' : 
+                         creditLiquidity.liquidityVerified === 'warning' ? '⚠️' : '🚫'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Performance Behavior */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Performance Behavior</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Defaults (lifetime)</p>
+                      <p className="text-xl font-bold">{performanceBehavior.defaults}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Extensions (last 12 months)</p>
+                      <p className="text-xl font-bold">{performanceBehavior.extensions}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Performance Status</p>
+                      <div className="flex items-center gap-1">
+                        <span className="text-lg">{performanceBehavior.performanceStatus === 'meets' ? '✅' : '⚠️'}</span>
+                        <span className="text-sm font-medium">
+                          {performanceBehavior.performanceStatus === 'meets' ? 'Meets Criteria' : 'Review'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Exposure Cap Logic */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Exposure Cap Logic</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">Exposure Limit</p>
+                      <p className="text-lg font-semibold">{formatCurrency(exposureCapLogic.exposureLimit)}</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">% LTC (Loan-to-Cost Cap)</p>
+                      <p className="text-xl font-bold">{exposureCapLogic.ltcCap}%</p>
+                    </div>
+                    <div className="p-3 bg-muted/30 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">% ARV (After-Repair-Value Cap)</p>
+                      <p className="text-xl font-bold">{exposureCapLogic.arvCap}%</p>
                     </div>
                   </div>
                 </div>
