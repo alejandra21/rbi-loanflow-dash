@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, Clock, TrendingUp, Building, FileText, CheckSquare } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +28,8 @@ export const ExperienceTieringCopyTab = ({
   const [externalDataValidation, setExternalDataValidation] = useState({
     isValidated: false,
     validatedBy: "",
-    validatedAt: ""
+    validatedAt: "",
+    notes: ""
   });
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
@@ -310,11 +312,12 @@ export const ExperienceTieringCopyTab = ({
     }));
   };
   const handleValidateExternalData = () => {
-    setExternalDataValidation({
+    setExternalDataValidation(prev => ({
+      ...prev,
       isValidated: true,
       validatedBy: "Operations Team",
       validatedAt: new Date().toLocaleString()
-    });
+    }));
   };
   return <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -401,11 +404,26 @@ export const ExperienceTieringCopyTab = ({
                       <div className="text-xs text-muted-foreground space-y-1">
                         <p>Validated by: <span className="font-medium">{externalDataValidation.validatedBy}</span></p>
                         <p>Validated at: <span className="font-medium">{externalDataValidation.validatedAt}</span></p>
+                        {externalDataValidation.notes && (
+                          <div className="mt-2 pt-2 border-t">
+                            <p className="font-medium mb-1">Notes:</p>
+                            <p className="whitespace-pre-wrap">{externalDataValidation.notes}</p>
+                          </div>
+                        )}
                       </div>
                     </div> : <div className="space-y-2">
                       <p className="text-xs text-muted-foreground">
                         This data requires manual validation by operations team.
                       </p>
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium">Validation Notes</label>
+                        <Textarea
+                          placeholder="Add any notes about this validation..."
+                          value={externalDataValidation.notes}
+                          onChange={(e) => setExternalDataValidation(prev => ({ ...prev, notes: e.target.value }))}
+                          className="min-h-[80px]"
+                        />
+                      </div>
                       <Button onClick={handleValidateExternalData} size="sm" className="gap-2">
                         <CheckCircle className="h-4 w-4" />
                         Mark as Validated
