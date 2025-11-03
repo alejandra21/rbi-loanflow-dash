@@ -1585,7 +1585,7 @@ export const LoanDetail = () => {
                 )}
               </TabsTrigger>
               <TabsTrigger value="experienceTieringCopy" className="relative text-sm px-4 py-2 flex-shrink-0">
-                Experience Tiering Copy
+                Experience Tiering
                 {loan.phases.experienceTiering.status === 'failed' && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
