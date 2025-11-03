@@ -319,7 +319,7 @@ export const ExperienceTieringCopyTab = ({
   return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <span className="font-medium">Experience Tiering Check (Redesigned)</span>
+          <span className="font-medium">Experience Tiering Check</span>
           <StatusBadge status={phase.status} />
         </div>
         <Button variant="outline" size="sm" className="flex items-center gap-2">
