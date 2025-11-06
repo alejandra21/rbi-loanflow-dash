@@ -373,6 +373,32 @@ export const ExperienceTieringCopyTab = ({
 
                 <div className="space-y-4">
                   <p className="text-sm font-medium">Forecasa Metrics by Entity</p>
+                  
+                  {/* Totals Card */}
+                  <div className="border-2 border-primary/30 rounded-lg overflow-hidden bg-primary/5">
+                    <div className="bg-primary/10 px-4 py-2 border-b border-primary/30">
+                      <p className="text-sm font-bold">Total Across All Entities</p>
+                    </div>
+                    <div className="p-4 grid grid-cols-4 gap-3">
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Total Verified Exits</p>
+                        <p className="text-2xl font-bold">{forecasaMetrics.reduce((sum, e) => sum + e.verifiedExits, 0)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Combined Volume</p>
+                        <p className="text-lg font-bold">{formatCurrency(forecasaMetrics.reduce((sum, e) => sum + e.totalVolume, 0))}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Avg Sale Price</p>
+                        <p className="text-lg font-semibold">{formatCurrency(forecasaMetrics.reduce((sum, e) => sum + e.avgSalePrice, 0) / forecasaMetrics.length)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Total Properties</p>
+                        <p className="text-sm font-medium">{forecasaMetrics.reduce((sum, e) => sum + e.managementExperience.properties, 0)} props</p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="space-y-3">
                     {forecasaMetrics.map((entity, index) => (
                       <div key={index} className="border rounded-lg overflow-hidden">
