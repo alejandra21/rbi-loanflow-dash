@@ -55,15 +55,38 @@ export const ExperienceTieringCopyTab = ({
     exceptionFlag: false,
     exceptionReason: "Tier Override"
   };
-  const forecasaMetrics = {
-    verifiedExits: 8,
-    totalVolume: 2450000,
-    avgSalePrice: 306250,
-    managementExperience: {
-      properties: 12,
-      duration: "3.5 years"
+  const forecasaMetrics = [
+    {
+      entityName: "Summit Capital Holdings LLC",
+      verifiedExits: 8,
+      totalVolume: 2450000,
+      avgSalePrice: 306250,
+      managementExperience: {
+        properties: 12,
+        duration: "3.5 years"
+      }
+    },
+    {
+      entityName: "John Doe (Individual)",
+      verifiedExits: 5,
+      totalVolume: 1200000,
+      avgSalePrice: 240000,
+      managementExperience: {
+        properties: 7,
+        duration: "2.1 years"
+      }
+    },
+    {
+      entityName: "Jane Smith (Individual)",
+      verifiedExits: 3,
+      totalVolume: 850000,
+      avgSalePrice: 283333,
+      managementExperience: {
+        properties: 4,
+        duration: "1.8 years"
+      }
     }
-  };
+  ];
   const trackRecordDoc = {
     fileName: "borrower_experience_2025Q1.pdf",
     uploadDate: "2025-10-28",
@@ -348,30 +371,41 @@ export const ExperienceTieringCopyTab = ({
         </CardHeader>
         {expandedCards.external && <CardContent className="space-y-4">
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <p className="text-sm font-medium">Forecasa Metrics by Entity</p>
                   <div className="space-y-3">
-                    <p className="text-sm font-medium">Forecasa Metrics</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-muted/30 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Verified Exits (36mo)</p>
-                        <p className="text-2xl font-bold">{forecasaMetrics.verifiedExits}</p>
+                    {forecasaMetrics.map((entity, index) => (
+                      <div key={index} className="border rounded-lg overflow-hidden">
+                        <div className="bg-muted/50 px-4 py-2 border-b">
+                          <p className="text-sm font-semibold">{entity.entityName}</p>
+                        </div>
+                        <div className="p-4 grid grid-cols-4 gap-3">
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Verified Exits (36mo)</p>
+                            <p className="text-2xl font-bold">{entity.verifiedExits}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Total Volume</p>
+                            <p className="text-lg font-bold">{formatCurrency(entity.totalVolume)}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Avg Sale Price</p>
+                            <p className="text-lg font-semibold">{formatCurrency(entity.avgSalePrice)}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Management Exp.</p>
+                            <p className="text-sm font-medium">{entity.managementExperience.properties} props</p>
+                            <p className="text-xs text-muted-foreground">{entity.managementExperience.duration}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="p-3 bg-muted/30 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Total Volume</p>
-                        <p className="text-2xl font-bold">{formatCurrency(forecasaMetrics.totalVolume)}</p>
-                      </div>
-                      <div className="p-3 bg-muted/30 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Avg Sale Price</p>
-                        <p className="text-lg font-semibold">{formatCurrency(forecasaMetrics.avgSalePrice)}</p>
-                      </div>
-                      <div className="p-3 bg-muted/30 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Management Experience</p>
-                        <p className="text-sm font-medium">{forecasaMetrics.managementExperience.properties} properties • {forecasaMetrics.managementExperience.duration}</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
+                </div>
 
-                  <div className="space-y-3">
+                <Separator />
+
+                <div className="space-y-3">
                     <p className="text-sm font-medium">Track Record Document</p>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -391,7 +425,7 @@ export const ExperienceTieringCopyTab = ({
                       Note: No automatic comparison — data shown for manual Ops review only.
                     </p>
                   </div>
-                </div>
+
 
                 {/* Manual Validation */}
                 <div className="p-4 border-2 rounded-lg bg-muted/20 space-y-3">
