@@ -437,21 +437,7 @@ export const ExperienceTieringCopyTab = ({
                           onClick={() => setExpandedEntities(prev => ({ ...prev, [index]: !prev[index] }))}
                         >
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <p className="text-sm font-semibold">{entity.entityName}</p>
-                              <Badge 
-                                variant={entity.experienceStatus === "ok" ? "success" : "destructive"}
-                                className="text-xs"
-                              >
-                                Experience: {entity.experienceStatus === "ok" ? "OK" : "Error"}
-                              </Badge>
-                              <Badge 
-                                variant={entity.guarantorsStatus === "ok" ? "success" : "warning"}
-                                className="text-xs"
-                              >
-                                Guarantors: {entity.guarantorsStatus === "ok" ? "OK" : "Error"}
-                              </Badge>
-                            </div>
+                            <p className="text-sm font-semibold">{entity.entityName}</p>
                             <ChevronDown 
                               className={`h-4 w-4 transition-transform ${expandedEntities[index] ? '' : '-rotate-90'}`} 
                             />
@@ -516,16 +502,10 @@ export const ExperienceTieringCopyTab = ({
                             {entity.report && (
                               <div className="border-t pt-3">
                                 <p className="text-xs font-medium mb-2">OpenCorporates Report</p>
-                                <div className="flex items-center justify-between bg-muted/30 rounded px-3 py-2">
-                                  <div className="flex items-center gap-2">
-                                    <FileText className="h-4 w-4 text-muted-foreground" />
-                                    <span className="text-xs font-mono">{entity.report.split('/').pop()}</span>
-                                  </div>
-                                  <Button variant="outline" size="sm" className="text-xs gap-1">
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                </div>
+                                <Button variant="outline" size="sm" className="w-full gap-2">
+                                  <Download className="h-4 w-4" />
+                                  Download Report
+                                </Button>
                               </div>
                             )}
                           </div>
