@@ -25,6 +25,7 @@ export const ExperienceTieringCopyTab = ({
     phaseLog: false
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+  const [expandedEntities, setExpandedEntities] = useState<Record<number, boolean>>({});
   const [externalDataValidation, setExternalDataValidation] = useState({
     isValidated: false,
     validatedBy: "",
@@ -77,7 +78,9 @@ export const ExperienceTieringCopyTab = ({
           position: null
         }
       ],
-      report: "Entity shows strong track record with verified exits across multiple markets. Leadership structure is well-established with clear ownership documentation."
+      report: "s3://bucket-name/reports/LOAN123456/open_corporates_report/OpenCorporates - Summit Capital Holdings LLC.pdf",
+      experienceStatus: "ok",
+      guarantorsStatus: "ok"
     },
     {
       entityName: "John Doe (Individual)",
@@ -95,7 +98,9 @@ export const ExperienceTieringCopyTab = ({
           position: "owner"
         }
       ],
-      report: "Individual borrower with consistent performance history. All transactions completed within expected timelines."
+      report: "s3://bucket-name/reports/LOAN123456/open_corporates_report/OpenCorporates - John Doe.pdf",
+      experienceStatus: "ok",
+      guarantorsStatus: "error"
     },
     {
       entityName: "Jane Smith (Individual)",
@@ -107,7 +112,9 @@ export const ExperienceTieringCopyTab = ({
         duration: "1.8 years"
       },
       people: [],
-      report: null
+      report: null,
+      experienceStatus: "error",
+      guarantorsStatus: "ok"
     }
   ];
   const trackRecordDoc = {
@@ -425,70 +432,104 @@ export const ExperienceTieringCopyTab = ({
                   <div className="space-y-3">
                     {forecasaMetrics.map((entity, index) => (
                       <div key={index} className="border rounded-lg overflow-hidden">
-                        <div className="bg-muted/50 px-4 py-2 border-b">
-                          <p className="text-sm font-semibold">{entity.entityName}</p>
-                        </div>
-                        <div className="p-4 space-y-4">
-                          <div className="grid grid-cols-4 gap-3">
-                            <div className="space-y-1">
-                              <p className="text-xs text-muted-foreground">Verified Exits (36mo)</p>
-                              <p className="text-2xl font-bold">{entity.verifiedExits}</p>
+                        <div 
+                          className="bg-muted/50 px-4 py-2 border-b cursor-pointer hover:bg-muted/70 transition-colors"
+                          onClick={() => setExpandedEntities(prev => ({ ...prev, [index]: !prev[index] }))}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold">{entity.entityName}</p>
+                              <Badge 
+                                variant={entity.experienceStatus === "ok" ? "success" : "destructive"}
+                                className="text-xs"
+                              >
+                                Experience: {entity.experienceStatus === "ok" ? "OK" : "Error"}
+                              </Badge>
+                              <Badge 
+                                variant={entity.guarantorsStatus === "ok" ? "success" : "warning"}
+                                className="text-xs"
+                              >
+                                Guarantors: {entity.guarantorsStatus === "ok" ? "OK" : "Error"}
+                              </Badge>
                             </div>
-                            <div className="space-y-1">
-                              <p className="text-xs text-muted-foreground">Total Volume</p>
-                              <p className="text-lg font-bold">{formatCurrency(entity.totalVolume)}</p>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-xs text-muted-foreground">Avg Sale Price</p>
-                              <p className="text-lg font-semibold">{formatCurrency(entity.avgSalePrice)}</p>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-xs text-muted-foreground">Management Exp.</p>
-                              <p className="text-sm font-medium">{entity.managementExperience.properties} props</p>
-                              <p className="text-xs text-muted-foreground">{entity.managementExperience.duration}</p>
-                            </div>
+                            <ChevronDown 
+                              className={`h-4 w-4 transition-transform ${expandedEntities[index] ? '' : '-rotate-90'}`} 
+                            />
                           </div>
+                        </div>
+                        
+                        {expandedEntities[index] && (
+                          <div className="p-4 space-y-4">
+                            <div className="grid grid-cols-4 gap-3">
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">Verified Exits (36mo)</p>
+                                <p className="text-2xl font-bold">{entity.verifiedExits}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">Total Volume</p>
+                                <p className="text-lg font-bold">{formatCurrency(entity.totalVolume)}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">Avg Sale Price</p>
+                                <p className="text-lg font-semibold">{formatCurrency(entity.avgSalePrice)}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">Management Exp.</p>
+                                <p className="text-sm font-medium">{entity.managementExperience.properties} props</p>
+                                <p className="text-xs text-muted-foreground">{entity.managementExperience.duration}</p>
+                              </div>
+                            </div>
 
-                          {/* People Information */}
-                          <div className="border-t pt-3">
-                            <p className="text-xs font-medium mb-2">Associated People</p>
-                            {entity.people && entity.people.length > 0 ? (
-                              <div className="space-y-2">
-                                {entity.people.map((person, personIndex) => (
-                                  <div key={personIndex} className="flex items-center justify-between text-xs bg-muted/30 rounded px-3 py-2">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium">{person.name}</span>
-                                      {person.position && (
-                                        <span className="text-muted-foreground">({person.position})</span>
+                            {/* People Information */}
+                            <div className="border-t pt-3">
+                              <p className="text-xs font-medium mb-2">Associated People</p>
+                              {entity.people && entity.people.length > 0 ? (
+                                <div className="space-y-2">
+                                  {entity.people.map((person, personIndex) => (
+                                    <div key={personIndex} className="flex items-center justify-between text-xs bg-muted/30 rounded px-3 py-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium">{person.name}</span>
+                                        {person.position && (
+                                          <span className="text-muted-foreground">({person.position})</span>
+                                        )}
+                                      </div>
+                                      {person.matched ? (
+                                        <Badge variant="success" className="text-xs gap-1">
+                                          <CheckCircle className="h-3 w-3" />
+                                          Matched
+                                        </Badge>
+                                      ) : (
+                                        <Badge variant="destructive" className="text-xs gap-1">
+                                          <XCircle className="h-3 w-3" />
+                                          Not Matched
+                                        </Badge>
                                       )}
                                     </div>
-                                    {person.matched ? (
-                                      <Badge variant="success" className="text-xs gap-1">
-                                        <CheckCircle className="h-3 w-3" />
-                                        Matched
-                                      </Badge>
-                                    ) : (
-                                      <Badge variant="destructive" className="text-xs gap-1">
-                                        <XCircle className="h-3 w-3" />
-                                        Not Matched
-                                      </Badge>
-                                    )}
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-xs text-muted-foreground italic">No people data available</p>
+                              )}
+                            </div>
+
+                            {/* Report Document */}
+                            {entity.report && (
+                              <div className="border-t pt-3">
+                                <p className="text-xs font-medium mb-2">OpenCorporates Report</p>
+                                <div className="flex items-center justify-between bg-muted/30 rounded px-3 py-2">
+                                  <div className="flex items-center gap-2">
+                                    <FileText className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-xs font-mono">{entity.report.split('/').pop()}</span>
                                   </div>
-                                ))}
+                                  <Button variant="outline" size="sm" className="text-xs gap-1">
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                </div>
                               </div>
-                            ) : (
-                              <p className="text-xs text-muted-foreground italic">No people data available</p>
                             )}
                           </div>
-
-                          {/* Report */}
-                          {entity.report && (
-                            <div className="border-t pt-3">
-                              <p className="text-xs font-medium mb-2">Report</p>
-                              <p className="text-xs text-muted-foreground">{entity.report}</p>
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     ))}
                   </div>
