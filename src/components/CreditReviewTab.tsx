@@ -53,14 +53,20 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       fico: 720,
       pullDate: "2025-11-01",
       bureau: "Experian",
-      status: "pass"
+      status: "pass",
+      tier: "Platinum", // From Experience Tiering phase
+      isForeignNational: false,
+      ssn: "***-**-1234" // Last 4 digits
     },
     coBorrower: {
       name: "Jane Smith",
       fico: 695,
       pullDate: "2025-11-01",
       bureau: "Experian",
-      status: "pass"
+      status: "pass",
+      tier: "Gold", // From Experience Tiering phase
+      isForeignNational: true,
+      ssn: null // No SSN for foreign national
     }
   };
 
@@ -273,9 +279,23 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <span className="text-sm font-medium">{creditPullData.borrower.name}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Tier</span>
+                    <Badge variant="outline">{creditPullData.borrower.tier}</Badge>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">FICO Score</span>
                     <span className="text-lg font-bold text-primary">{creditPullData.borrower.fico}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Foreign National</span>
+                    <span className="text-sm">{creditPullData.borrower.isForeignNational ? "Yes" : "No"}</span>
+                  </div>
+                  {creditPullData.borrower.ssn && (
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">SSN</span>
+                      <span className="text-sm font-mono">{creditPullData.borrower.ssn}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Bureau</span>
                     <span className="text-sm">{creditPullData.borrower.bureau}</span>
@@ -296,9 +316,23 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <span className="text-sm font-medium">{creditPullData.coBorrower.name}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Tier</span>
+                    <Badge variant="outline">{creditPullData.coBorrower.tier}</Badge>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">FICO Score</span>
                     <span className="text-lg font-bold text-primary">{creditPullData.coBorrower.fico}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Foreign National</span>
+                    <span className="text-sm">{creditPullData.coBorrower.isForeignNational ? "Yes" : "No"}</span>
+                  </div>
+                  {creditPullData.coBorrower.ssn && (
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">SSN</span>
+                      <span className="text-sm font-mono">{creditPullData.coBorrower.ssn}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Bureau</span>
                     <span className="text-sm">{creditPullData.coBorrower.bureau}</span>
