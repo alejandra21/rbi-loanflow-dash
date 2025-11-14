@@ -14,7 +14,6 @@ interface CreditReviewTabProps {
 export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     creditPull: false,
-    utilization: false,
     latePayment: false,
     creditUtilization: false,
     tlo: false,
@@ -64,13 +63,6 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       status: "pass"
     }
   };
-
-  // Mock data for Credit Utilization
-  const utilizationData = [
-    { account: "Chase Sapphire", limit: 15000, balance: 3200, utilization: 21.3, status: "pass" },
-    { account: "Amex Gold", limit: 25000, balance: 8500, utilization: 34.0, status: "warn" },
-    { account: "Citi Double Cash", limit: 10000, balance: 1200, utilization: 12.0, status: "pass" },
-  ];
 
   // Mock data for Late Payments
   const latePaymentData = {
@@ -405,52 +397,6 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 );
               }
             })()}
-          </CardContent>
-        )}
-      </Card>
-
-      {/* Section 3: Credit Utilization by Account */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('utilization')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Credit Utilization Analysis
-              {getStatusBadge('warn')}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.utilization ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.utilization && (
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Account</TableHead>
-                  <TableHead className="text-right">Credit Limit</TableHead>
-                  <TableHead className="text-right">Balance</TableHead>
-                  <TableHead className="text-right">Utilization</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {utilizationData.map((item, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="font-medium">{item.account}</TableCell>
-                    <TableCell className="text-right">${item.limit.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">${item.balance.toLocaleString()}</TableCell>
-                    <TableCell className="text-right font-semibold">{item.utilization}%</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className="mt-4 p-3 bg-muted/30 rounded">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Overall Utilization</span>
-                <span className="text-lg font-bold">25.4%</span>
-              </div>
-            </div>
           </CardContent>
         )}
       </Card>
