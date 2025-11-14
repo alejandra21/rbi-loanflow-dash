@@ -47,28 +47,65 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   };
 
   // Mock data for Credit Pull & FICO
+  const closingDate = "2025-11-15"; // Loan closing date
+  
   const creditPullData = {
     borrower: {
       name: "John Doe",
       fico: 720,
       pullDate: "2025-11-01",
       bureau: "Experian",
-      status: "pass",
-      tier: "Platinum", // From Experience Tiering phase
       isForeignNational: false,
-      ssn: "***-**-1234" // Last 4 digits
+      ssn: "***-**-1234", // Last 4 digits
+      ssnIssueDate: "1995-03-15", // SSN Issue Date
+      dob: "1990-05-20", // Date of Birth
+      apiStatus: "success" // success, failure, missing_authorization
     },
     coBorrower: {
       name: "Jane Smith",
       fico: 695,
       pullDate: "2025-11-01",
       bureau: "Experian",
-      status: "pass",
-      tier: "Gold", // From Experience Tiering phase
       isForeignNational: true,
-      ssn: null // No SSN for foreign national
+      ssn: null, // No SSN for foreign national
+      ssnIssueDate: null,
+      dob: "1988-08-12",
+      apiStatus: "success"
     }
   };
+
+  // Validation logic for Credit Pull
+  const validateCreditPull = (borrowerData: typeof creditPullData.borrower | typeof creditPullData.coBorrower) => {
+    // Check API status
+    if (borrowerData.apiStatus === "failure" || borrowerData.apiStatus === "missing_authorization") {
+      return { status: "fail", reason: "Underwriting/Credit Analyst review" };
+    }
+
+    // Check SSN Issue Date < DOB (if both exist)
+    if (borrowerData.ssnIssueDate && borrowerData.dob) {
+      const ssnDate = new Date(borrowerData.ssnIssueDate);
+      const dobDate = new Date(borrowerData.dob);
+      if (ssnDate < dobDate) {
+        return { status: "fail", reason: "SSN issue date before DOB - Manual review" };
+      }
+    }
+
+    // Check credit report age (>90 days from closing date)
+    const pullDate = new Date(borrowerData.pullDate);
+    const closing = new Date(closingDate);
+    const daysDiff = Math.floor((closing.getTime() - pullDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysDiff > 90) {
+      return { status: "fail", reason: "Credit report >90 days old - Manual review" };
+    }
+
+    return { status: "pass", reason: null };
+  };
+
+  const borrowerValidation = validateCreditPull(creditPullData.borrower);
+  const coBorrowerValidation = validateCreditPull(creditPullData.coBorrower);
+  
+  // Overall status for the card
+  const overallStatus = borrowerValidation.status === "fail" || coBorrowerValidation.status === "fail" ? "fail" : "pass";
 
   // Mock data for Late Payments
   const latePaymentData = {
@@ -262,7 +299,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Credit Pull & FICO
-              {getStatusBadge('pass')}
+              {getStatusBadge(overallStatus)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditPull ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -272,19 +309,18 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="grid grid-cols-2 gap-4">
               {/* Borrower */}
               <div className="p-4 border rounded-lg space-y-3">
-                <p className="text-sm font-semibold">Primary Borrower</p>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Name</span>
                     <span className="text-sm font-medium">{creditPullData.borrower.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Tier</span>
-                    <Badge variant="outline">{creditPullData.borrower.tier}</Badge>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">FICO Score</span>
                     <span className="text-lg font-bold text-primary">{creditPullData.borrower.fico}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">DOB</span>
+                    <span className="text-sm">{creditPullData.borrower.dob}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Foreign National</span>
@@ -306,26 +342,33 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Status</span>
-                    {getStatusBadge(creditPullData.borrower.status)}
+                    {getStatusBadge(borrowerValidation.status)}
                   </div>
+                  {borrowerValidation.reason && (
+                    <div className="p-2 bg-destructive/10 rounded-md">
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {borrowerValidation.reason}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Co-Borrower */}
               <div className="p-4 border rounded-lg space-y-3">
-                <p className="text-sm font-semibold">Co-Borrower</p>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Name</span>
                     <span className="text-sm font-medium">{creditPullData.coBorrower.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Tier</span>
-                    <Badge variant="outline">{creditPullData.coBorrower.tier}</Badge>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">FICO Score</span>
                     <span className="text-lg font-bold text-primary">{creditPullData.coBorrower.fico}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">DOB</span>
+                    <span className="text-sm">{creditPullData.coBorrower.dob}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Foreign National</span>
@@ -347,8 +390,16 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Status</span>
-                    {getStatusBadge(creditPullData.coBorrower.status)}
+                    {getStatusBadge(coBorrowerValidation.status)}
                   </div>
+                  {coBorrowerValidation.reason && (
+                    <div className="p-2 bg-destructive/10 rounded-md">
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {coBorrowerValidation.reason}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
