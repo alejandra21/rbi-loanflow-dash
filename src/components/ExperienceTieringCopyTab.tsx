@@ -718,7 +718,6 @@ export const ExperienceTieringCopyTab = ({
                     <div className="grid grid-cols-2 gap-4">
                       {/* Borrower Reports */}
                       <div className="space-y-2">
-                        <p className="text-xs font-semibold">{ficoReports.borrower.name}</p>
                         <div className="space-y-1.5">
                           {ficoReports.borrower.reports.map((report, idx) => (
                             <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
