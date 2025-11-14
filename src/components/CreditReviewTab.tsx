@@ -79,15 +79,33 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   // Mock data for TLO Review
   const tloData = {
-    addressHistory: [
-      { address: "123 Main St, Austin TX", period: "2020-Present", verified: true },
-      { address: "456 Oak Ave, Dallas TX", period: "2017-2020", verified: true },
-    ],
-    employmentHistory: [
-      { employer: "Tech Corp", position: "Senior Developer", period: "2019-Present", verified: true },
-    ],
-    status: "pass"
+    pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report.pdf",
+    reportDate: "2025-10-20",
+    extracted: {
+      fullName: "John Doe",
+      last4SSN: "1234",
+      dateOfBirth: "1985-06-15"
+    },
+    posData: {
+      fullName: "John Doe",
+      last4SSN: "1234",
+      dateOfBirth: "1985-06-15"
+    },
+    validation: {
+      nameMatch: true,
+      ssnMatch: true,
+      dobMatch: true,
+      dobYearDiff: 0, // Years difference
+      missingFields: [] as string[] // ["DOB", "SSN"] if any missing
+    },
+    identityVerificationStatus: "pass" // "pass" or "manual_validation_required"
   };
+
+  // Calculate validation status
+  const requiresManualValidation = 
+    !tloData.validation.ssnMatch || 
+    Math.abs(tloData.validation.dobYearDiff) > 1 ||
+    tloData.validation.missingFields.length > 0;
 
   // Mock data for LexisNexis
   const lexisNexisData = {
@@ -317,43 +335,142 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               TLO Review
-              {getStatusBadge('pass')}
+              {requiresManualValidation ? getStatusBadge('fail') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tlo ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.tlo && (
           <CardContent className="space-y-4">
+            {/* PDF Report */}
+            <div className="p-3 bg-muted/30 rounded flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">TLO Report</p>
+                <p className="text-sm font-medium">Report Date: {tloData.reportDate}</p>
+              </div>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Download className="h-3 w-3" />
+                Download
+              </Button>
+            </div>
+
+            <Separator />
+
+            {/* Extracted Data vs POS Comparison */}
             <div>
-              <p className="text-sm font-semibold mb-3">Address History</p>
-              <div className="space-y-2">
-                {tloData.addressHistory.map((addr, idx) => (
-                  <div key={idx} className="flex justify-between p-3 border rounded">
-                    <div>
-                      <p className="text-sm font-medium">{addr.address}</p>
-                      <p className="text-xs text-muted-foreground">{addr.period}</p>
-                    </div>
-                    {addr.verified && <CheckCircle className="h-4 w-4 text-success" />}
+              <p className="text-sm font-semibold mb-3">Identity Verification</p>
+              <div className="space-y-3">
+                {/* Full Name */}
+                <div className="p-3 border rounded">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-muted-foreground">Full Name</span>
+                    {tloData.validation.nameMatch ? (
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        Match
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive" className="gap-1">
+                        <XCircle className="h-3 w-3" />
+                        Mismatch
+                      </Badge>
+                    )}
                   </div>
-                ))}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">TLO Report</p>
+                      <p className="font-medium">{tloData.extracted.fullName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">POS Data</p>
+                      <p className="font-medium">{tloData.posData.fullName}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Last 4 SSN */}
+                <div className="p-3 border rounded">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-muted-foreground">Last 4 SSN</span>
+                    {tloData.validation.missingFields.includes("SSN") ? (
+                      <Badge variant="destructive">Missing</Badge>
+                    ) : tloData.validation.ssnMatch ? (
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        Match
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive" className="gap-1">
+                        <XCircle className="h-3 w-3" />
+                        Mismatch
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">TLO Report</p>
+                      <p className="font-medium">***-**-{tloData.extracted.last4SSN}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">POS Data</p>
+                      <p className="font-medium">***-**-{tloData.posData.last4SSN}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Date of Birth */}
+                <div className="p-3 border rounded">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-muted-foreground">Date of Birth</span>
+                    {tloData.validation.missingFields.includes("DOB") ? (
+                      <Badge variant="destructive">Missing</Badge>
+                    ) : Math.abs(tloData.validation.dobYearDiff) > 1 ? (
+                      <Badge variant="destructive" className="gap-1">
+                        <XCircle className="h-3 w-3" />
+                        Mismatch ({tloData.validation.dobYearDiff > 0 ? '+' : ''}{tloData.validation.dobYearDiff} years)
+                      </Badge>
+                    ) : (
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        Match
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">TLO Report</p>
+                      <p className="font-medium">{tloData.extracted.dateOfBirth}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">POS Data</p>
+                      <p className="font-medium">{tloData.posData.dateOfBirth}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <Separator />
 
+            {/* Verification Status */}
             <div>
-              <p className="text-sm font-semibold mb-3">Employment History</p>
-              <div className="space-y-2">
-                {tloData.employmentHistory.map((emp, idx) => (
-                  <div key={idx} className="flex justify-between p-3 border rounded">
-                    <div>
-                      <p className="text-sm font-medium">{emp.employer}</p>
-                      <p className="text-xs text-muted-foreground">{emp.position} • {emp.period}</p>
-                    </div>
-                    {emp.verified && <CheckCircle className="h-4 w-4 text-success" />}
+              <p className="text-sm font-semibold mb-2">Identity Verification Status</p>
+              {requiresManualValidation ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded space-y-2">
+                  <p className="text-sm font-medium text-destructive">⚠ Manual Validation Required - Identity Mismatch</p>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {!tloData.validation.ssnMatch && <p>• SSN mismatch detected</p>}
+                    {Math.abs(tloData.validation.dobYearDiff) > 1 && <p>• DOB mismatch {">"}1 year ({tloData.validation.dobYearDiff > 0 ? '+' : ''}{tloData.validation.dobYearDiff} years)</p>}
+                    {tloData.validation.missingFields.map((field, idx) => (
+                      <p key={idx}>• Missing {field} field</p>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ Pass - All identity data verified</p>
+                </div>
+              )}
             </div>
           </CardContent>
         )}
