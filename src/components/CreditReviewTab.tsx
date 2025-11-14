@@ -538,9 +538,9 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
             <Separator />
 
-            {/* Rule CR-24: Combined Background Result */}
+            {/* Combined Background Result */}
             <div>
-              <p className="text-sm font-semibold mb-3">Rule CR-24: Combined Background Result</p>
+              <p className="text-sm font-semibold mb-3">Combined Background Result</p>
               
               {/* Background Checks */}
               <div className="space-y-2 mb-4">
