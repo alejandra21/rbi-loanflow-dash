@@ -36,9 +36,14 @@ export const LoanDetail = () => {
     manualValidation: false,
     phaseLog: false,
   });
+  const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
 
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
+  };
+
+  const toggleLog = (logId: string) => {
+    setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
   };
   
   const loan = mockLoans.find(l => l.id === id);
@@ -730,91 +735,60 @@ export const LoanDetail = () => {
           {expandedCards.auditLog && (
             <CardContent>
             <div className="space-y-3">
-              {/* Entity Validation */}
-              {phase.eligibilityData.entityNameValidation && (
+              {phase.auditLog && phase.auditLog.length > 0 ? (
+                phase.auditLog.map((log: any) => (
+                  <div key={log.id} className="border rounded-lg">
+                    <div className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <span className="font-medium text-sm">{log.tag || log.action}</span>
+                            <p className="text-xs text-muted-foreground mt-0.5">{log.timestamp || new Date(log.actionDate).toLocaleString()}</p>
+                            <p className="text-sm mt-1">{log.description || log.details}</p>
+                          </div>
+                          <div className="flex items-center gap-2 ml-4 flex-wrap justify-end">
+                            {log.exceptionTag && (
+                              <Badge variant="outline" className="text-xs">
+                                {log.exceptionTag}
+                              </Badge>
+                            )}
+                            {log.exceptionType && (
+                              <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
+                                {log.exceptionType}
+                              </Badge>
+                            )}
+                            <Badge 
+                              variant={
+                                log.status === 'completed' || log.status === 'verified' || log.decision === 'approved' 
+                                  ? 'default' 
+                                  : log.status === 'warning' || log.decision === 'review' 
+                                  ? 'warning' 
+                                  : 'outline'
+                              } 
+                              className="text-xs"
+                            >
+                              {log.status || log.decision}
+                            </Badge>
+                            <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {expandedLogs[log.id] && (
+                      <div className="px-3 pb-3 border-t bg-muted/20">
+                        <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
+                          {JSON.stringify(log.jsonData || log, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
                 <div className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
                   <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">Entity Name & Type Validation</span>
-                      <Badge variant="outline" className="text-xs">API Validation</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{new Date(phase.eligibilityData.entityNameValidation.validationDate).toLocaleString()}</p>
-                    <p className="text-xs mt-1">Validated via {phase.eligibilityData.entityNameValidation.provider} - Match confidence: {phase.eligibilityData.entityNameValidation.matchConfidence}%</p>
-                  </div>
-                </div>
-              )}
-
-              {/* IDV Verifications */}
-              {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
-                signatory.idvDetails && (
-                  <div key={`idv-${index}`} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">IDV Verification - {signatory.name}</span>
-                        <Badge variant={signatory.idvDetails.status === 'verified' ? 'default' : 'destructive'} className="text-xs">
-                          {signatory.idvDetails.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{new Date(signatory.idvDetails.verificationDate).toLocaleString()}</p>
-                      <p className="text-xs mt-1">Verified {signatory.idvDetails.documentType} via {signatory.idvDetails.provider} - Confidence: {signatory.idvDetails.confidence}%</p>
-                    </div>
-                  </div>
-                )
-              ))}
-
-              {/* Credit Score Requests */}
-              {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
-                signatory.creditScoreRequest && (
-                  <div key={`credit-${index}`} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">Credit Score Request - {signatory.name}</span>
-                        <Badge variant={signatory.creditScoreRequest.status === 'completed' ? 'default' : 'secondary'} className="text-xs">
-                          {signatory.creditScoreRequest.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{new Date(signatory.creditScoreRequest.requestDate).toLocaleString()}</p>
-                      <p className="text-xs mt-1">Credit score retrieved from {signatory.creditScoreRequest.provider} - Score: {signatory.creditScore}</p>
-                    </div>
-                  </div>
-                )
-              ))}
-
-              {/* SSN Verifications for Signatories */}
-              {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
-                signatory.ssnVerification && (
-                  <div key={`ssn-${index}`} className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">SSN Verification - {signatory.name}</span>
-                        <Badge variant={signatory.ssnVerification.verified ? 'default' : 'destructive'} className="text-xs">
-                          {signatory.ssnVerification.verified ? 'Verified' : 'Failed'}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{new Date(signatory.ssnVerification.verificationDate).toLocaleString()}</p>
-                      <p className="text-xs mt-1">SSN validated via {signatory.ssnVerification.provider} - Match: {signatory.ssnVerification.matchConfidence}%</p>
-                    </div>
-                  </div>
-                )
-              ))}
-
-              {/* Entity EIN Verification */}
-              {phase.eligibilityData.einVerification && (
-                <div className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">Entity EIN Verification</span>
-                      <Badge variant={phase.eligibilityData.einVerification.status === 'verified' ? 'default' : 'destructive'} className="text-xs">
-                        {phase.eligibilityData.einVerification.status}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{new Date(phase.eligibilityData.einVerification.verificationDate).toLocaleString()}</p>
-                    <p className="text-xs mt-1">EIN {phase.eligibilityData.ein} verified via {phase.eligibilityData.einVerification.provider}</p>
+                    <p className="text-muted-foreground">No audit log entries available</p>
                   </div>
                 </div>
               )}
