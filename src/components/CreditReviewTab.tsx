@@ -393,69 +393,31 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             {/* Summary Grid */}
             <div>
               <p className="text-sm font-semibold mb-3">Late Payment Summary (24 months)</p>
-              <div className="grid grid-cols-4 gap-3">
-                <div className="p-3 border rounded text-center">
-                  <p className="text-2xl font-bold">{latePaymentData.summary.late30Days}</p>
-                  <p className="text-xs text-muted-foreground">30 Days</p>
-                  {latePaymentData.summary.late30Days > 0 && (
-                    <Badge variant="outline" className="mt-1">Minor</Badge>
-                  )}
+              <div className="grid grid-cols-3 gap-4">
+                {/* Box 1: 30 days or clean - Pass */}
+                <div className="p-4 border rounded space-y-2">
+                  <p className="text-3xl font-bold text-center">{latePaymentData.summary.late30Days}</p>
+                  <p className="text-xs text-muted-foreground text-center">30 days or clean</p>
+                  <Badge variant="success" className="w-full justify-center">Pass</Badge>
                 </div>
-                <div className="p-3 border rounded text-center">
-                  <p className="text-2xl font-bold">{latePaymentData.summary.late60Days}</p>
-                  <p className="text-xs text-muted-foreground">60 Days</p>
-                  {latePaymentData.summary.late60Days > 0 && (
-                    <Badge variant="warning" className="mt-1">Exception</Badge>
-                  )}
+
+                {/* Box 2: 60-90 days - Manual Review */}
+                <div className="p-4 border rounded space-y-2">
+                  <p className="text-3xl font-bold text-center">{latePaymentData.summary.late60Days + latePaymentData.summary.late90Days}</p>
+                  <p className="text-xs text-muted-foreground text-center">60-90 days</p>
+                  <Badge variant="warning" className="w-full justify-center">Manual Review: CreditException_60_90</Badge>
                 </div>
-                <div className="p-3 border rounded text-center">
-                  <p className="text-2xl font-bold">{latePaymentData.summary.late90Days}</p>
-                  <p className="text-xs text-muted-foreground">90 Days</p>
-                  {latePaymentData.summary.late90Days > 0 && (
-                    <Badge variant="warning" className="mt-1">Exception</Badge>
-                  )}
-                </div>
-                <div className="p-3 border rounded text-center">
-                  <p className="text-2xl font-bold">{latePaymentData.summary.late120Plus}</p>
-                  <p className="text-xs text-muted-foreground">120+ Days</p>
-                  {latePaymentData.summary.late120Plus > 0 && (
-                    <Badge variant="destructive" className="mt-1">Severe</Badge>
-                  )}
+
+                {/* Box 3: 120+ days - Credit Severity */}
+                <div className="p-4 border rounded space-y-2">
+                  <p className="text-3xl font-bold text-center">{latePaymentData.summary.late120Plus}</p>
+                  <p className="text-xs text-muted-foreground text-center">120+ days</p>
+                  <Badge variant="destructive" className="w-full justify-center">CreditSeverity_120</Badge>
                 </div>
               </div>
             </div>
 
             <Separator />
-
-            {/* Payment Details */}
-            {latePaymentData.payments.length > 0 && (
-              <>
-                <div>
-                  <p className="text-sm font-semibold mb-3">Payment Details</p>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Creditor</TableHead>
-                        <TableHead className="text-right">Days Late</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {latePaymentData.payments.map((item, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell>{item.date}</TableCell>
-                          <TableCell className="font-medium">{item.creditor}</TableCell>
-                          <TableCell className="text-right">{item.daysLate}</TableCell>
-                          <TableCell className="text-right">${item.amount}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-                <Separator />
-              </>
-            )}
 
             {/* Decision */}
             {latePaymentDecision === "manual_credit_severity_120" ? (
