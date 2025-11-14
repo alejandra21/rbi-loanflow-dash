@@ -98,14 +98,75 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       dobYearDiff: 0, // Years difference
       missingFields: [] as string[] // ["DOB", "SSN"] if any missing
     },
-    identityVerificationStatus: "pass" // "pass" or "manual_validation_required"
+    identityVerificationStatus: "pass", // "pass" or "manual_validation_required"
+    // Rule CR-24: Combined Background Result
+    backgroundCheck: {
+      liens: {
+        active: false,
+        satisfiedOrAged: false, // Satisfied or aged 120 months
+        monthsSinceLatest: 130
+      },
+      judgments: {
+        active: false,
+        satisfiedOrAged: false,
+        monthsSinceLatest: 125
+      },
+      bankruptcies: {
+        active: false,
+        satisfiedOrAged: false,
+        monthsSinceLatest: 140
+      },
+      foreclosures: {
+        withinLast36Months: false,
+        monthsSinceLatest: 48
+      },
+      unclearDisposition: false
+    }
   };
 
-  // Calculate validation status
-  const requiresManualValidation = 
+  // Calculate identity validation status
+  const requiresIdentityManualValidation = 
     !tloData.validation.ssnMatch || 
     Math.abs(tloData.validation.dobYearDiff) > 1 ||
     tloData.validation.missingFields.length > 0;
+
+  // Calculate Rule CR-24: Combined Background Result
+  const hasActiveLiensJudgmentsBankruptcies = 
+    tloData.backgroundCheck.liens.active ||
+    tloData.backgroundCheck.judgments.active ||
+    tloData.backgroundCheck.bankruptcies.active;
+
+  const hasActiveWithin120Months = 
+    (tloData.backgroundCheck.liens.monthsSinceLatest <= 120 && !tloData.backgroundCheck.liens.satisfiedOrAged) ||
+    (tloData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !tloData.backgroundCheck.judgments.satisfiedOrAged) ||
+    (tloData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !tloData.backgroundCheck.bankruptcies.satisfiedOrAged);
+
+  const hasSatisfiedOrAged = 
+    tloData.backgroundCheck.liens.satisfiedOrAged ||
+    tloData.backgroundCheck.judgments.satisfiedOrAged ||
+    tloData.backgroundCheck.bankruptcies.satisfiedOrAged;
+
+  const hasForeclosuresLast36 = tloData.backgroundCheck.foreclosures.withinLast36Months;
+
+  // Determine background decision
+  let backgroundDecision: "pass" | "manual_validation" | "non_pass" = "pass";
+  
+  // Fail Criteria: Any active or unresolved record 120 months AND foreclosures within last 36 months
+  if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
+    backgroundDecision = "non_pass";
+  }
+  // Manual Validation: Satisfied/aged 120 months OR identity mismatch OR unclear disposition, AND foreclosures within 36 months
+  else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || tloData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
+    backgroundDecision = "manual_validation";
+  }
+  // Pass: No active liens, judgments, bankruptcies within 120 months OR foreclosures within 36 months
+  else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
+    backgroundDecision = "pass";
+  }
+  // Manual Validation for identity issues even without foreclosures
+  else if (requiresIdentityManualValidation) {
+    backgroundDecision = "manual_validation";
+  }
 
   // Mock data for LexisNexis
   const lexisNexisData = {
@@ -335,7 +396,9 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               TLO Review
-              {requiresManualValidation ? getStatusBadge('fail') : getStatusBadge('pass')}
+              {backgroundDecision === "non_pass" ? getStatusBadge('fail') : 
+               backgroundDecision === "manual_validation" ? getStatusBadge('warn') : 
+               getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tlo ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -455,7 +518,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             {/* Verification Status */}
             <div>
               <p className="text-sm font-semibold mb-2">Identity Verification Status</p>
-              {requiresManualValidation ? (
+              {requiresIdentityManualValidation ? (
                 <div className="p-3 bg-destructive/10 border border-destructive/20 rounded space-y-2">
                   <p className="text-sm font-medium text-destructive">⚠ Manual Validation Required - Identity Mismatch</p>
                   <div className="text-xs text-muted-foreground space-y-1">
@@ -469,6 +532,114 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
               ) : (
                 <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Pass - All identity data verified</p>
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* Rule CR-24: Combined Background Result */}
+            <div>
+              <p className="text-sm font-semibold mb-3">Rule CR-24: Combined Background Result</p>
+              
+              {/* Background Checks */}
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between p-3 border rounded">
+                  <div>
+                    <p className="text-sm font-medium">Liens</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.backgroundCheck.liens.active ? 'Active' : 
+                       tloData.backgroundCheck.liens.satisfiedOrAged ? 'Satisfied/Aged 120+ months' :
+                       `Last: ${tloData.backgroundCheck.liens.monthsSinceLatest} months ago`}
+                    </p>
+                  </div>
+                  {tloData.backgroundCheck.liens.active ? (
+                    <Badge variant="destructive">Active</Badge>
+                  ) : tloData.backgroundCheck.liens.monthsSinceLatest > 120 ? (
+                    <Badge variant="success">Clear</Badge>
+                  ) : (
+                    <Badge variant="warning">Review</Badge>
+                  )}
+                </div>
+
+                <div className="flex justify-between p-3 border rounded">
+                  <div>
+                    <p className="text-sm font-medium">Judgments</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.backgroundCheck.judgments.active ? 'Active' : 
+                       tloData.backgroundCheck.judgments.satisfiedOrAged ? 'Satisfied/Aged 120+ months' :
+                       `Last: ${tloData.backgroundCheck.judgments.monthsSinceLatest} months ago`}
+                    </p>
+                  </div>
+                  {tloData.backgroundCheck.judgments.active ? (
+                    <Badge variant="destructive">Active</Badge>
+                  ) : tloData.backgroundCheck.judgments.monthsSinceLatest > 120 ? (
+                    <Badge variant="success">Clear</Badge>
+                  ) : (
+                    <Badge variant="warning">Review</Badge>
+                  )}
+                </div>
+
+                <div className="flex justify-between p-3 border rounded">
+                  <div>
+                    <p className="text-sm font-medium">Bankruptcies</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.backgroundCheck.bankruptcies.active ? 'Active' : 
+                       tloData.backgroundCheck.bankruptcies.satisfiedOrAged ? 'Satisfied/Aged 120+ months' :
+                       `Last: ${tloData.backgroundCheck.bankruptcies.monthsSinceLatest} months ago`}
+                    </p>
+                  </div>
+                  {tloData.backgroundCheck.bankruptcies.active ? (
+                    <Badge variant="destructive">Active</Badge>
+                  ) : tloData.backgroundCheck.bankruptcies.monthsSinceLatest > 120 ? (
+                    <Badge variant="success">Clear</Badge>
+                  ) : (
+                    <Badge variant="warning">Review</Badge>
+                  )}
+                </div>
+
+                <div className="flex justify-between p-3 border rounded">
+                  <div>
+                    <p className="text-sm font-medium">Foreclosures</p>
+                    <p className="text-xs text-muted-foreground">
+                      Last: {tloData.backgroundCheck.foreclosures.monthsSinceLatest} months ago
+                    </p>
+                  </div>
+                  {tloData.backgroundCheck.foreclosures.withinLast36Months ? (
+                    <Badge variant="destructive">Within 36 months</Badge>
+                  ) : (
+                    <Badge variant="success">Clear</Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Background Decision */}
+              {backgroundDecision === "non_pass" ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded space-y-2">
+                  <p className="text-sm font-medium text-destructive">🔴 Non-Pass with Validation</p>
+                  <p className="text-xs text-muted-foreground">
+                    Any active or unresolved record within 120 months AND foreclosures within the last 36 months
+                  </p>
+                  <p className="text-xs font-medium">→ File declined automatically. Routed to Manual Validation</p>
+                </div>
+              ) : backgroundDecision === "manual_validation" ? (
+                <div className="p-3 bg-warning/10 border border-warning/20 rounded space-y-2">
+                  <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
+                  <p className="text-xs text-muted-foreground">
+                    {hasSatisfiedOrAged && "Satisfied or aged 120 months"}
+                    {requiresIdentityManualValidation && " • Identity mismatch"}
+                    {tloData.backgroundCheck.unclearDisposition && " • Unclear disposition"}
+                    {hasForeclosuresLast36 && " • Foreclosures within last 36 months"}
+                  </p>
+                  <p className="text-xs font-medium">→ Assigned to Underwriter review queue</p>
+                </div>
+              ) : (
+                <div className="p-3 bg-success/10 border border-success/20 rounded space-y-2">
+                  <p className="text-sm font-medium text-success">✓ Pass</p>
+                  <p className="text-xs text-muted-foreground">
+                    No active liens, judgments, bankruptcies within last 120 months. No foreclosures within the last 36 months
+                  </p>
+                  <p className="text-xs font-medium">→ Continue to Step 4 (Non-Owner Occupancy Verification)</p>
                 </div>
               )}
             </div>
