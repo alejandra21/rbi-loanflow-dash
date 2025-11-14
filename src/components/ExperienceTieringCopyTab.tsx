@@ -150,16 +150,22 @@ export const ExperienceTieringCopyTab = ({
     liquidityVerified: "verified"
   };
   const ficoReports = {
-    borrower: [
-      { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01" },
-      { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01" },
-      { name: "Account History Summary", type: "Supporting Document", date: "2025-11-01" }
-    ],
-    coBorrower: [
-      { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01" },
-      { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01" },
-      { name: "ITIN Verification", type: "Identity Document", date: "2025-11-01" }
-    ]
+    borrower: {
+      name: "John Doe",
+      reports: [
+        { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01", url: "/documents/credit-report-experian-johndoe.pdf" },
+        { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01", url: "/documents/fico-score-johndoe.pdf" },
+        { name: "Account History Summary", type: "Supporting Document", date: "2025-11-01", url: "/documents/account-history-johndoe.pdf" }
+      ]
+    },
+    coBorrower: {
+      name: "Jane Smith",
+      reports: [
+        { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01", url: "/documents/credit-report-experian-janesmith.pdf" },
+        { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01", url: "/documents/fico-score-janesmith.pdf" },
+        { name: "ITIN Verification", type: "Identity Document", date: "2025-11-01", url: "/documents/itin-verification-janesmith.pdf" }
+      ]
+    }
   };
   const performanceBehavior = {
     defaults: 0,
@@ -712,15 +718,23 @@ export const ExperienceTieringCopyTab = ({
                     <div className="grid grid-cols-2 gap-4">
                       {/* Borrower Reports */}
                       <div className="space-y-2">
-                        <p className="text-xs font-semibold">Primary Borrower</p>
+                        <p className="text-xs font-semibold">{ficoReports.borrower.name}</p>
                         <div className="space-y-1.5">
-                          {ficoReports.borrower.map((report, idx) => (
+                          {ficoReports.borrower.reports.map((report, idx) => (
                             <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
                               <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <div className="text-xs font-medium truncate">{report.name}</div>
                                 <div className="text-[10px] text-muted-foreground">{report.type} • {report.date}</div>
                               </div>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-7 w-7 flex-shrink-0"
+                                onClick={() => window.open(report.url, '_blank')}
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                              </Button>
                             </div>
                           ))}
                         </div>
@@ -728,15 +742,23 @@ export const ExperienceTieringCopyTab = ({
                       
                       {/* Co-Borrower Reports */}
                       <div className="space-y-2">
-                        <p className="text-xs font-semibold">Co-Borrower</p>
+                        <p className="text-xs font-semibold">{ficoReports.coBorrower.name}</p>
                         <div className="space-y-1.5">
-                          {ficoReports.coBorrower.map((report, idx) => (
+                          {ficoReports.coBorrower.reports.map((report, idx) => (
                             <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
                               <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <div className="text-xs font-medium truncate">{report.name}</div>
                                 <div className="text-[10px] text-muted-foreground">{report.type} • {report.date}</div>
                               </div>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-7 w-7 flex-shrink-0"
+                                onClick={() => window.open(report.url, '_blank')}
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                              </Button>
                             </div>
                           ))}
                         </div>
