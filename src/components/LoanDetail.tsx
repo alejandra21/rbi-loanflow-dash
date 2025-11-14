@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { ExperienceTieringCopyTab } from "@/components/ExperienceTieringCopyTab";
+import { CreditReviewTab } from "@/components/CreditReviewTab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp } from "lucide-react";
@@ -1720,7 +1721,7 @@ export const LoanDetail = () => {
               </TabsContent>
               
               <TabsContent value="creditReview" className="mt-0">
-                <PhaseTab phase={loan.phases.creditReview} phaseName="Credit Review" />
+                <CreditReviewTab phase={loan.phases.creditReview} />
               </TabsContent>
               
               <TabsContent value="nonOwnerOccupancy" className="mt-0">
