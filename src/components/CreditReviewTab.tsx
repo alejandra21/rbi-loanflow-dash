@@ -91,14 +91,20 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   // Mock data for LexisNexis
   const lexisNexisData = {
-    identityVerification: {
-      score: 850,
-      status: "pass",
-      verifiedElements: ["SSN", "DOB", "Address", "Phone"]
-    },
-    fraudIndicators: [],
-    publicRecords: []
+    matchStatus: "clear", // "clear" or "match"
+    exactNameMatch: false,
+    mScore: 85, // M=100 means exact match
+    reportDate: "2025-10-15",
+    closeDate: "2025-11-10", // Loan close date for comparison
+    status: "pass"
   };
+
+  // Calculate if report is older than 60 days from close date
+  const reportAge = Math.floor(
+    (new Date(lexisNexisData.closeDate).getTime() - new Date(lexisNexisData.reportDate).getTime()) / 
+    (1000 * 60 * 60 * 24)
+  );
+  const isReportStale = reportAge > 60;
 
   // Mock data for FlagDat
   const flagDatData = {
@@ -360,42 +366,64 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               LexisNexis
-              {getStatusBadge('pass')}
+              {lexisNexisData.matchStatus === "match" || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.lexisNexis ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.lexisNexis && (
           <CardContent className="space-y-4">
-            <div className="p-4 border rounded-lg space-y-3">
-              <p className="text-sm font-semibold">Identity Verification</p>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Verification Score</span>
-                <span className="text-2xl font-bold text-success">{lexisNexisData.identityVerification.score}</span>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border rounded space-y-2">
+                <p className="text-xs text-muted-foreground">Match Status</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">
+                    {lexisNexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
+                  </p>
+                  {lexisNexisData.matchStatus === "match" ? (
+                    <Badge variant="destructive">Match Found</Badge>
+                  ) : (
+                    <Badge variant="success">Clear</Badge>
+                  )}
+                </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Verified Elements</p>
-                <div className="flex flex-wrap gap-2">
-                  {lexisNexisData.identityVerification.verifiedElements.map((element, idx) => (
-                    <Badge key={idx} variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      {element}
-                    </Badge>
-                  ))}
+              <div className="p-4 border rounded space-y-2">
+                <p className="text-xs text-muted-foreground">M Score</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">{lexisNexisData.mScore}</p>
+                  {lexisNexisData.mScore === 100 && lexisNexisData.exactNameMatch && (
+                    <Badge variant="destructive">Exact Match</Badge>
+                  )}
+                </div>
+              </div>
+              <div className="p-4 border rounded space-y-2">
+                <p className="text-xs text-muted-foreground">Report Date</p>
+                <p className="text-sm font-medium">{lexisNexisData.reportDate}</p>
+              </div>
+              <div className="p-4 border rounded space-y-2">
+                <p className="text-xs text-muted-foreground">Report Age</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">{reportAge} days</p>
+                  {isReportStale && (
+                    <Badge variant="destructive">Stale</Badge>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-muted/30 rounded">
-                <p className="text-xs text-muted-foreground mb-1">Fraud Indicators</p>
-                <p className="text-lg font-bold text-success">0</p>
+            {(lexisNexisData.matchStatus === "match" && lexisNexisData.exactNameMatch && lexisNexisData.mScore === 100) ? (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                <p className="text-sm font-medium text-destructive">⚠ Exact Name Match (M=100) - Manual Review: KYC required</p>
               </div>
-              <div className="p-3 bg-muted/30 rounded">
-                <p className="text-xs text-muted-foreground mb-1">Public Records</p>
-                <p className="text-lg font-bold text-success">0</p>
+            ) : isReportStale ? (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
               </div>
-            </div>
+            ) : (
+              <div className="p-3 bg-success/10 border border-success/20 rounded">
+                <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
+              </div>
+            )}
           </CardContent>
         )}
       </Card>
