@@ -21,12 +21,17 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     flagDat: false,
     logs: false
   });
+  const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
 
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
+  };
+
+  const toggleLog = (logId: string) => {
+    setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
   };
 
   const getStatusBadge = (status: string) => {
@@ -267,22 +272,54 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   // Mock logs data
   const logsData = [
     {
+      id: "log-001",
+      tag: "credit_pull",
       timestamp: "2025-11-10 14:23:15",
+      description: "Credit Pull Initiated",
       action: "Credit Pull Initiated",
       user: "System",
-      status: "completed"
+      status: "completed",
+      exceptionTag: "credit_api",
+      exceptionType: null,
+      jsonData: {
+        borrower: "John Doe",
+        bureau: "Experian",
+        fico_score: 720,
+        pull_date: "2025-11-01"
+      }
     },
     {
+      id: "log-002",
+      tag: "tlo",
       timestamp: "2025-11-10 14:25:42",
+      description: "TLO Verification",
       action: "TLO Verification",
       user: "System",
-      status: "completed"
+      status: "completed",
+      exceptionTag: "identity_verification",
+      exceptionType: null,
+      jsonData: {
+        ssn_match: true,
+        dob_match: true,
+        address_verified: true,
+        confidence: 95
+      }
     },
     {
+      id: "log-003",
+      tag: "lexisnexis",
       timestamp: "2025-11-10 14:28:10",
+      description: "LexisNexis Check",
       action: "LexisNexis Check",
       user: "System",
-      status: "completed"
+      status: "completed",
+      exceptionTag: "watchlist_screening",
+      exceptionType: null,
+      jsonData: {
+        match_status: "clear",
+        m_score: 85,
+        report_date: "2025-10-15"
+      }
     }
   ];
 
@@ -996,28 +1033,48 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         </CardHeader>
         {expandedCards.logs && (
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Timestamp</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {logsData.map((log, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="font-mono text-xs">{log.timestamp}</TableCell>
-                    <TableCell>{log.action}</TableCell>
-                    <TableCell>{log.user}</TableCell>
-                    <TableCell>
-                      <Badge variant="success">{log.status}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="space-y-3">
+              {logsData.map(log => (
+                <div key={log.id} className="border rounded-lg">
+                  <div className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
+                    <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <span className="font-medium text-sm">{log.tag}</span>
+                          <p className="text-xs text-muted-foreground mt-0.5">{log.timestamp}</p>
+                          <p className="text-sm mt-1">{log.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4 flex-wrap justify-end">
+                          <Badge variant="outline" className="text-xs">
+                            {log.exceptionTag}
+                          </Badge>
+                          {log.exceptionType && (
+                            <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
+                              {log.exceptionType}
+                            </Badge>
+                          )}
+                          <Badge 
+                            variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'} 
+                            className="text-xs"
+                          >
+                            {log.status}
+                          </Badge>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {expandedLogs[log.id] && (
+                    <div className="px-3 pb-3 border-t bg-muted/20">
+                      <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
+                        {JSON.stringify(log.jsonData, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </CardContent>
         )}
       </Card>
