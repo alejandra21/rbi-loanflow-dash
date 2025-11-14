@@ -102,9 +102,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   // Mock data for FlagDat
   const flagDatData = {
-    watchlistCheck: "Clear",
-    sanctionsCheck: "Clear",
-    adverseMediaCheck: "Clear",
+    watchlistCheck: false, // false = no match, true = match found
+    blacklistCheck: false, // false = no match, true = match found
     status: "pass",
     lastChecked: "2025-11-10"
   };
@@ -417,25 +416,45 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Watchlist Check</p>
-                <p className="text-lg font-semibold text-success">{flagDatData.watchlistCheck}</p>
+                <p className="text-xs text-muted-foreground">WatchList Check</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">
+                    {flagDatData.watchlistCheck ? "True" : "False"}
+                  </p>
+                  {flagDatData.watchlistCheck ? (
+                    <Badge variant="destructive">Match Found</Badge>
+                  ) : (
+                    <Badge variant="success">No Match</Badge>
+                  )}
+                </div>
               </div>
               <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Sanctions Check</p>
-                <p className="text-lg font-semibold text-success">{flagDatData.sanctionsCheck}</p>
-              </div>
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Adverse Media Check</p>
-                <p className="text-lg font-semibold text-success">{flagDatData.adverseMediaCheck}</p>
+                <p className="text-xs text-muted-foreground">BlackList Check</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">
+                    {flagDatData.blacklistCheck ? "True" : "False"}
+                  </p>
+                  {flagDatData.blacklistCheck ? (
+                    <Badge variant="destructive">Match Found</Badge>
+                  ) : (
+                    <Badge variant="success">No Match</Badge>
+                  )}
+                </div>
               </div>
               <div className="p-4 border rounded space-y-2">
                 <p className="text-xs text-muted-foreground">Last Checked</p>
                 <p className="text-sm font-medium">{flagDatData.lastChecked}</p>
               </div>
             </div>
-            <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded">
-              <p className="text-sm font-medium text-success">✓ All checks passed - No flags detected</p>
-            </div>
+            {(flagDatData.watchlistCheck || flagDatData.blacklistCheck) ? (
+              <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded">
+                <p className="text-sm font-medium text-destructive">⚠ Match found - Manual Review by Underwriting/Credit Analyst required</p>
+              </div>
+            ) : (
+              <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded">
+                <p className="text-sm font-medium text-success">✓ No match - Continue workflow</p>
+              </div>
+            )}
           </CardContent>
         )}
       </Card>
