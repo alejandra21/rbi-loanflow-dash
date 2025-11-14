@@ -72,10 +72,31 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   ];
 
   // Mock data for Late Payments
-  const latePaymentData = [
-    { date: "2024-08-15", creditor: "Wells Fargo", daysLate: 30, amount: 450, status: "warn" },
-    { date: "2024-03-22", creditor: "Chase", daysLate: 15, amount: 220, status: "pass" },
-  ];
+  const latePaymentData = {
+    creditReport: "s3://bucket-name/credit-reports/LOAN123456/Credit_Report.pdf",
+    evaluationPeriod: "24 months",
+    payments: [
+      { date: "2024-08-15", creditor: "Wells Fargo", daysLate: 30, amount: 450, severity: "minor" },
+      { date: "2024-03-22", creditor: "Chase", daysLate: 15, amount: 220, severity: "minor" },
+    ],
+    summary: {
+      late30Days: 1,
+      late60Days: 0,
+      late90Days: 0,
+      late120Plus: 0
+    }
+  };
+
+  // Determine late payment decision
+  let latePaymentDecision: "pass" | "manual_credit_exception_60_90" | "manual_credit_severity_120" = "pass";
+  
+  if (latePaymentData.summary.late120Plus > 0) {
+    latePaymentDecision = "manual_credit_severity_120";
+  } else if (latePaymentData.summary.late60Days > 0 || latePaymentData.summary.late90Days > 0) {
+    latePaymentDecision = "manual_credit_exception_60_90";
+  } else {
+    latePaymentDecision = "pass"; // 30-day or clean
+  }
 
   // Mock data for TLO Review
   const tloData = {
@@ -346,45 +367,113 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
               Late Payment History Evaluation
-              {getStatusBadge('warn')}
+              {latePaymentDecision === "manual_credit_severity_120" ? getStatusBadge('fail') :
+               latePaymentDecision === "manual_credit_exception_60_90" ? getStatusBadge('warn') :
+               getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.latePayment ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.latePayment && (
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Creditor</TableHead>
-                  <TableHead className="text-right">Days Late</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {latePaymentData.map((item, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{item.date}</TableCell>
-                    <TableCell className="font-medium">{item.creditor}</TableCell>
-                    <TableCell className="text-right">{item.daysLate}</TableCell>
-                    <TableCell className="text-right">${item.amount}</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className="mt-4 p-3 bg-muted/30 rounded space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Total Late Payments (24 months)</span>
-                <span className="font-semibold">2</span>
+          <CardContent className="space-y-4">
+            {/* Credit Report */}
+            <div className="p-3 bg-muted/30 rounded flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Credit Report</p>
+                <p className="text-sm font-medium">Evaluation Period: {latePaymentData.evaluationPeriod}</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Most Recent</span>
-                <span className="font-semibold">6 months ago</span>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Download className="h-3 w-3" />
+                Download
+              </Button>
+            </div>
+
+            <Separator />
+
+            {/* Summary Grid */}
+            <div>
+              <p className="text-sm font-semibold mb-3">Late Payment Summary (24 months)</p>
+              <div className="grid grid-cols-4 gap-3">
+                <div className="p-3 border rounded text-center">
+                  <p className="text-2xl font-bold">{latePaymentData.summary.late30Days}</p>
+                  <p className="text-xs text-muted-foreground">30 Days</p>
+                  {latePaymentData.summary.late30Days > 0 && (
+                    <Badge variant="outline" className="mt-1">Minor</Badge>
+                  )}
+                </div>
+                <div className="p-3 border rounded text-center">
+                  <p className="text-2xl font-bold">{latePaymentData.summary.late60Days}</p>
+                  <p className="text-xs text-muted-foreground">60 Days</p>
+                  {latePaymentData.summary.late60Days > 0 && (
+                    <Badge variant="warning" className="mt-1">Exception</Badge>
+                  )}
+                </div>
+                <div className="p-3 border rounded text-center">
+                  <p className="text-2xl font-bold">{latePaymentData.summary.late90Days}</p>
+                  <p className="text-xs text-muted-foreground">90 Days</p>
+                  {latePaymentData.summary.late90Days > 0 && (
+                    <Badge variant="warning" className="mt-1">Exception</Badge>
+                  )}
+                </div>
+                <div className="p-3 border rounded text-center">
+                  <p className="text-2xl font-bold">{latePaymentData.summary.late120Plus}</p>
+                  <p className="text-xs text-muted-foreground">120+ Days</p>
+                  {latePaymentData.summary.late120Plus > 0 && (
+                    <Badge variant="destructive" className="mt-1">Severe</Badge>
+                  )}
+                </div>
               </div>
             </div>
+
+            <Separator />
+
+            {/* Payment Details */}
+            {latePaymentData.payments.length > 0 && (
+              <>
+                <div>
+                  <p className="text-sm font-semibold mb-3">Payment Details</p>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Creditor</TableHead>
+                        <TableHead className="text-right">Days Late</TableHead>
+                        <TableHead className="text-right">Amount</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {latePaymentData.payments.map((item, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell>{item.date}</TableCell>
+                          <TableCell className="font-medium">{item.creditor}</TableCell>
+                          <TableCell className="text-right">{item.daysLate}</TableCell>
+                          <TableCell className="text-right">${item.amount}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                <Separator />
+              </>
+            )}
+
+            {/* Decision */}
+            {latePaymentDecision === "manual_credit_severity_120" ? (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
+                <p className="text-xs text-muted-foreground mt-1">120+ day late payments detected within 24 months</p>
+              </div>
+            ) : latePaymentDecision === "manual_credit_exception_60_90" ? (
+              <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
+                <p className="text-xs text-muted-foreground mt-1">60-90 day late payments detected within 24 months</p>
+              </div>
+            ) : (
+              <div className="p-3 bg-success/10 border border-success/20 rounded">
+                <p className="text-sm font-medium text-success">✓ Pass</p>
+                <p className="text-xs text-muted-foreground mt-1">30-day late or clean payment history</p>
+              </div>
+            )}
           </CardContent>
         )}
       </Card>
