@@ -149,6 +149,18 @@ export const ExperienceTieringCopyTab = ({
     liquidityRatioMinRequired: 1.25,
     liquidityVerified: "verified"
   };
+  const ficoReports = {
+    borrower: [
+      { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01" },
+      { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01" },
+      { name: "Account History Summary", type: "Supporting Document", date: "2025-11-01" }
+    ],
+    coBorrower: [
+      { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01" },
+      { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01" },
+      { name: "ITIN Verification", type: "Identity Document", date: "2025-11-01" }
+    ]
+  };
   const performanceBehavior = {
     defaults: 0,
     extensions: 2,
@@ -691,6 +703,44 @@ export const ExperienceTieringCopyTab = ({
                     <div className="p-3 bg-muted/30 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">Liquidity Ratio Minimum Required</p>
                       <p className="font-medium">{creditLiquidity.liquidityRatioMinRequired}x</p>
+                    </div>
+                  </div>
+                  
+                  {/* FICO Reports Section */}
+                  <div className="mt-4 space-y-3">
+                    <p className="text-xs font-medium text-muted-foreground">Reports Used for FICO Calculation</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Borrower Reports */}
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold">Primary Borrower</p>
+                        <div className="space-y-1.5">
+                          {ficoReports.borrower.map((report, idx) => (
+                            <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+                              <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-medium truncate">{report.name}</div>
+                                <div className="text-[10px] text-muted-foreground">{report.type} • {report.date}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Co-Borrower Reports */}
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold">Co-Borrower</p>
+                        <div className="space-y-1.5">
+                          {ficoReports.coBorrower.map((report, idx) => (
+                            <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+                              <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-medium truncate">{report.name}</div>
+                                <div className="text-[10px] text-muted-foreground">{report.type} • {report.date}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
