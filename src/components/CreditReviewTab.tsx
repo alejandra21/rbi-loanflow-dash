@@ -56,7 +56,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       status: "pass",
       tier: "Platinum", // From Experience Tiering phase
       isForeignNational: false,
-      ssn: "***-**-1234" // Last 4 digits
+      ssn: "***-**-1234", // Last 4 digits
+      reports: [
+        { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01" },
+        { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01" },
+        { name: "Account History Summary", type: "Supporting Document", date: "2025-11-01" }
+      ]
     },
     coBorrower: {
       name: "Jane Smith",
@@ -66,7 +71,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       status: "pass",
       tier: "Gold", // From Experience Tiering phase
       isForeignNational: true,
-      ssn: null // No SSN for foreign national
+      ssn: null, // No SSN for foreign national
+      reports: [
+        { name: "Credit Report - Experian", type: "Credit Bureau Report", date: "2025-11-01" },
+        { name: "FICO Score Calculation", type: "Score Analysis", date: "2025-11-01" },
+        { name: "ITIN Verification", type: "Identity Document", date: "2025-11-01" }
+      ]
     }
   };
 
@@ -304,6 +314,27 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <span className="text-xs text-muted-foreground">Pull Date</span>
                     <span className="text-sm">{creditPullData.borrower.pullDate}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Status</span>
+                    {getStatusBadge(creditPullData.borrower.status)}
+                  </div>
+                  
+                  <Separator className="my-3" />
+                  
+                  <div className="space-y-2">
+                    <span className="text-xs font-medium text-muted-foreground">Reports Used for Calculation</span>
+                    <div className="space-y-1.5">
+                      {creditPullData.borrower.reports.map((report, idx) => (
+                        <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+                          <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-medium truncate">{report.name}</div>
+                            <div className="text-[10px] text-muted-foreground">{report.type} • {report.date}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -340,6 +371,27 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">Pull Date</span>
                     <span className="text-sm">{creditPullData.coBorrower.pullDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Status</span>
+                    {getStatusBadge(creditPullData.coBorrower.status)}
+                  </div>
+                  
+                  <Separator className="my-3" />
+                  
+                  <div className="space-y-2">
+                    <span className="text-xs font-medium text-muted-foreground">Reports Used for Calculation</span>
+                    <div className="space-y-1.5">
+                      {creditPullData.coBorrower.reports.map((report, idx) => (
+                        <div key={idx} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+                          <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-medium truncate">{report.name}</div>
+                            <div className="text-[10px] text-muted-foreground">{report.type} • {report.date}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
