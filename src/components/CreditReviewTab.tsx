@@ -59,7 +59,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       ssn: "***-**-1234", // Last 4 digits
       ssnIssueDate: "1995-03-15", // SSN Issue Date
       dob: "1990-05-20", // Date of Birth
-      apiStatus: "success" // success, failure, missing_authorization
+      apiStatus: "success", // success, failure, missing_authorization
+      ownershipPercentage: 65 // % of ownership
     },
     coBorrower: {
       name: "Jane Smith",
@@ -70,7 +71,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       ssn: null, // No SSN for foreign national
       ssnIssueDate: null,
       dob: "1988-08-12",
-      apiStatus: "success"
+      apiStatus: "success",
+      ownershipPercentage: 35 // % of ownership
     }
   };
 
@@ -79,6 +81,11 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     // Check API status
     if (borrowerData.apiStatus === "failure" || borrowerData.apiStatus === "missing_authorization") {
       return { status: "fail", reason: "Underwriting/Credit Analyst review" };
+    }
+
+    // Check ownership percentage
+    if (borrowerData.ownershipPercentage < 20) {
+      return { status: "fail", reason: "Ownership percentage below 20% - Manual review" };
     }
 
     // Check SSN Issue Date < DOB (if both exist)
@@ -315,8 +322,16 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <span className="text-sm font-medium">{creditPullData.borrower.name}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Ownership %</span>
+                    <span className={`text-sm font-semibold ${creditPullData.borrower.ownershipPercentage < 20 ? 'text-destructive' : ''}`}>
+                      {creditPullData.borrower.ownershipPercentage}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">FICO Score</span>
-                    <span className="text-lg font-bold text-primary">{creditPullData.borrower.fico}</span>
+                    <span className="text-lg font-bold text-primary">
+                      {creditPullData.borrower.isForeignNational && !creditPullData.borrower.ssn ? "N/A" : creditPullData.borrower.fico}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">DOB</span>
@@ -363,8 +378,16 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <span className="text-sm font-medium">{creditPullData.coBorrower.name}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-xs text-muted-foreground">Ownership %</span>
+                    <span className={`text-sm font-semibold ${creditPullData.coBorrower.ownershipPercentage < 20 ? 'text-destructive' : ''}`}>
+                      {creditPullData.coBorrower.ownershipPercentage}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">FICO Score</span>
-                    <span className="text-lg font-bold text-primary">{creditPullData.coBorrower.fico}</span>
+                    <span className="text-lg font-bold text-primary">
+                      {creditPullData.coBorrower.isForeignNational && !creditPullData.coBorrower.ssn ? "N/A" : creditPullData.coBorrower.fico}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">DOB</span>
