@@ -34,6 +34,16 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
   };
 
+  const getTierColor = (tier: string): string => {
+    const colors: Record<string, string> = {
+      'Tier 1': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
+      'Tier 2': 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white',
+      'Tier 3': 'bg-gradient-to-r from-gray-300 to-gray-500 text-white',
+      'Tier 4': 'bg-gradient-to-r from-orange-400 to-orange-600 text-white'
+    };
+    return colors[tier] || 'bg-muted';
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pass":
@@ -389,7 +399,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Company Tier</p>
-              <p className="text-2xl font-bold">{companyTier}</p>
+              <Badge className={getTierColor(companyTier)}>{companyTier}</Badge>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Lowest FICO Score</p>
