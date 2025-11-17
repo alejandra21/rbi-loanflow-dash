@@ -605,15 +605,9 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         <div className="flex items-center justify-between">
                           <p className="font-medium text-sm">{guarantor.utilization}%</p>
                           {isUtilizationValid(guarantor.utilization) ? (
-                            <Badge variant="success" className="gap-1">
-                              <CheckCircle className="h-3 w-3" />
-                              Pass
-                            </Badge>
+                            <CheckCircle className="h-4 w-4 text-green-600" />
                           ) : (
-                            <Badge variant="warning" className="gap-1">
-                              <AlertTriangle className="h-3 w-3" />
-                              Review
-                            </Badge>
+                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
                           )}
                         </div>
                       </div>
