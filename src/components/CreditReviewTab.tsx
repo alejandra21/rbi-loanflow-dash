@@ -497,73 +497,26 @@ export const CreditReviewTab = ({
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditReviewSummary ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.creditReviewSummary && <CardContent>
-          {/* Row 1: Guarantors | Company Tier | Loan Program */}
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Number of Guarantors</p>
-              <p className="text-lg font-bold">{numGuarantors}</p>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Company Tier</p>
-              <Badge className={`${getTierColor(companyTier)} text-sm font-semibold px-3 py-1`}>
-                {companyTier}
-              </Badge>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Loan Program</p>
-              <p className="text-lg font-bold">{loanProgram}</p>
-            </div>
-          </div>
-
-          {/* Row 2: Lowest FICO | Verified Projects | Product Min */}
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Lowest Middle FICO Score</p>
-              <p className="text-lg font-bold text-primary">{lowestFICO}</p>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Verified Projects</p>
-              <p className="text-lg font-bold">{verifiedProjects}</p>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Product Min</p>
-              <p className="text-lg font-bold">{productMin}</p>
-            </div>
-          </div>
-
-          {/* Row 3: LTC | LTV | Loan Limit */}
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">LTC</p>
-              <p className="text-lg font-bold">{ltc}%</p>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">LTV</p>
-              <p className="text-lg font-bold">{ltv}%</p>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Loan Limit</p>
-              <p className="text-lg font-bold">${loanLimit.toLocaleString()}</p>
-            </div>
-          </div>
-
-          {/* Row 4: Product Min vs Lowest FICO validation & Tier Change */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Lowest Middle FICO {'>'}  Product Min</p>
+        {expandedCards.creditReviewSummary && <CardContent className="space-y-6">
+          {/* Section 1: Borrower & Program */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Borrower & Program</h3>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Number of Guarantors</p>
+                <p className="text-lg font-bold">{numGuarantors}</p>
               </div>
-              <div className="flex items-center gap-2 mt-2">
-                {ficoMeetsProductMin ? <Badge variant="success" className="gap-1">
-                    <CheckCircle className="h-3 w-3" /> Pass
-                  </Badge> : <Badge variant="destructive" className="gap-1">
-                    <XCircle className="h-3 w-3" /> Fail
-                  </Badge>}
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Company Tier</p>
+                <Badge className={`${getTierColor(companyTier)} text-sm font-semibold px-3 py-1`}>
+                  {companyTier}
+                </Badge>
               </div>
-            </div>
-            
-            {tierChanged && <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Loan Program</p>
+                <p className="text-lg font-bold">{loanProgram}</p>
+              </div>
+              {tierChanged && <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <div className="flex items-center gap-2">
                   <p className="text-xs text-muted-foreground">Tier Change</p>
                   <TooltipProvider>
@@ -585,9 +538,97 @@ export const CreditReviewTab = ({
                   <Badge className={`${getTierColor(companyTier)} text-xs font-semibold px-2 py-1`}>
                     {companyTier}
                   </Badge>
-                  
                 </div>
               </div>}
+            </div>
+          </div>
+
+          <Separator className="bg-border/50" />
+
+          {/* Section 2: Creditworthiness */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Creditworthiness</h3>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Lowest Middle FICO</p>
+                <p className="text-lg font-bold text-primary">{lowestFICO}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Product Min FICO</p>
+                <p className="text-lg font-bold">{productMin}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Verified Projects</p>
+                <p className="text-lg font-bold">{verifiedProjects}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Lowest FICO {'>'} Product Min</p>
+                <div className="flex items-center gap-2 mt-2">
+                  {ficoMeetsProductMin ? <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Pass
+                    </Badge> : <Badge variant="destructive" className="gap-1">
+                      <XCircle className="h-3 w-3" /> Fail
+                    </Badge>}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Separator className="bg-border/50" />
+
+          {/* Section 3: Exposure Eligibility */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Exposure Eligibility</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">LTC</p>
+                <p className="text-lg font-bold">{ltc}%</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">LTV</p>
+                <p className="text-lg font-bold">{ltv}%</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Loan Limit</p>
+                <p className="text-lg font-bold">${loanLimit.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          <Separator className="bg-border/50" />
+
+          {/* Matrix Snapshot Panel */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Matrix Snapshot</h3>
+            <div className="p-4 bg-muted/50 rounded-lg border border-border">
+              <p className="text-xs font-semibold text-muted-foreground mb-3">Credit Matrix Row Used:</p>
+              <div className="space-y-2 text-sm font-mono">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Program:</span>
+                  <span className="font-semibold">{loanProgram}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Experience:</span>
+                  <span className="font-semibold">{verifiedProjects} projects</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Min FICO:</span>
+                  <span className="font-semibold">{productMin}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">LTC:</span>
+                  <span className="font-semibold">{ltc}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">ARLTV:</span>
+                  <span className="font-semibold">{ltv}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Loan Limit:</span>
+                  <span className="font-semibold">${loanLimit.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>}
       </Card>
