@@ -124,25 +124,36 @@ export const CreditReportV2Tab = ({
           count: 2,
           recent: 1,
           old: 1,
-          monthsSinceLatest: 118
+          monthsSinceLatest: 118,
+          items: [
+            { type: "Tax Lien", amount: "$15,000", date: "2015-03-15", status: "Satisfied" },
+            { type: "Judgment Lien", amount: "$8,500", date: "2024-01-10", status: "Active" }
+          ]
         },
         judgments: {
           count: 0,
           recent: 0,
           old: 0,
-          monthsSinceLatest: null
+          monthsSinceLatest: null,
+          items: []
         },
         bankruptcies: {
           count: 1,
           recent: 0,
           old: 1,
-          monthsSinceLatest: 140
+          monthsSinceLatest: 140,
+          items: [
+            { type: "Chapter 7", filingDate: "2013-03-20", dischargeDate: "2013-09-15", status: "Discharged" }
+          ]
         },
         foreclosures: {
           count: 1,
           recent: 1,
           old: 0,
-          monthsSinceLatest: 48
+          monthsSinceLatest: 48,
+          items: [
+            { address: "123 Main St, City, ST", date: "2021-01-15", status: "Completed" }
+          ]
         },
         unclearDisposition: false
       }
@@ -172,25 +183,36 @@ export const CreditReportV2Tab = ({
           count: 2,
           recent: 1,
           old: 1,
-          monthsSinceLatest: 118
+          monthsSinceLatest: 118,
+          items: [
+            { type: "Tax Lien", amount: "$12,000", date: "2016-05-20", status: "Satisfied" },
+            { type: "Contractor Lien", amount: "$5,000", date: "2024-02-10", status: "Active" }
+          ]
         },
         judgments: {
           count: 0,
           recent: 0,
           old: 0,
-          monthsSinceLatest: null
+          monthsSinceLatest: null,
+          items: []
         },
         bankruptcies: {
           count: 1,
           recent: 0,
           old: 1,
-          monthsSinceLatest: 140
+          monthsSinceLatest: 140,
+          items: [
+            { type: "Chapter 13", filingDate: "2013-05-10", dischargeDate: "2018-06-20", status: "Discharged" }
+          ]
         },
         foreclosures: {
           count: 1,
           recent: 1,
           old: 0,
-          monthsSinceLatest: 48
+          monthsSinceLatest: 48,
+          items: [
+            { address: "456 Oak Ave, City, ST", date: "2021-03-22", status: "Completed" }
+          ]
         },
         unclearDisposition: false
       }
@@ -813,8 +835,18 @@ export const CreditReportV2Tab = ({
                               <TableRow>
                                 <TableHead className="text-xs">Type</TableHead>
                                 <TableHead className="text-xs">Count</TableHead>
-                                <TableHead className="text-xs">Recent</TableHead>
-                                <TableHead className="text-xs">Old</TableHead>
+                                <TableHead className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    <AlertTriangle className="h-3 w-3 text-warning" />
+                                    <span className="text-warning">Recent</span>
+                                  </div>
+                                </TableHead>
+                                <TableHead className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    <CheckCircle className="h-3 w-3 text-success" />
+                                    Old
+                                  </div>
+                                </TableHead>
                                 <TableHead className="text-xs">Months Since Latest</TableHead>
                               </TableRow>
                             </TableHeader>
@@ -822,73 +854,82 @@ export const CreditReportV2Tab = ({
                               <TableRow>
                                 <TableCell className="text-xs font-semibold">Liens</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.count}</TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.liens.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
-                                    {tloGuarantorData.backgroundCheck.liens.recent}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.liens.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
-                                    {tloGuarantorData.backgroundCheck.liens.old}
-                                  </div>
-                                </TableCell>
+                                <TableCell className="text-xs text-warning">{tloGuarantorData.backgroundCheck.liens.recent}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.old}</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.monthsSinceLatest}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell className="text-xs font-semibold">Judgments</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.count}</TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.judgments.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
-                                    {tloGuarantorData.backgroundCheck.judgments.recent}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.judgments.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
-                                    {tloGuarantorData.backgroundCheck.judgments.old}
-                                  </div>
-                                </TableCell>
+                                <TableCell className="text-xs text-warning">{tloGuarantorData.backgroundCheck.judgments.recent}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.old}</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest ?? '—'}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell className="text-xs font-semibold">Bankruptcies</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.count}</TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.bankruptcies.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
-                                    {tloGuarantorData.backgroundCheck.bankruptcies.recent}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.bankruptcies.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
-                                    {tloGuarantorData.backgroundCheck.bankruptcies.old}
-                                  </div>
-                                </TableCell>
+                                <TableCell className="text-xs text-warning">{tloGuarantorData.backgroundCheck.bankruptcies.recent}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.old}</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.monthsSinceLatest}</TableCell>
                               </TableRow>
                               <TableRow>
                                 <TableCell className="text-xs font-semibold">Foreclosures</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.foreclosures.count}</TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.foreclosures.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
-                                    {tloGuarantorData.backgroundCheck.foreclosures.recent}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    {tloGuarantorData.backgroundCheck.foreclosures.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
-                                    {tloGuarantorData.backgroundCheck.foreclosures.old}
-                                  </div>
-                                </TableCell>
+                                <TableCell className="text-xs text-warning">{tloGuarantorData.backgroundCheck.foreclosures.recent}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.foreclosures.old}</TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.foreclosures.monthsSinceLatest}</TableCell>
                               </TableRow>
                             </TableBody>
                           </Table>
+
+                          {/* Detailed Items */}
+                          {(tloGuarantorData.backgroundCheck.liens.items.length > 0 ||
+                            tloGuarantorData.backgroundCheck.judgments.items.length > 0 ||
+                            tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 ||
+                            tloGuarantorData.backgroundCheck.foreclosures.items.length > 0) && (
+                            <div className="mt-4 space-y-3">
+                              {tloGuarantorData.backgroundCheck.liens.items.length > 0 && (
+                                <div className="p-3 bg-muted/30 rounded border">
+                                  <p className="text-xs font-semibold mb-2">Liens Found:</p>
+                                  {tloGuarantorData.backgroundCheck.liens.items.map((item, idx) => (
+                                    <div key={idx} className="text-xs mb-2 last:mb-0">
+                                      <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} | <span className={item.status === "Active" ? "text-warning" : "text-success"}>{item.status}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {tloGuarantorData.backgroundCheck.judgments.items.length > 0 && (
+                                <div className="p-3 bg-muted/30 rounded border">
+                                  <p className="text-xs font-semibold mb-2">Judgments Found:</p>
+                                  {tloGuarantorData.backgroundCheck.judgments.items.map((item: any, idx: number) => (
+                                    <div key={idx} className="text-xs mb-2 last:mb-0">
+                                      <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} | <span className={item.status === "Active" ? "text-warning" : "text-success"}>{item.status}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 && (
+                                <div className="p-3 bg-muted/30 rounded border">
+                                  <p className="text-xs font-semibold mb-2">Bankruptcies Found:</p>
+                                  {tloGuarantorData.backgroundCheck.bankruptcies.items.map((item, idx) => (
+                                    <div key={idx} className="text-xs mb-2 last:mb-0">
+                                      <span className="font-medium">{item.type}</span> | Filed: {item.filingDate} | Discharged: {item.dischargeDate} | <span className="text-muted-foreground">{item.status}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {tloGuarantorData.backgroundCheck.foreclosures.items.length > 0 && (
+                                <div className="p-3 bg-muted/30 rounded border">
+                                  <p className="text-xs font-semibold mb-2">Foreclosures Found:</p>
+                                  {tloGuarantorData.backgroundCheck.foreclosures.items.map((item, idx) => (
+                                    <div key={idx} className="text-xs mb-2 last:mb-0">
+                                      <span className="font-medium">{item.address}</span> | {item.date} | <span className="text-muted-foreground">{item.status}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         {/* Decision */}
