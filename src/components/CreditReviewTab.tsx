@@ -198,169 +198,107 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     isFrozen: false, // Set to true to simulate frozen credit report
   };
 
-  // Mock data for TLO Review - per guarantor
+  // Mock data for TLO Review
   const tloData = {
-    borrower: {
-      name: "John Doe",
-      pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_JohnDoe.pdf",
-      reportDate: "2025-10-20",
-      extracted: {
-        fullName: "John Doe",
-        last4SSN: "1234",
-        dateOfBirth: "1985-06-15"
-      },
-      posData: {
-        fullName: "John Doe",
-        last4SSN: "1234",
-        dateOfBirth: "1985-06-15"
-      },
-      validation: {
-        nameMatch: true,
-        ssnMatch: true,
-        dobMatch: true,
-        dobYearDiff: 0,
-        missingFields: [] as string[]
-      },
-      backgroundCheck: {
-        liens: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 130
-        },
-        judgments: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 125
-        },
-        bankruptcies: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 140
-        },
-        foreclosures: {
-          withinLast36Months: false,
-          monthsSinceLatest: 48
-        },
-        unclearDisposition: false
-      }
+    pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report.pdf",
+    reportDate: "2025-10-20",
+    extracted: {
+      fullName: "John Doe",
+      last4SSN: "1234",
+      dateOfBirth: "1985-06-15"
     },
-    coBorrower: {
-      name: "Jane Smith",
-      pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_JaneSmith.pdf",
-      reportDate: "2025-10-18",
-      extracted: {
-        fullName: "Jane Smith",
-        last4SSN: "5678",
-        dateOfBirth: "1988-08-12"
+    posData: {
+      fullName: "John Doe",
+      last4SSN: "1234",
+      dateOfBirth: "1985-06-15"
+    },
+    validation: {
+      nameMatch: true,
+      ssnMatch: true,
+      dobMatch: true,
+      dobYearDiff: 0, // Years difference
+      missingFields: [] as string[] // ["DOB", "SSN"] if any missing
+    },
+    identityVerificationStatus: "pass", // "pass" or "manual_validation_required"
+    // Rule CR-24: Combined Background Result
+    backgroundCheck: {
+      liens: {
+        active: false,
+        satisfiedOrAged: false, // Satisfied or aged 120 months
+        monthsSinceLatest: 130
       },
-      posData: {
-        fullName: "Jane Smith",
-        last4SSN: "5678",
-        dateOfBirth: "1988-08-12"
+      judgments: {
+        active: false,
+        satisfiedOrAged: false,
+        monthsSinceLatest: 125
       },
-      validation: {
-        nameMatch: true,
-        ssnMatch: true,
-        dobMatch: true,
-        dobYearDiff: 0,
-        missingFields: [] as string[]
+      bankruptcies: {
+        active: false,
+        satisfiedOrAged: false,
+        monthsSinceLatest: 140
       },
-      backgroundCheck: {
-        liens: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 145
-        },
-        judgments: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 150
-        },
-        bankruptcies: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 160
-        },
-        foreclosures: {
-          withinLast36Months: false,
-          monthsSinceLatest: 55
-        },
-        unclearDisposition: false
-      }
+      foreclosures: {
+        withinLast36Months: false,
+        monthsSinceLatest: 48
+      },
+      unclearDisposition: false
     }
   };
 
-  // Calculate TLO validation for each guarantor
-  const calculateTLOValidation = (guarantorData: typeof tloData.borrower) => {
-    const requiresIdentityManualValidation = 
-      !guarantorData.validation.ssnMatch || 
-      Math.abs(guarantorData.validation.dobYearDiff) > 1 ||
-      guarantorData.validation.missingFields.length > 0;
+  // Calculate identity validation status
+  const requiresIdentityManualValidation = 
+    !tloData.validation.ssnMatch || 
+    Math.abs(tloData.validation.dobYearDiff) > 1 ||
+    tloData.validation.missingFields.length > 0;
 
-    const hasActiveLiensJudgmentsBankruptcies = 
-      guarantorData.backgroundCheck.liens.active ||
-      guarantorData.backgroundCheck.judgments.active ||
-      guarantorData.backgroundCheck.bankruptcies.active;
+  // Calculate Rule CR-24: Combined Background Result
+  const hasActiveLiensJudgmentsBankruptcies = 
+    tloData.backgroundCheck.liens.active ||
+    tloData.backgroundCheck.judgments.active ||
+    tloData.backgroundCheck.bankruptcies.active;
 
-    const hasActiveWithin120Months = 
-      (guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged) ||
-      (guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged) ||
-      (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged);
+  const hasActiveWithin120Months = 
+    (tloData.backgroundCheck.liens.monthsSinceLatest <= 120 && !tloData.backgroundCheck.liens.satisfiedOrAged) ||
+    (tloData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !tloData.backgroundCheck.judgments.satisfiedOrAged) ||
+    (tloData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !tloData.backgroundCheck.bankruptcies.satisfiedOrAged);
 
-    const hasSatisfiedOrAged = 
-      guarantorData.backgroundCheck.liens.satisfiedOrAged ||
-      guarantorData.backgroundCheck.judgments.satisfiedOrAged ||
-      guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
+  const hasSatisfiedOrAged = 
+    tloData.backgroundCheck.liens.satisfiedOrAged ||
+    tloData.backgroundCheck.judgments.satisfiedOrAged ||
+    tloData.backgroundCheck.bankruptcies.satisfiedOrAged;
 
-    const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.withinLast36Months;
+  const hasForeclosuresLast36 = tloData.backgroundCheck.foreclosures.withinLast36Months;
 
-    let backgroundDecision: "pass" | "manual_validation" | "non_pass" = "pass";
-    
-    if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
-      backgroundDecision = "non_pass";
-    }
-    else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || guarantorData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
-      backgroundDecision = "manual_validation";
-    }
-    else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
-      backgroundDecision = "pass";
-    }
-    else if (requiresIdentityManualValidation) {
-      backgroundDecision = "manual_validation";
-    }
+  // Determine background decision
+  let backgroundDecision: "pass" | "manual_validation" | "non_pass" = "pass";
+  
+  // Fail Criteria: Any active or unresolved record 120 months AND foreclosures within last 36 months
+  if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
+    backgroundDecision = "non_pass";
+  }
+  // Manual Validation: Satisfied/aged 120 months OR identity mismatch OR unclear disposition, AND foreclosures within 36 months
+  else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || tloData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
+    backgroundDecision = "manual_validation";
+  }
+  // Pass: No active liens, judgments, bankruptcies within 120 months OR foreclosures within 36 months
+  else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
+    backgroundDecision = "pass";
+  }
+  // Manual Validation for identity issues even without foreclosures
+  else if (requiresIdentityManualValidation) {
+    backgroundDecision = "manual_validation";
+  }
 
-    return {
-      requiresIdentityManualValidation,
-      hasActiveLiensJudgmentsBankruptcies,
-      hasActiveWithin120Months,
-      hasSatisfiedOrAged,
-      hasForeclosuresLast36,
-      backgroundDecision
-    };
-  };
-
-  const borrowerTLOValidation = calculateTLOValidation(tloData.borrower);
-  const coBorrowerTLOValidation = calculateTLOValidation(tloData.coBorrower);
-
-  // Mock data for LexisNexis - per guarantor
+  // Mock data for LexisNexis - show entities that matched
   const lexisNexisData = {
-    borrower: {
-      name: "John Doe",
-      matchStatus: "match",
-      matchedEntities: [
-        { name: "John Doe", matchScore: 95, type: "Exact Name Match", risk: "Low" },
-        { name: "Jonathan Doe", matchScore: 78, type: "Similar Name Match", risk: "Medium" }
-      ],
-      reportDate: "2025-10-15",
-      closeDate: "2025-11-10"
-    },
-    coBorrower: {
-      name: "Jane Smith",
-      matchStatus: "clear",
-      matchedEntities: [],
-      reportDate: "2025-10-12",
-      closeDate: "2025-11-10"
-    }
+    matchStatus: "match", // "clear" or "match"
+    matchedEntities: [
+      { name: "John Doe", matchScore: 95, type: "Exact Name Match", risk: "Low" },
+      { name: "Jonathan Doe", matchScore: 78, type: "Similar Name Match", risk: "Medium" }
+    ],
+    reportDate: "2025-10-15",
+    closeDate: "2025-11-10", // Loan close date for comparison
+    status: "pass"
   };
 
   // Calculate if report is older than 60 days from close date
