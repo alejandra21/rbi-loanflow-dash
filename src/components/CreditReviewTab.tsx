@@ -785,15 +785,17 @@ export const CreditReviewTab = ({
                               </Tooltip>
                             </TooltipProvider>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">{hasCreditAuth ? 'Yes' : 'No'}</p>
-                            {hasCreditAuth ? (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                            ) : (
-                              <AlertTriangle className="h-4 w-4 text-red-600" />
-                            )}
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm">{hasCreditAuth ? 'Yes' : 'No'}</p>
+                              {hasCreditAuth ? (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                              )}
+                            </div>
                             {hasCreditAuth && (
-                              <Button variant="outline" size="sm" className="ml-2 h-7 px-2 text-xs">
+                              <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
                                 <Download className="h-3 w-3 mr-1" />
                                 Download Authorization
                               </Button>
