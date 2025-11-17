@@ -53,6 +53,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   // Mock data for Credit Pull & FICO
   const closingDate = "2025-11-15"; // Loan closing date
+  const companyTier = "Tier 2"; // Company tier
   
   const creditPullData = {
     borrower: {
@@ -65,7 +66,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       ssnIssueDate: "1995-03-15", // SSN Issue Date
       dob: "1990-05-20", // Date of Birth
       apiStatus: "success", // success, failure, missing_authorization
-      ownershipPercentage: 65 // % of ownership
+      ownershipPercentage: 65, // % of ownership
+      utilization: 35 // Credit utilization percentage
     },
     coBorrower: {
       name: "Jane Smith",
@@ -77,9 +79,17 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       ssnIssueDate: null,
       dob: "1988-08-12",
       apiStatus: "success",
-      ownershipPercentage: 35 // % of ownership
+      ownershipPercentage: 35, // % of ownership
+      utilization: 42 // Credit utilization percentage
     }
   };
+
+  // Get all guarantors
+  const guarantors = [creditPullData.borrower, creditPullData.coBorrower];
+  const numGuarantors = guarantors.length;
+  const lowestFICO = Math.min(
+    ...guarantors.map(g => g.isForeignNational && !g.ssn ? Infinity : g.fico).filter(f => f !== Infinity)
+  );
 
   // Validation logic for Credit Pull
   const validateCreditPull = (borrowerData: typeof creditPullData.borrower | typeof creditPullData.coBorrower) => {
@@ -110,6 +120,11 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       return { status: "fail", reason: "Credit report >90 days old - Manual review" };
     }
 
+    // Check utilization
+    if (borrowerData.utilization > 75) {
+      return { status: "fail", reason: "Utilization exceeds 75% - Manual review" };
+    }
+
     return { status: "pass", reason: null };
   };
 
@@ -119,32 +134,52 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   // Overall status for the card
   const overallStatus = borrowerValidation.status === "fail" || coBorrowerValidation.status === "fail" ? "fail" : "pass";
 
-  // Mock data for Late Payments
+  // Mock data for Late Payments - by guarantor
   const latePaymentData = {
-    creditReport: "s3://bucket-name/credit-reports/LOAN123456/Credit_Report.pdf",
-    evaluationPeriod: "24 months",
-    payments: [
-      { date: "2024-08-15", creditor: "Wells Fargo", daysLate: 30, amount: 450, severity: "minor" },
-      { date: "2024-03-22", creditor: "Chase", daysLate: 15, amount: 220, severity: "minor" },
-    ],
-    summary: {
-      late30Days: 1,
-      late60Days: 0,
-      late90Days: 0,
-      late120Plus: 0
+    borrower: {
+      name: "John Doe",
+      creditReport: "s3://bucket-name/credit-reports/LOAN123456/John_Doe_Credit_Report.pdf",
+      evaluationPeriod: "24 months",
+      payments: [
+        { date: "2024-08-15", creditor: "Wells Fargo", daysLate: 30, amount: 450, severity: "minor" },
+        { date: "2024-03-22", creditor: "Chase", daysLate: 15, amount: 220, severity: "minor" },
+      ],
+      summary: {
+        late30Days: 1,
+        late60Days: 0,
+        late90Days: 0,
+        late120Plus: 0
+      }
+    },
+    coBorrower: {
+      name: "Jane Smith",
+      creditReport: "s3://bucket-name/credit-reports/LOAN123456/Jane_Smith_Credit_Report.pdf",
+      evaluationPeriod: "24 months",
+      payments: [
+        { date: "2024-06-10", creditor: "Bank of America", daysLate: 60, amount: 800, severity: "moderate" },
+      ],
+      summary: {
+        late30Days: 0,
+        late60Days: 1,
+        late90Days: 0,
+        late120Plus: 0
+      }
     }
   };
 
-  // Determine late payment decision
-  let latePaymentDecision: "pass" | "manual_credit_exception_60_90" | "manual_credit_severity_120" = "pass";
-  
-  if (latePaymentData.summary.late120Plus > 0) {
-    latePaymentDecision = "manual_credit_severity_120";
-  } else if (latePaymentData.summary.late60Days > 0 || latePaymentData.summary.late90Days > 0) {
-    latePaymentDecision = "manual_credit_exception_60_90";
-  } else {
-    latePaymentDecision = "pass"; // 30-day or clean
-  }
+  // Determine late payment decision per guarantor
+  const evaluateLatePayments = (summary: typeof latePaymentData.borrower.summary): "pass" | "manual_credit_exception_60_90" | "manual_credit_severity_120" => {
+    if (summary.late120Plus > 0) {
+      return "manual_credit_severity_120";
+    } else if (summary.late60Days > 0 || summary.late90Days > 0) {
+      return "manual_credit_exception_60_90";
+    } else {
+      return "pass"; // 30-day or clean
+    }
+  };
+
+  const borrowerLatePaymentDecision = evaluateLatePayments(latePaymentData.borrower.summary);
+  const coBorrowerLatePaymentDecision = evaluateLatePayments(latePaymentData.coBorrower.summary);
 
   // Mock data for Credit Utilization Analysis
   const creditUtilizationAnalysisData = {
@@ -244,11 +279,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     backgroundDecision = "manual_validation";
   }
 
-  // Mock data for LexisNexis
+  // Mock data for LexisNexis - show entities that matched
   const lexisNexisData = {
-    matchStatus: "clear", // "clear" or "match"
-    exactNameMatch: false,
-    mScore: 85, // M=100 means exact match
+    matchStatus: "match", // "clear" or "match"
+    matchedEntities: [
+      { name: "John Doe", matchScore: 95, type: "Exact Name Match", risk: "Low" },
+      { name: "Jonathan Doe", matchScore: 78, type: "Similar Name Match", risk: "Medium" }
+    ],
     reportDate: "2025-10-15",
     closeDate: "2025-11-10", // Loan close date for comparison
     status: "pass"
@@ -261,10 +298,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   );
   const isReportStale = reportAge > 60;
 
-  // Mock data for FlagDat
+  // Mock data for FlagDat - show number of matches
   const flagDatData = {
-    watchlistCheck: false, // false = no match, true = match found
-    blacklistCheck: false, // false = no match, true = match found
+    watchlistMatches: 2, // Number of watchlist matches
+    blacklistMatches: 0, // Number of blacklist matches
     status: "pass",
     lastChecked: "2025-11-10"
   };
@@ -336,6 +373,32 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         </Button>
       </div>
 
+      {/* Summary Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Credit Review Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Number of Guarantors</p>
+              <p className="text-2xl font-bold">{numGuarantors}</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Company Tier</p>
+              <p className="text-2xl font-bold">{companyTier}</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Lowest FICO Score</p>
+              <p className="text-2xl font-bold text-primary">{lowestFICO}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Section 1: Credit Pull & FICO */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('creditPull')}>
@@ -350,119 +413,100 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         </CardHeader>
         {expandedCards.creditPull && (
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Borrower */}
-              <div className="p-4 border rounded-lg space-y-3">
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Name</span>
-                    <span className="text-sm font-medium">{creditPullData.borrower.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Ownership %</span>
-                    <span className={`text-sm font-semibold ${creditPullData.borrower.ownershipPercentage < 20 ? 'text-destructive' : ''}`}>
-                      {creditPullData.borrower.ownershipPercentage}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">FICO Score</span>
-                    <span className="text-lg font-bold text-primary">
-                      {creditPullData.borrower.isForeignNational && !creditPullData.borrower.ssn ? "N/A" : creditPullData.borrower.fico}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">DOB</span>
-                    <span className="text-sm">{creditPullData.borrower.dob}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Foreign National</span>
-                    <span className="text-sm">{creditPullData.borrower.isForeignNational ? "Yes" : "No"}</span>
-                  </div>
-                  {creditPullData.borrower.ssn && (
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">SSN</span>
-                      <span className="text-sm font-mono">{creditPullData.borrower.ssn}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Bureau</span>
-                    <span className="text-sm">{creditPullData.borrower.bureau}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Pull Date</span>
-                    <span className="text-sm">{creditPullData.borrower.pullDate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Status</span>
-                    {getStatusBadge(borrowerValidation.status)}
-                  </div>
-                  {borrowerValidation.reason && (
-                    <div className="p-2 bg-destructive/10 rounded-md">
-                      <p className="text-xs text-destructive flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {borrowerValidation.reason}
-                      </p>
-                    </div>
-                  )}
+            {guarantors.map((guarantor, index) => (
+              <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium">{guarantor.name}</h4>
+                  <Badge variant="outline">{guarantor.ownershipPercentage}% ownership</Badge>
                 </div>
-              </div>
-
-              {/* Co-Borrower */}
-              <div className="p-4 border rounded-lg space-y-3">
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Name</span>
-                    <span className="text-sm font-medium">{creditPullData.coBorrower.name}</span>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">Ownership %</p>
+                    <p className={`font-medium text-sm ${guarantor.ownershipPercentage < 20 ? 'text-destructive' : ''}`}>
+                      {guarantor.ownershipPercentage}%
+                    </p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Ownership %</span>
-                    <span className={`text-sm font-semibold ${creditPullData.coBorrower.ownershipPercentage < 20 ? 'text-destructive' : ''}`}>
-                      {creditPullData.coBorrower.ownershipPercentage}%
-                    </span>
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">FICO Score</p>
+                    <p className="font-medium text-sm flex items-center">
+                      {guarantor.isForeignNational && !guarantor.ssn ? "N/A" : guarantor.fico}
+                      <CreditCard className="h-4 w-4 ml-1" />
+                    </p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">FICO Score</span>
-                    <span className="text-lg font-bold text-primary">
-                      {creditPullData.coBorrower.isForeignNational && !creditPullData.coBorrower.ssn ? "N/A" : creditPullData.coBorrower.fico}
-                    </span>
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">Bureau</p>
+                    <p className="font-medium text-sm">{guarantor.bureau}</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">DOB</span>
-                    <span className="text-sm">{creditPullData.coBorrower.dob}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Foreign National</span>
-                    <span className="text-sm">{creditPullData.coBorrower.isForeignNational ? "Yes" : "No"}</span>
-                  </div>
-                  {creditPullData.coBorrower.ssn && (
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">SSN</span>
-                      <span className="text-sm font-mono">{creditPullData.coBorrower.ssn}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Bureau</span>
-                    <span className="text-sm">{creditPullData.coBorrower.bureau}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Pull Date</span>
-                    <span className="text-sm">{creditPullData.coBorrower.pullDate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Status</span>
-                    {getStatusBadge(coBorrowerValidation.status)}
-                  </div>
-                  {coBorrowerValidation.reason && (
-                    <div className="p-2 bg-destructive/10 rounded-md">
-                      <p className="text-xs text-destructive flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {coBorrowerValidation.reason}
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">Utilization</p>
+                    <div className="flex items-center space-x-2">
+                      <p className={`font-medium text-sm ${guarantor.utilization > 75 ? 'text-destructive' : ''}`}>
+                        {guarantor.utilization}%
                       </p>
+                      {guarantor.utilization > 75 && (
+                        <AlertTriangle className="h-4 w-4 text-destructive" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">DOB</p>
+                    <p className="font-medium text-sm">{guarantor.dob}</p>
+                  </div>
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">DOB vs SSN Issued</p>
+                    {guarantor.ssnIssueDate && guarantor.dob ? (
+                      <div className="flex items-center space-x-2">
+                        <p className={`font-medium text-sm ${new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? 'text-destructive' : 'text-success'}`}>
+                          {new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? 'Invalid' : 'Valid'}
+                        </p>
+                        {new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? (
+                          <AlertTriangle className="h-4 w-4 text-destructive" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        )}
+                      </div>
+                    ) : (
+                      <p className="font-medium text-sm">N/A</p>
+                    )}
+                  </div>
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">Foreign National</p>
+                    <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
+                  </div>
+                  
+                  {guarantor.ssn && (
+                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                      <p className="text-xs text-muted-foreground">SSN</p>
+                      <p className="font-medium text-sm font-mono">{guarantor.ssn}</p>
                     </div>
                   )}
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">Pull Date</p>
+                    <p className="font-medium text-sm">{guarantor.pullDate}</p>
+                  </div>
+                  
+                  <div className="p-3 bg-muted/20 rounded space-y-1">
+                    <p className="text-xs text-muted-foreground">Status</p>
+                    {getStatusBadge(validateCreditPull(guarantor).status)}
+                  </div>
                 </div>
+                
+                {validateCreditPull(guarantor).reason && (
+                  <div className="p-3 bg-destructive/10 rounded-md flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
+                    <p className="text-sm text-destructive">{validateCreditPull(guarantor).reason}</p>
+                  </div>
+                )}
               </div>
-            </div>
+            ))}
           </CardContent>
         )}
       </Card>
@@ -554,82 +598,112 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         )}
       </Card>
 
-      {/* Section 3: Late Payment History Evaluation */}
+      {/* Section 3: Late Payment History Evaluation - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('latePayment')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
               Late Payment History Evaluation
-              {latePaymentDecision === "manual_credit_severity_120" ? getStatusBadge('fail') :
-               latePaymentDecision === "manual_credit_exception_60_90" ? getStatusBadge('warn') :
-               getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.latePayment ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.latePayment && (
           <CardContent className="space-y-4">
-            {/* Credit Report */}
-            <div className="p-3 bg-muted/30 rounded flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Credit Report</p>
-                <p className="text-sm font-medium">Evaluation Period: {latePaymentData.evaluationPeriod}</p>
+            {/* Borrower Late Payments */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{latePaymentData.borrower.name}</h4>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="h-3 w-3" />
+                    Download Report
+                  </Button>
+                </div>
               </div>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Download className="h-3 w-3" />
-                Download
-              </Button>
-            </div>
 
-            <Separator />
-
-            {/* Summary Grid */}
-            <div>
-              <p className="text-sm font-semibold mb-3">Late Payment Summary (24 months)</p>
               <div className="grid grid-cols-3 gap-4">
-                {/* Box 1: 30 days or clean - Pass */}
-                <div className="p-4 border rounded space-y-2">
-                  <p className="text-3xl font-bold text-center">{latePaymentData.summary.late30Days}</p>
+                <div className="p-3 bg-muted/20 rounded space-y-2">
+                  <p className="text-2xl font-bold text-center">{latePaymentData.borrower.summary.late30Days}</p>
                   <p className="text-xs text-muted-foreground text-center">30 days or clean</p>
                   <Badge variant="success" className="w-full justify-center">Pass</Badge>
                 </div>
-
-                {/* Box 2: 60-90 days - Manual Review */}
-                <div className="p-4 border rounded space-y-2">
-                  <p className="text-3xl font-bold text-center">{latePaymentData.summary.late60Days + latePaymentData.summary.late90Days}</p>
+                <div className="p-3 bg-muted/20 rounded space-y-2">
+                  <p className="text-2xl font-bold text-center">{latePaymentData.borrower.summary.late60Days + latePaymentData.borrower.summary.late90Days}</p>
                   <p className="text-xs text-muted-foreground text-center">60-90 days</p>
-                  <Badge variant="warning" className="w-full justify-center">Manual Review: CreditException_60_90</Badge>
+                  <Badge variant="warning" className="w-full justify-center">Manual Review</Badge>
                 </div>
-
-                {/* Box 3: 120+ days - Credit Severity */}
-                <div className="p-4 border rounded space-y-2">
-                  <p className="text-3xl font-bold text-center">{latePaymentData.summary.late120Plus}</p>
+                <div className="p-3 bg-muted/20 rounded space-y-2">
+                  <p className="text-2xl font-bold text-center">{latePaymentData.borrower.summary.late120Plus}</p>
                   <p className="text-xs text-muted-foreground text-center">120+ days</p>
-                  <Badge variant="destructive" className="w-full justify-center">CreditSeverity_120</Badge>
+                  <Badge variant="destructive" className="w-full justify-center">Severity</Badge>
                 </div>
               </div>
+
+              {borrowerLatePaymentDecision === "manual_credit_severity_120" && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
+                </div>
+              )}
+              {borrowerLatePaymentDecision === "manual_credit_exception_60_90" && (
+                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                  <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
+                </div>
+              )}
+              {borrowerLatePaymentDecision === "pass" && (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
+                </div>
+              )}
             </div>
 
-            <Separator />
+            {/* Co-Borrower Late Payments */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{latePaymentData.coBorrower.name}</h4>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="h-3 w-3" />
+                    Download Report
+                  </Button>
+                </div>
+              </div>
 
-            {/* Decision */}
-            {latePaymentDecision === "manual_credit_severity_120" ? (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
-                <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
-                <p className="text-xs text-muted-foreground mt-1">120+ day late payments detected within 24 months</p>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-3 bg-muted/20 rounded space-y-2">
+                  <p className="text-2xl font-bold text-center">{latePaymentData.coBorrower.summary.late30Days}</p>
+                  <p className="text-xs text-muted-foreground text-center">30 days or clean</p>
+                  <Badge variant="success" className="w-full justify-center">Pass</Badge>
+                </div>
+                <div className="p-3 bg-muted/20 rounded space-y-2">
+                  <p className="text-2xl font-bold text-center">{latePaymentData.coBorrower.summary.late60Days + latePaymentData.coBorrower.summary.late90Days}</p>
+                  <p className="text-xs text-muted-foreground text-center">60-90 days</p>
+                  <Badge variant="warning" className="w-full justify-center">Manual Review</Badge>
+                </div>
+                <div className="p-3 bg-muted/20 rounded space-y-2">
+                  <p className="text-2xl font-bold text-center">{latePaymentData.coBorrower.summary.late120Plus}</p>
+                  <p className="text-xs text-muted-foreground text-center">120+ days</p>
+                  <Badge variant="destructive" className="w-full justify-center">Severity</Badge>
+                </div>
               </div>
-            ) : latePaymentDecision === "manual_credit_exception_60_90" ? (
-              <div className="p-3 bg-warning/10 border border-warning/20 rounded">
-                <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
-                <p className="text-xs text-muted-foreground mt-1">60-90 day late payments detected within 24 months</p>
-              </div>
-            ) : (
-              <div className="p-3 bg-success/10 border border-success/20 rounded">
-                <p className="text-sm font-medium text-success">✓ Pass</p>
-                <p className="text-xs text-muted-foreground mt-1">30-day late or clean payment history</p>
-              </div>
-            )}
+
+              {coBorrowerLatePaymentDecision === "manual_credit_severity_120" && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
+                </div>
+              )}
+              {coBorrowerLatePaymentDecision === "manual_credit_exception_60_90" && (
+                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                  <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
+                </div>
+              )}
+              {coBorrowerLatePaymentDecision === "pass" && (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
+                </div>
+              )}
+            </div>
           </CardContent>
         )}
       </Card>
@@ -906,57 +980,85 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         </CardHeader>
         {expandedCards.lexisNexis && (
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Match Status</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold">
-                    {lexisNexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
-                  </p>
-                  {lexisNexisData.matchStatus === "match" ? (
-                    <Badge variant="destructive">Match Found</Badge>
-                  ) : (
-                    <Badge variant="success">Clear</Badge>
-                  )}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Match Status</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {lexisNexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
+                    </p>
+                    {lexisNexisData.matchStatus === "match" ? (
+                      <Badge variant="destructive">Match Found</Badge>
+                    ) : (
+                      <Badge variant="success">Clear</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-4 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Report Date</p>
+                  <p className="text-sm font-medium">{lexisNexisData.reportDate}</p>
+                </div>
+                <div className="p-4 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Report Age</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">{reportAge} days</p>
+                    {isReportStale && (
+                      <Badge variant="destructive">Stale</Badge>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">M Score</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold">{lexisNexisData.mScore}</p>
-                  {lexisNexisData.mScore === 100 && lexisNexisData.exactNameMatch && (
-                    <Badge variant="destructive">Exact Match</Badge>
-                  )}
-                </div>
-              </div>
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Report Date</p>
-                <p className="text-sm font-medium">{lexisNexisData.reportDate}</p>
-              </div>
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Report Age</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">{reportAge} days</p>
-                  {isReportStale && (
-                    <Badge variant="destructive">Stale</Badge>
-                  )}
-                </div>
-              </div>
-            </div>
 
-            {(lexisNexisData.matchStatus === "match" && lexisNexisData.exactNameMatch && lexisNexisData.mScore === 100) ? (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
-                <p className="text-sm font-medium text-destructive">⚠ Exact Name Match (M=100) - Manual Review: KYC required</p>
-              </div>
-            ) : isReportStale ? (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
-                <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
-              </div>
-            ) : (
-              <div className="p-3 bg-success/10 border border-success/20 rounded">
-                <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
-              </div>
-            )}
+              {lexisNexisData.matchStatus === "match" && lexisNexisData.matchedEntities.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="text-sm font-semibold mb-3">Matched Entities</p>
+                    <div className="space-y-3">
+                      {lexisNexisData.matchedEntities.map((entity, index) => (
+                        <div key={index} className="p-3 bg-muted/30 rounded-lg">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-xs text-muted-foreground">Name</p>
+                              <p className="text-sm font-medium">{entity.name}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Match Score</p>
+                              <p className="text-sm font-medium">{entity.matchScore}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Type</p>
+                              <p className="text-sm font-medium">{entity.type}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Risk</p>
+                              <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
+                                {entity.risk}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {lexisNexisData.matchStatus === "match" ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">⚠ Match Found - Manual Review: KYC required</p>
+                </div>
+              ) : isReportStale ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
+                </div>
+              ) : (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
+                </div>
+              )}
+            </div>
           </CardContent>
         )}
       </Card>
@@ -977,26 +1079,26 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">WatchList Check</p>
+                <p className="text-xs text-muted-foreground">WatchList Matches</p>
                 <div className="flex items-center gap-2">
                   <p className="text-lg font-semibold">
-                    {flagDatData.watchlistCheck ? "True" : "False"}
+                    {flagDatData.watchlistMatches}
                   </p>
-                  {flagDatData.watchlistCheck ? (
-                    <Badge variant="destructive">Match Found</Badge>
+                  {flagDatData.watchlistMatches > 0 ? (
+                    <Badge variant="destructive">{flagDatData.watchlistMatches} Match(es)</Badge>
                   ) : (
                     <Badge variant="success">No Match</Badge>
                   )}
                 </div>
               </div>
               <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">BlackList Check</p>
+                <p className="text-xs text-muted-foreground">BlackList Matches</p>
                 <div className="flex items-center gap-2">
                   <p className="text-lg font-semibold">
-                    {flagDatData.blacklistCheck ? "True" : "False"}
+                    {flagDatData.blacklistMatches}
                   </p>
-                  {flagDatData.blacklistCheck ? (
-                    <Badge variant="destructive">Match Found</Badge>
+                  {flagDatData.blacklistMatches > 0 ? (
+                    <Badge variant="destructive">{flagDatData.blacklistMatches} Match(es)</Badge>
                   ) : (
                     <Badge variant="success">No Match</Badge>
                   )}
@@ -1007,13 +1109,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 <p className="text-sm font-medium">{flagDatData.lastChecked}</p>
               </div>
             </div>
-            {(flagDatData.watchlistCheck || flagDatData.blacklistCheck) ? (
+            {(flagDatData.watchlistMatches > 0 || flagDatData.blacklistMatches > 0) ? (
               <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded">
-                <p className="text-sm font-medium text-destructive">⚠ Match found - Manual Review by Underwriting/Credit Analyst required</p>
+                <p className="text-sm font-medium text-destructive">⚠ {flagDatData.watchlistMatches + flagDatData.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
               </div>
             ) : (
               <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded">
-                <p className="text-sm font-medium text-success">✓ No match - Continue workflow</p>
+                <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
               </div>
             )}
           </CardContent>
