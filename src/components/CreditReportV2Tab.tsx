@@ -18,13 +18,22 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     creditReviewSummary: true,
     logs: false,
-    matrixSnapshot: false,
-    utilizationRules: false,
   });
   
   const [expandedGuarantors, setExpandedGuarantors] = useState<Record<string, boolean>>({
     'John Doe': false,
     'Jane Smith': false
+  });
+  
+  const [expandedGuarantorSections, setExpandedGuarantorSections] = useState<Record<string, boolean>>({
+    'John Doe-creditReport': false,
+    'John Doe-tlo': false,
+    'John Doe-lexisNexis': false,
+    'John Doe-flagDat': false,
+    'Jane Smith-creditReport': false,
+    'Jane Smith-tlo': false,
+    'Jane Smith-lexisNexis': false,
+    'Jane Smith-flagDat': false,
   });
   
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
@@ -40,6 +49,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     setExpandedGuarantors(prev => ({
       ...prev,
       [name]: !prev[name]
+    }));
+  };
+  
+  const toggleGuarantorSection = (key: string) => {
+    setExpandedGuarantorSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
     }));
   };
   
