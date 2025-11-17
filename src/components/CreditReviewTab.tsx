@@ -1503,13 +1503,13 @@ export const CreditReviewTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 6: FlagDat - By Guarantor */}
+      {/* Section 6: FlagDat Validations - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('flagDat')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
-              FlagDat
+              FlagDat Validations
               {hasAnyFlagDatMatches ? getStatusBadge('fail') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? '' : '-rotate-90'}`} />
