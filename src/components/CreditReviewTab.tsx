@@ -198,96 +198,145 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     isFrozen: false, // Set to true to simulate frozen credit report
   };
 
-  // Mock data for TLO Review
+  // Mock data for TLO Review - By Guarantor
   const tloData = {
-    pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report.pdf",
-    reportDate: "2025-10-20",
-    extracted: {
-      fullName: "John Doe",
-      last4SSN: "1234",
-      dateOfBirth: "1985-06-15"
+    borrower: {
+      name: "John Doe",
+      pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_Borrower.pdf",
+      reportDate: "2025-10-20",
+      extracted: {
+        fullName: "John Doe",
+        last4SSN: "1234",
+        dateOfBirth: "1985-06-15"
+      },
+      posData: {
+        fullName: "John Doe",
+        last4SSN: "1234",
+        dateOfBirth: "1985-06-15"
+      },
+      validation: {
+        nameMatch: true,
+        ssnMatch: true,
+        dobMatch: true,
+        dobYearDiff: 0,
+        missingFields: [] as string[]
+      },
+      backgroundCheck: {
+        liens: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 130
+        },
+        judgments: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 125
+        },
+        bankruptcies: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 140
+        },
+        foreclosures: {
+          withinLast36Months: false,
+          monthsSinceLatest: 48
+        },
+        unclearDisposition: false
+      }
     },
-    posData: {
-      fullName: "John Doe",
-      last4SSN: "1234",
-      dateOfBirth: "1985-06-15"
-    },
-    validation: {
-      nameMatch: true,
-      ssnMatch: true,
-      dobMatch: true,
-      dobYearDiff: 0, // Years difference
-      missingFields: [] as string[] // ["DOB", "SSN"] if any missing
-    },
-    identityVerificationStatus: "pass", // "pass" or "manual_validation_required"
-    // Rule CR-24: Combined Background Result
-    backgroundCheck: {
-      liens: {
-        active: false,
-        satisfiedOrAged: false, // Satisfied or aged 120 months
-        monthsSinceLatest: 130
+    coBorrower: {
+      name: "Jane Smith",
+      pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_CoBorrower.pdf",
+      reportDate: "2025-10-20",
+      extracted: {
+        fullName: "Jane Smith",
+        last4SSN: "5678",
+        dateOfBirth: "1988-08-12"
       },
-      judgments: {
-        active: false,
-        satisfiedOrAged: false,
-        monthsSinceLatest: 125
+      posData: {
+        fullName: "Jane Smith",
+        last4SSN: "5678",
+        dateOfBirth: "1988-08-12"
       },
-      bankruptcies: {
-        active: false,
-        satisfiedOrAged: false,
-        monthsSinceLatest: 140
+      validation: {
+        nameMatch: true,
+        ssnMatch: true,
+        dobMatch: true,
+        dobYearDiff: 0,
+        missingFields: [] as string[]
       },
-      foreclosures: {
-        withinLast36Months: false,
-        monthsSinceLatest: 48
-      },
-      unclearDisposition: false
+      backgroundCheck: {
+        liens: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 135
+        },
+        judgments: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 130
+        },
+        bankruptcies: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 145
+        },
+        foreclosures: {
+          withinLast36Months: false,
+          monthsSinceLatest: 50
+        },
+        unclearDisposition: false
+      }
     }
   };
 
-  // Calculate identity validation status
-  const requiresIdentityManualValidation = 
-    !tloData.validation.ssnMatch || 
-    Math.abs(tloData.validation.dobYearDiff) > 1 ||
-    tloData.validation.missingFields.length > 0;
+  // Calculate TLO decisions for each guarantor
+  const calculateTLODecision = (guarantorData: typeof tloData.borrower) => {
+    const requiresIdentityManualValidation = 
+      !guarantorData.validation.ssnMatch || 
+      Math.abs(guarantorData.validation.dobYearDiff) > 1 ||
+      guarantorData.validation.missingFields.length > 0;
 
-  // Calculate Rule CR-24: Combined Background Result
-  const hasActiveLiensJudgmentsBankruptcies = 
-    tloData.backgroundCheck.liens.active ||
-    tloData.backgroundCheck.judgments.active ||
-    tloData.backgroundCheck.bankruptcies.active;
+    const hasActiveLiensJudgmentsBankruptcies = 
+      guarantorData.backgroundCheck.liens.active ||
+      guarantorData.backgroundCheck.judgments.active ||
+      guarantorData.backgroundCheck.bankruptcies.active;
 
-  const hasActiveWithin120Months = 
-    (tloData.backgroundCheck.liens.monthsSinceLatest <= 120 && !tloData.backgroundCheck.liens.satisfiedOrAged) ||
-    (tloData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !tloData.backgroundCheck.judgments.satisfiedOrAged) ||
-    (tloData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !tloData.backgroundCheck.bankruptcies.satisfiedOrAged);
+    const hasActiveWithin120Months = 
+      (guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged) ||
+      (guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged) ||
+      (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged);
 
-  const hasSatisfiedOrAged = 
-    tloData.backgroundCheck.liens.satisfiedOrAged ||
-    tloData.backgroundCheck.judgments.satisfiedOrAged ||
-    tloData.backgroundCheck.bankruptcies.satisfiedOrAged;
+    const hasSatisfiedOrAged = 
+      guarantorData.backgroundCheck.liens.satisfiedOrAged ||
+      guarantorData.backgroundCheck.judgments.satisfiedOrAged ||
+      guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
 
-  const hasForeclosuresLast36 = tloData.backgroundCheck.foreclosures.withinLast36Months;
+    const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.withinLast36Months;
 
-  // Determine background decision
-  let backgroundDecision: "pass" | "manual_validation" | "non_pass" = "pass";
-  
-  // Fail Criteria: Any active or unresolved record 120 months AND foreclosures within last 36 months
-  if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
-    backgroundDecision = "non_pass";
-  }
-  // Manual Validation: Satisfied/aged 120 months OR identity mismatch OR unclear disposition, AND foreclosures within 36 months
-  else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || tloData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
-    backgroundDecision = "manual_validation";
-  }
-  // Pass: No active liens, judgments, bankruptcies within 120 months OR foreclosures within 36 months
-  else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
-    backgroundDecision = "pass";
-  }
-  // Manual Validation for identity issues even without foreclosures
-  else if (requiresIdentityManualValidation) {
-    backgroundDecision = "manual_validation";
-  }
+    let decision: "pass" | "manual_validation" | "non_pass" = "pass";
+    
+    if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
+      decision = "non_pass";
+    } else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || guarantorData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
+      decision = "manual_validation";
+    } else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
+      decision = "pass";
+    } else if (requiresIdentityManualValidation) {
+      decision = "manual_validation";
+    }
+
+    return { decision, requiresIdentityManualValidation };
+  };
+
+  const borrowerTLOResult = calculateTLODecision(tloData.borrower);
+  const coBorrowerTLOResult = calculateTLODecision(tloData.coBorrower);
+
+  // Overall TLO decision (worst case)
+  const overallTLODecision = 
+    borrowerTLOResult.decision === "non_pass" || coBorrowerTLOResult.decision === "non_pass" ? "non_pass" :
+    borrowerTLOResult.decision === "manual_validation" || coBorrowerTLOResult.decision === "manual_validation" ? "manual_validation" :
+    "pass";
 
   // Mock data for LexisNexis - show entities that matched
   const lexisNexisData = {
@@ -522,6 +571,9 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
               Late Payment History Evaluation
+              {(borrowerLatePaymentDecision === "manual_credit_severity_120" || coBorrowerLatePaymentDecision === "manual_credit_severity_120") ? getStatusBadge('fail') :
+               (borrowerLatePaymentDecision === "manual_credit_exception_60_90" || coBorrowerLatePaymentDecision === "manual_credit_exception_60_90") ? getStatusBadge('review') :
+               getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.latePayment ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -625,15 +677,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         )}
       </Card>
 
-      {/* Section 4: TLO Review */}
+      {/* Section 4: TLO Review - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('tlo')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               TLO Review
-              {backgroundDecision === "non_pass" ? getStatusBadge('fail') : 
-               backgroundDecision === "manual_validation" ? getStatusBadge('warn') : 
+              {overallTLODecision === "non_pass" ? getStatusBadge('fail') : 
+               overallTLODecision === "manual_validation" ? getStatusBadge('warn') : 
                getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tlo ? '' : '-rotate-90'}`} />
@@ -641,241 +693,401 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         </CardHeader>
         {expandedCards.tlo && (
           <CardContent className="space-y-4">
-            {/* PDF Report */}
-            <div className="p-3 bg-muted/30 rounded flex items-center justify-between">
+            {/* Borrower TLO Review */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{tloData.borrower.name}</h4>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="h-3 w-3" />
+                    Download Report
+                  </Button>
+                </div>
+              </div>
+
+              <div className="p-3 bg-muted/20 rounded">
+                <p className="text-xs text-muted-foreground">Report Date</p>
+                <p className="text-sm font-medium">{tloData.borrower.reportDate}</p>
+              </div>
+
+              <Separator />
+
+              {/* Identity Verification */}
               <div>
-                <p className="text-xs text-muted-foreground">TLO Report</p>
-                <p className="text-sm font-medium">Report Date: {tloData.reportDate}</p>
-              </div>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Download className="h-3 w-3" />
-                Download
-              </Button>
-            </div>
+                <p className="text-sm font-semibold mb-3">Identity Verification</p>
+                <div className="space-y-3">
+                  {/* Full Name */}
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">Full Name</span>
+                      {tloData.borrower.validation.nameMatch ? (
+                        <Badge variant="success" className="gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive" className="gap-1">
+                          <XCircle className="h-3 w-3" />
+                          Mismatch
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">TLO Report</p>
+                        <p className="font-medium">{tloData.borrower.extracted.fullName}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">POS Data</p>
+                        <p className="font-medium">{tloData.borrower.posData.fullName}</p>
+                      </div>
+                    </div>
+                  </div>
 
-            <Separator />
+                  {/* Last 4 SSN */}
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">Last 4 SSN</span>
+                      {tloData.borrower.validation.missingFields.includes("SSN") ? (
+                        <Badge variant="destructive">Missing</Badge>
+                      ) : tloData.borrower.validation.ssnMatch ? (
+                        <Badge variant="success" className="gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive" className="gap-1">
+                          <XCircle className="h-3 w-3" />
+                          Mismatch
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">TLO Report</p>
+                        <p className="font-medium">***-**-{tloData.borrower.extracted.last4SSN}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">POS Data</p>
+                        <p className="font-medium">***-**-{tloData.borrower.posData.last4SSN}</p>
+                      </div>
+                    </div>
+                  </div>
 
-            {/* Extracted Data vs POS Comparison */}
-            <div>
-              <p className="text-sm font-semibold mb-3">Identity Verification</p>
-              <div className="space-y-3">
-                {/* Full Name */}
-                <div className="p-3 border rounded">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-muted-foreground">Full Name</span>
-                    {tloData.validation.nameMatch ? (
-                      <Badge variant="success" className="gap-1">
-                        <CheckCircle className="h-3 w-3" />
-                        Match
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive" className="gap-1">
-                        <XCircle className="h-3 w-3" />
-                        Mismatch
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <p className="text-xs text-muted-foreground">TLO Report</p>
-                      <p className="font-medium">{tloData.extracted.fullName}</p>
+                  {/* DOB */}
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">Date of Birth</span>
+                      {tloData.borrower.validation.missingFields.includes("DOB") ? (
+                        <Badge variant="destructive">Missing</Badge>
+                      ) : tloData.borrower.validation.dobMatch ? (
+                        <Badge variant="success" className="gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="warning" className="gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          {Math.abs(tloData.borrower.validation.dobYearDiff)} year diff
+                        </Badge>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">POS Data</p>
-                      <p className="font-medium">{tloData.posData.fullName}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Last 4 SSN */}
-                <div className="p-3 border rounded">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-muted-foreground">Last 4 SSN</span>
-                    {tloData.validation.missingFields.includes("SSN") ? (
-                      <Badge variant="destructive">Missing</Badge>
-                    ) : tloData.validation.ssnMatch ? (
-                      <Badge variant="success" className="gap-1">
-                        <CheckCircle className="h-3 w-3" />
-                        Match
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive" className="gap-1">
-                        <XCircle className="h-3 w-3" />
-                        Mismatch
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <p className="text-xs text-muted-foreground">TLO Report</p>
-                      <p className="font-medium">***-**-{tloData.extracted.last4SSN}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">POS Data</p>
-                      <p className="font-medium">***-**-{tloData.posData.last4SSN}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Date of Birth */}
-                <div className="p-3 border rounded">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-muted-foreground">Date of Birth</span>
-                    {tloData.validation.missingFields.includes("DOB") ? (
-                      <Badge variant="destructive">Missing</Badge>
-                    ) : Math.abs(tloData.validation.dobYearDiff) > 1 ? (
-                      <Badge variant="destructive" className="gap-1">
-                        <XCircle className="h-3 w-3" />
-                        Mismatch ({tloData.validation.dobYearDiff > 0 ? '+' : ''}{tloData.validation.dobYearDiff} years)
-                      </Badge>
-                    ) : (
-                      <Badge variant="success" className="gap-1">
-                        <CheckCircle className="h-3 w-3" />
-                        Match
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <p className="text-xs text-muted-foreground">TLO Report</p>
-                      <p className="font-medium">{tloData.extracted.dateOfBirth}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">POS Data</p>
-                      <p className="font-medium">{tloData.posData.dateOfBirth}</p>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">TLO Report</p>
+                        <p className="font-medium">{tloData.borrower.extracted.dateOfBirth}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">POS Data</p>
+                        <p className="font-medium">{tloData.borrower.posData.dateOfBirth}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <Separator />
+              <Separator />
 
-            {/* Verification Status */}
-            <div>
-              <p className="text-sm font-semibold mb-2">Identity Verification Status</p>
-              {requiresIdentityManualValidation ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded space-y-2">
-                  <p className="text-sm font-medium text-destructive">⚠ Manual Validation Required - Identity Mismatch</p>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    {!tloData.validation.ssnMatch && <p>• SSN mismatch detected</p>}
-                    {Math.abs(tloData.validation.dobYearDiff) > 1 && <p>• DOB mismatch {">"}1 year ({tloData.validation.dobYearDiff > 0 ? '+' : ''}{tloData.validation.dobYearDiff} years)</p>}
-                    {tloData.validation.missingFields.map((field, idx) => (
-                      <p key={idx}>• Missing {field} field</p>
-                    ))}
+              {/* Background Check Details */}
+              <div>
+                <p className="text-sm font-semibold mb-3">Background Check Details (Rule CR-24)</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Liens</span>
+                      {tloData.borrower.backgroundCheck.liens.active ? (
+                        <Badge variant="destructive">Active</Badge>
+                      ) : tloData.borrower.backgroundCheck.liens.satisfiedOrAged ? (
+                        <Badge variant="warning">Satisfied/Aged</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.borrower.backgroundCheck.liens.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Judgments</span>
+                      {tloData.borrower.backgroundCheck.judgments.active ? (
+                        <Badge variant="destructive">Active</Badge>
+                      ) : tloData.borrower.backgroundCheck.judgments.satisfiedOrAged ? (
+                        <Badge variant="warning">Satisfied/Aged</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.borrower.backgroundCheck.judgments.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Bankruptcies</span>
+                      {tloData.borrower.backgroundCheck.bankruptcies.active ? (
+                        <Badge variant="destructive">Active</Badge>
+                      ) : tloData.borrower.backgroundCheck.bankruptcies.satisfiedOrAged ? (
+                        <Badge variant="warning">Satisfied/Aged</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.borrower.backgroundCheck.bankruptcies.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Foreclosures</span>
+                      {tloData.borrower.backgroundCheck.foreclosures.withinLast36Months ? (
+                        <Badge variant="destructive">Within 36 mo</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.borrower.backgroundCheck.foreclosures.monthsSinceLatest} months since latest
+                    </p>
                   </div>
                 </div>
-              ) : (
+              </div>
+
+              {/* Decision */}
+              {borrowerTLOResult.decision === "non_pass" && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">❌ Non-Pass</p>
+                </div>
+              )}
+              {borrowerTLOResult.decision === "manual_validation" && (
+                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                  <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
+                </div>
+              )}
+              {borrowerTLOResult.decision === "pass" && (
                 <div className="p-3 bg-success/10 border border-success/20 rounded">
-                  <p className="text-sm font-medium text-success">✓ Pass - All identity data verified</p>
+                  <p className="text-sm font-medium text-success">✓ Pass</p>
                 </div>
               )}
             </div>
 
-            <Separator />
-
-            {/* Combined Background Result */}
-            <div>
-              <p className="text-sm font-semibold mb-3">Combined Background Result</p>
-              
-              {/* Background Checks */}
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between p-3 border rounded">
-                  <div>
-                    <p className="text-sm font-medium">Liens</p>
-                    <p className="text-xs text-muted-foreground">
-                      {tloData.backgroundCheck.liens.active ? 'Active' : 
-                       tloData.backgroundCheck.liens.satisfiedOrAged ? 'Satisfied/Aged 120+ months' :
-                       `Last: ${tloData.backgroundCheck.liens.monthsSinceLatest} months ago`}
-                    </p>
-                  </div>
-                  {tloData.backgroundCheck.liens.active ? (
-                    <Badge variant="destructive">Active</Badge>
-                  ) : tloData.backgroundCheck.liens.monthsSinceLatest > 120 ? (
-                    <Badge variant="success">Clear</Badge>
-                  ) : (
-                    <Badge variant="warning">Review</Badge>
-                  )}
-                </div>
-
-                <div className="flex justify-between p-3 border rounded">
-                  <div>
-                    <p className="text-sm font-medium">Judgments</p>
-                    <p className="text-xs text-muted-foreground">
-                      {tloData.backgroundCheck.judgments.active ? 'Active' : 
-                       tloData.backgroundCheck.judgments.satisfiedOrAged ? 'Satisfied/Aged 120+ months' :
-                       `Last: ${tloData.backgroundCheck.judgments.monthsSinceLatest} months ago`}
-                    </p>
-                  </div>
-                  {tloData.backgroundCheck.judgments.active ? (
-                    <Badge variant="destructive">Active</Badge>
-                  ) : tloData.backgroundCheck.judgments.monthsSinceLatest > 120 ? (
-                    <Badge variant="success">Clear</Badge>
-                  ) : (
-                    <Badge variant="warning">Review</Badge>
-                  )}
-                </div>
-
-                <div className="flex justify-between p-3 border rounded">
-                  <div>
-                    <p className="text-sm font-medium">Bankruptcies</p>
-                    <p className="text-xs text-muted-foreground">
-                      {tloData.backgroundCheck.bankruptcies.active ? 'Active' : 
-                       tloData.backgroundCheck.bankruptcies.satisfiedOrAged ? 'Satisfied/Aged 120+ months' :
-                       `Last: ${tloData.backgroundCheck.bankruptcies.monthsSinceLatest} months ago`}
-                    </p>
-                  </div>
-                  {tloData.backgroundCheck.bankruptcies.active ? (
-                    <Badge variant="destructive">Active</Badge>
-                  ) : tloData.backgroundCheck.bankruptcies.monthsSinceLatest > 120 ? (
-                    <Badge variant="success">Clear</Badge>
-                  ) : (
-                    <Badge variant="warning">Review</Badge>
-                  )}
-                </div>
-
-                <div className="flex justify-between p-3 border rounded">
-                  <div>
-                    <p className="text-sm font-medium">Foreclosures</p>
-                    <p className="text-xs text-muted-foreground">
-                      Last: {tloData.backgroundCheck.foreclosures.monthsSinceLatest} months ago
-                    </p>
-                  </div>
-                  {tloData.backgroundCheck.foreclosures.withinLast36Months ? (
-                    <Badge variant="destructive">Within 36 months</Badge>
-                  ) : (
-                    <Badge variant="success">Clear</Badge>
-                  )}
+            {/* Co-Borrower TLO Review */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{tloData.coBorrower.name}</h4>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="h-3 w-3" />
+                    Download Report
+                  </Button>
                 </div>
               </div>
 
-              {/* Background Decision */}
-              {backgroundDecision === "non_pass" ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded space-y-2">
-                  <p className="text-sm font-medium text-destructive">🔴 Non-Pass with Validation</p>
-                  <p className="text-xs text-muted-foreground">
-                    Any active or unresolved record within 120 months AND foreclosures within the last 36 months
-                  </p>
-                  <p className="text-xs font-medium">→ File declined automatically. Routed to Manual Validation</p>
+              <div className="p-3 bg-muted/20 rounded">
+                <p className="text-xs text-muted-foreground">Report Date</p>
+                <p className="text-sm font-medium">{tloData.coBorrower.reportDate}</p>
+              </div>
+
+              <Separator />
+
+              {/* Identity Verification */}
+              <div>
+                <p className="text-sm font-semibold mb-3">Identity Verification</p>
+                <div className="space-y-3">
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">Full Name</span>
+                      {tloData.coBorrower.validation.nameMatch ? (
+                        <Badge variant="success" className="gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive" className="gap-1">
+                          <XCircle className="h-3 w-3" />
+                          Mismatch
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">TLO Report</p>
+                        <p className="font-medium">{tloData.coBorrower.extracted.fullName}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">POS Data</p>
+                        <p className="font-medium">{tloData.coBorrower.posData.fullName}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">Last 4 SSN</span>
+                      {tloData.coBorrower.validation.missingFields.includes("SSN") ? (
+                        <Badge variant="destructive">Missing</Badge>
+                      ) : tloData.coBorrower.validation.ssnMatch ? (
+                        <Badge variant="success" className="gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive" className="gap-1">
+                          <XCircle className="h-3 w-3" />
+                          Mismatch
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">TLO Report</p>
+                        <p className="font-medium">***-**-{tloData.coBorrower.extracted.last4SSN}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">POS Data</p>
+                        <p className="font-medium">***-**-{tloData.coBorrower.posData.last4SSN}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">Date of Birth</span>
+                      {tloData.coBorrower.validation.missingFields.includes("DOB") ? (
+                        <Badge variant="destructive">Missing</Badge>
+                      ) : tloData.coBorrower.validation.dobMatch ? (
+                        <Badge variant="success" className="gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="warning" className="gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          {Math.abs(tloData.coBorrower.validation.dobYearDiff)} year diff
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">TLO Report</p>
+                        <p className="font-medium">{tloData.coBorrower.extracted.dateOfBirth}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">POS Data</p>
+                        <p className="font-medium">{tloData.coBorrower.posData.dateOfBirth}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ) : backgroundDecision === "manual_validation" ? (
-                <div className="p-3 bg-warning/10 border border-warning/20 rounded space-y-2">
+              </div>
+
+              <Separator />
+
+              {/* Background Check Details */}
+              <div>
+                <p className="text-sm font-semibold mb-3">Background Check Details (Rule CR-24)</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Liens</span>
+                      {tloData.coBorrower.backgroundCheck.liens.active ? (
+                        <Badge variant="destructive">Active</Badge>
+                      ) : tloData.coBorrower.backgroundCheck.liens.satisfiedOrAged ? (
+                        <Badge variant="warning">Satisfied/Aged</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.coBorrower.backgroundCheck.liens.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Judgments</span>
+                      {tloData.coBorrower.backgroundCheck.judgments.active ? (
+                        <Badge variant="destructive">Active</Badge>
+                      ) : tloData.coBorrower.backgroundCheck.judgments.satisfiedOrAged ? (
+                        <Badge variant="warning">Satisfied/Aged</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.coBorrower.backgroundCheck.judgments.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Bankruptcies</span>
+                      {tloData.coBorrower.backgroundCheck.bankruptcies.active ? (
+                        <Badge variant="destructive">Active</Badge>
+                      ) : tloData.coBorrower.backgroundCheck.bankruptcies.satisfiedOrAged ? (
+                        <Badge variant="warning">Satisfied/Aged</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.coBorrower.backgroundCheck.bankruptcies.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+
+                  <div className="p-3 border rounded">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">Foreclosures</span>
+                      {tloData.coBorrower.backgroundCheck.foreclosures.withinLast36Months ? (
+                        <Badge variant="destructive">Within 36 mo</Badge>
+                      ) : (
+                        <Badge variant="success">Clear</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {tloData.coBorrower.backgroundCheck.foreclosures.monthsSinceLatest} months since latest
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Decision */}
+              {coBorrowerTLOResult.decision === "non_pass" && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">❌ Non-Pass</p>
+                </div>
+              )}
+              {coBorrowerTLOResult.decision === "manual_validation" && (
+                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                   <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
-                  <p className="text-xs text-muted-foreground">
-                    {hasSatisfiedOrAged && "Satisfied or aged 120 months"}
-                    {requiresIdentityManualValidation && " • Identity mismatch"}
-                    {tloData.backgroundCheck.unclearDisposition && " • Unclear disposition"}
-                    {hasForeclosuresLast36 && " • Foreclosures within last 36 months"}
-                  </p>
-                  <p className="text-xs font-medium">→ Assigned to Underwriter review queue</p>
                 </div>
-              ) : (
-                <div className="p-3 bg-success/10 border border-success/20 rounded space-y-2">
+              )}
+              {coBorrowerTLOResult.decision === "pass" && (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Pass</p>
-                  <p className="text-xs text-muted-foreground">
-                    No active liens, judgments, bankruptcies within last 120 months. No foreclosures within the last 36 months
-                  </p>
-                  <p className="text-xs font-medium">→ Continue to Step 4 (Non-Owner Occupancy Verification)</p>
                 </div>
               )}
             </div>
