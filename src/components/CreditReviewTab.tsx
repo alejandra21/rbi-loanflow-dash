@@ -487,7 +487,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Company Tier</p>
-              <Badge className={`${getTierColor(companyTier)} text-xl font-bold px-4 py-2`}>
+              <Badge className={`${getTierColor(companyTier)} text-sm font-semibold px-3 py-1`}>
                 {companyTier}
               </Badge>
             </div>
