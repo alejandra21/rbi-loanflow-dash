@@ -676,11 +676,7 @@ export const CreditReviewTab = ({
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Credit Report Validations
-              {overallStatus === 'pass' ? (
-                <CheckCircle className="h-4 w-4 text-success" />
-              ) : (
-                <AlertTriangle className="h-4 w-4 text-warning" />
-              )}
+              {getStatusBadge(overallStatus)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditPull ? '' : '-rotate-90'}`} />
           </CardTitle>
