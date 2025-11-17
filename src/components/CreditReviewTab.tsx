@@ -1350,13 +1350,13 @@ export const CreditReviewTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 5: LexisNexis - By Guarantor */}
+      {/* Section 5: LexisNexis Validations - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('lexisNexis')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              LexisNexis
+              LexisNexis Validations
               {hasAnyMatch || isAnyReportStale ? getStatusBadge('fail') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.lexisNexis ? '' : '-rotate-90'}`} />
