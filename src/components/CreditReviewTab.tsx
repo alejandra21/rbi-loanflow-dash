@@ -69,7 +69,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const loanLimit = 500000; // Loan Limit
   const productMin = 680; // Product Minimum FICO Score requirement
   const loanProgram = "DSCR 30-Year Fixed"; // Loan Program
-  const verifiedProject = "Yes"; // Verified Project status
+  const verifiedProjects = 3; // Verified Projects count
   
   const creditPullData = {
     borrower: {
@@ -479,25 +479,42 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-4 mb-4">
+          {/* Row 1: Guarantors | Company Tier | Loan Program */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Number of Guarantors</p>
               <p className="text-2xl font-bold">{numGuarantors}</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Company Tier</p>
-              <Badge className={getTierColor(companyTier)}>{companyTier}</Badge>
+              <Badge className={`${getTierColor(companyTier)} text-xl font-bold px-4 py-2`}>
+                {companyTier}
+              </Badge>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Loan Program</p>
+              <p className="text-2xl font-bold">{loanProgram}</p>
+            </div>
+          </div>
+
+          {/* Row 2: Lowest FICO | Verified Projects | Product Min */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Lowest FICO Score</p>
-              <p className="text-2xl font-bold text-primary">{lowestFICO}</p>
+              <p className="text-2xl font-bold">{lowestFICO}</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Verified Projects</p>
+              <p className="text-2xl font-bold">{verifiedProjects}</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Product Min</p>
               <p className="text-2xl font-bold">{productMin}</p>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4 mb-4">
+
+          {/* Row 3: LTC | LTV | Loan Limit */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">LTC</p>
               <p className="text-2xl font-bold">{ltc}%</p>
@@ -510,31 +527,25 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
               <p className="text-xs text-muted-foreground">Loan Limit</p>
               <p className="text-2xl font-bold">${loanLimit.toLocaleString()}</p>
             </div>
+          </div>
+
+          {/* Row 4: Product Min vs Lowest FICO validation - Single card */}
+          <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Product Min vs Lowest FICO</p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">Product Min vs Lowest FICO</p>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
                 {ficoMeetsProductMin ? (
                   <Badge variant="success" className="gap-1">
-                    <CheckCircle className="h-3 w-3" />
-                    Pass
+                    <CheckCircle className="h-3 w-3" /> Pass
                   </Badge>
                 ) : (
                   <Badge variant="destructive" className="gap-1">
-                    <XCircle className="h-3 w-3" />
-                    Fail
+                    <XCircle className="h-3 w-3" /> Fail
                   </Badge>
                 )}
               </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Loan Program</p>
-              <p className="text-lg font-semibold">{loanProgram}</p>
-            </div>
-            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-              <p className="text-xs text-muted-foreground">Verified Project</p>
-              <p className="text-lg font-semibold">{verifiedProject}</p>
             </div>
           </div>
         </CardContent>
