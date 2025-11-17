@@ -371,7 +371,7 @@ export const CreditReportV2Tab = ({
                   <CreditCard className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">Credit Report Validations</h3>
                   <div className="flex items-center gap-2 ml-auto">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="default" className="text-xs">
                       {guarantor.pullType}
                     </Badge>
                     {(() => {
