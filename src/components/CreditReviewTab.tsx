@@ -1024,13 +1024,13 @@ export const CreditReviewTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 4: TLO Review - By Guarantor */}
+      {/* Section 4: TLO Validations - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('tlo')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              TLO Review
+              TLO Validations
               {overallTLODecision === "non_pass" ? getStatusBadge('fail') : overallTLODecision === "manual_validation" ? getStatusBadge('warn') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tlo ? '' : '-rotate-90'}`} />
