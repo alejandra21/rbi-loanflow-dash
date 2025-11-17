@@ -33,6 +33,10 @@ export const CreditReportV2Tab = ({
     'Jane Smith-lexisNexis': false,
     'Jane Smith-flagDat': false
   });
+  const [expandedBackgroundCheckDetails, setExpandedBackgroundCheckDetails] = useState<Record<string, boolean>>({
+    'John Doe': false,
+    'Jane Smith': false
+  });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
@@ -50,6 +54,12 @@ export const CreditReportV2Tab = ({
     setExpandedGuarantorSections(prev => ({
       ...prev,
       [key]: !prev[key]
+    }));
+  };
+  const toggleBackgroundCheckDetails = (name: string) => {
+    setExpandedBackgroundCheckDetails(prev => ({
+      ...prev,
+      [name]: !prev[name]
     }));
   };
   const toggleLog = (logId: string) => {
@@ -524,28 +534,6 @@ export const CreditReportV2Tab = ({
                         </div>
                         
                         <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <div className="flex items-center gap-1">
-                            <p className="text-xs text-muted-foreground">FICO vs Product Minimum</p>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Info className="h-3 w-3 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Product Minimum: {productMin}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">
-                              {guarantor.fico >= productMin ? 'Pass' : 'Fail'}
-                            </p>
-                            {guarantor.fico >= productMin ? <CheckCircle className="h-4 w-4 text-green-600" /> : <XCircle className="h-4 w-4 text-red-600" />}
-                          </div>
-                        </div>
-                        
-                        <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">Credit Pull Date</p>
                           <div className="space-y-1">
                             <p className="font-medium text-sm">{guarantor.pullDate}</p>
@@ -887,48 +875,58 @@ export const CreditReportV2Tab = ({
                             tloGuarantorData.backgroundCheck.judgments.items.length > 0 ||
                             tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 ||
                             tloGuarantorData.backgroundCheck.foreclosures.items.length > 0) && (
-                            <div className="mt-4 space-y-3">
-                              {tloGuarantorData.backgroundCheck.liens.items.length > 0 && (
-                                <div className="p-3 bg-muted/30 rounded border">
-                                  <p className="text-xs font-semibold mb-2">Liens Found:</p>
-                                  {tloGuarantorData.backgroundCheck.liens.items.map((item, idx) => (
-                                    <div key={idx} className="text-xs mb-2 last:mb-0">
-                                      <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} | <span className={item.status === "Active" ? "text-warning" : "text-success"}>{item.status}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                              {tloGuarantorData.backgroundCheck.judgments.items.length > 0 && (
-                                <div className="p-3 bg-muted/30 rounded border">
-                                  <p className="text-xs font-semibold mb-2">Judgments Found:</p>
-                                  {tloGuarantorData.backgroundCheck.judgments.items.map((item: any, idx: number) => (
-                                    <div key={idx} className="text-xs mb-2 last:mb-0">
-                                      <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} | <span className={item.status === "Active" ? "text-warning" : "text-success"}>{item.status}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                              {tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 && (
-                                <div className="p-3 bg-muted/30 rounded border">
-                                  <p className="text-xs font-semibold mb-2">Bankruptcies Found:</p>
-                                  {tloGuarantorData.backgroundCheck.bankruptcies.items.map((item, idx) => (
-                                    <div key={idx} className="text-xs mb-2 last:mb-0">
-                                      <span className="font-medium">{item.type}</span> | Filed: {item.filingDate} | Discharged: {item.dischargeDate} | <span className="text-muted-foreground">{item.status}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                              {tloGuarantorData.backgroundCheck.foreclosures.items.length > 0 && (
-                                <div className="p-3 bg-muted/30 rounded border">
-                                  <p className="text-xs font-semibold mb-2">Foreclosures Found:</p>
-                                  {tloGuarantorData.backgroundCheck.foreclosures.items.map((item, idx) => (
-                                    <div key={idx} className="text-xs mb-2 last:mb-0">
-                                      <span className="font-medium">{item.address}</span> | {item.date} | <span className="text-muted-foreground">{item.status}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
+                            <Collapsible 
+                              open={expandedBackgroundCheckDetails[guarantor.name]}
+                              onOpenChange={() => toggleBackgroundCheckDetails(guarantor.name)}
+                              className="mt-4"
+                            >
+                              <CollapsibleTrigger className="flex items-center gap-2 text-xs font-medium hover:text-primary transition-colors">
+                                <ChevronDown className={`h-4 w-4 transition-transform ${expandedBackgroundCheckDetails[guarantor.name] ? 'transform rotate-180' : ''}`} />
+                                View Detailed Items Found
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-3 space-y-3">
+                                {tloGuarantorData.backgroundCheck.liens.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
+                                    <p className="text-xs font-semibold mb-2">Liens Found:</p>
+                                    {tloGuarantorData.backgroundCheck.liens.items.map((item, idx) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
+                                        <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} | <span className={item.status === "Active" ? "text-warning" : "text-success"}>{item.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {tloGuarantorData.backgroundCheck.judgments.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
+                                    <p className="text-xs font-semibold mb-2">Judgments Found:</p>
+                                    {tloGuarantorData.backgroundCheck.judgments.items.map((item: any, idx: number) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
+                                        <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} | <span className={item.status === "Active" ? "text-warning" : "text-success"}>{item.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
+                                    <p className="text-xs font-semibold mb-2">Bankruptcies Found:</p>
+                                    {tloGuarantorData.backgroundCheck.bankruptcies.items.map((item, idx) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
+                                        <span className="font-medium">{item.type}</span> | Filed: {item.filingDate} | Discharged: {item.dischargeDate} | <span className="text-muted-foreground">{item.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {tloGuarantorData.backgroundCheck.foreclosures.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
+                                    <p className="text-xs font-semibold mb-2">Foreclosures Found:</p>
+                                    {tloGuarantorData.backgroundCheck.foreclosures.items.map((item, idx) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
+                                        <span className="font-medium">{item.address}</span> | {item.date} | <span className="text-muted-foreground">{item.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </CollapsibleContent>
+                            </Collapsible>
                           )}
                         </div>
 
