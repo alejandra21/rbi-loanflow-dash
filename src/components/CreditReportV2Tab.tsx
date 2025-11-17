@@ -467,11 +467,6 @@ export const CreditReportV2Tab = ({
                           <p className="text-xs text-muted-foreground">FICO Score</p>
                           <p className="font-medium text-sm">{guarantor.fico}</p>
                         </div>
-
-                        <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <p className="text-xs text-muted-foreground">Pull Type</p>
-                          <p className="font-medium text-sm">Hard Pull</p>
-                        </div>
                         
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <div className="flex items-center gap-1">
