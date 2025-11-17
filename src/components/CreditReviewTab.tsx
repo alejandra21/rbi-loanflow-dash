@@ -36,10 +36,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   const getTierColor = (tier: string): string => {
     const colors: Record<string, string> = {
-      'Tier 1': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
-      'Tier 2': 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white',
-      'Tier 3': 'bg-gradient-to-r from-gray-300 to-gray-500 text-white',
-      'Tier 4': 'bg-gradient-to-r from-orange-400 to-orange-600 text-white'
+      'Platinum': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
+      'Gold': 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white',
+      'Silver': 'bg-gradient-to-r from-gray-300 to-gray-500 text-white',
+      'Bronze': 'bg-gradient-to-r from-orange-400 to-orange-600 text-white'
     };
     return colors[tier] || 'bg-muted';
   };
@@ -63,7 +63,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   // Mock data for Credit Pull & FICO
   const closingDate = "2025-11-15"; // Loan closing date
-  const companyTier = "Tier 2"; // Company tier
+  const companyTier = "Gold"; // Company tier
   
   const creditPullData = {
     borrower: {
