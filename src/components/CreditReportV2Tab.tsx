@@ -249,6 +249,7 @@ export const CreditReportV2Tab = ({
     fico: 720,
     pullDate: "2025-11-01",
     bureau: "Experian",
+    pullType: "Hard Pull" as const,
     isForeignNational: false,
     ssn: "***-**-1234",
     dob: "1985-06-15",
@@ -272,6 +273,7 @@ export const CreditReportV2Tab = ({
     fico: 695,
     pullDate: "2025-11-01",
     bureau: "TransUnion",
+    pullType: "Soft Pull" as const,
     isForeignNational: false,
     ssn: "***-**-5678",
     dob: "1988-03-22",
@@ -366,6 +368,9 @@ export const CreditReportV2Tab = ({
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <CreditCard className="h-4 w-4" />
                   <h3 className="text-sm font-semibold text-muted-foreground">Credit Report Validations</h3>
+                  <Badge variant="outline" className="text-xs">
+                    {guarantor.pullType}
+                  </Badge>
                   {(() => {
               // Calculate overall validation status for Credit Report
               const hasFails = !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) || !isCreditReportDateValid(guarantor.pullDate) || guarantor.latePayments.ninetyDays > 0 || guarantor.publicRecords.count > 0;
