@@ -910,6 +910,54 @@ export const CreditReviewTab = ({
                         )}
                       </div>
                       
+                      <Separator />
+                      
+                      {/* Public Record Review Section */}
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-sm font-semibold text-muted-foreground">Public Record Review</h5>
+                          <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                            <Download className="h-3 w-3 mr-1" />
+                            Download Report
+                          </Button>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">Bankruptcies</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
+                                {getStatusBadge('pass')}
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">Foreclosures</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
+                                {getStatusBadge('pass')}
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">Tax Liens</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
+                                {getStatusBadge('pass')}
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">Judgments</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
+                                {getStatusBadge('pass')}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                            <p className="text-sm font-medium text-success">✓ No Public Records Found - Continue workflow</p>
+                          </div>
+                        </div>
+                      </div>
+                      
                       {guarantorValidation.reason && (
                         <div className="p-3 bg-destructive/10 rounded-md flex items-start gap-2">
                           <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
