@@ -10,6 +10,7 @@ import { JsonViewer } from "@/components/JsonViewer";
 import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { ExperienceTieringCopyTab } from "@/components/ExperienceTieringCopyTab";
 import { CreditReviewTab } from "@/components/CreditReviewTab";
+import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp } from "lucide-react";
@@ -1571,6 +1572,18 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
+              <TabsTrigger value="creditReportV2" className="relative text-sm px-4 py-2 flex-shrink-0">
+                Credit Report v2
+                {loan.phases.creditReview.status === 'failed' && (
+                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
+                )}
+                {loan.phases.creditReview.status === 'manual' && (
+                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
+                )}
+                {loan.phases.creditReview.status === 'passed' && (
+                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
+                )}
+              </TabsTrigger>
               <TabsTrigger value="nonOwnerOccupancy" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Non-Owner Occupancy
                 {loan.phases.nonOwnerOccupancy.status === 'failed' && (
@@ -1680,6 +1693,10 @@ export const LoanDetail = () => {
               
               <TabsContent value="creditReview" className="mt-0">
                 <CreditReviewTab phase={loan.phases.creditReview} />
+              </TabsContent>
+              
+              <TabsContent value="creditReportV2" className="mt-0">
+                <CreditReportV2Tab phase={loan.phases.creditReview} />
               </TabsContent>
               
               <TabsContent value="nonOwnerOccupancy" className="mt-0">
