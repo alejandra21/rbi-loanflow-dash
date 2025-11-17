@@ -624,66 +624,30 @@ export const CreditReviewTab = ({
               </CollapsibleTrigger>
               
               <CollapsibleContent>
-                <div className="rounded-lg overflow-hidden border border-border">
-                  {/* Header with dark background */}
-                  <div className="bg-slate-700 text-white px-4 py-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide">Borrower Funded Loan – 3–5 Projects, FICO 660+</p>
-                  </div>
-                  
-                  {/* Table */}
+                <div className="rounded-lg border border-border">
                   <Table>
-                    <TableHeader className="bg-slate-800">
-                      <TableRow className="border-slate-700 hover:bg-slate-800">
-                        <TableHead className="text-white text-xs font-semibold h-10">PROGRAM</TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">
-                          <div className="flex items-center gap-1">
-                            MIN PROJECTS
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Info className="h-3 w-3" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="text-xs">Minimum verified projects required</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">
-                          <div className="flex items-center gap-1">
-                            MAX PROJECTS
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Info className="h-3 w-3" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="text-xs">Maximum verified projects in range</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">MIN FICO</TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">MAX FICO</TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">LTC OR LTP</TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">ARLTV NJC</TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">ARLTV JD</TableHead>
-                        <TableHead className="text-white text-xs font-semibold h-10">MAX LOAN AMOUNT</TableHead>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Program</TableHead>
+                        <TableHead>Min Projects</TableHead>
+                        <TableHead>Max Projects</TableHead>
+                        <TableHead>Min FICO</TableHead>
+                        <TableHead>Max FICO</TableHead>
+                        <TableHead>LTC</TableHead>
+                        <TableHead>ARLTV</TableHead>
+                        <TableHead>Max Loan Amount</TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody className="bg-slate-900">
-                      <TableRow className="border-slate-700 hover:bg-slate-800/50">
-                        <TableCell className="text-white font-medium">{loanProgram}</TableCell>
-                        <TableCell className="text-white">{verifiedProjects}</TableCell>
-                        <TableCell className="text-white">5</TableCell>
-                        <TableCell className="text-white">{productMin}</TableCell>
-                        <TableCell className="text-white">699</TableCell>
-                        <TableCell className="text-white">{ltc.toFixed(2)}</TableCell>
-                        <TableCell className="text-white">{ltv.toFixed(2)}</TableCell>
-                        <TableCell className="text-white">{ltv.toFixed(2)}</TableCell>
-                        <TableCell className="text-white">${loanLimit.toLocaleString()}</TableCell>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">{loanProgram}</TableCell>
+                        <TableCell>{verifiedProjects}</TableCell>
+                        <TableCell>5</TableCell>
+                        <TableCell>{productMin}</TableCell>
+                        <TableCell>699</TableCell>
+                        <TableCell>{ltc}%</TableCell>
+                        <TableCell>{ltv}%</TableCell>
+                        <TableCell>${loanLimit.toLocaleString()}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
