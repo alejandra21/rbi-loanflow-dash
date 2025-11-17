@@ -676,11 +676,7 @@ export const CreditReviewTab = ({
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Credit Report Validations
-              {overallStatus === 'pass' ? (
-                <CheckCircle className="h-4 w-4 text-success" />
-              ) : (
-                <AlertTriangle className="h-4 w-4 text-warning" />
-              )}
+              {getStatusBadge(overallStatus)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditPull ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -707,15 +703,11 @@ export const CreditReviewTab = ({
                     className="p-4 bg-muted/30 cursor-pointer hover:bg-muted/40 transition-colors flex items-center justify-between"
                     onClick={() => toggleGuarantor(guarantor.name)}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between flex-1 mr-2">
                       <h4 className="font-medium">{guarantor.name}</h4>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{guarantor.ownershipPercentage}% ownership</Badge>
-                        {guarantorStatus === 'pass' ? (
-                          <CheckCircle className="h-4 w-4 text-success" />
-                        ) : (
-                          <AlertTriangle className="h-4 w-4 text-warning" />
-                        )}
+                        {getStatusBadge(guarantorStatus)}
                       </div>
                     </div>
                     <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? '' : '-rotate-90'}`} />
@@ -761,11 +753,7 @@ export const CreditReviewTab = ({
                             {isDobVsSsnValid !== null ? (
                               <div className="flex items-center gap-2">
                                 <p className="font-medium text-sm">{isDobVsSsnValid ? 'Valid' : 'Invalid'}</p>
-                                {isDobVsSsnValid ? (
-                                  <CheckCircle className="h-4 w-4 text-success" />
-                                ) : (
-                                  <AlertTriangle className="h-4 w-4 text-warning" />
-                                )}
+                                {getStatusBadge(isDobVsSsnValid ? 'pass' : 'warn')}
                               </div>
                             ) : (
                               <p className="font-medium text-sm">N/A</p>
@@ -795,11 +783,7 @@ export const CreditReviewTab = ({
                           </div>
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-sm">{hasCreditAuth ? 'Yes' : 'No'}</p>
-                            {hasCreditAuth ? (
-                              <CheckCircle className="h-4 w-4 text-success" />
-                            ) : (
-                              <AlertTriangle className="h-4 w-4 text-warning" />
-                            )}
+                            {getStatusBadge(hasCreditAuth ? 'pass' : 'warn')}
                             {hasCreditAuth && (
                               <Button variant="outline" size="sm" className="ml-2 h-7 px-2 text-xs">
                                 <Download className="h-3 w-3 mr-1" />
@@ -845,11 +829,7 @@ export const CreditReviewTab = ({
                             </div>
                             <div className="flex items-center gap-2">
                               <p className="font-medium text-sm">{guarantor.utilization}%</p>
-                              {isUtilizationValid ? (
-                                <CheckCircle className="h-4 w-4 text-success" />
-                              ) : (
-                                <AlertTriangle className="h-4 w-4 text-warning" />
-                              )}
+                              {getStatusBadge(isUtilizationValid ? 'pass' : 'warn')}
                             </div>
                           </div>
                           
@@ -869,11 +849,7 @@ export const CreditReviewTab = ({
                             </div>
                             <div className="flex items-center gap-2">
                               <p className="font-medium text-sm">{guarantor.pullDate}</p>
-                              {daysDiff !== null && (isReportDateValid ? (
-                                <CheckCircle className="h-4 w-4 text-success" />
-                              ) : (
-                                <AlertTriangle className="h-4 w-4 text-warning" />
-                              ))}
+                              {daysDiff !== null && getStatusBadge(isReportDateValid ? 'pass' : 'warn')}
                             </div>
                           </div>
                         </div>
