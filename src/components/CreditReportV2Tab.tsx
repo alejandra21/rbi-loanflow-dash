@@ -106,6 +106,157 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const previousTier = "Silver";
   const tierChangeReason = "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines.";
 
+  // Mock data for TLO, LexisNexis, and FlagDat
+  const tloData = {
+    "John Doe": {
+      pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_John.pdf",
+      reportDate: "2025-10-20",
+      extracted: {
+        fullName: "John Doe",
+        last4SSN: "1234",
+        dateOfBirth: "1985-06-15"
+      },
+      posData: {
+        fullName: "John Doe",
+        last4SSN: "1234",
+        dateOfBirth: "1985-06-15"
+      },
+      validation: {
+        nameMatch: true,
+        ssnMatch: true,
+        dobMatch: true,
+        dobYearDiff: 0,
+        missingFields: [] as string[]
+      },
+      backgroundCheck: {
+        liens: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 130
+        },
+        judgments: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 125
+        },
+        bankruptcies: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 140
+        },
+        foreclosures: {
+          withinLast36Months: false,
+          monthsSinceLatest: 48
+        },
+        unclearDisposition: false
+      }
+    },
+    "Jane Smith": {
+      pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_Jane.pdf",
+      reportDate: "2025-10-20",
+      extracted: {
+        fullName: "Jane Smith",
+        last4SSN: "5678",
+        dateOfBirth: "1988-08-12"
+      },
+      posData: {
+        fullName: "Jane Smith",
+        last4SSN: "5678",
+        dateOfBirth: "1988-08-12"
+      },
+      validation: {
+        nameMatch: true,
+        ssnMatch: false,
+        dobMatch: true,
+        dobYearDiff: 0,
+        missingFields: [] as string[]
+      },
+      backgroundCheck: {
+        liens: {
+          active: false,
+          satisfiedOrAged: true,
+          monthsSinceLatest: 50
+        },
+        judgments: {
+          active: false,
+          satisfiedOrAged: true,
+          monthsSinceLatest: 45
+        },
+        bankruptcies: {
+          active: false,
+          satisfiedOrAged: false,
+          monthsSinceLatest: 150
+        },
+        foreclosures: {
+          withinLast36Months: false,
+          monthsSinceLatest: 50
+        },
+        unclearDisposition: false
+      }
+    }
+  };
+
+  const lexisNexisData = {
+    "John Doe": {
+      matchStatus: "match",
+      matchedEntities: [{
+        name: "John Doe",
+        matchScore: 95,
+        type: "Exact Name Match",
+        risk: "Low"
+      }, {
+        name: "Jonathan Doe",
+        matchScore: 78,
+        type: "Similar Name Match",
+        risk: "Medium"
+      }],
+      reportDate: "2025-10-15",
+      closeDate: "2025-11-10"
+    },
+    "Jane Smith": {
+      matchStatus: "clear",
+      matchedEntities: [],
+      reportDate: "2025-10-16",
+      closeDate: "2025-11-10"
+    }
+  };
+
+  const flagDatData = {
+    "John Doe": {
+      watchlistMatches: 2,
+      blacklistMatches: 0,
+      lastChecked: "2025-11-10"
+    },
+    "Jane Smith": {
+      watchlistMatches: 0,
+      blacklistMatches: 0,
+      lastChecked: "2025-11-10"
+    }
+  };
+
+  const calculateTLODecision = (guarantorData: typeof tloData["John Doe"]) => {
+    const requiresIdentityManualValidation = !guarantorData.validation.ssnMatch || Math.abs(guarantorData.validation.dobYearDiff) > 1 || guarantorData.validation.missingFields.length > 0;
+    const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.active || guarantorData.backgroundCheck.judgments.active || guarantorData.backgroundCheck.bankruptcies.active;
+    const hasActiveWithin120Months = (guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged) || (guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged) || (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged);
+    const hasSatisfiedOrAged = guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
+    const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.withinLast36Months;
+    
+    let decision: "pass" | "manual_validation" | "non_pass" = "pass";
+    if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
+      decision = "non_pass";
+    } else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || guarantorData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
+      decision = "manual_validation";
+    } else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
+      decision = "pass";
+    } else if (requiresIdentityManualValidation) {
+      decision = "manual_validation";
+    }
+    return {
+      decision,
+      requiresIdentityManualValidation
+    };
+  };
+
   const guarantors = [
     {
       name: "John Doe",
@@ -119,7 +270,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       ssnIssueDate: "2000-01-01",
       utilization: 35,
       hasCreditAuth: true,
-      validation: 'pass',
+      validation: 'pass' as const,
       latePayments: {
         thirtyDays: 0,
         sixtyDays: 0,
@@ -129,17 +280,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         count: 0,
         collections: 0,
         bankruptcies: "No (0)"
-      },
-      tlo: {
-        decision: "pass",
-        identityValidation: true
-      },
-      lexisNexis: {
-        matches: false,
-        reportDate: "2025-10-15"
-      },
-      flagDat: {
-        matches: false
       }
     },
     {
@@ -154,7 +294,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       ssnIssueDate: "2003-05-15",
       utilization: 55,
       hasCreditAuth: true,
-      validation: 'warn',
+      validation: 'warn' as const,
       latePayments: {
         thirtyDays: 1,
         sixtyDays: 0,
@@ -164,24 +304,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         count: 0,
         collections: 0,
         bankruptcies: "No (0)"
-      },
-      tlo: {
-        decision: "manual_validation",
-        identityValidation: false
-      },
-      lexisNexis: {
-        matches: false,
-        reportDate: "2025-10-15"
-      },
-      flagDat: {
-        matches: false
       }
     }
   ];
 
   const numGuarantors = guarantors.length;
-  const overallStatus = guarantors.some(g => g.validation === 'fail') ? 'fail' : 
-                       guarantors.some(g => g.validation === 'warn') ? 'warn' : 'pass';
+  const overallStatus = guarantors.some(g => g.validation === 'warn') ? 'warn' : 'pass';
   
   const lowestFICO = Math.min(...guarantors.map(g => g.fico));
   const ficoMeetsProductMin = lowestFICO >= productMin;
@@ -575,56 +703,383 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
               <Separator className="my-6" />
 
               {/* TLO Validations */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-tlo`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}
+              >
+                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4" />
-                  TLO Validations
-                  {getStatusBadge(guarantor.tlo.decision)}
-                </h3>
-                <div className="p-4 bg-muted/20 rounded-lg">
-                  <p className="text-sm">
-                    TLO Decision: <span className="font-semibold">{guarantor.tlo.decision === 'pass' ? 'Pass' : 'Manual Validation Required'}</span>
-                  </p>
-                  <p className="text-sm mt-2">
-                    Identity Validation: <span className="font-semibold">{guarantor.tlo.identityValidation ? 'Valid' : 'Requires Review'}</span>
-                  </p>
-                </div>
-              </div>
+                  <h3 className="text-sm font-semibold text-muted-foreground">TLO Validations</h3>
+                  {(() => {
+                    const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
+                    return tloResult.decision === "non_pass" ? getStatusBadge('fail') : 
+                           tloResult.decision === "manual_validation" ? getStatusBadge('warn') : 
+                           getStatusBadge('pass');
+                  })()}
+                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? '' : '-rotate-90'}`} />
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  {(() => {
+                    const tloGuarantorData = tloData[guarantor.name as keyof typeof tloData];
+                    const tloResult = calculateTLODecision(tloGuarantorData);
+                    
+                    return (
+                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <Download className="h-3 w-3" />
+                            Download Report
+                          </Button>
+                        </div>
+
+                        <div className="p-3 bg-muted/20 rounded">
+                          <p className="text-xs text-muted-foreground">Report Date</p>
+                          <p className="text-sm font-medium">{tloGuarantorData.reportDate}</p>
+                        </div>
+
+                        <Separator />
+
+                        {/* Identity Verification */}
+                        <div>
+                          <p className="text-sm font-semibold mb-3">Identity Verification</p>
+                          <div className="space-y-3">
+                            {/* Full Name */}
+                            <div className="p-3 border rounded">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-muted-foreground">Full Name</span>
+                                {tloGuarantorData.validation.nameMatch ? (
+                                  <Badge variant="success" className="gap-1">
+                                    <CheckCircle className="h-3 w-3" />
+                                    Match
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="destructive" className="gap-1">
+                                    <XCircle className="h-3 w-3" />
+                                    Mismatch
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                  <p className="text-xs text-muted-foreground">TLO Report</p>
+                                  <p className="font-medium">{tloGuarantorData.extracted.fullName}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground">POS Data</p>
+                                  <p className="font-medium">{tloGuarantorData.posData.fullName}</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Last 4 SSN */}
+                            <div className="p-3 border rounded">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-muted-foreground">Last 4 SSN</span>
+                                {tloGuarantorData.validation.missingFields.includes("SSN") ? (
+                                  <Badge variant="destructive">Missing</Badge>
+                                ) : tloGuarantorData.validation.ssnMatch ? (
+                                  <Badge variant="success" className="gap-1">
+                                    <CheckCircle className="h-3 w-3" />
+                                    Match
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="destructive" className="gap-1">
+                                    <XCircle className="h-3 w-3" />
+                                    Mismatch
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                  <p className="text-xs text-muted-foreground">TLO Report</p>
+                                  <p className="font-medium">***-**-{tloGuarantorData.extracted.last4SSN}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground">POS Data</p>
+                                  <p className="font-medium">***-**-{tloGuarantorData.posData.last4SSN}</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* DOB */}
+                            <div className="p-3 border rounded">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-muted-foreground">Date of Birth</span>
+                                {tloGuarantorData.validation.missingFields.includes("DOB") ? (
+                                  <Badge variant="destructive">Missing</Badge>
+                                ) : tloGuarantorData.validation.dobMatch ? (
+                                  <Badge variant="success" className="gap-1">
+                                    <CheckCircle className="h-3 w-3" />
+                                    Match
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="warning" className="gap-1">
+                                    <AlertTriangle className="h-3 w-3" />
+                                    {Math.abs(tloGuarantorData.validation.dobYearDiff)} year diff
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                  <p className="text-xs text-muted-foreground">TLO Report</p>
+                                  <p className="font-medium">{tloGuarantorData.extracted.dateOfBirth}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground">POS Data</p>
+                                  <p className="font-medium">{tloGuarantorData.posData.dateOfBirth}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Separator />
+
+                        {/* Background Check */}
+                        <div>
+                          <p className="text-sm font-semibold mb-3">Background Check</p>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="text-xs">Type</TableHead>
+                                <TableHead className="text-xs">Active</TableHead>
+                                <TableHead className="text-xs">Satisfied/Aged</TableHead>
+                                <TableHead className="text-xs">Months Since Latest</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              <TableRow>
+                                <TableCell className="text-xs">Liens</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.active ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.satisfiedOrAged ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.monthsSinceLatest}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className="text-xs">Judgments</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.active ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.satisfiedOrAged ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className="text-xs">Bankruptcies</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.active ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.satisfiedOrAged ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.monthsSinceLatest}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className="text-xs">Foreclosures</TableCell>
+                                <TableCell className="text-xs" colSpan={2}>{tloGuarantorData.backgroundCheck.foreclosures.withinLast36Months ? "Within Last 36 Months" : "None Recent"}</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.foreclosures.monthsSinceLatest}</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </div>
+
+                        {/* Decision */}
+                        {tloResult.decision === "non_pass" && (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                            <p className="text-sm font-medium text-destructive">🔴 Non-Pass</p>
+                          </div>
+                        )}
+                        {tloResult.decision === "manual_validation" && (
+                          <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                            <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
+                          </div>
+                        )}
+                        {tloResult.decision === "pass" && (
+                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                            <p className="text-sm font-medium text-success">✓ Pass</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </CollapsibleContent>
+              </Collapsible>
 
               <Separator className="my-6" />
 
               {/* LexisNexis Validations */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}
+              >
+                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4" />
-                  LexisNexis Validations
-                  {getStatusBadge(guarantor.lexisNexis.matches ? 'fail' : 'pass')}
-                </h3>
-                <div className="p-4 bg-muted/20 rounded-lg">
-                  <p className="text-sm">
-                    Watchlist Matches: <span className="font-semibold">{guarantor.lexisNexis.matches ? 'Found' : 'None'}</span>
-                  </p>
-                  <p className="text-sm mt-2">
-                    Report Date: <span className="font-semibold">{guarantor.lexisNexis.reportDate}</span>
-                  </p>
-                </div>
-              </div>
+                  <h3 className="text-sm font-semibold text-muted-foreground">LexisNexis Validations</h3>
+                  {(() => {
+                    const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+                    const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
+                    const isReportStale = reportAge > 60;
+                    const hasMatch = lexisData.matchStatus === "match";
+                    return hasMatch || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass');
+                  })()}
+                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? '' : '-rotate-90'}`} />
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  {(() => {
+                    const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+                    const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
+                    const isReportStale = reportAge > 60;
+                    const hasMatch = lexisData.matchStatus === "match";
+                    
+                    return (
+                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="p-3 border rounded space-y-2">
+                            <p className="text-xs text-muted-foreground">Match Status</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold">
+                                {lexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
+                              </p>
+                              {lexisData.matchStatus === "match" ? (
+                                <Badge variant="destructive">Match Found</Badge>
+                              ) : (
+                                <Badge variant="success">Clear</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-3 border rounded space-y-2">
+                            <p className="text-xs text-muted-foreground">Report Date</p>
+                            <p className="text-sm font-medium">{lexisData.reportDate}</p>
+                          </div>
+                          <div className="p-3 border rounded space-y-2">
+                            <p className="text-xs text-muted-foreground">Report Age</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-medium">{reportAge} days</p>
+                              {isReportStale && <Badge variant="destructive">Stale</Badge>}
+                            </div>
+                          </div>
+                        </div>
+
+                        {hasMatch && lexisData.matchedEntities.length > 0 && (
+                          <>
+                            <Separator />
+                            <div>
+                              <p className="text-sm font-semibold mb-3">Matched Entities</p>
+                              <div className="space-y-3">
+                                {lexisData.matchedEntities.map((entity, index) => (
+                                  <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <div>
+                                        <p className="text-xs text-muted-foreground">Name</p>
+                                        <p className="text-sm font-medium">{entity.name}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground">Match Score</p>
+                                        <p className="text-sm font-medium">{entity.matchScore}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground">Type</p>
+                                        <p className="text-sm font-medium">{entity.type}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground">Risk</p>
+                                        <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
+                                          {entity.risk}
+                                        </Badge>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {hasMatch ? (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                            <p className="text-sm font-medium text-destructive">🔴 Match Found - Manual Review Required</p>
+                          </div>
+                        ) : isReportStale ? (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                            <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                            <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </CollapsibleContent>
+              </Collapsible>
 
               <Separator className="my-6" />
 
               {/* FlagDat Validations */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-flagDat`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-flagDat`)}
+              >
+                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <AlertCircleIcon className="h-4 w-4" />
-                  FlagDat Validations
-                  {getStatusBadge(guarantor.flagDat.matches ? 'fail' : 'pass')}
-                </h3>
-                <div className="p-4 bg-muted/20 rounded-lg">
-                  <p className="text-sm">
-                    Fraud Matches: <span className="font-semibold">{guarantor.flagDat.matches ? 'Found' : 'None'}</span>
-                  </p>
-                </div>
-              </div>
+                  <h3 className="text-sm font-semibold text-muted-foreground">FlagDat Validations</h3>
+                  {(() => {
+                    const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
+                    const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
+                    return hasMatches ? getStatusBadge('fail') : getStatusBadge('pass');
+                  })()}
+                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-flagDat`] ? '' : '-rotate-90'}`} />
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  {(() => {
+                    const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
+                    const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
+                    
+                    return (
+                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="p-3 border rounded space-y-2">
+                            <p className="text-xs text-muted-foreground">WatchList Matches</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-lg font-semibold">
+                                {flagData.watchlistMatches}
+                              </p>
+                              {flagData.watchlistMatches > 0 ? (
+                                <Badge variant="destructive">{flagData.watchlistMatches} Match(es)</Badge>
+                              ) : (
+                                <Badge variant="success">No Match</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-3 border rounded space-y-2">
+                            <p className="text-xs text-muted-foreground">BlackList Matches</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-lg font-semibold">
+                                {flagData.blacklistMatches}
+                              </p>
+                              {flagData.blacklistMatches > 0 ? (
+                                <Badge variant="destructive">{flagData.blacklistMatches} Match(es)</Badge>
+                              ) : (
+                                <Badge variant="success">No Match</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-3 border rounded space-y-2">
+                            <p className="text-xs text-muted-foreground">Last Checked</p>
+                            <p className="text-sm font-medium">{flagData.lastChecked}</p>
+                          </div>
+                        </div>
+
+                        {hasMatches ? (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                            <p className="text-sm font-medium text-destructive">⚠ {flagData.watchlistMatches + flagData.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                            <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           )}
         </Card>
