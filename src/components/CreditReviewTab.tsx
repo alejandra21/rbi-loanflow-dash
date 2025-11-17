@@ -68,6 +68,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const ltv = 68; // Loan to Value
   const loanLimit = 500000; // Loan Limit
   const productMin = 680; // Product Minimum FICO Score requirement
+  const loanProgram = "DSCR 30-Year Fixed"; // Loan Program
+  const verifiedProject = "Yes"; // Verified Project status
   
   const creditPullData = {
     borrower: {
@@ -495,7 +497,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
               <p className="text-2xl font-bold">{productMin}</p>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">LTC</p>
               <p className="text-2xl font-bold">{ltc}%</p>
@@ -523,6 +525,16 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   </Badge>
                 )}
               </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Loan Program</p>
+              <p className="text-lg font-semibold">{loanProgram}</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Verified Project</p>
+              <p className="text-lg font-semibold">{verifiedProject}</p>
             </div>
           </div>
         </CardContent>
