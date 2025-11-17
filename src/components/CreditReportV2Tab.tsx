@@ -121,22 +121,27 @@ export const CreditReportV2Tab = ({
       },
       backgroundCheck: {
         liens: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 130
+          count: 2,
+          recent: 1,
+          old: 1,
+          monthsSinceLatest: 118
         },
         judgments: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 125
+          count: 0,
+          recent: 0,
+          old: 0,
+          monthsSinceLatest: null
         },
         bankruptcies: {
-          active: false,
-          satisfiedOrAged: false,
+          count: 1,
+          recent: 0,
+          old: 1,
           monthsSinceLatest: 140
         },
         foreclosures: {
-          withinLast36Months: false,
+          count: 1,
+          recent: 1,
+          old: 0,
           monthsSinceLatest: 48
         },
         unclearDisposition: false
@@ -164,23 +169,28 @@ export const CreditReportV2Tab = ({
       },
       backgroundCheck: {
         liens: {
-          active: false,
-          satisfiedOrAged: true,
-          monthsSinceLatest: 50
+          count: 2,
+          recent: 1,
+          old: 1,
+          monthsSinceLatest: 118
         },
         judgments: {
-          active: false,
-          satisfiedOrAged: true,
-          monthsSinceLatest: 45
+          count: 0,
+          recent: 0,
+          old: 0,
+          monthsSinceLatest: null
         },
         bankruptcies: {
-          active: false,
-          satisfiedOrAged: false,
-          monthsSinceLatest: 150
+          count: 1,
+          recent: 0,
+          old: 1,
+          monthsSinceLatest: 140
         },
         foreclosures: {
-          withinLast36Months: false,
-          monthsSinceLatest: 50
+          count: 1,
+          recent: 1,
+          old: 0,
+          monthsSinceLatest: 48
         },
         unclearDisposition: false
       }
@@ -224,10 +234,12 @@ export const CreditReportV2Tab = ({
   };
   const calculateTLODecision = (guarantorData: typeof tloData["John Doe"]) => {
     const requiresIdentityManualValidation = !guarantorData.validation.ssnMatch || Math.abs(guarantorData.validation.dobYearDiff) > 1 || guarantorData.validation.missingFields.length > 0;
-    const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.active || guarantorData.backgroundCheck.judgments.active || guarantorData.backgroundCheck.bankruptcies.active;
-    const hasActiveWithin120Months = guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
-    const hasSatisfiedOrAged = guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
-    const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.withinLast36Months;
+    const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.recent > 0 || guarantorData.backgroundCheck.judgments.recent > 0 || guarantorData.backgroundCheck.bankruptcies.recent > 0;
+    const hasActiveWithin120Months = (guarantorData.backgroundCheck.liens.monthsSinceLatest !== null && guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && guarantorData.backgroundCheck.liens.old === 0) || 
+                                      (guarantorData.backgroundCheck.judgments.monthsSinceLatest !== null && guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && guarantorData.backgroundCheck.judgments.old === 0) || 
+                                      (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest !== null && guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && guarantorData.backgroundCheck.bankruptcies.old === 0);
+    const hasSatisfiedOrAged = guarantorData.backgroundCheck.liens.old > 0 || guarantorData.backgroundCheck.judgments.old > 0 || guarantorData.backgroundCheck.bankruptcies.old > 0;
+    const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.recent > 0;
     let decision: "pass" | "manual_validation" | "non_pass" = "pass";
     if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
       decision = "non_pass";
@@ -800,33 +812,79 @@ export const CreditReportV2Tab = ({
                             <TableHeader>
                               <TableRow>
                                 <TableHead className="text-xs">Type</TableHead>
-                                <TableHead className="text-xs">Active</TableHead>
-                                <TableHead className="text-xs">Satisfied/Aged</TableHead>
+                                <TableHead className="text-xs">Count</TableHead>
+                                <TableHead className="text-xs">Recent</TableHead>
+                                <TableHead className="text-xs">Old</TableHead>
                                 <TableHead className="text-xs">Months Since Latest</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               <TableRow>
-                                <TableCell className="text-xs">Liens</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.active ? "Yes" : "No"}</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.satisfiedOrAged ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs font-semibold">Liens</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.count}</TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.liens.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
+                                    {tloGuarantorData.backgroundCheck.liens.recent}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.liens.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
+                                    {tloGuarantorData.backgroundCheck.liens.old}
+                                  </div>
+                                </TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.monthsSinceLatest}</TableCell>
                               </TableRow>
                               <TableRow>
-                                <TableCell className="text-xs">Judgments</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.active ? "Yes" : "No"}</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.satisfiedOrAged ? "Yes" : "No"}</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest}</TableCell>
+                                <TableCell className="text-xs font-semibold">Judgments</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.count}</TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.judgments.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
+                                    {tloGuarantorData.backgroundCheck.judgments.recent}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.judgments.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
+                                    {tloGuarantorData.backgroundCheck.judgments.old}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest ?? '—'}</TableCell>
                               </TableRow>
                               <TableRow>
-                                <TableCell className="text-xs">Bankruptcies</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.active ? "Yes" : "No"}</TableCell>
-                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.satisfiedOrAged ? "Yes" : "No"}</TableCell>
+                                <TableCell className="text-xs font-semibold">Bankruptcies</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.count}</TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.bankruptcies.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
+                                    {tloGuarantorData.backgroundCheck.bankruptcies.recent}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.bankruptcies.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
+                                    {tloGuarantorData.backgroundCheck.bankruptcies.old}
+                                  </div>
+                                </TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.bankruptcies.monthsSinceLatest}</TableCell>
                               </TableRow>
                               <TableRow>
-                                <TableCell className="text-xs">Foreclosures</TableCell>
-                                <TableCell className="text-xs" colSpan={2}>{tloGuarantorData.backgroundCheck.foreclosures.withinLast36Months ? "Within Last 36 Months" : "None Recent"}</TableCell>
+                                <TableCell className="text-xs font-semibold">Foreclosures</TableCell>
+                                <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.foreclosures.count}</TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.foreclosures.recent > 0 && <AlertTriangle className="h-3 w-3 text-warning" />}
+                                    {tloGuarantorData.backgroundCheck.foreclosures.recent}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  <div className="flex items-center gap-1">
+                                    {tloGuarantorData.backgroundCheck.foreclosures.old > 0 && <CheckCircle className="h-3 w-3 text-success" />}
+                                    {tloGuarantorData.backgroundCheck.foreclosures.old}
+                                  </div>
+                                </TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.foreclosures.monthsSinceLatest}</TableCell>
                               </TableRow>
                             </TableBody>
