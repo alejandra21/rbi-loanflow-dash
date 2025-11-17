@@ -14,6 +14,7 @@ export const CreditReviewTab = ({
   phase
 }: CreditReviewTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
+    creditReviewSummary: true,
     creditPull: false,
     latePayment: false,
     creditUtilization: false,
@@ -487,13 +488,16 @@ export const CreditReviewTab = ({
 
       {/* Summary Section */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Credit Review Summary
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('creditReviewSummary')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Credit Review Summary
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditReviewSummary ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        {expandedCards.creditReviewSummary && <CardContent>
           {/* Row 1: Guarantors | Company Tier | Loan Program */}
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
@@ -585,7 +589,7 @@ export const CreditReviewTab = ({
                 </div>
               </div>}
           </div>
-        </CardContent>
+        </CardContent>}
       </Card>
 
       {/* Section 1: Credit Pull & FICO */}
