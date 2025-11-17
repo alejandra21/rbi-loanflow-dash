@@ -68,7 +68,7 @@ export const CreditReviewTab = ({
   const ltv = 68; // Loan to Value
   const loanLimit = 500000; // Loan Limit
   const productMin = 680; // Product Minimum FICO Score requirement
-  const loanProgram = "DSCR 30-Year Fixed"; // Loan Program
+  const loanProgram = "DSCR"; // Loan Program
   const verifiedProjects = 3; // Verified Projects count
 
   // Tier change tracking
