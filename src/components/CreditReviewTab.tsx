@@ -512,21 +512,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
               <p className="text-xs text-muted-foreground">Product Min vs Lowest FICO</p>
               <div className="flex items-center gap-2">
                 {ficoMeetsProductMin ? (
-                  <>
-                    <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      Pass
-                    </Badge>
-                    <span className="text-sm font-medium text-muted-foreground">+{ficoDifference}</span>
-                  </>
+                  <Badge variant="success" className="gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    Pass
+                  </Badge>
                 ) : (
-                  <>
-                    <Badge variant="destructive" className="gap-1">
-                      <XCircle className="h-3 w-3" />
-                      Fail
-                    </Badge>
-                    <span className="text-sm font-medium text-destructive">{ficoDifference}</span>
-                  </>
+                  <Badge variant="destructive" className="gap-1">
+                    <XCircle className="h-3 w-3" />
+                    Fail
+                  </Badge>
                 )}
               </div>
             </div>
