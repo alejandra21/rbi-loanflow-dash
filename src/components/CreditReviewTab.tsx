@@ -26,6 +26,10 @@ export const CreditReviewTab = ({
     matrixSnapshot: false
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+  const [expandedGuarantors, setExpandedGuarantors] = useState<Record<string, boolean>>({
+    'John Doe': true,
+    'Jane Smith': false
+  });
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
@@ -36,6 +40,12 @@ export const CreditReviewTab = ({
     setExpandedLogs(prev => ({
       ...prev,
       [logId]: !prev[logId]
+    }));
+  };
+  const toggleGuarantor = (name: string) => {
+    setExpandedGuarantors(prev => ({
+      ...prev,
+      [name]: !prev[name]
     }));
   };
   const getTierColor = (tier: string): string => {
@@ -666,7 +676,11 @@ export const CreditReviewTab = ({
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Credit Report Validations
-              {getStatusBadge(overallStatus)}
+              {overallStatus === 'pass' ? (
+                <CheckCircle className="h-4 w-4 text-success" />
+              ) : (
+                <AlertTriangle className="h-4 w-4 text-warning" />
+              )}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditPull ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -680,261 +694,257 @@ export const CreditReviewTab = ({
               const isDobVsSsnValid = guarantor.ssnIssueDate && guarantor.dob ? new Date(guarantor.ssnIssueDate) >= new Date(guarantor.dob) : null;
               const isUtilizationValid = guarantor.utilization < 50;
               const hasCreditAuth = guarantor.apiStatus === 'success';
+              const guarantorValidation = validateCreditPull(guarantor);
+              
+              // Get late payment data for this guarantor
+              const latePaymentInfo = index === 0 ? latePaymentData.borrower : latePaymentData.coBorrower;
+              const latePaymentDecision = evaluateLatePayments(latePaymentInfo.summary);
+              const guarantorStatus = guarantorValidation.status === 'fail' || latePaymentDecision !== 'pass' ? 'review' : 'pass';
               
               return (
-                <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium">{guarantor.name}</h4>
-                    <Badge variant="outline">{guarantor.ownershipPercentage}% ownership</Badge>
+                <div key={index} className="border rounded-lg overflow-hidden">
+                  <div 
+                    className="p-4 bg-muted/30 cursor-pointer hover:bg-muted/40 transition-colors flex items-center justify-between"
+                    onClick={() => toggleGuarantor(guarantor.name)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <h4 className="font-medium">{guarantor.name}</h4>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">{guarantor.ownershipPercentage}% ownership</Badge>
+                        {guarantorStatus === 'pass' ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <AlertTriangle className="h-4 w-4 text-warning" />
+                        )}
+                      </div>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? '' : '-rotate-90'}`} />
                   </div>
                   
-                  {/* Identity Section */}
-                  <div>
-                    <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Identity</h5>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">DOB</p>
-                        <p className="font-medium text-sm">{guarantor.dob}</p>
+                  {expandedGuarantors[guarantor.name] && (
+                    <div className="p-4 space-y-4">
+                      {/* Identity Section */}
+                      <div>
+                        <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Identity</h5>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">DOB</p>
+                            <p className="font-medium text-sm">{guarantor.dob}</p>
+                          </div>
+                          
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Foreign National</p>
+                            <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
+                          </div>
+                          
+                          {guarantor.ssnIssueDate && (
+                            <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">SSN Issued Date</p>
+                              <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
+                            </div>
+                          )}
+                          
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <div className="flex items-center gap-1">
+                              <p className="text-xs text-muted-foreground">DOB vs SSN Issued</p>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <Info className="h-3 w-3 text-muted-foreground" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Validates that SSN was issued after the borrower's date of birth</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                            {isDobVsSsnValid !== null ? (
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium text-sm">{isDobVsSsnValid ? 'Valid' : 'Invalid'}</p>
+                                {isDobVsSsnValid ? (
+                                  <CheckCircle className="h-4 w-4 text-success" />
+                                ) : (
+                                  <AlertTriangle className="h-4 w-4 text-warning" />
+                                )}
+                              </div>
+                            ) : (
+                              <p className="font-medium text-sm">N/A</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Foreign National</p>
-                        <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
-                      </div>
+                      <Separator />
                       
-                      {guarantor.ssnIssueDate && (
+                      {/* Credit Authorization Section */}
+                      <div>
+                        <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Authorization</h5>
                         <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <p className="text-xs text-muted-foreground">SSN Issued Date</p>
-                          <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
+                          <div className="flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground">Credit Authorization</p>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="h-3 w-3 text-muted-foreground" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Borrower authorization to pull credit report</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-sm">{hasCreditAuth ? 'Yes' : 'No'}</p>
+                            {hasCreditAuth ? (
+                              <CheckCircle className="h-4 w-4 text-success" />
+                            ) : (
+                              <AlertTriangle className="h-4 w-4 text-warning" />
+                            )}
+                            {hasCreditAuth && (
+                              <Button variant="outline" size="sm" className="ml-2 h-7 px-2 text-xs">
+                                <Download className="h-3 w-3 mr-1" />
+                                Download Authorization
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Separator />
+                      
+                      {/* Credit Score & Usage Section */}
+                      <div>
+                        <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Score & Usage</h5>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Middle FICO Score</p>
+                            <p className="font-medium text-sm flex items-center">
+                              {guarantor.isForeignNational && !guarantor.ssn ? "N/A" : guarantor.fico}
+                              <CreditCard className="h-4 w-4 ml-1" />
+                            </p>
+                          </div>
+                          
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Bureau</p>
+                            <p className="font-medium text-sm">{guarantor.bureau}</p>
+                          </div>
+                          
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <div className="flex items-center gap-1">
+                              <p className="text-xs text-muted-foreground">Utilization</p>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <Info className="h-3 w-3 text-muted-foreground" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Credit utilization should be below 50% for optimal approval</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm">{guarantor.utilization}%</p>
+                              {isUtilizationValid ? (
+                                <CheckCircle className="h-4 w-4 text-success" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-warning" />
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <div className="flex items-center gap-1">
+                              <p className="text-xs text-muted-foreground">Credit Report Date</p>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <Info className="h-3 w-3 text-muted-foreground" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Credit report must be less than 90 days old from closing date</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm">{guarantor.pullDate}</p>
+                              {daysDiff !== null && (isReportDateValid ? (
+                                <CheckCircle className="h-4 w-4 text-success" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-warning" />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Separator />
+                      
+                      {/* Late Payment History Section */}
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
+                          <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                            <Download className="h-3 w-3 mr-1" />
+                            Download Report
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="p-3 bg-muted/20 rounded space-y-2">
+                            <p className="text-2xl font-bold text-center">{latePaymentInfo.summary.late30Days}</p>
+                            <p className="text-xs text-muted-foreground text-center">30 days or clean</p>
+                            <div className="flex items-center justify-center gap-1">
+                              <CheckCircle className="h-4 w-4 text-success" />
+                              <span className="text-xs text-success font-medium">Pass</span>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-muted/20 rounded space-y-2">
+                            <p className="text-2xl font-bold text-center">{latePaymentInfo.summary.late60Days + latePaymentInfo.summary.late90Days}</p>
+                            <p className="text-xs text-muted-foreground text-center">60-90 days</p>
+                            <div className="flex items-center justify-center gap-1">
+                              <AlertTriangle className="h-4 w-4 text-warning" />
+                              <span className="text-xs text-warning font-medium">Manual Review</span>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-muted/20 rounded space-y-2">
+                            <p className="text-2xl font-bold text-center">{latePaymentInfo.summary.late120Plus}</p>
+                            <p className="text-xs text-muted-foreground text-center">120+ days</p>
+                            <div className="flex items-center justify-center gap-1">
+                              <AlertCircle className="h-4 w-4 text-destructive" />
+                              <span className="text-xs text-destructive font-medium">Severity</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {latePaymentDecision === "manual_credit_severity_120" && (
+                          <div className="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded">
+                            <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
+                          </div>
+                        )}
+                        {latePaymentDecision === "manual_credit_exception_60_90" && (
+                          <div className="mt-3 p-3 bg-warning/10 border border-warning/20 rounded">
+                            <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
+                          </div>
+                        )}
+                        {latePaymentDecision === "pass" && (
+                          <div className="mt-3 p-3 bg-success/10 border border-success/20 rounded">
+                            <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {guarantorValidation.reason && (
+                        <div className="p-3 bg-destructive/10 rounded-md flex items-start gap-2">
+                          <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
+                          <p className="text-sm text-destructive">{guarantorValidation.reason}</p>
                         </div>
                       )}
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <div className="flex items-center gap-1">
-                          <p className="text-xs text-muted-foreground">DOB vs SSN Issued</p>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="h-3 w-3 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Validates that SSN was issued after the borrower's date of birth</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        {isDobVsSsnValid !== null ? (
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">{isDobVsSsnValid ? 'Valid' : 'Invalid'}</p>
-                            {getStatusBadge(isDobVsSsnValid ? 'pass' : 'fail')}
-                          </div>
-                        ) : (
-                          <p className="font-medium text-sm">N/A</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Separator />
-                  
-                  {/* Credit Authorization Section */}
-                  <div>
-                    <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Authorization</h5>
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <div className="flex items-center gap-1">
-                        <p className="text-xs text-muted-foreground">Credit Authorization</p>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="h-3 w-3 text-muted-foreground" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Borrower authorization to pull credit report</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-sm">{hasCreditAuth ? 'Yes' : 'No'}</p>
-                        {getStatusBadge(hasCreditAuth ? 'pass' : 'review')}
-                        {hasCreditAuth && (
-                          <Button variant="outline" size="sm" className="ml-2">
-                            <Download className="h-3 w-3 mr-1" />
-                            Download Authorization
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Separator />
-                  
-                  {/* Credit Score & Usage Section */}
-                  <div>
-                    <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Score & Usage</h5>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Middle FICO Score</p>
-                        <p className="font-medium text-sm flex items-center">
-                          {guarantor.isForeignNational && !guarantor.ssn ? "N/A" : guarantor.fico}
-                          <CreditCard className="h-4 w-4 ml-1" />
-                        </p>
-                      </div>
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Bureau</p>
-                        <p className="font-medium text-sm">{guarantor.bureau}</p>
-                      </div>
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <div className="flex items-center gap-1">
-                          <p className="text-xs text-muted-foreground">Utilization</p>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="h-3 w-3 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Credit utilization should be below 50% for optimal approval</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm">{guarantor.utilization}%</p>
-                          {getStatusBadge(isUtilizationValid ? 'pass' : 'review')}
-                        </div>
-                      </div>
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <div className="flex items-center gap-1">
-                          <p className="text-xs text-muted-foreground">Credit Report Date</p>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="h-3 w-3 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Credit report must be less than 90 days old from closing date</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm">{guarantor.pullDate}</p>
-                          {daysDiff !== null && getStatusBadge(isReportDateValid ? 'pass' : 'review')}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {validateCreditPull(guarantor).reason && (
-                    <div className="p-3 bg-destructive/10 rounded-md flex items-start gap-2">
-                      <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
-                      <p className="text-sm text-destructive">{validateCreditPull(guarantor).reason}</p>
                     </div>
                   )}
                 </div>
               );
             })}
-          </CardContent>}
-      </Card>
-
-
-      {/* Section 3: Late Payment History Evaluation - By Guarantor */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('latePayment')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertCircleIcon className="h-4 w-4" />
-              Late Payment History Evaluation
-              {borrowerLatePaymentDecision === "manual_credit_severity_120" || coBorrowerLatePaymentDecision === "manual_credit_severity_120" ? getStatusBadge('fail') : borrowerLatePaymentDecision === "manual_credit_exception_60_90" || coBorrowerLatePaymentDecision === "manual_credit_exception_60_90" ? getStatusBadge('review') : getStatusBadge('pass')}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.latePayment ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.latePayment && <CardContent className="space-y-4">
-            {/* Borrower Late Payments */}
-            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">{latePaymentData.borrower.name}</h4>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Download className="h-3 w-3" />
-                    Download Report
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div className="p-3 bg-muted/20 rounded space-y-2">
-                  <p className="text-2xl font-bold text-center">{latePaymentData.borrower.summary.late30Days}</p>
-                  <p className="text-xs text-muted-foreground text-center">30 days or clean</p>
-                  <Badge variant="success" className="w-full justify-center">Pass</Badge>
-                </div>
-                <div className="p-3 bg-muted/20 rounded space-y-2">
-                  <p className="text-2xl font-bold text-center">{latePaymentData.borrower.summary.late60Days + latePaymentData.borrower.summary.late90Days}</p>
-                  <p className="text-xs text-muted-foreground text-center">60-90 days</p>
-                  <Badge variant="warning" className="w-full justify-center">Manual Review</Badge>
-                </div>
-                <div className="p-3 bg-muted/20 rounded space-y-2">
-                  <p className="text-2xl font-bold text-center">{latePaymentData.borrower.summary.late120Plus}</p>
-                  <p className="text-xs text-muted-foreground text-center">120+ days</p>
-                  <Badge variant="destructive" className="w-full justify-center">Severity</Badge>
-                </div>
-              </div>
-
-              {borrowerLatePaymentDecision === "manual_credit_severity_120" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
-                  <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
-                </div>}
-              {borrowerLatePaymentDecision === "manual_credit_exception_60_90" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
-                  <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
-                </div>}
-              {borrowerLatePaymentDecision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
-                  <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
-                </div>}
-            </div>
-
-            {/* Co-Borrower Late Payments */}
-            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">{latePaymentData.coBorrower.name}</h4>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Download className="h-3 w-3" />
-                    Download Report
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div className="p-3 bg-muted/20 rounded space-y-2">
-                  <p className="text-2xl font-bold text-center">{latePaymentData.coBorrower.summary.late30Days}</p>
-                  <p className="text-xs text-muted-foreground text-center">30 days or clean</p>
-                  <Badge variant="success" className="w-full justify-center">Pass</Badge>
-                </div>
-                <div className="p-3 bg-muted/20 rounded space-y-2">
-                  <p className="text-2xl font-bold text-center">{latePaymentData.coBorrower.summary.late60Days + latePaymentData.coBorrower.summary.late90Days}</p>
-                  <p className="text-xs text-muted-foreground text-center">60-90 days</p>
-                  <Badge variant="warning" className="w-full justify-center">Manual Review</Badge>
-                </div>
-                <div className="p-3 bg-muted/20 rounded space-y-2">
-                  <p className="text-2xl font-bold text-center">{latePaymentData.coBorrower.summary.late120Plus}</p>
-                  <p className="text-xs text-muted-foreground text-center">120+ days</p>
-                  <Badge variant="destructive" className="w-full justify-center">Severity</Badge>
-                </div>
-              </div>
-
-              {coBorrowerLatePaymentDecision === "manual_credit_severity_120" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
-                  <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
-                </div>}
-              {coBorrowerLatePaymentDecision === "manual_credit_exception_60_90" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
-                  <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
-                </div>}
-              {coBorrowerLatePaymentDecision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
-                  <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
-                </div>}
-            </div>
           </CardContent>}
       </Card>
 
