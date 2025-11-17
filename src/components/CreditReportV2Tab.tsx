@@ -538,7 +538,7 @@ export const CreditReportV2Tab = ({
                           <div className="space-y-1">
                             <p className="font-medium text-sm">{guarantor.pullDate}</p>
                             <div className="flex items-center gap-2">
-                              <p className="text-xs text-muted-foreground">
+                              <p className={`text-xs ${isCreditReportDateValid(guarantor.pullDate) ? 'text-green-600' : 'text-red-600'}`}>
                                 {isCreditReportDateValid(guarantor.pullDate) ? '✓ Within 90 days' : '✗ Older than 90 days'}
                               </p>
                               {isCreditReportDateValid(guarantor.pullDate) ? <CheckCircle className="h-3 w-3 text-green-600" /> : <AlertTriangle className="h-3 w-3 text-red-600" />}
