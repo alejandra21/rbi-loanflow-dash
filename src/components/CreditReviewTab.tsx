@@ -557,11 +557,7 @@ export const CreditReviewTab = ({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        {ficoMeetsProductMin ? (
-                          <CheckCircle className="h-3 w-3 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-3 w-3 text-amber-500" />
-                        )}
+                        <Info className="h-3 w-3 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="text-xs">
@@ -573,7 +569,14 @@ export const CreditReviewTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <p className="text-lg font-bold text-primary">{lowestFICO}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-bold text-primary">{lowestFICO}</p>
+                  {ficoMeetsProductMin ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-amber-500" />
+                  )}
+                </div>
               </div>
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <p className="text-xs text-muted-foreground">Product Min FICO</p>
