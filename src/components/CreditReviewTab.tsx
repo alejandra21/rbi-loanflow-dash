@@ -483,7 +483,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Number of Guarantors</p>
-              <p className="text-2xl font-bold">{numGuarantors}</p>
+              <p className="text-lg font-bold">{numGuarantors}</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Company Tier</p>
@@ -493,7 +493,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Loan Program</p>
-              <p className="text-2xl font-bold">{loanProgram}</p>
+              <p className="text-lg font-bold">{loanProgram}</p>
             </div>
           </div>
 
@@ -501,15 +501,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Lowest FICO Score</p>
-              <p className="text-2xl font-bold">{lowestFICO}</p>
+              <p className="text-lg font-bold">{lowestFICO}</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Verified Projects</p>
-              <p className="text-2xl font-bold">{verifiedProjects}</p>
+              <p className="text-lg font-bold">{verifiedProjects}</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Product Min</p>
-              <p className="text-2xl font-bold">{productMin}</p>
+              <p className="text-lg font-bold">{productMin}</p>
             </div>
           </div>
 
@@ -517,15 +517,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">LTC</p>
-              <p className="text-2xl font-bold">{ltc}%</p>
+              <p className="text-lg font-bold">{ltc}%</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">LTV</p>
-              <p className="text-2xl font-bold">{ltv}%</p>
+              <p className="text-lg font-bold">{ltv}%</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Loan Limit</p>
-              <p className="text-2xl font-bold">${loanLimit.toLocaleString()}</p>
+              <p className="text-lg font-bold">${loanLimit.toLocaleString()}</p>
             </div>
           </div>
 
