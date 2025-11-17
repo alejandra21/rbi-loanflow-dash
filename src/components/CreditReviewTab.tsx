@@ -550,7 +550,7 @@ export const CreditReviewTab = ({
           {/* Section 2: Creditworthiness */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-muted-foreground">Creditworthiness</h3>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <div className="flex items-center gap-2">
                   <p className="text-xs text-muted-foreground">Lowest Middle FICO</p>
@@ -585,16 +585,6 @@ export const CreditReviewTab = ({
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <p className="text-xs text-muted-foreground">Verified Projects</p>
                 <p className="text-lg font-bold">{verifiedProjects}</p>
-              </div>
-              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-                <p className="text-xs text-muted-foreground">Lowest FICO {'>'} Product Min</p>
-                <div className="flex items-center gap-2 mt-2">
-                  {ficoMeetsProductMin ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Pass
-                    </Badge> : <Badge variant="destructive" className="gap-1">
-                      <XCircle className="h-3 w-3" /> Fail
-                    </Badge>}
-                </div>
               </div>
             </div>
           </div>
