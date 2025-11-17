@@ -535,18 +535,25 @@ export const CreditReportV2Tab = ({
                         
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">Credit Pull Date</p>
-                          <div className="space-y-1">
-                            <p className="font-medium text-sm">{guarantor.pullDate}</p>
-                            <div className="flex items-center gap-2">
-                              <p className={`text-xs ${isCreditReportDateValid(guarantor.pullDate) ? 'text-green-600' : 'text-red-600'}`}>
-                                {isCreditReportDateValid(guarantor.pullDate) ? '✓ Within 90 days' : '✗ Older than 90 days'}
-                              </p>
-                              {isCreditReportDateValid(guarantor.pullDate) ? <CheckCircle className="h-3 w-3 text-green-600" /> : <AlertTriangle className="h-3 w-3 text-red-600" />}
+                          <p className="font-medium text-sm">{guarantor.pullDate}</p>
                         </div>
                       </div>
-                      {guarantor.fico >= productMin}
-                    </div>
-                      </div>
+                      
+                      {isCreditReportDateValid(guarantor.pullDate) && (
+                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <p className="text-sm text-green-700 dark:text-green-300">
+                            ✓ Credit Pull Date Valid - Within 90 days
+                          </p>
+                        </div>
+                      )}
+                      
+                      {!isCreditReportDateValid(guarantor.pullDate) && (
+                        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                          <p className="text-sm text-red-700 dark:text-red-300">
+                            ✗ Credit Pull Date Invalid - Older than 90 days
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
