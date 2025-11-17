@@ -367,10 +367,10 @@ export const CreditReportV2Tab = ({
           {expandedGuarantors[guarantor.name] && <CardContent className="space-y-6">
               {/* Credit Report Validations */}
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-creditReport`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}>
-                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
-                  <CreditCard className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">Credit Report Validations</h3>
-                  <div className="flex items-center gap-2">
+                <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">Credit Report Validations</h3>
+                  <div className="flex items-center gap-2 ml-auto">
                     <Badge variant="outline" className="text-xs">
                       {guarantor.pullType}
                     </Badge>
@@ -667,10 +667,10 @@ export const CreditReportV2Tab = ({
 
               {/* TLO Validations */}
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-tlo`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}>
-                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
-                  <Shield className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">TLO Validations</h3>
-                  <div className="flex items-center gap-2">
+                <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
+                  <Shield className="h-4 w-4 mr-2" />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">TLO Validations</h3>
+                  <div className="flex items-center gap-2 ml-auto">
                     {(() => {
                 const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
                 return tloResult.decision === "non_pass" ? getStatusBadge('fail') : tloResult.decision === "manual_validation" ? getStatusBadge('warn') : getStatusBadge('pass');
@@ -837,10 +837,10 @@ export const CreditReportV2Tab = ({
 
               {/* LexisNexis Validations */}
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}>
-                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
-                  <Shield className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">LexisNexis Validations</h3>
-                  <div className="flex items-center gap-2">
+                <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
+                  <Shield className="h-4 w-4 mr-2" />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">LexisNexis Validations</h3>
+                  <div className="flex items-center gap-2 ml-auto">
                     {(() => {
                 const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
                 const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
@@ -929,10 +929,10 @@ export const CreditReportV2Tab = ({
 
               {/* FlagDat Validations */}
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-flagDat`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-flagDat`)}>
-                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
-                  <AlertCircleIcon className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">FlagDat Validations</h3>
-                  <div className="flex items-center gap-2">
+                <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
+                  <AlertCircleIcon className="h-4 w-4 mr-2" />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">FlagDat Validations</h3>
+                  <div className="flex items-center gap-2 ml-auto">
                     {(() => {
                 const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
                 const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
