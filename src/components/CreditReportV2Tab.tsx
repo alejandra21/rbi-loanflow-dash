@@ -649,8 +649,8 @@ export const CreditReportV2Tab = ({
                     </div>
 
                     {/* Download Credit Report Button */}
-                    <div className="mt-6 flex justify-center">
-                      <Button variant="default" size="sm" className="gap-2">
+                    <div className="mt-6">
+                      <Button variant="outline" size="sm" className="gap-2 w-full">
                         <Download className="h-4 w-4" />
                         Download Credit Report
                       </Button>
