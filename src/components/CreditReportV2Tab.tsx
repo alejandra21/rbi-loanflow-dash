@@ -386,6 +386,13 @@ export const CreditReportV2Tab = ({
                 
                 <CollapsibleContent>
                   <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Download className="h-3 w-3" />
+                        Download Credit Report
+                      </Button>
+                    </div>
+                    
                     {/* Identity */}
                     <div>
                       <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Identity</h5>
@@ -650,14 +657,6 @@ export const CreditReportV2Tab = ({
                             </p>
                           </div>}
                       </div>
-                    </div>
-
-                    {/* Download Credit Report Button */}
-                    <div className="mt-6">
-                      <Button variant="outline" size="sm" className="gap-2 w-full">
-                        <Download className="h-4 w-4" />
-                        Download Credit Report
-                      </Button>
                     </div>
                   </div>
                 </CollapsibleContent>
