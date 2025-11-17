@@ -516,7 +516,7 @@ export const CreditReviewTab = ({
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Lowest FICO Score</p>
-              <p className="text-lg font-bold">{lowestFICO}</p>
+              <p className="text-lg font-bold text-primary">{lowestFICO}</p>
             </div>
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Verified Projects</p>
