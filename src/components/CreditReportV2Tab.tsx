@@ -467,6 +467,11 @@ export const CreditReportV2Tab = ({
                           <p className="text-xs text-muted-foreground">FICO Score</p>
                           <p className="font-medium text-sm">{guarantor.fico}</p>
                         </div>
+
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Pull Type</p>
+                          <p className="font-medium text-sm">Hard Pull</p>
+                        </div>
                         
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <div className="flex items-center gap-1">
@@ -524,7 +529,14 @@ export const CreditReportV2Tab = ({
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-sm">{guarantor.utilization}%</p>
+                          {guarantor.utilization < 50 ? (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <AlertTriangle className="h-4 w-4 text-amber-600" />
+                          )}
+                        </div>
                       </div>
 
                       <Collapsible className="mt-3">
@@ -634,6 +646,14 @@ export const CreditReportV2Tab = ({
                             </p>
                           </div>}
                       </div>
+                    </div>
+
+                    {/* Download Credit Report Button */}
+                    <div className="mt-6 flex justify-center">
+                      <Button variant="default" size="sm" className="gap-2">
+                        <Download className="h-4 w-4" />
+                        Download Credit Report
+                      </Button>
                     </div>
                   </div>
                 </CollapsibleContent>
