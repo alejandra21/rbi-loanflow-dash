@@ -353,12 +353,14 @@ export const CreditReportV2Tab = ({
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span>{guarantor.name}</span>
+              </div>
+              <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
                   {guarantor.ownership}% Ownership
                 </Badge>
                 {getStatusBadge(guarantor.validation)}
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? '' : '-rotate-90'}`} />
               </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? '' : '-rotate-90'}`} />
             </CardTitle>
           </CardHeader>
 
@@ -367,17 +369,19 @@ export const CreditReportV2Tab = ({
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-creditReport`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <CreditCard className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground">Credit Report Validations</h3>
-                  <Badge variant="outline" className="text-xs">
-                    {guarantor.pullType}
-                  </Badge>
-                  {(() => {
-              // Calculate overall validation status for Credit Report
-              const hasFails = !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) || !isCreditReportDateValid(guarantor.pullDate) || guarantor.latePayments.ninetyDays > 0 || guarantor.publicRecords.count > 0;
-              const hasWarnings = !isUtilizationValid(guarantor.utilization) || guarantor.latePayments.thirtyDays > 0 || guarantor.latePayments.sixtyDays > 0;
-              return hasFails ? getStatusBadge('fail') : hasWarnings ? getStatusBadge('warn') : getStatusBadge('pass');
-            })()}
-                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? '' : '-rotate-90'}`} />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">Credit Report Validations</h3>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {guarantor.pullType}
+                    </Badge>
+                    {(() => {
+                // Calculate overall validation status for Credit Report
+                const hasFails = !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) || !isCreditReportDateValid(guarantor.pullDate) || guarantor.latePayments.ninetyDays > 0 || guarantor.publicRecords.count > 0;
+                const hasWarnings = !isUtilizationValid(guarantor.utilization) || guarantor.latePayments.thirtyDays > 0 || guarantor.latePayments.sixtyDays > 0;
+                return hasFails ? getStatusBadge('fail') : hasWarnings ? getStatusBadge('warn') : getStatusBadge('pass');
+              })()}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? '' : '-rotate-90'}`} />
+                  </div>
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
@@ -665,12 +669,14 @@ export const CreditReportV2Tab = ({
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-tlo`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground">TLO Validations</h3>
-                  {(() => {
-              const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
-              return tloResult.decision === "non_pass" ? getStatusBadge('fail') : tloResult.decision === "manual_validation" ? getStatusBadge('warn') : getStatusBadge('pass');
-            })()}
-                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? '' : '-rotate-90'}`} />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">TLO Validations</h3>
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
+                return tloResult.decision === "non_pass" ? getStatusBadge('fail') : tloResult.decision === "manual_validation" ? getStatusBadge('warn') : getStatusBadge('pass');
+              })()}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? '' : '-rotate-90'}`} />
+                  </div>
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
@@ -833,15 +839,17 @@ export const CreditReportV2Tab = ({
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground">LexisNexis Validations</h3>
-                  {(() => {
-              const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
-              const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
-              const isReportStale = reportAge > 60;
-              const hasMatch = lexisData.matchStatus === "match";
-              return hasMatch || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass');
-            })()}
-                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? '' : '-rotate-90'}`} />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">LexisNexis Validations</h3>
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+                const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
+                const isReportStale = reportAge > 60;
+                const hasMatch = lexisData.matchStatus === "match";
+                return hasMatch || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass');
+              })()}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? '' : '-rotate-90'}`} />
+                  </div>
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
@@ -923,13 +931,15 @@ export const CreditReportV2Tab = ({
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-flagDat`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-flagDat`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <AlertCircleIcon className="h-4 w-4" />
-                  <h3 className="text-sm font-semibold text-muted-foreground">FlagDat Validations</h3>
-                  {(() => {
-              const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
-              const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
-              return hasMatches ? getStatusBadge('fail') : getStatusBadge('pass');
-            })()}
-                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-flagDat`] ? '' : '-rotate-90'}`} />
+                  <h3 className="text-sm font-semibold text-muted-foreground flex-1">FlagDat Validations</h3>
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
+                const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
+                return hasMatches ? getStatusBadge('fail') : getStatusBadge('pass');
+              })()}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-flagDat`] ? '' : '-rotate-90'}`} />
+                  </div>
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
