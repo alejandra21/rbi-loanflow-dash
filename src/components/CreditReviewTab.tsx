@@ -509,7 +509,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-muted/20 rounded space-y-1">
-                    <p className="text-xs text-muted-foreground">FICO Score</p>
+                    <p className="text-xs text-muted-foreground">Middle FICO Score</p>
                     <p className="font-medium text-sm flex items-center">
                       {guarantor.isForeignNational && !guarantor.ssn ? "N/A" : guarantor.fico}
                       <CreditCard className="h-4 w-4 ml-1" />
