@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/StatusBadge";
-import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, AlertCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, AlertCircle, ArrowRight, Info } from "lucide-react";
 import { useState } from "react";
 
 interface CreditReviewTabProps {
@@ -70,6 +71,11 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const productMin = 680; // Product Minimum FICO Score requirement
   const loanProgram = "DSCR 30-Year Fixed"; // Loan Program
   const verifiedProjects = 3; // Verified Projects count
+  
+  // Tier change tracking
+  const tierChanged = true; // Whether tier was forced to change
+  const previousTier = "Silver"; // Previous tier before change
+  const tierChangeReason = "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines."; // Reason for tier change
   
   const creditPullData = {
     borrower: {
@@ -529,7 +535,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             </div>
           </div>
 
-          {/* Row 4: Product Min vs Lowest FICO validation - Single card */}
+          {/* Row 4: Product Min vs Lowest FICO validation & Tier Change */}
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <div className="flex items-center justify-between">
@@ -547,6 +553,36 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 )}
               </div>
             </div>
+            
+            {tierChanged && (
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-muted-foreground">Tier Change</p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3 w-3 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">{tierChangeReason}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge className={`${getTierColor(previousTier)} text-xs font-semibold px-2 py-1`}>
+                    {previousTier}
+                  </Badge>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  <Badge className={`${getTierColor(companyTier)} text-xs font-semibold px-2 py-1`}>
+                    {companyTier}
+                  </Badge>
+                  <Badge variant="warning" className="gap-1 ml-2">
+                    <AlertTriangle className="h-3 w-3" /> Forced
+                  </Badge>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
