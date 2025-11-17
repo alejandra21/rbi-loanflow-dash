@@ -7,12 +7,12 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, AlertCircle, ArrowRight, Info } from "lucide-react";
 import { useState } from "react";
-
 interface CreditReviewTabProps {
   phase: any;
 }
-
-export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
+export const CreditReviewTab = ({
+  phase
+}: CreditReviewTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     creditPull: false,
     latePayment: false,
@@ -23,18 +23,18 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     logs: false
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
-
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
   };
-
   const toggleLog = (logId: string) => {
-    setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
+    setExpandedLogs(prev => ({
+      ...prev,
+      [logId]: !prev[logId]
+    }));
   };
-
   const getTierColor = (tier: string): string => {
     const colors: Record<string, string> = {
       'Platinum': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
@@ -44,7 +44,6 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     };
     return colors[tier] || 'bg-muted';
   };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pass":
@@ -71,12 +70,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const productMin = 680; // Product Minimum FICO Score requirement
   const loanProgram = "DSCR 30-Year Fixed"; // Loan Program
   const verifiedProjects = 3; // Verified Projects count
-  
+
   // Tier change tracking
   const tierChanged = true; // Whether tier was forced to change
   const previousTier = "Silver"; // Previous tier before change
   const tierChangeReason = "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines."; // Reason for tier change
-  
+
   const creditPullData = {
     borrower: {
       name: "John Doe",
@@ -84,11 +83,16 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       pullDate: "2025-11-01",
       bureau: "Experian",
       isForeignNational: false,
-      ssn: "***-**-1234", // Last 4 digits
-      ssnIssueDate: "1995-03-15", // SSN Issue Date
-      dob: "1990-05-20", // Date of Birth
-      apiStatus: "success", // success, failure, missing_authorization
-      ownershipPercentage: 65, // % of ownership
+      ssn: "***-**-1234",
+      // Last 4 digits
+      ssnIssueDate: "1995-03-15",
+      // SSN Issue Date
+      dob: "1990-05-20",
+      // Date of Birth
+      apiStatus: "success",
+      // success, failure, missing_authorization
+      ownershipPercentage: 65,
+      // % of ownership
       utilization: 35 // Credit utilization percentage
     },
     coBorrower: {
@@ -97,11 +101,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       pullDate: "2025-11-01",
       bureau: "Experian",
       isForeignNational: true,
-      ssn: null, // No SSN for foreign national
+      ssn: null,
+      // No SSN for foreign national
       ssnIssueDate: null,
       dob: "1988-08-12",
       apiStatus: "success",
-      ownershipPercentage: 35, // % of ownership
+      ownershipPercentage: 35,
+      // % of ownership
       utilization: 42 // Credit utilization percentage
     }
   };
@@ -109,9 +115,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   // Get all guarantors
   const guarantors = [creditPullData.borrower, creditPullData.coBorrower];
   const numGuarantors = guarantors.length;
-  const lowestFICO = Math.min(
-    ...guarantors.map(g => g.isForeignNational && !g.ssn ? Infinity : g.fico).filter(f => f !== Infinity)
-  );
+  const lowestFICO = Math.min(...guarantors.map(g => g.isForeignNational && !g.ssn ? Infinity : g.fico).filter(f => f !== Infinity));
 
   // Validation: Product Min vs Lowest FICO Score
   const ficoMeetsProductMin = lowestFICO >= productMin;
@@ -121,12 +125,18 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const validateCreditPull = (borrowerData: typeof creditPullData.borrower | typeof creditPullData.coBorrower) => {
     // Check API status
     if (borrowerData.apiStatus === "failure" || borrowerData.apiStatus === "missing_authorization") {
-      return { status: "fail", reason: "Underwriting/Credit Analyst review" };
+      return {
+        status: "fail",
+        reason: "Underwriting/Credit Analyst review"
+      };
     }
 
     // Check ownership percentage
     if (borrowerData.ownershipPercentage < 20) {
-      return { status: "fail", reason: "Ownership percentage below 20% - Manual review" };
+      return {
+        status: "fail",
+        reason: "Ownership percentage below 20% - Manual review"
+      };
     }
 
     // Check SSN Issue Date < DOB (if both exist)
@@ -134,7 +144,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       const ssnDate = new Date(borrowerData.ssnIssueDate);
       const dobDate = new Date(borrowerData.dob);
       if (ssnDate < dobDate) {
-        return { status: "fail", reason: "SSN issue date before DOB - Manual review" };
+        return {
+          status: "fail",
+          reason: "SSN issue date before DOB - Manual review"
+        };
       }
     }
 
@@ -143,20 +156,27 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     const closing = new Date(closingDate);
     const daysDiff = Math.floor((closing.getTime() - pullDate.getTime()) / (1000 * 60 * 60 * 24));
     if (daysDiff > 90) {
-      return { status: "fail", reason: "Credit report >90 days old - Manual review" };
+      return {
+        status: "fail",
+        reason: "Credit report >90 days old - Manual review"
+      };
     }
 
     // Check utilization
     if (borrowerData.utilization > 75) {
-      return { status: "fail", reason: "Utilization exceeds 75% - Manual review" };
+      return {
+        status: "fail",
+        reason: "Utilization exceeds 75% - Manual review"
+      };
     }
-
-    return { status: "pass", reason: null };
+    return {
+      status: "pass",
+      reason: null
+    };
   };
-
   const borrowerValidation = validateCreditPull(creditPullData.borrower);
   const coBorrowerValidation = validateCreditPull(creditPullData.coBorrower);
-  
+
   // Overall status for the card
   const overallStatus = borrowerValidation.status === "fail" || coBorrowerValidation.status === "fail" ? "fail" : "pass";
 
@@ -166,10 +186,19 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       name: "John Doe",
       creditReport: "s3://bucket-name/credit-reports/LOAN123456/John_Doe_Credit_Report.pdf",
       evaluationPeriod: "24 months",
-      payments: [
-        { date: "2024-08-15", creditor: "Wells Fargo", daysLate: 30, amount: 450, severity: "minor" },
-        { date: "2024-03-22", creditor: "Chase", daysLate: 15, amount: 220, severity: "minor" },
-      ],
+      payments: [{
+        date: "2024-08-15",
+        creditor: "Wells Fargo",
+        daysLate: 30,
+        amount: 450,
+        severity: "minor"
+      }, {
+        date: "2024-03-22",
+        creditor: "Chase",
+        daysLate: 15,
+        amount: 220,
+        severity: "minor"
+      }],
       summary: {
         late30Days: 1,
         late60Days: 0,
@@ -181,9 +210,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       name: "Jane Smith",
       creditReport: "s3://bucket-name/credit-reports/LOAN123456/Jane_Smith_Credit_Report.pdf",
       evaluationPeriod: "24 months",
-      payments: [
-        { date: "2024-06-10", creditor: "Bank of America", daysLate: 60, amount: 800, severity: "moderate" },
-      ],
+      payments: [{
+        date: "2024-06-10",
+        creditor: "Bank of America",
+        daysLate: 60,
+        amount: 800,
+        severity: "moderate"
+      }],
       summary: {
         late30Days: 0,
         late60Days: 1,
@@ -203,15 +236,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       return "pass"; // 30-day or clean
     }
   };
-
   const borrowerLatePaymentDecision = evaluateLatePayments(latePaymentData.borrower.summary);
   const coBorrowerLatePaymentDecision = evaluateLatePayments(latePaymentData.coBorrower.summary);
 
   // Mock data for Credit Utilization Analysis
   const creditUtilizationAnalysisData = {
     creditReport: "s3://bucket-name/credit-reports/LOAN123456/Credit_Report.pdf",
-    revolvingUtilization: 45, // Percentage (0-100)
-    isFrozen: false, // Set to true to simulate frozen credit report
+    revolvingUtilization: 45,
+    // Percentage (0-100)
+    isFrozen: false // Set to true to simulate frozen credit report
   };
 
   // Mock data for TLO Review - By Guarantor
@@ -308,30 +341,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
 
   // Calculate TLO decisions for each guarantor
   const calculateTLODecision = (guarantorData: typeof tloData.borrower) => {
-    const requiresIdentityManualValidation = 
-      !guarantorData.validation.ssnMatch || 
-      Math.abs(guarantorData.validation.dobYearDiff) > 1 ||
-      guarantorData.validation.missingFields.length > 0;
-
-    const hasActiveLiensJudgmentsBankruptcies = 
-      guarantorData.backgroundCheck.liens.active ||
-      guarantorData.backgroundCheck.judgments.active ||
-      guarantorData.backgroundCheck.bankruptcies.active;
-
-    const hasActiveWithin120Months = 
-      (guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged) ||
-      (guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged) ||
-      (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged);
-
-    const hasSatisfiedOrAged = 
-      guarantorData.backgroundCheck.liens.satisfiedOrAged ||
-      guarantorData.backgroundCheck.judgments.satisfiedOrAged ||
-      guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
-
+    const requiresIdentityManualValidation = !guarantorData.validation.ssnMatch || Math.abs(guarantorData.validation.dobYearDiff) > 1 || guarantorData.validation.missingFields.length > 0;
+    const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.active || guarantorData.backgroundCheck.judgments.active || guarantorData.backgroundCheck.bankruptcies.active;
+    const hasActiveWithin120Months = guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
+    const hasSatisfiedOrAged = guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
     const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.withinLast36Months;
-
     let decision: "pass" | "manual_validation" | "non_pass" = "pass";
-    
     if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
       decision = "non_pass";
     } else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || guarantorData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
@@ -341,34 +356,41 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     } else if (requiresIdentityManualValidation) {
       decision = "manual_validation";
     }
-
-    return { decision, requiresIdentityManualValidation };
+    return {
+      decision,
+      requiresIdentityManualValidation
+    };
   };
-
   const borrowerTLOResult = calculateTLODecision(tloData.borrower);
   const coBorrowerTLOResult = calculateTLODecision(tloData.coBorrower);
 
   // Overall TLO decision (worst case)
-  const overallTLODecision = 
-    borrowerTLOResult.decision === "non_pass" || coBorrowerTLOResult.decision === "non_pass" ? "non_pass" :
-    borrowerTLOResult.decision === "manual_validation" || coBorrowerTLOResult.decision === "manual_validation" ? "manual_validation" :
-    "pass";
+  const overallTLODecision = borrowerTLOResult.decision === "non_pass" || coBorrowerTLOResult.decision === "non_pass" ? "non_pass" : borrowerTLOResult.decision === "manual_validation" || coBorrowerTLOResult.decision === "manual_validation" ? "manual_validation" : "pass";
 
   // Mock data for LexisNexis - By Guarantor
   const lexisNexisData = {
     borrower: {
       name: "John Doe",
-      matchStatus: "match", // "clear" or "match"
-      matchedEntities: [
-        { name: "John Doe", matchScore: 95, type: "Exact Name Match", risk: "Low" },
-        { name: "Jonathan Doe", matchScore: 78, type: "Similar Name Match", risk: "Medium" }
-      ],
+      matchStatus: "match",
+      // "clear" or "match"
+      matchedEntities: [{
+        name: "John Doe",
+        matchScore: 95,
+        type: "Exact Name Match",
+        risk: "Low"
+      }, {
+        name: "Jonathan Doe",
+        matchScore: 78,
+        type: "Similar Name Match",
+        risk: "Medium"
+      }],
       reportDate: "2025-10-15",
       closeDate: "2025-11-10"
     },
     coBorrower: {
       name: "Jane Smith",
-      matchStatus: "clear", // "clear" or "match"
+      matchStatus: "clear",
+      // "clear" or "match"
       matchedEntities: [],
       reportDate: "2025-10-16",
       closeDate: "2025-11-10"
@@ -376,14 +398,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   };
 
   // Calculate if reports are older than 60 days from close date
-  const borrowerReportAge = Math.floor(
-    (new Date(lexisNexisData.borrower.closeDate).getTime() - new Date(lexisNexisData.borrower.reportDate).getTime()) / 
-    (1000 * 60 * 60 * 24)
-  );
-  const coBorrowerReportAge = Math.floor(
-    (new Date(lexisNexisData.coBorrower.closeDate).getTime() - new Date(lexisNexisData.coBorrower.reportDate).getTime()) / 
-    (1000 * 60 * 60 * 24)
-  );
+  const borrowerReportAge = Math.floor((new Date(lexisNexisData.borrower.closeDate).getTime() - new Date(lexisNexisData.borrower.reportDate).getTime()) / (1000 * 60 * 60 * 24));
+  const coBorrowerReportAge = Math.floor((new Date(lexisNexisData.coBorrower.closeDate).getTime() - new Date(lexisNexisData.coBorrower.reportDate).getTime()) / (1000 * 60 * 60 * 24));
   const isBorrowerReportStale = borrowerReportAge > 60;
   const isCoBorrowerReportStale = coBorrowerReportAge > 60;
   const isAnyReportStale = isBorrowerReportStale || isCoBorrowerReportStale;
@@ -404,67 +420,60 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
       lastChecked: "2025-11-10"
     }
   };
-
   const totalWatchlistMatches = flagDatData.borrower.watchlistMatches + flagDatData.coBorrower.watchlistMatches;
   const totalBlacklistMatches = flagDatData.borrower.blacklistMatches + flagDatData.coBorrower.blacklistMatches;
   const hasAnyFlagDatMatches = totalWatchlistMatches > 0 || totalBlacklistMatches > 0;
 
   // Mock logs data
-  const logsData = [
-    {
-      id: "log-001",
-      tag: "credit_pull",
-      timestamp: "2025-11-10 14:23:15",
-      description: "Credit Pull Initiated",
-      action: "Credit Pull Initiated",
-      user: "System",
-      status: "completed",
-      exceptionTag: "credit_api",
-      exceptionType: null,
-      jsonData: {
-        borrower: "John Doe",
-        bureau: "Experian",
-        fico_score: 720,
-        pull_date: "2025-11-01"
-      }
-    },
-    {
-      id: "log-002",
-      tag: "tlo",
-      timestamp: "2025-11-10 14:25:42",
-      description: "TLO Verification",
-      action: "TLO Verification",
-      user: "System",
-      status: "completed",
-      exceptionTag: "identity_verification",
-      exceptionType: null,
-      jsonData: {
-        ssn_match: true,
-        dob_match: true,
-        address_verified: true,
-        confidence: 95
-      }
-    },
-    {
-      id: "log-003",
-      tag: "lexisnexis",
-      timestamp: "2025-11-10 14:28:10",
-      description: "LexisNexis Check",
-      action: "LexisNexis Check",
-      user: "System",
-      status: "completed",
-      exceptionTag: "watchlist_screening",
-      exceptionType: null,
-      jsonData: {
-        match_status: "clear",
-        m_score: 85,
-        report_date: "2025-10-15"
-      }
+  const logsData = [{
+    id: "log-001",
+    tag: "credit_pull",
+    timestamp: "2025-11-10 14:23:15",
+    description: "Credit Pull Initiated",
+    action: "Credit Pull Initiated",
+    user: "System",
+    status: "completed",
+    exceptionTag: "credit_api",
+    exceptionType: null,
+    jsonData: {
+      borrower: "John Doe",
+      bureau: "Experian",
+      fico_score: 720,
+      pull_date: "2025-11-01"
     }
-  ];
-
-  return (
-    <div className="space-y-4">
+  }, {
+    id: "log-002",
+    tag: "tlo",
+    timestamp: "2025-11-10 14:25:42",
+    description: "TLO Verification",
+    action: "TLO Verification",
+    user: "System",
+    status: "completed",
+    exceptionTag: "identity_verification",
+    exceptionType: null,
+    jsonData: {
+      ssn_match: true,
+      dob_match: true,
+      address_verified: true,
+      confidence: 95
+    }
+  }, {
+    id: "log-003",
+    tag: "lexisnexis",
+    timestamp: "2025-11-10 14:28:10",
+    description: "LexisNexis Check",
+    action: "LexisNexis Check",
+    user: "System",
+    status: "completed",
+    exceptionTag: "watchlist_screening",
+    exceptionType: null,
+    jsonData: {
+      match_status: "clear",
+      m_score: 85,
+      report_date: "2025-10-15"
+    }
+  }];
+  return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Review</span>
@@ -542,20 +551,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 <p className="text-xs text-muted-foreground">Product Min vs Lowest FICO</p>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                {ficoMeetsProductMin ? (
-                  <Badge variant="success" className="gap-1">
+                {ficoMeetsProductMin ? <Badge variant="success" className="gap-1">
                     <CheckCircle className="h-3 w-3" /> Pass
-                  </Badge>
-                ) : (
-                  <Badge variant="destructive" className="gap-1">
+                  </Badge> : <Badge variant="destructive" className="gap-1">
                     <XCircle className="h-3 w-3" /> Fail
-                  </Badge>
-                )}
+                  </Badge>}
               </div>
             </div>
             
-            {tierChanged && (
-              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+            {tierChanged && <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <div className="flex items-center gap-2">
                   <p className="text-xs text-muted-foreground">Tier Change</p>
                   <TooltipProvider>
@@ -577,12 +581,9 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <Badge className={`${getTierColor(companyTier)} text-xs font-semibold px-2 py-1`}>
                     {companyTier}
                   </Badge>
-                  <Badge variant="warning" className="gap-1 ml-2">
-                    <AlertTriangle className="h-3 w-3" /> Forced
-                  </Badge>
+                  
                 </div>
-              </div>
-            )}
+              </div>}
           </div>
         </CardContent>
       </Card>
@@ -599,10 +600,8 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditPull ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.creditPull && (
-          <CardContent className="space-y-4">
-            {guarantors.map((guarantor, index) => (
-              <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
+        {expandedCards.creditPull && <CardContent className="space-y-4">
+            {guarantors.map((guarantor, index) => <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">{guarantor.name}</h4>
                   <Badge variant="outline">{guarantor.ownershipPercentage}% ownership</Badge>
@@ -628,9 +627,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                       <p className={`font-medium text-sm ${guarantor.utilization > 75 ? 'text-destructive' : ''}`}>
                         {guarantor.utilization}%
                       </p>
-                      {guarantor.utilization > 75 && (
-                        <AlertTriangle className="h-4 w-4 text-destructive" />
-                      )}
+                      {guarantor.utilization > 75 && <AlertTriangle className="h-4 w-4 text-destructive" />}
                     </div>
                   </div>
                   
@@ -641,20 +638,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   
                   <div className="p-3 bg-muted/20 rounded space-y-1">
                     <p className="text-xs text-muted-foreground">DOB vs SSN Issued</p>
-                    {guarantor.ssnIssueDate && guarantor.dob ? (
-                      <div className="flex items-center space-x-2">
+                    {guarantor.ssnIssueDate && guarantor.dob ? <div className="flex items-center space-x-2">
                         <p className={`font-medium text-sm ${new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? 'text-destructive' : 'text-success'}`}>
                           {new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? 'Invalid' : 'Valid'}
                         </p>
-                        {new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? (
-                          <AlertTriangle className="h-4 w-4 text-destructive" />
-                        ) : (
-                          <CheckCircle className="h-4 w-4 text-success" />
-                        )}
-                      </div>
-                    ) : (
-                      <p className="font-medium text-sm">N/A</p>
-                    )}
+                        {new Date(guarantor.ssnIssueDate) < new Date(guarantor.dob) ? <AlertTriangle className="h-4 w-4 text-destructive" /> : <CheckCircle className="h-4 w-4 text-success" />}
+                      </div> : <p className="font-medium text-sm">N/A</p>}
                   </div>
                   
                   <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -662,12 +651,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
                   </div>
                   
-                  {guarantor.ssnIssueDate && (
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
+                  {guarantor.ssnIssueDate && <div className="p-3 bg-muted/20 rounded space-y-1">
                       <p className="text-xs text-muted-foreground">SSN Issued Date</p>
                       <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
-                    </div>
-                  )}
+                    </div>}
                   
                   <div className="p-3 bg-muted/20 rounded space-y-1">
                     <p className="text-xs text-muted-foreground">Pull Date</p>
@@ -680,16 +667,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   </div>
                 </div>
                 
-                {validateCreditPull(guarantor).reason && (
-                  <div className="p-3 bg-destructive/10 rounded-md flex items-start gap-2">
+                {validateCreditPull(guarantor).reason && <div className="p-3 bg-destructive/10 rounded-md flex items-start gap-2">
                     <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
                     <p className="text-sm text-destructive">{validateCreditPull(guarantor).reason}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        )}
+                  </div>}
+              </div>)}
+          </CardContent>}
       </Card>
 
 
@@ -700,15 +683,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
               Late Payment History Evaluation
-              {(borrowerLatePaymentDecision === "manual_credit_severity_120" || coBorrowerLatePaymentDecision === "manual_credit_severity_120") ? getStatusBadge('fail') :
-               (borrowerLatePaymentDecision === "manual_credit_exception_60_90" || coBorrowerLatePaymentDecision === "manual_credit_exception_60_90") ? getStatusBadge('review') :
-               getStatusBadge('pass')}
+              {borrowerLatePaymentDecision === "manual_credit_severity_120" || coBorrowerLatePaymentDecision === "manual_credit_severity_120" ? getStatusBadge('fail') : borrowerLatePaymentDecision === "manual_credit_exception_60_90" || coBorrowerLatePaymentDecision === "manual_credit_exception_60_90" ? getStatusBadge('review') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.latePayment ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.latePayment && (
-          <CardContent className="space-y-4">
+        {expandedCards.latePayment && <CardContent className="space-y-4">
             {/* Borrower Late Payments */}
             <div className="p-4 bg-muted/30 rounded-lg space-y-3">
               <div className="flex items-center justify-between">
@@ -739,21 +719,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 </div>
               </div>
 
-              {borrowerLatePaymentDecision === "manual_credit_severity_120" && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {borrowerLatePaymentDecision === "manual_credit_severity_120" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
-                </div>
-              )}
-              {borrowerLatePaymentDecision === "manual_credit_exception_60_90" && (
-                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                </div>}
+              {borrowerLatePaymentDecision === "manual_credit_exception_60_90" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                   <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
-                </div>
-              )}
-              {borrowerLatePaymentDecision === "pass" && (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div>}
+              {borrowerLatePaymentDecision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Co-Borrower Late Payments */}
@@ -786,24 +760,17 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 </div>
               </div>
 
-              {coBorrowerLatePaymentDecision === "manual_credit_severity_120" && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {coBorrowerLatePaymentDecision === "manual_credit_severity_120" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">🔴 Manual Review Required: CreditSeverity_120</p>
-                </div>
-              )}
-              {coBorrowerLatePaymentDecision === "manual_credit_exception_60_90" && (
-                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                </div>}
+              {coBorrowerLatePaymentDecision === "manual_credit_exception_60_90" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                   <p className="text-sm font-medium text-warning">⚠ Manual Review Required: CreditException_60_90</p>
-                </div>
-              )}
-              {coBorrowerLatePaymentDecision === "pass" && (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div>}
+              {coBorrowerLatePaymentDecision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Pass - Continue workflow</p>
-                </div>
-              )}
+                </div>}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 4: TLO Review - By Guarantor */}
@@ -813,15 +780,12 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               TLO Review
-              {overallTLODecision === "non_pass" ? getStatusBadge('fail') : 
-               overallTLODecision === "manual_validation" ? getStatusBadge('warn') : 
-               getStatusBadge('pass')}
+              {overallTLODecision === "non_pass" ? getStatusBadge('fail') : overallTLODecision === "manual_validation" ? getStatusBadge('warn') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tlo ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.tlo && (
-          <CardContent className="space-y-4">
+        {expandedCards.tlo && <CardContent className="space-y-4">
             {/* Borrower TLO Review */}
             <div className="p-4 bg-muted/30 rounded-lg space-y-3">
               <div className="flex items-center justify-between">
@@ -849,17 +813,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-muted-foreground">Full Name</span>
-                      {tloData.borrower.validation.nameMatch ? (
-                        <Badge variant="success" className="gap-1">
+                      {tloData.borrower.validation.nameMatch ? <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Match
-                        </Badge>
-                      ) : (
-                        <Badge variant="destructive" className="gap-1">
+                        </Badge> : <Badge variant="destructive" className="gap-1">
                           <XCircle className="h-3 w-3" />
                           Mismatch
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
@@ -877,19 +837,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-muted-foreground">Last 4 SSN</span>
-                      {tloData.borrower.validation.missingFields.includes("SSN") ? (
-                        <Badge variant="destructive">Missing</Badge>
-                      ) : tloData.borrower.validation.ssnMatch ? (
-                        <Badge variant="success" className="gap-1">
+                      {tloData.borrower.validation.missingFields.includes("SSN") ? <Badge variant="destructive">Missing</Badge> : tloData.borrower.validation.ssnMatch ? <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Match
-                        </Badge>
-                      ) : (
-                        <Badge variant="destructive" className="gap-1">
+                        </Badge> : <Badge variant="destructive" className="gap-1">
                           <XCircle className="h-3 w-3" />
                           Mismatch
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
@@ -907,19 +861,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-muted-foreground">Date of Birth</span>
-                      {tloData.borrower.validation.missingFields.includes("DOB") ? (
-                        <Badge variant="destructive">Missing</Badge>
-                      ) : tloData.borrower.validation.dobMatch ? (
-                        <Badge variant="success" className="gap-1">
+                      {tloData.borrower.validation.missingFields.includes("DOB") ? <Badge variant="destructive">Missing</Badge> : tloData.borrower.validation.dobMatch ? <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Match
-                        </Badge>
-                      ) : (
-                        <Badge variant="warning" className="gap-1">
+                        </Badge> : <Badge variant="warning" className="gap-1">
                           <AlertTriangle className="h-3 w-3" />
                           {Math.abs(tloData.borrower.validation.dobYearDiff)} year diff
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
@@ -944,13 +892,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Liens</span>
-                      {tloData.borrower.backgroundCheck.liens.active ? (
-                        <Badge variant="destructive">Active</Badge>
-                      ) : tloData.borrower.backgroundCheck.liens.satisfiedOrAged ? (
-                        <Badge variant="warning">Satisfied/Aged</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.borrower.backgroundCheck.liens.active ? <Badge variant="destructive">Active</Badge> : tloData.borrower.backgroundCheck.liens.satisfiedOrAged ? <Badge variant="warning">Satisfied/Aged</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.borrower.backgroundCheck.liens.monthsSinceLatest} months since latest
@@ -960,13 +902,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Judgments</span>
-                      {tloData.borrower.backgroundCheck.judgments.active ? (
-                        <Badge variant="destructive">Active</Badge>
-                      ) : tloData.borrower.backgroundCheck.judgments.satisfiedOrAged ? (
-                        <Badge variant="warning">Satisfied/Aged</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.borrower.backgroundCheck.judgments.active ? <Badge variant="destructive">Active</Badge> : tloData.borrower.backgroundCheck.judgments.satisfiedOrAged ? <Badge variant="warning">Satisfied/Aged</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.borrower.backgroundCheck.judgments.monthsSinceLatest} months since latest
@@ -976,13 +912,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Bankruptcies</span>
-                      {tloData.borrower.backgroundCheck.bankruptcies.active ? (
-                        <Badge variant="destructive">Active</Badge>
-                      ) : tloData.borrower.backgroundCheck.bankruptcies.satisfiedOrAged ? (
-                        <Badge variant="warning">Satisfied/Aged</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.borrower.backgroundCheck.bankruptcies.active ? <Badge variant="destructive">Active</Badge> : tloData.borrower.backgroundCheck.bankruptcies.satisfiedOrAged ? <Badge variant="warning">Satisfied/Aged</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.borrower.backgroundCheck.bankruptcies.monthsSinceLatest} months since latest
@@ -992,11 +922,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Foreclosures</span>
-                      {tloData.borrower.backgroundCheck.foreclosures.withinLast36Months ? (
-                        <Badge variant="destructive">Within 36 mo</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.borrower.backgroundCheck.foreclosures.withinLast36Months ? <Badge variant="destructive">Within 36 mo</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.borrower.backgroundCheck.foreclosures.monthsSinceLatest} months since latest
@@ -1006,21 +932,15 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
               </div>
 
               {/* Decision */}
-              {borrowerTLOResult.decision === "non_pass" && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {borrowerTLOResult.decision === "non_pass" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">❌ Non-Pass</p>
-                </div>
-              )}
-              {borrowerTLOResult.decision === "manual_validation" && (
-                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                </div>}
+              {borrowerTLOResult.decision === "manual_validation" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                   <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
-                </div>
-              )}
-              {borrowerTLOResult.decision === "pass" && (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div>}
+              {borrowerTLOResult.decision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Pass</p>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Co-Borrower TLO Review */}
@@ -1049,17 +969,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-muted-foreground">Full Name</span>
-                      {tloData.coBorrower.validation.nameMatch ? (
-                        <Badge variant="success" className="gap-1">
+                      {tloData.coBorrower.validation.nameMatch ? <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Match
-                        </Badge>
-                      ) : (
-                        <Badge variant="destructive" className="gap-1">
+                        </Badge> : <Badge variant="destructive" className="gap-1">
                           <XCircle className="h-3 w-3" />
                           Mismatch
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
@@ -1076,19 +992,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-muted-foreground">Last 4 SSN</span>
-                      {tloData.coBorrower.validation.missingFields.includes("SSN") ? (
-                        <Badge variant="destructive">Missing</Badge>
-                      ) : tloData.coBorrower.validation.ssnMatch ? (
-                        <Badge variant="success" className="gap-1">
+                      {tloData.coBorrower.validation.missingFields.includes("SSN") ? <Badge variant="destructive">Missing</Badge> : tloData.coBorrower.validation.ssnMatch ? <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Match
-                        </Badge>
-                      ) : (
-                        <Badge variant="destructive" className="gap-1">
+                        </Badge> : <Badge variant="destructive" className="gap-1">
                           <XCircle className="h-3 w-3" />
                           Mismatch
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
@@ -1105,19 +1015,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-muted-foreground">Date of Birth</span>
-                      {tloData.coBorrower.validation.missingFields.includes("DOB") ? (
-                        <Badge variant="destructive">Missing</Badge>
-                      ) : tloData.coBorrower.validation.dobMatch ? (
-                        <Badge variant="success" className="gap-1">
+                      {tloData.coBorrower.validation.missingFields.includes("DOB") ? <Badge variant="destructive">Missing</Badge> : tloData.coBorrower.validation.dobMatch ? <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Match
-                        </Badge>
-                      ) : (
-                        <Badge variant="warning" className="gap-1">
+                        </Badge> : <Badge variant="warning" className="gap-1">
                           <AlertTriangle className="h-3 w-3" />
                           {Math.abs(tloData.coBorrower.validation.dobYearDiff)} year diff
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
@@ -1142,13 +1046,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Liens</span>
-                      {tloData.coBorrower.backgroundCheck.liens.active ? (
-                        <Badge variant="destructive">Active</Badge>
-                      ) : tloData.coBorrower.backgroundCheck.liens.satisfiedOrAged ? (
-                        <Badge variant="warning">Satisfied/Aged</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.coBorrower.backgroundCheck.liens.active ? <Badge variant="destructive">Active</Badge> : tloData.coBorrower.backgroundCheck.liens.satisfiedOrAged ? <Badge variant="warning">Satisfied/Aged</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.coBorrower.backgroundCheck.liens.monthsSinceLatest} months since latest
@@ -1158,13 +1056,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Judgments</span>
-                      {tloData.coBorrower.backgroundCheck.judgments.active ? (
-                        <Badge variant="destructive">Active</Badge>
-                      ) : tloData.coBorrower.backgroundCheck.judgments.satisfiedOrAged ? (
-                        <Badge variant="warning">Satisfied/Aged</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.coBorrower.backgroundCheck.judgments.active ? <Badge variant="destructive">Active</Badge> : tloData.coBorrower.backgroundCheck.judgments.satisfiedOrAged ? <Badge variant="warning">Satisfied/Aged</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.coBorrower.backgroundCheck.judgments.monthsSinceLatest} months since latest
@@ -1174,13 +1066,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Bankruptcies</span>
-                      {tloData.coBorrower.backgroundCheck.bankruptcies.active ? (
-                        <Badge variant="destructive">Active</Badge>
-                      ) : tloData.coBorrower.backgroundCheck.bankruptcies.satisfiedOrAged ? (
-                        <Badge variant="warning">Satisfied/Aged</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.coBorrower.backgroundCheck.bankruptcies.active ? <Badge variant="destructive">Active</Badge> : tloData.coBorrower.backgroundCheck.bankruptcies.satisfiedOrAged ? <Badge variant="warning">Satisfied/Aged</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.coBorrower.backgroundCheck.bankruptcies.monthsSinceLatest} months since latest
@@ -1190,11 +1076,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Foreclosures</span>
-                      {tloData.coBorrower.backgroundCheck.foreclosures.withinLast36Months ? (
-                        <Badge variant="destructive">Within 36 mo</Badge>
-                      ) : (
-                        <Badge variant="success">Clear</Badge>
-                      )}
+                      {tloData.coBorrower.backgroundCheck.foreclosures.withinLast36Months ? <Badge variant="destructive">Within 36 mo</Badge> : <Badge variant="success">Clear</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {tloData.coBorrower.backgroundCheck.foreclosures.monthsSinceLatest} months since latest
@@ -1204,24 +1086,17 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
               </div>
 
               {/* Decision */}
-              {coBorrowerTLOResult.decision === "non_pass" && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {coBorrowerTLOResult.decision === "non_pass" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">❌ Non-Pass</p>
-                </div>
-              )}
-              {coBorrowerTLOResult.decision === "manual_validation" && (
-                <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                </div>}
+              {coBorrowerTLOResult.decision === "manual_validation" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                   <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
-                </div>
-              )}
-              {coBorrowerTLOResult.decision === "pass" && (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div>}
+              {coBorrowerTLOResult.decision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Pass</p>
-                </div>
-              )}
+                </div>}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 5: LexisNexis - By Guarantor */}
@@ -1236,8 +1111,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.lexisNexis ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.lexisNexis && (
-          <CardContent className="space-y-4">
+        {expandedCards.lexisNexis && <CardContent className="space-y-4">
             {/* Borrower LexisNexis */}
             <div className="p-4 bg-muted/30 rounded-lg space-y-3">
               <div className="flex items-center justify-between">
@@ -1251,11 +1125,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="text-sm font-semibold">
                       {lexisNexisData.borrower.matchStatus === "match" ? "Match/Hit" : "Clear"}
                     </p>
-                    {lexisNexisData.borrower.matchStatus === "match" ? (
-                      <Badge variant="destructive">Match Found</Badge>
-                    ) : (
-                      <Badge variant="success">Clear</Badge>
-                    )}
+                    {lexisNexisData.borrower.matchStatus === "match" ? <Badge variant="destructive">Match Found</Badge> : <Badge variant="success">Clear</Badge>}
                   </div>
                 </div>
                 <div className="p-3 border rounded space-y-2">
@@ -1266,21 +1136,17 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <p className="text-xs text-muted-foreground">Report Age</p>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{borrowerReportAge} days</p>
-                    {isBorrowerReportStale && (
-                      <Badge variant="destructive">Stale</Badge>
-                    )}
+                    {isBorrowerReportStale && <Badge variant="destructive">Stale</Badge>}
                   </div>
                 </div>
               </div>
 
-              {lexisNexisData.borrower.matchStatus === "match" && lexisNexisData.borrower.matchedEntities.length > 0 && (
-                <>
+              {lexisNexisData.borrower.matchStatus === "match" && lexisNexisData.borrower.matchedEntities.length > 0 && <>
                   <Separator />
                   <div>
                     <p className="text-sm font-semibold mb-3">Matched Entities</p>
                     <div className="space-y-3">
-                      {lexisNexisData.borrower.matchedEntities.map((entity, index) => (
-                        <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                      {lexisNexisData.borrower.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
                           <div className="grid grid-cols-2 gap-3">
                             <div>
                               <p className="text-xs text-muted-foreground">Name</p>
@@ -1301,26 +1167,18 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                               </Badge>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                   </div>
-                </>
-              )}
+                </>}
 
-              {lexisNexisData.borrower.matchStatus === "match" ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {lexisNexisData.borrower.matchStatus === "match" ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">⚠ Match Found - Manual Review: KYC required</p>
-                </div>
-              ) : isBorrowerReportStale ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                </div> : isBorrowerReportStale ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
-                </div>
-              ) : (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Co-Borrower LexisNexis */}
@@ -1336,11 +1194,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="text-sm font-semibold">
                       {lexisNexisData.coBorrower.matchStatus === "match" ? "Match/Hit" : "Clear"}
                     </p>
-                    {lexisNexisData.coBorrower.matchStatus === "match" ? (
-                      <Badge variant="destructive">Match Found</Badge>
-                    ) : (
-                      <Badge variant="success">Clear</Badge>
-                    )}
+                    {lexisNexisData.coBorrower.matchStatus === "match" ? <Badge variant="destructive">Match Found</Badge> : <Badge variant="success">Clear</Badge>}
                   </div>
                 </div>
                 <div className="p-3 border rounded space-y-2">
@@ -1351,21 +1205,17 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                   <p className="text-xs text-muted-foreground">Report Age</p>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{coBorrowerReportAge} days</p>
-                    {isCoBorrowerReportStale && (
-                      <Badge variant="destructive">Stale</Badge>
-                    )}
+                    {isCoBorrowerReportStale && <Badge variant="destructive">Stale</Badge>}
                   </div>
                 </div>
               </div>
 
-              {lexisNexisData.coBorrower.matchStatus === "match" && lexisNexisData.coBorrower.matchedEntities.length > 0 && (
-                <>
+              {lexisNexisData.coBorrower.matchStatus === "match" && lexisNexisData.coBorrower.matchedEntities.length > 0 && <>
                   <Separator />
                   <div>
                     <p className="text-sm font-semibold mb-3">Matched Entities</p>
                     <div className="space-y-3">
-                      {lexisNexisData.coBorrower.matchedEntities.map((entity, index) => (
-                        <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                      {lexisNexisData.coBorrower.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
                           <div className="grid grid-cols-2 gap-3">
                             <div>
                               <p className="text-xs text-muted-foreground">Name</p>
@@ -1386,29 +1236,20 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                               </Badge>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                   </div>
-                </>
-              )}
+                </>}
 
-              {lexisNexisData.coBorrower.matchStatus === "match" ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {lexisNexisData.coBorrower.matchStatus === "match" ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">⚠ Match Found - Manual Review: KYC required</p>
-                </div>
-              ) : isCoBorrowerReportStale ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                </div> : isCoBorrowerReportStale ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
-                </div>
-              ) : (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
-                </div>
-              )}
+                </div>}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 6: FlagDat - By Guarantor */}
@@ -1423,8 +1264,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.flagDat && (
-          <CardContent className="space-y-4">
+        {expandedCards.flagDat && <CardContent className="space-y-4">
             {/* Borrower FlagDat */}
             <div className="p-4 bg-muted/30 rounded-lg space-y-3">
               <div className="flex items-center justify-between">
@@ -1438,11 +1278,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="text-lg font-semibold">
                       {flagDatData.borrower.watchlistMatches}
                     </p>
-                    {flagDatData.borrower.watchlistMatches > 0 ? (
-                      <Badge variant="destructive">{flagDatData.borrower.watchlistMatches} Match(es)</Badge>
-                    ) : (
-                      <Badge variant="success">No Match</Badge>
-                    )}
+                    {flagDatData.borrower.watchlistMatches > 0 ? <Badge variant="destructive">{flagDatData.borrower.watchlistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
                   </div>
                 </div>
                 <div className="p-3 border rounded space-y-2">
@@ -1451,11 +1287,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="text-lg font-semibold">
                       {flagDatData.borrower.blacklistMatches}
                     </p>
-                    {flagDatData.borrower.blacklistMatches > 0 ? (
-                      <Badge variant="destructive">{flagDatData.borrower.blacklistMatches} Match(es)</Badge>
-                    ) : (
-                      <Badge variant="success">No Match</Badge>
-                    )}
+                    {flagDatData.borrower.blacklistMatches > 0 ? <Badge variant="destructive">{flagDatData.borrower.blacklistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
                   </div>
                 </div>
                 <div className="p-3 border rounded space-y-2">
@@ -1464,15 +1296,11 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 </div>
               </div>
 
-              {(flagDatData.borrower.watchlistMatches > 0 || flagDatData.borrower.blacklistMatches > 0) ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {flagDatData.borrower.watchlistMatches > 0 || flagDatData.borrower.blacklistMatches > 0 ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">⚠ {flagDatData.borrower.watchlistMatches + flagDatData.borrower.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
-                </div>
-              ) : (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Co-Borrower FlagDat */}
@@ -1488,11 +1316,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="text-lg font-semibold">
                       {flagDatData.coBorrower.watchlistMatches}
                     </p>
-                    {flagDatData.coBorrower.watchlistMatches > 0 ? (
-                      <Badge variant="destructive">{flagDatData.coBorrower.watchlistMatches} Match(es)</Badge>
-                    ) : (
-                      <Badge variant="success">No Match</Badge>
-                    )}
+                    {flagDatData.coBorrower.watchlistMatches > 0 ? <Badge variant="destructive">{flagDatData.coBorrower.watchlistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
                   </div>
                 </div>
                 <div className="p-3 border rounded space-y-2">
@@ -1501,11 +1325,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="text-lg font-semibold">
                       {flagDatData.coBorrower.blacklistMatches}
                     </p>
-                    {flagDatData.coBorrower.blacklistMatches > 0 ? (
-                      <Badge variant="destructive">{flagDatData.coBorrower.blacklistMatches} Match(es)</Badge>
-                    ) : (
-                      <Badge variant="success">No Match</Badge>
-                    )}
+                    {flagDatData.coBorrower.blacklistMatches > 0 ? <Badge variant="destructive">{flagDatData.coBorrower.blacklistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
                   </div>
                 </div>
                 <div className="p-3 border rounded space-y-2">
@@ -1514,18 +1334,13 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 </div>
               </div>
 
-              {(flagDatData.coBorrower.watchlistMatches > 0 || flagDatData.coBorrower.blacklistMatches > 0) ? (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+              {flagDatData.coBorrower.watchlistMatches > 0 || flagDatData.coBorrower.blacklistMatches > 0 ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">⚠ {flagDatData.coBorrower.watchlistMatches + flagDatData.coBorrower.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
-                </div>
-              ) : (
-                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
                   <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
-                </div>
-              )}
+                </div>}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 7: Logs */}
@@ -1539,11 +1354,9 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.logs ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.logs && (
-          <CardContent>
+        {expandedCards.logs && <CardContent>
             <div className="space-y-3">
-              {logsData.map(log => (
-                <div key={log.id} className="border rounded-lg">
+              {logsData.map(log => <div key={log.id} className="border rounded-lg">
                   <div className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
                     <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
                     <div className="flex-1 space-y-2">
@@ -1557,15 +1370,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                           <Badge variant="outline" className="text-xs">
                             {log.exceptionTag}
                           </Badge>
-                          {log.exceptionType && (
-                            <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
+                          {log.exceptionType && <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
                               {log.exceptionType}
-                            </Badge>
-                          )}
-                          <Badge 
-                            variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'} 
-                            className="text-xs"
-                          >
+                            </Badge>}
+                          <Badge variant={log.status === 'completed' ? 'default' : log.status === 'warning' ? 'warning' : 'outline'} className="text-xs">
                             {log.status}
                           </Badge>
                           <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
@@ -1573,19 +1381,14 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                       </div>
                     </div>
                   </div>
-                  {expandedLogs[log.id] && (
-                    <div className="px-3 pb-3 border-t bg-muted/20">
+                  {expandedLogs[log.id] && <div className="px-3 pb-3 border-t bg-muted/20">
                       <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
                         {JSON.stringify(log.jsonData, null, 2)}
                       </pre>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    </div>}
+                </div>)}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
-    </div>
-  );
+    </div>;
 };
