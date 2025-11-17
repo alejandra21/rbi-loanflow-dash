@@ -924,31 +924,24 @@ export const CreditReviewTab = ({
                         <div className="space-y-3">
                           <div className="grid grid-cols-2 gap-3">
                             <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">Public Records</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
+                                <CheckCircle className="h-4 w-4 text-success" />
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/20 rounded space-y-1">
+                              <p className="text-xs text-muted-foreground">Collection/charge-offs</p>
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
+                                <CheckCircle className="h-4 w-4 text-success" />
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/20 rounded space-y-1 col-span-2">
                               <p className="text-xs text-muted-foreground">Bankruptcies</p>
                               <div className="flex items-center justify-between">
-                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
-                                {getStatusBadge('pass')}
-                              </div>
-                            </div>
-                            <div className="p-3 bg-muted/20 rounded space-y-1">
-                              <p className="text-xs text-muted-foreground">Foreclosures</p>
-                              <div className="flex items-center justify-between">
-                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
-                                {getStatusBadge('pass')}
-                              </div>
-                            </div>
-                            <div className="p-3 bg-muted/20 rounded space-y-1">
-                              <p className="text-xs text-muted-foreground">Tax Liens</p>
-                              <div className="flex items-center justify-between">
-                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
-                                {getStatusBadge('pass')}
-                              </div>
-                            </div>
-                            <div className="p-3 bg-muted/20 rounded space-y-1">
-                              <p className="text-xs text-muted-foreground">Judgments</p>
-                              <div className="flex items-center justify-between">
-                                <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
-                                {getStatusBadge('pass')}
+                                <p className="font-medium text-sm">{index === 0 ? 'No (0)' : 'No (0)'}</p>
+                                <CheckCircle className="h-4 w-4 text-success" />
                               </div>
                             </div>
                           </div>
