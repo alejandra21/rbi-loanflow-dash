@@ -9,22 +9,20 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, Info, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { CreditReviewSummary } from "@/components/CreditReviewSummary";
-
 interface CreditReportV2TabProps {
   phase: any;
 }
-
-export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
+export const CreditReportV2Tab = ({
+  phase
+}: CreditReportV2TabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     creditReviewSummary: true,
-    logs: false,
+    logs: false
   });
-  
   const [expandedGuarantors, setExpandedGuarantors] = useState<Record<string, boolean>>({
     'John Doe': false,
     'Jane Smith': false
   });
-  
   const [expandedGuarantorSections, setExpandedGuarantorSections] = useState<Record<string, boolean>>({
     'John Doe-creditReport': false,
     'John Doe-tlo': false,
@@ -33,39 +31,33 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     'Jane Smith-creditReport': false,
     'Jane Smith-tlo': false,
     'Jane Smith-lexisNexis': false,
-    'Jane Smith-flagDat': false,
+    'Jane Smith-flagDat': false
   });
-  
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
-  
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
   };
-  
   const toggleGuarantor = (name: string) => {
     setExpandedGuarantors(prev => ({
       ...prev,
       [name]: !prev[name]
     }));
   };
-  
   const toggleGuarantorSection = (key: string) => {
     setExpandedGuarantorSections(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
   };
-  
   const toggleLog = (logId: string) => {
     setExpandedLogs(prev => ({
       ...prev,
       [logId]: !prev[logId]
     }));
   };
-
   const getTierColor = (tier: string): string => {
     const colors: Record<string, string> = {
       'Platinum': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
@@ -75,7 +67,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     };
     return colors[tier] || 'bg-muted';
   };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pass":
@@ -195,7 +186,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       }
     }
   };
-
   const lexisNexisData = {
     "John Doe": {
       matchStatus: "match",
@@ -220,7 +210,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       closeDate: "2025-11-10"
     }
   };
-
   const flagDatData = {
     "John Doe": {
       watchlistMatches: 2,
@@ -233,14 +222,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       lastChecked: "2025-11-10"
     }
   };
-
   const calculateTLODecision = (guarantorData: typeof tloData["John Doe"]) => {
     const requiresIdentityManualValidation = !guarantorData.validation.ssnMatch || Math.abs(guarantorData.validation.dobYearDiff) > 1 || guarantorData.validation.missingFields.length > 0;
     const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.active || guarantorData.backgroundCheck.judgments.active || guarantorData.backgroundCheck.bankruptcies.active;
-    const hasActiveWithin120Months = (guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged) || (guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged) || (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged);
+    const hasActiveWithin120Months = guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && !guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
     const hasSatisfiedOrAged = guarantorData.backgroundCheck.liens.satisfiedOrAged || guarantorData.backgroundCheck.judgments.satisfiedOrAged || guarantorData.backgroundCheck.bankruptcies.satisfiedOrAged;
     const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.withinLast36Months;
-    
     let decision: "pass" | "manual_validation" | "non_pass" = "pass";
     if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
       decision = "non_pass";
@@ -256,82 +243,73 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       requiresIdentityManualValidation
     };
   };
-
-  const guarantors = [
-    {
-      name: "John Doe",
-      ownership: 60,
-      fico: 720,
-      pullDate: "2025-11-01",
-      bureau: "Experian",
-      isForeignNational: false,
-      ssn: "***-**-1234",
-      dob: "1985-06-15",
-      ssnIssueDate: "2000-01-01",
-      utilization: 35,
-      hasCreditAuth: true,
-      validation: 'pass' as const,
-      latePayments: {
-        thirtyDays: 0,
-        sixtyDays: 0,
-        ninetyDays: 0
-      },
-      publicRecords: {
-        count: 0,
-        collections: 0,
-        bankruptcies: "No (0)"
-      }
+  const guarantors = [{
+    name: "John Doe",
+    ownership: 60,
+    fico: 720,
+    pullDate: "2025-11-01",
+    bureau: "Experian",
+    isForeignNational: false,
+    ssn: "***-**-1234",
+    dob: "1985-06-15",
+    ssnIssueDate: "2000-01-01",
+    utilization: 35,
+    hasCreditAuth: true,
+    validation: 'pass' as const,
+    latePayments: {
+      thirtyDays: 0,
+      sixtyDays: 0,
+      ninetyDays: 0
     },
-    {
-      name: "Jane Smith",
-      ownership: 40,
-      fico: 695,
-      pullDate: "2025-11-01",
-      bureau: "TransUnion",
-      isForeignNational: false,
-      ssn: "***-**-5678",
-      dob: "1988-03-22",
-      ssnIssueDate: "2003-05-15",
-      utilization: 55,
-      hasCreditAuth: true,
-      validation: 'warn' as const,
-      latePayments: {
-        thirtyDays: 1,
-        sixtyDays: 0,
-        ninetyDays: 0
-      },
-      publicRecords: {
-        count: 0,
-        collections: 0,
-        bankruptcies: "No (0)"
-      }
+    publicRecords: {
+      count: 0,
+      collections: 0,
+      bankruptcies: "No (0)"
     }
-  ];
-
+  }, {
+    name: "Jane Smith",
+    ownership: 40,
+    fico: 695,
+    pullDate: "2025-11-01",
+    bureau: "TransUnion",
+    isForeignNational: false,
+    ssn: "***-**-5678",
+    dob: "1988-03-22",
+    ssnIssueDate: "2003-05-15",
+    utilization: 55,
+    hasCreditAuth: true,
+    validation: 'warn' as const,
+    latePayments: {
+      thirtyDays: 1,
+      sixtyDays: 0,
+      ninetyDays: 0
+    },
+    publicRecords: {
+      count: 0,
+      collections: 0,
+      bankruptcies: "No (0)"
+    }
+  }];
   const numGuarantors = guarantors.length;
   const overallStatus = guarantors.some(g => g.validation === 'warn') ? 'warn' : 'pass';
-  
   const lowestFICO = Math.min(...guarantors.map(g => g.fico));
   const ficoMeetsProductMin = lowestFICO >= productMin;
-
-  const auditLogs = [
-    {
-      id: "log-001",
-      tag: "credit_pull",
-      timestamp: "2025-11-10 14:25:32",
-      description: "Credit Report Pull",
-      action: "Credit Report Retrieved",
-      user: "System",
-      status: "completed",
-      exceptionTag: "credit_verification",
-      exceptionType: null,
-      jsonData: {
-        bureau: "Experian",
-        fico_score: 720,
-        report_date: "2025-11-01"
-      }
+  const auditLogs = [{
+    id: "log-001",
+    tag: "credit_pull",
+    timestamp: "2025-11-10 14:25:32",
+    description: "Credit Report Pull",
+    action: "Credit Report Retrieved",
+    user: "System",
+    status: "completed",
+    exceptionTag: "credit_verification",
+    exceptionType: null,
+    jsonData: {
+      bureau: "Experian",
+      fico_score: 720,
+      report_date: "2025-11-01"
     }
-  ];
+  }];
 
   // Calculate if DOB vs SSN is valid
   const isDobVsSsnValid = (dob: string, ssnIssueDate: string | undefined) => {
@@ -351,9 +329,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     const daysDiff = Math.floor((closingDateObj.getTime() - pullDateObj.getTime()) / (1000 * 60 * 60 * 24));
     return daysDiff <= 90;
   };
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Report v2</span>
@@ -366,34 +342,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       </div>
 
       {/* Credit Review Summary */}
-      <CreditReviewSummary
-        expandedCards={expandedCards}
-        toggleCard={toggleCard}
-        overallStatus={overallStatus}
-        numGuarantors={numGuarantors}
-        companyTier={companyTier}
-        loanProgram={loanProgram}
-        tierChanged={tierChanged}
-        previousTier={previousTier}
-        tierChangeReason={tierChangeReason}
-        lowestFICO={lowestFICO}
-        productMin={productMin}
-        verifiedProjects={verifiedProjects}
-        ficoMeetsProductMin={ficoMeetsProductMin}
-        ltc={ltc}
-        ltv={ltv}
-        loanLimit={loanLimit}
-        closingDate={closingDate}
-      />
+      <CreditReviewSummary expandedCards={expandedCards} toggleCard={toggleCard} overallStatus={overallStatus} numGuarantors={numGuarantors} companyTier={companyTier} loanProgram={loanProgram} tierChanged={tierChanged} previousTier={previousTier} tierChangeReason={tierChangeReason} lowestFICO={lowestFICO} productMin={productMin} verifiedProjects={verifiedProjects} ficoMeetsProductMin={ficoMeetsProductMin} ltc={ltc} ltv={ltv} loanLimit={loanLimit} closingDate={closingDate} />
 
 
       {/* Guarantors */}
-      {guarantors.map((guarantor) => (
-        <Card key={guarantor.name}>
-          <CardHeader 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleGuarantor(guarantor.name)}
-          >
+      {guarantors.map(guarantor => <Card key={guarantor.name}>
+          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleGuarantor(guarantor.name)}>
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span>{guarantor.name}</span>
@@ -406,30 +360,18 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
             </CardTitle>
           </CardHeader>
 
-          {expandedGuarantors[guarantor.name] && (
-            <CardContent className="space-y-6">
+          {expandedGuarantors[guarantor.name] && <CardContent className="space-y-6">
               {/* Credit Report Validations */}
-              <Collapsible
-                open={expandedGuarantorSections[`${guarantor.name}-creditReport`]}
-                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}
-              >
+              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-creditReport`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <CreditCard className="h-4 w-4" />
                   <h3 className="text-sm font-semibold text-muted-foreground">Credit Report Validations</h3>
                   {(() => {
-                    // Calculate overall validation status for Credit Report
-                    const hasFails = !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ||
-                                    !isCreditReportDateValid(guarantor.pullDate) ||
-                                    guarantor.latePayments.ninetyDays > 0 ||
-                                    guarantor.publicRecords.count > 0;
-                    const hasWarnings = !isUtilizationValid(guarantor.utilization) ||
-                                       guarantor.latePayments.thirtyDays > 0 ||
-                                       guarantor.latePayments.sixtyDays > 0;
-                    
-                    return hasFails ? getStatusBadge('fail') :
-                           hasWarnings ? getStatusBadge('warn') :
-                           getStatusBadge('pass');
-                  })()}
+              // Calculate overall validation status for Credit Report
+              const hasFails = !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) || !isCreditReportDateValid(guarantor.pullDate) || guarantor.latePayments.ninetyDays > 0 || guarantor.publicRecords.count > 0;
+              const hasWarnings = !isUtilizationValid(guarantor.utilization) || guarantor.latePayments.thirtyDays > 0 || guarantor.latePayments.sixtyDays > 0;
+              return hasFails ? getStatusBadge('fail') : hasWarnings ? getStatusBadge('warn') : getStatusBadge('pass');
+            })()}
                   <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? '' : '-rotate-90'}`} />
                 </CollapsibleTrigger>
                 
@@ -449,12 +391,10 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
                         </div>
                         
-                        {guarantor.ssnIssueDate && (
-                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                        {guarantor.ssnIssueDate && <div className="p-3 bg-muted/20 rounded space-y-1">
                             <p className="text-xs text-muted-foreground">SSN Issued Date</p>
                             <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
-                          </div>
-                        )}
+                          </div>}
                         
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <div className="flex items-center gap-1">
@@ -470,20 +410,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               </Tooltip>
                             </TooltipProvider>
                           </div>
-                          {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) !== null ? (
-                            <div className="flex items-center gap-2">
+                          {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) !== null ? <div className="flex items-center gap-2">
                               <p className="font-medium text-sm">
                                 {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? 'Valid' : 'Invalid'}
                               </p>
-                              {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? (
-                                <CheckCircle className="h-4 w-4 text-green-600" />
-                              ) : (
-                                <AlertTriangle className="h-4 w-4 text-red-600" />
-                              )}
-                            </div>
-                          ) : (
-                            <p className="font-medium text-sm">N/A</p>
-                          )}
+                              {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-red-600" />}
+                            </div> : <p className="font-medium text-sm">N/A</p>}
                         </div>
                       </div>
                     </div>
@@ -515,9 +447,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.hasCreditAuth ? "Received" : "Not Received"}</p>
-                          {guarantor.hasCreditAuth && (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          )}
+                          {guarantor.hasCreditAuth && <CheckCircle className="h-4 w-4 text-green-600" />}
                         </div>
                       </div>
                     </div>
@@ -556,11 +486,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             <p className="font-medium text-sm">
                               {guarantor.fico >= productMin ? 'Pass' : 'Fail'}
                             </p>
-                            {guarantor.fico >= productMin ? (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                            ) : (
-                              <XCircle className="h-4 w-4 text-red-600" />
-                            )}
+                            {guarantor.fico >= productMin ? <CheckCircle className="h-4 w-4 text-green-600" /> : <XCircle className="h-4 w-4 text-red-600" />}
                           </div>
                         </div>
                         
@@ -572,11 +498,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               <p className="text-xs text-muted-foreground">
                                 {isCreditReportDateValid(guarantor.pullDate) ? '✓ Within 90 days' : '✗ Older than 90 days'}
                               </p>
-                              {isCreditReportDateValid(guarantor.pullDate) ? (
-                                <CheckCircle className="h-3 w-3 text-green-600" />
-                              ) : (
-                                <AlertTriangle className="h-3 w-3 text-red-600" />
-                              )}
+                              {isCreditReportDateValid(guarantor.pullDate) ? <CheckCircle className="h-3 w-3 text-green-600" /> : <AlertTriangle className="h-3 w-3 text-red-600" />}
                             </div>
                           </div>
                         </div>
@@ -604,11 +526,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.utilization}%</p>
-                          {isUtilizationValid(guarantor.utilization) ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                          )}
+                          {isUtilizationValid(guarantor.utilization) ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-yellow-600" />}
                         </div>
                       </div>
 
@@ -655,10 +573,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
-                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                          <Download className="h-3 w-3 mr-1" />
-                          Download Authorization
-                        </Button>
+                        
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -674,15 +589,11 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
                         </div>
                       </div>
-                      {guarantor.latePayments.thirtyDays === 0 && 
-                       guarantor.latePayments.sixtyDays === 0 && 
-                       guarantor.latePayments.ninetyDays === 0 && (
-                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      {guarantor.latePayments.thirtyDays === 0 && guarantor.latePayments.sixtyDays === 0 && guarantor.latePayments.ninetyDays === 0 && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <p className="text-sm text-green-700 dark:text-green-300">
                             ✓ No Late Payments - Continue workflow
                           </p>
-                        </div>
-                      )}
+                        </div>}
                     </div>
 
                     <Separator />
@@ -702,18 +613,14 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             <p className="text-xs text-muted-foreground">Public Records</p>
                             <div className="flex items-center justify-between">
                               <p className="font-medium text-sm">{guarantor.publicRecords.count}</p>
-                              {guarantor.publicRecords.count === 0 && (
-                                <CheckCircle className="h-4 w-4 text-green-600" />
-                              )}
+                              {guarantor.publicRecords.count === 0 && <CheckCircle className="h-4 w-4 text-green-600" />}
                             </div>
                           </div>
                           <div className="p-3 bg-muted/20 rounded space-y-1">
                             <p className="text-xs text-muted-foreground">Collections</p>
                             <div className="flex items-center justify-between">
                               <p className="font-medium text-sm">{guarantor.publicRecords.collections}</p>
-                              {guarantor.publicRecords.collections === 0 && (
-                                <CheckCircle className="h-4 w-4 text-green-600" />
-                              )}
+                              {guarantor.publicRecords.collections === 0 && <CheckCircle className="h-4 w-4 text-green-600" />}
                             </div>
                           </div>
                         </div>
@@ -721,19 +628,14 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           <p className="text-xs text-muted-foreground">Bankruptcies</p>
                           <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">{guarantor.publicRecords.bankruptcies}</p>
-                            {guarantor.publicRecords.bankruptcies === "No (0)" && (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                            )}
+                            {guarantor.publicRecords.bankruptcies === "No (0)" && <CheckCircle className="h-4 w-4 text-green-600" />}
                           </div>
                         </div>
-                        {guarantor.publicRecords.count === 0 && 
-                         guarantor.publicRecords.collections === 0 && (
-                          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        {guarantor.publicRecords.count === 0 && guarantor.publicRecords.collections === 0 && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                             <p className="text-sm text-green-700 dark:text-green-300">
                               ✓ No Public Records or Collections - Continue workflow
                             </p>
-                          </div>
-                        )}
+                          </div>}
                       </div>
                     </div>
                   </div>
@@ -743,29 +645,22 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
               <Separator className="my-6" />
 
               {/* TLO Validations */}
-              <Collapsible
-                open={expandedGuarantorSections[`${guarantor.name}-tlo`]}
-                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}
-              >
+              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-tlo`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4" />
                   <h3 className="text-sm font-semibold text-muted-foreground">TLO Validations</h3>
                   {(() => {
-                    const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
-                    return tloResult.decision === "non_pass" ? getStatusBadge('fail') : 
-                           tloResult.decision === "manual_validation" ? getStatusBadge('warn') : 
-                           getStatusBadge('pass');
-                  })()}
+              const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
+              return tloResult.decision === "non_pass" ? getStatusBadge('fail') : tloResult.decision === "manual_validation" ? getStatusBadge('warn') : getStatusBadge('pass');
+            })()}
                   <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? '' : '-rotate-90'}`} />
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
                   {(() => {
-                    const tloGuarantorData = tloData[guarantor.name as keyof typeof tloData];
-                    const tloResult = calculateTLODecision(tloGuarantorData);
-                    
-                    return (
-                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+              const tloGuarantorData = tloData[guarantor.name as keyof typeof tloData];
+              const tloResult = calculateTLODecision(tloGuarantorData);
+              return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
                         <div className="flex items-center justify-between">
                           <Button variant="outline" size="sm" className="gap-2">
                             <Download className="h-3 w-3" />
@@ -788,17 +683,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             <div className="p-3 border rounded">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-muted-foreground">Full Name</span>
-                                {tloGuarantorData.validation.nameMatch ? (
-                                  <Badge variant="success" className="gap-1">
+                                {tloGuarantorData.validation.nameMatch ? <Badge variant="success" className="gap-1">
                                     <CheckCircle className="h-3 w-3" />
                                     Match
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="destructive" className="gap-1">
+                                  </Badge> : <Badge variant="destructive" className="gap-1">
                                     <XCircle className="h-3 w-3" />
                                     Mismatch
-                                  </Badge>
-                                )}
+                                  </Badge>}
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
@@ -816,19 +707,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             <div className="p-3 border rounded">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-muted-foreground">Last 4 SSN</span>
-                                {tloGuarantorData.validation.missingFields.includes("SSN") ? (
-                                  <Badge variant="destructive">Missing</Badge>
-                                ) : tloGuarantorData.validation.ssnMatch ? (
-                                  <Badge variant="success" className="gap-1">
+                                {tloGuarantorData.validation.missingFields.includes("SSN") ? <Badge variant="destructive">Missing</Badge> : tloGuarantorData.validation.ssnMatch ? <Badge variant="success" className="gap-1">
                                     <CheckCircle className="h-3 w-3" />
                                     Match
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="destructive" className="gap-1">
+                                  </Badge> : <Badge variant="destructive" className="gap-1">
                                     <XCircle className="h-3 w-3" />
                                     Mismatch
-                                  </Badge>
-                                )}
+                                  </Badge>}
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
@@ -846,19 +731,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             <div className="p-3 border rounded">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-muted-foreground">Date of Birth</span>
-                                {tloGuarantorData.validation.missingFields.includes("DOB") ? (
-                                  <Badge variant="destructive">Missing</Badge>
-                                ) : tloGuarantorData.validation.dobMatch ? (
-                                  <Badge variant="success" className="gap-1">
+                                {tloGuarantorData.validation.missingFields.includes("DOB") ? <Badge variant="destructive">Missing</Badge> : tloGuarantorData.validation.dobMatch ? <Badge variant="success" className="gap-1">
                                     <CheckCircle className="h-3 w-3" />
                                     Match
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="warning" className="gap-1">
+                                  </Badge> : <Badge variant="warning" className="gap-1">
                                     <AlertTriangle className="h-3 w-3" />
                                     {Math.abs(tloGuarantorData.validation.dobYearDiff)} year diff
-                                  </Badge>
-                                )}
+                                  </Badge>}
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
@@ -917,56 +796,44 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </div>
 
                         {/* Decision */}
-                        {tloResult.decision === "non_pass" && (
-                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                        {tloResult.decision === "non_pass" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">🔴 Non-Pass</p>
-                          </div>
-                        )}
-                        {tloResult.decision === "manual_validation" && (
-                          <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                          </div>}
+                        {tloResult.decision === "manual_validation" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                             <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
-                          </div>
-                        )}
-                        {tloResult.decision === "pass" && (
-                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                          </div>}
+                        {tloResult.decision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
                             <p className="text-sm font-medium text-success">✓ Pass</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
+                          </div>}
+                      </div>;
+            })()}
                 </CollapsibleContent>
               </Collapsible>
 
               <Separator className="my-6" />
 
               {/* LexisNexis Validations */}
-              <Collapsible
-                open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]}
-                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}
-              >
+              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4" />
                   <h3 className="text-sm font-semibold text-muted-foreground">LexisNexis Validations</h3>
                   {(() => {
-                    const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
-                    const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
-                    const isReportStale = reportAge > 60;
-                    const hasMatch = lexisData.matchStatus === "match";
-                    return hasMatch || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass');
-                  })()}
+              const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+              const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
+              const isReportStale = reportAge > 60;
+              const hasMatch = lexisData.matchStatus === "match";
+              return hasMatch || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass');
+            })()}
                   <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? '' : '-rotate-90'}`} />
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
                   {(() => {
-                    const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
-                    const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
-                    const isReportStale = reportAge > 60;
-                    const hasMatch = lexisData.matchStatus === "match";
-                    
-                    return (
-                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+              const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+              const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
+              const isReportStale = reportAge > 60;
+              const hasMatch = lexisData.matchStatus === "match";
+              return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
                         <div className="grid grid-cols-3 gap-4">
                           <div className="p-3 border rounded space-y-2">
                             <p className="text-xs text-muted-foreground">Match Status</p>
@@ -974,11 +841,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               <p className="text-sm font-semibold">
                                 {lexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
                               </p>
-                              {lexisData.matchStatus === "match" ? (
-                                <Badge variant="destructive">Match Found</Badge>
-                              ) : (
-                                <Badge variant="success">Clear</Badge>
-                              )}
+                              {lexisData.matchStatus === "match" ? <Badge variant="destructive">Match Found</Badge> : <Badge variant="success">Clear</Badge>}
                             </div>
                           </div>
                           <div className="p-3 border rounded space-y-2">
@@ -994,14 +857,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           </div>
                         </div>
 
-                        {hasMatch && lexisData.matchedEntities.length > 0 && (
-                          <>
+                        {hasMatch && lexisData.matchedEntities.length > 0 && <>
                             <Separator />
                             <div>
                               <p className="text-sm font-semibold mb-3">Matched Entities</p>
                               <div className="space-y-3">
-                                {lexisData.matchedEntities.map((entity, index) => (
-                                  <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                                {lexisData.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
                                     <div className="grid grid-cols-2 gap-3">
                                       <div>
                                         <p className="text-xs text-muted-foreground">Name</p>
@@ -1022,57 +883,43 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                         </Badge>
                                       </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  </div>)}
                               </div>
                             </div>
-                          </>
-                        )}
+                          </>}
 
-                        {hasMatch ? (
-                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                        {hasMatch ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">🔴 Match Found - Manual Review Required</p>
-                          </div>
-                        ) : isReportStale ? (
-                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                          </div> : isReportStale ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
-                          </div>
-                        ) : (
-                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                          </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
                             <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
+                          </div>}
+                      </div>;
+            })()}
                 </CollapsibleContent>
               </Collapsible>
 
               <Separator className="my-6" />
 
               {/* FlagDat Validations */}
-              <Collapsible
-                open={expandedGuarantorSections[`${guarantor.name}-flagDat`]}
-                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-flagDat`)}
-              >
+              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-flagDat`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-flagDat`)}>
                 <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <AlertCircleIcon className="h-4 w-4" />
                   <h3 className="text-sm font-semibold text-muted-foreground">FlagDat Validations</h3>
                   {(() => {
-                    const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
-                    const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
-                    return hasMatches ? getStatusBadge('fail') : getStatusBadge('pass');
-                  })()}
+              const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
+              const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
+              return hasMatches ? getStatusBadge('fail') : getStatusBadge('pass');
+            })()}
                   <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-flagDat`] ? '' : '-rotate-90'}`} />
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
                   {(() => {
-                    const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
-                    const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
-                    
-                    return (
-                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+              const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
+              const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
+              return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
                         <div className="grid grid-cols-3 gap-4">
                           <div className="p-3 border rounded space-y-2">
                             <p className="text-xs text-muted-foreground">WatchList Matches</p>
@@ -1080,11 +927,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               <p className="text-lg font-semibold">
                                 {flagData.watchlistMatches}
                               </p>
-                              {flagData.watchlistMatches > 0 ? (
-                                <Badge variant="destructive">{flagData.watchlistMatches} Match(es)</Badge>
-                              ) : (
-                                <Badge variant="success">No Match</Badge>
-                              )}
+                              {flagData.watchlistMatches > 0 ? <Badge variant="destructive">{flagData.watchlistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
                             </div>
                           </div>
                           <div className="p-3 border rounded space-y-2">
@@ -1093,11 +936,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               <p className="text-lg font-semibold">
                                 {flagData.blacklistMatches}
                               </p>
-                              {flagData.blacklistMatches > 0 ? (
-                                <Badge variant="destructive">{flagData.blacklistMatches} Match(es)</Badge>
-                              ) : (
-                                <Badge variant="success">No Match</Badge>
-                              )}
+                              {flagData.blacklistMatches > 0 ? <Badge variant="destructive">{flagData.blacklistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
                             </div>
                           </div>
                           <div className="p-3 border rounded space-y-2">
@@ -1106,24 +945,17 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           </div>
                         </div>
 
-                        {hasMatches ? (
-                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                        {hasMatches ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">⚠ {flagData.watchlistMatches + flagData.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
-                          </div>
-                        ) : (
-                          <div className="p-3 bg-success/10 border border-success/20 rounded">
+                          </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
                             <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
+                          </div>}
+                      </div>;
+            })()}
                 </CollapsibleContent>
               </Collapsible>
-            </CardContent>
-          )}
-        </Card>
-      ))}
+            </CardContent>}
+        </Card>)}
 
       {/* Logs */}
       <Card>
@@ -1136,14 +968,9 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.logs ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.logs && (
-          <CardContent className="space-y-3">
-            {auditLogs.map((log) => (
-              <div key={log.id} className="border rounded-lg">
-                <div
-                  className="p-3 cursor-pointer hover:bg-muted/30 transition-colors"
-                  onClick={() => toggleLog(log.id)}
-                >
+        {expandedCards.logs && <CardContent className="space-y-3">
+            {auditLogs.map(log => <div key={log.id} className="border rounded-lg">
+                <div className="p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                       <Badge variant="outline" className="text-xs">
@@ -1152,16 +979,11 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                       <span className="text-sm font-medium">{log.description}</span>
                       <span className="text-xs text-muted-foreground">{log.timestamp}</span>
                     </div>
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${
-                        expandedLogs[log.id] ? '' : '-rotate-90'
-                      }`}
-                    />
+                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
                   </div>
                 </div>
 
-                {expandedLogs[log.id] && (
-                  <div className="p-3 bg-muted/20 border-t space-y-2">
+                {expandedLogs[log.id] && <div className="p-3 bg-muted/20 border-t space-y-2">
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-muted-foreground">Action:</span>
@@ -1175,28 +997,20 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         <span className="text-muted-foreground">Status:</span>
                         <span className="ml-2 font-medium">{log.status}</span>
                       </div>
-                      {log.exceptionTag && (
-                        <div>
+                      {log.exceptionTag && <div>
                           <span className="text-muted-foreground">Exception Tag:</span>
                           <span className="ml-2 font-medium">{log.exceptionTag}</span>
-                        </div>
-                      )}
+                        </div>}
                     </div>
-                    {log.jsonData && (
-                      <div className="mt-3">
+                    {log.jsonData && <div className="mt-3">
                         <p className="text-xs text-muted-foreground mb-2">JSON Data:</p>
                         <pre className="text-xs bg-background p-2 rounded border overflow-x-auto">
                           {JSON.stringify(log.jsonData, null, 2)}
                         </pre>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        )}
+                      </div>}
+                  </div>}
+              </div>)}
+          </CardContent>}
       </Card>
-    </div>
-  );
+    </div>;
 };
