@@ -495,6 +495,7 @@ export const CreditReviewTab = ({
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Credit Review Summary
+              {getStatusBadge(overallStatus)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.creditReviewSummary ? '' : '-rotate-90'}`} />
           </CardTitle>
