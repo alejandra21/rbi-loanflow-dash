@@ -484,10 +484,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                     <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
                   </div>
                   
-                  {guarantor.ssn && (
+                  {guarantor.ssnIssueDate && (
                     <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">SSN</p>
-                      <p className="font-medium text-sm font-mono">{guarantor.ssn}</p>
+                      <p className="text-xs text-muted-foreground">SSN Issued Date</p>
+                      <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
                     </div>
                   )}
                   
