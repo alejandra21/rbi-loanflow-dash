@@ -707,11 +707,7 @@ export const CreditReviewTab = ({
                       <h4 className="font-medium">{guarantor.name}</h4>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{guarantor.ownershipPercentage}% ownership</Badge>
-                        {guarantorStatus === 'pass' ? (
-                          <CheckCircle className="h-4 w-4 text-success" />
-                        ) : (
-                          <AlertTriangle className="h-4 w-4 text-warning" />
-                        )}
+                        {getStatusBadge(guarantorStatus)}
                       </div>
                     </div>
                     <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? '' : '-rotate-90'}`} />
