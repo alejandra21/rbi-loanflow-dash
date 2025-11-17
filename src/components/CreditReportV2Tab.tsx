@@ -598,15 +598,24 @@ export const CreditReportV2Tab = ({
                       <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">30 Days</p>
-                          <p className="font-medium text-sm">{guarantor.latePayments.thirtyDays}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-sm">{guarantor.latePayments.thirtyDays}</p>
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          </div>
                         </div>
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">60 Days</p>
-                          <p className="font-medium text-sm">{guarantor.latePayments.sixtyDays}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-sm">{guarantor.latePayments.sixtyDays}</p>
+                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                          </div>
                         </div>
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">90+ Days</p>
-                          <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
+                            <XCircle className="h-4 w-4 text-red-600" />
+                          </div>
                         </div>
                       </div>
                       {guarantor.latePayments.thirtyDays === 0 && guarantor.latePayments.sixtyDays === 0 && guarantor.latePayments.ninetyDays === 0 && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
