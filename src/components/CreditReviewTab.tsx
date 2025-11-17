@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { StatusBadge } from "@/components/StatusBadge";
+import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, AlertCircle, ArrowRight, Info } from "lucide-react";
@@ -927,21 +927,21 @@ export const CreditReviewTab = ({
                               <p className="text-xs text-muted-foreground">Public Records</p>
                               <div className="flex items-center justify-between">
                                 <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
-                                <CheckCircle className="h-4 w-4 text-success" />
+                                <StatusIcon status="passed" />
                               </div>
                             </div>
                             <div className="p-3 bg-muted/20 rounded space-y-1">
                               <p className="text-xs text-muted-foreground">Collection/charge-offs</p>
                               <div className="flex items-center justify-between">
                                 <p className="font-medium text-sm">{index === 0 ? '0' : '0'}</p>
-                                <CheckCircle className="h-4 w-4 text-success" />
+                                <StatusIcon status="passed" />
                               </div>
                             </div>
                             <div className="p-3 bg-muted/20 rounded space-y-1 col-span-2">
                               <p className="text-xs text-muted-foreground">Bankruptcies</p>
                               <div className="flex items-center justify-between">
                                 <p className="font-medium text-sm">{index === 0 ? 'No (0)' : 'No (0)'}</p>
-                                <CheckCircle className="h-4 w-4 text-success" />
+                                <StatusIcon status="passed" />
                               </div>
                             </div>
                           </div>
