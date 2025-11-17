@@ -602,7 +602,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.utilization}%</p>
                           {isUtilizationValid(guarantor.utilization) ? (
                             <CheckCircle className="h-4 w-4 text-green-600" />
