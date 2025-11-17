@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, AlertCircle, ArrowRight, Info } from "lucide-react";
 import { useState } from "react";
 interface CreditReviewTabProps {
@@ -21,7 +22,8 @@ export const CreditReviewTab = ({
     tlo: false,
     lexisNexis: false,
     flagDat: false,
-    logs: false
+    logs: false,
+    matrixSnapshot: false
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const toggleCard = (cardId: string) => {
@@ -550,7 +552,27 @@ export const CreditReviewTab = ({
             <h3 className="text-sm font-semibold text-muted-foreground">Creditworthiness</h3>
             <div className="grid grid-cols-4 gap-4">
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
-                <p className="text-xs text-muted-foreground">Lowest Middle FICO</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-muted-foreground">Lowest Middle FICO</p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {ficoMeetsProductMin ? (
+                          <CheckCircle className="h-3 w-3 text-green-500" />
+                        ) : (
+                          <AlertCircle className="h-3 w-3 text-amber-500" />
+                        )}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">
+                          {ficoMeetsProductMin 
+                            ? `FICO ${lowestFICO} meets minimum requirement of ${productMin}`
+                            : `FICO ${lowestFICO} below minimum requirement of ${productMin}`}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <p className="text-lg font-bold text-primary">{lowestFICO}</p>
               </div>
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
@@ -598,38 +620,84 @@ export const CreditReviewTab = ({
           <Separator className="bg-border/50" />
 
           {/* Matrix Snapshot Panel */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-muted-foreground">Matrix Snapshot</h3>
-            <div className="p-4 bg-muted/50 rounded-lg border border-border">
-              <p className="text-xs font-semibold text-muted-foreground mb-3">Credit Matrix Row Used:</p>
-              <div className="space-y-2 text-sm font-mono">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Program:</span>
-                  <span className="font-semibold">{loanProgram}</span>
+          <Collapsible
+            open={expandedCards.matrixSnapshot}
+            onOpenChange={() => toggleCard('matrixSnapshot')}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger className="flex items-center gap-2 w-full">
+                <h3 className="text-sm font-semibold text-muted-foreground">Matrix Snapshot</h3>
+                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.matrixSnapshot ? '' : '-rotate-90'}`} />
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent>
+                <div className="rounded-lg overflow-hidden border border-border">
+                  {/* Header with dark background */}
+                  <div className="bg-slate-700 text-white px-4 py-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide">Borrower Funded Loan – 3–5 Projects, FICO 660+</p>
+                  </div>
+                  
+                  {/* Table */}
+                  <Table>
+                    <TableHeader className="bg-slate-800">
+                      <TableRow className="border-slate-700 hover:bg-slate-800">
+                        <TableHead className="text-white text-xs font-semibold h-10">PROGRAM</TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">
+                          <div className="flex items-center gap-1">
+                            MIN PROJECTS
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="h-3 w-3" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">Minimum verified projects required</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">
+                          <div className="flex items-center gap-1">
+                            MAX PROJECTS
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="h-3 w-3" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">Maximum verified projects in range</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">MIN FICO</TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">MAX FICO</TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">LTC OR LTP</TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">ARLTV NJC</TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">ARLTV JD</TableHead>
+                        <TableHead className="text-white text-xs font-semibold h-10">MAX LOAN AMOUNT</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody className="bg-slate-900">
+                      <TableRow className="border-slate-700 hover:bg-slate-800/50">
+                        <TableCell className="text-white font-medium">{loanProgram}</TableCell>
+                        <TableCell className="text-white">{verifiedProjects}</TableCell>
+                        <TableCell className="text-white">5</TableCell>
+                        <TableCell className="text-white">{productMin}</TableCell>
+                        <TableCell className="text-white">699</TableCell>
+                        <TableCell className="text-white">{ltc.toFixed(2)}</TableCell>
+                        <TableCell className="text-white">{ltv.toFixed(2)}</TableCell>
+                        <TableCell className="text-white">{ltv.toFixed(2)}</TableCell>
+                        <TableCell className="text-white">${loanLimit.toLocaleString()}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Experience:</span>
-                  <span className="font-semibold">{verifiedProjects} projects</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Min FICO:</span>
-                  <span className="font-semibold">{productMin}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">LTC:</span>
-                  <span className="font-semibold">{ltc}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">ARLTV:</span>
-                  <span className="font-semibold">{ltv}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Loan Limit:</span>
-                  <span className="font-semibold">${loanLimit.toLocaleString()}</span>
-                </div>
-              </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
         </CardContent>}
       </Card>
 
