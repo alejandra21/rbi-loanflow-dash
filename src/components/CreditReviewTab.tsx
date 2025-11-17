@@ -871,6 +871,35 @@ export const CreditReviewTab = ({
                             </div>
                           </div>
                         </div>
+                        
+                        {/* Utilization Business Rules */}
+                        <div className="mt-3 rounded-lg border border-border">
+                          <div className="p-2 bg-muted/30 border-b border-border">
+                            <h6 className="text-xs font-semibold text-muted-foreground">Utilization Business Rules</h6>
+                          </div>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="text-xs">Utilization Range</TableHead>
+                                <TableHead className="text-xs">Decision</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              <TableRow>
+                                <TableCell className="text-xs">{"< 50%"}</TableCell>
+                                <TableCell className="text-xs">Pass</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className="text-xs">50–69%</TableCell>
+                                <TableCell className="text-xs">Manual Review – High Utilization</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className="text-xs">{">= 70% or Frozen Report"}</TableCell>
+                                <TableCell className="text-xs">Non-Pass – Manual Validation: High Utilization Manual Review by Underwriting/Credit Analyst</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </div>
                       </div>
                       
                       <Separator />
