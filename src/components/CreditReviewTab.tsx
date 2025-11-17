@@ -64,6 +64,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   // Mock data for Credit Pull & FICO
   const closingDate = "2025-11-15"; // Loan closing date
   const companyTier = "Gold"; // Company tier
+  const ltc = 75; // Loan to Cost
+  const ltv = 68; // Loan to Value
+  const loanLimit = 500000; // Loan Limit
+  const productMin = 680; // Product Minimum FICO Score requirement
   
   const creditPullData = {
     borrower: {
@@ -100,6 +104,10 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
   const lowestFICO = Math.min(
     ...guarantors.map(g => g.isForeignNational && !g.ssn ? Infinity : g.fico).filter(f => f !== Infinity)
   );
+
+  // Validation: Product Min vs Lowest FICO Score
+  const ficoMeetsProductMin = lowestFICO >= productMin;
+  const ficoDifference = lowestFICO - productMin;
 
   // Validation logic for Credit Pull
   const validateCreditPull = (borrowerData: typeof creditPullData.borrower | typeof creditPullData.coBorrower) => {
@@ -469,7 +477,7 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Number of Guarantors</p>
               <p className="text-2xl font-bold">{numGuarantors}</p>
@@ -481,6 +489,46 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <p className="text-xs text-muted-foreground">Lowest FICO Score</p>
               <p className="text-2xl font-bold text-primary">{lowestFICO}</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Product Min</p>
+              <p className="text-2xl font-bold">{productMin}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">LTC</p>
+              <p className="text-2xl font-bold">{ltc}%</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">LTV</p>
+              <p className="text-2xl font-bold">{ltv}%</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Loan Limit</p>
+              <p className="text-2xl font-bold">${loanLimit.toLocaleString()}</p>
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+              <p className="text-xs text-muted-foreground">Product Min vs Lowest FICO</p>
+              <div className="flex items-center gap-2">
+                {ficoMeetsProductMin ? (
+                  <>
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Pass
+                    </Badge>
+                    <span className="text-sm font-medium text-muted-foreground">+{ficoDifference}</span>
+                  </>
+                ) : (
+                  <>
+                    <Badge variant="destructive" className="gap-1">
+                      <XCircle className="h-3 w-3" />
+                      Fail
+                    </Badge>
+                    <span className="text-sm font-medium text-destructive">{ficoDifference}</span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
