@@ -552,7 +552,7 @@ export const CreditReviewTab = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-muted/30 rounded-lg space-y-1">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Product Min vs Lowest FICO</p>
+                <p className="text-xs text-muted-foreground">Lowest Middle FICO {'>'}  Product Min</p>
               </div>
               <div className="flex items-center gap-2 mt-2">
                 {ficoMeetsProductMin ? <Badge variant="success" className="gap-1">
