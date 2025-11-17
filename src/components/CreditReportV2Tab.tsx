@@ -657,7 +657,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
                         <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
                           <Download className="h-3 w-3 mr-1" />
-                          Download Report
+                          Download Authorization
                         </Button>
                       </div>
                       <div className="grid grid-cols-3 gap-3">
