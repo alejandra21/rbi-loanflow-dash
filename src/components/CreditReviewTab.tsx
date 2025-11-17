@@ -338,32 +338,60 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
     borrowerTLOResult.decision === "manual_validation" || coBorrowerTLOResult.decision === "manual_validation" ? "manual_validation" :
     "pass";
 
-  // Mock data for LexisNexis - show entities that matched
+  // Mock data for LexisNexis - By Guarantor
   const lexisNexisData = {
-    matchStatus: "match", // "clear" or "match"
-    matchedEntities: [
-      { name: "John Doe", matchScore: 95, type: "Exact Name Match", risk: "Low" },
-      { name: "Jonathan Doe", matchScore: 78, type: "Similar Name Match", risk: "Medium" }
-    ],
-    reportDate: "2025-10-15",
-    closeDate: "2025-11-10", // Loan close date for comparison
-    status: "pass"
+    borrower: {
+      name: "John Doe",
+      matchStatus: "match", // "clear" or "match"
+      matchedEntities: [
+        { name: "John Doe", matchScore: 95, type: "Exact Name Match", risk: "Low" },
+        { name: "Jonathan Doe", matchScore: 78, type: "Similar Name Match", risk: "Medium" }
+      ],
+      reportDate: "2025-10-15",
+      closeDate: "2025-11-10"
+    },
+    coBorrower: {
+      name: "Jane Smith",
+      matchStatus: "clear", // "clear" or "match"
+      matchedEntities: [],
+      reportDate: "2025-10-16",
+      closeDate: "2025-11-10"
+    }
   };
 
-  // Calculate if report is older than 60 days from close date
-  const reportAge = Math.floor(
-    (new Date(lexisNexisData.closeDate).getTime() - new Date(lexisNexisData.reportDate).getTime()) / 
+  // Calculate if reports are older than 60 days from close date
+  const borrowerReportAge = Math.floor(
+    (new Date(lexisNexisData.borrower.closeDate).getTime() - new Date(lexisNexisData.borrower.reportDate).getTime()) / 
     (1000 * 60 * 60 * 24)
   );
-  const isReportStale = reportAge > 60;
+  const coBorrowerReportAge = Math.floor(
+    (new Date(lexisNexisData.coBorrower.closeDate).getTime() - new Date(lexisNexisData.coBorrower.reportDate).getTime()) / 
+    (1000 * 60 * 60 * 24)
+  );
+  const isBorrowerReportStale = borrowerReportAge > 60;
+  const isCoBorrowerReportStale = coBorrowerReportAge > 60;
+  const isAnyReportStale = isBorrowerReportStale || isCoBorrowerReportStale;
+  const hasAnyMatch = lexisNexisData.borrower.matchStatus === "match" || lexisNexisData.coBorrower.matchStatus === "match";
 
-  // Mock data for FlagDat - show number of matches
+  // Mock data for FlagDat - By Guarantor
   const flagDatData = {
-    watchlistMatches: 2, // Number of watchlist matches
-    blacklistMatches: 0, // Number of blacklist matches
-    status: "pass",
-    lastChecked: "2025-11-10"
+    borrower: {
+      name: "John Doe",
+      watchlistMatches: 2,
+      blacklistMatches: 0,
+      lastChecked: "2025-11-10"
+    },
+    coBorrower: {
+      name: "Jane Smith",
+      watchlistMatches: 0,
+      blacklistMatches: 0,
+      lastChecked: "2025-11-10"
+    }
   };
+
+  const totalWatchlistMatches = flagDatData.borrower.watchlistMatches + flagDatData.coBorrower.watchlistMatches;
+  const totalBlacklistMatches = flagDatData.borrower.blacklistMatches + flagDatData.coBorrower.blacklistMatches;
+  const hasAnyFlagDatMatches = totalWatchlistMatches > 0 || totalBlacklistMatches > 0;
 
   // Mock logs data
   const logsData = [
@@ -1095,58 +1123,63 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         )}
       </Card>
 
-      {/* Section 5: LexisNexis */}
+      {/* Section 5: LexisNexis - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('lexisNexis')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               LexisNexis
-              {lexisNexisData.matchStatus === "match" || isReportStale ? getStatusBadge('fail') : getStatusBadge('pass')}
+              {hasAnyMatch || isAnyReportStale ? getStatusBadge('fail') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.lexisNexis ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.lexisNexis && (
           <CardContent className="space-y-4">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 border rounded space-y-2">
+            {/* Borrower LexisNexis */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{lexisNexisData.borrower.name}</h4>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-3 border rounded space-y-2">
                   <p className="text-xs text-muted-foreground">Match Status</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg font-semibold">
-                      {lexisNexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
+                    <p className="text-sm font-semibold">
+                      {lexisNexisData.borrower.matchStatus === "match" ? "Match/Hit" : "Clear"}
                     </p>
-                    {lexisNexisData.matchStatus === "match" ? (
+                    {lexisNexisData.borrower.matchStatus === "match" ? (
                       <Badge variant="destructive">Match Found</Badge>
                     ) : (
                       <Badge variant="success">Clear</Badge>
                     )}
                   </div>
                 </div>
-                <div className="p-4 border rounded space-y-2">
+                <div className="p-3 border rounded space-y-2">
                   <p className="text-xs text-muted-foreground">Report Date</p>
-                  <p className="text-sm font-medium">{lexisNexisData.reportDate}</p>
+                  <p className="text-sm font-medium">{lexisNexisData.borrower.reportDate}</p>
                 </div>
-                <div className="p-4 border rounded space-y-2">
+                <div className="p-3 border rounded space-y-2">
                   <p className="text-xs text-muted-foreground">Report Age</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium">{reportAge} days</p>
-                    {isReportStale && (
+                    <p className="text-sm font-medium">{borrowerReportAge} days</p>
+                    {isBorrowerReportStale && (
                       <Badge variant="destructive">Stale</Badge>
                     )}
                   </div>
                 </div>
               </div>
 
-              {lexisNexisData.matchStatus === "match" && lexisNexisData.matchedEntities.length > 0 && (
+              {lexisNexisData.borrower.matchStatus === "match" && lexisNexisData.borrower.matchedEntities.length > 0 && (
                 <>
                   <Separator />
                   <div>
                     <p className="text-sm font-semibold mb-3">Matched Entities</p>
                     <div className="space-y-3">
-                      {lexisNexisData.matchedEntities.map((entity, index) => (
-                        <div key={index} className="p-3 bg-muted/30 rounded-lg">
+                      {lexisNexisData.borrower.matchedEntities.map((entity, index) => (
+                        <div key={index} className="p-3 bg-muted/20 rounded-lg">
                           <div className="grid grid-cols-2 gap-3">
                             <div>
                               <p className="text-xs text-muted-foreground">Name</p>
@@ -1174,11 +1207,96 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
                 </>
               )}
 
-              {lexisNexisData.matchStatus === "match" ? (
+              {lexisNexisData.borrower.matchStatus === "match" ? (
                 <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">⚠ Match Found - Manual Review: KYC required</p>
                 </div>
-              ) : isReportStale ? (
+              ) : isBorrowerReportStale ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
+                </div>
+              ) : (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
+                </div>
+              )}
+            </div>
+
+            {/* Co-Borrower LexisNexis */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{lexisNexisData.coBorrower.name}</h4>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Match Status</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold">
+                      {lexisNexisData.coBorrower.matchStatus === "match" ? "Match/Hit" : "Clear"}
+                    </p>
+                    {lexisNexisData.coBorrower.matchStatus === "match" ? (
+                      <Badge variant="destructive">Match Found</Badge>
+                    ) : (
+                      <Badge variant="success">Clear</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Report Date</p>
+                  <p className="text-sm font-medium">{lexisNexisData.coBorrower.reportDate}</p>
+                </div>
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Report Age</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">{coBorrowerReportAge} days</p>
+                    {isCoBorrowerReportStale && (
+                      <Badge variant="destructive">Stale</Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {lexisNexisData.coBorrower.matchStatus === "match" && lexisNexisData.coBorrower.matchedEntities.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="text-sm font-semibold mb-3">Matched Entities</p>
+                    <div className="space-y-3">
+                      {lexisNexisData.coBorrower.matchedEntities.map((entity, index) => (
+                        <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-xs text-muted-foreground">Name</p>
+                              <p className="text-sm font-medium">{entity.name}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Match Score</p>
+                              <p className="text-sm font-medium">{entity.matchScore}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Type</p>
+                              <p className="text-sm font-medium">{entity.type}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Risk</p>
+                              <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
+                                {entity.risk}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {lexisNexisData.coBorrower.matchStatus === "match" ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">⚠ Match Found - Manual Review: KYC required</p>
+                </div>
+              ) : isCoBorrowerReportStale ? (
                 <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                   <p className="text-sm font-medium text-destructive">🔴 Report is {">"}60 days old - Manual Review required</p>
                 </div>
@@ -1192,61 +1310,119 @@ export const CreditReviewTab = ({ phase }: CreditReviewTabProps) => {
         )}
       </Card>
 
-      {/* Section 6: FlagDat */}
+      {/* Section 6: FlagDat - By Guarantor */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('flagDat')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
               FlagDat
-              {getStatusBadge('pass')}
+              {hasAnyFlagDatMatches ? getStatusBadge('fail') : getStatusBadge('pass')}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.flagDat && (
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">WatchList Matches</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold">
-                    {flagDatData.watchlistMatches}
-                  </p>
-                  {flagDatData.watchlistMatches > 0 ? (
-                    <Badge variant="destructive">{flagDatData.watchlistMatches} Match(es)</Badge>
-                  ) : (
-                    <Badge variant="success">No Match</Badge>
-                  )}
+          <CardContent className="space-y-4">
+            {/* Borrower FlagDat */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{flagDatData.borrower.name}</h4>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">WatchList Matches</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {flagDatData.borrower.watchlistMatches}
+                    </p>
+                    {flagDatData.borrower.watchlistMatches > 0 ? (
+                      <Badge variant="destructive">{flagDatData.borrower.watchlistMatches} Match(es)</Badge>
+                    ) : (
+                      <Badge variant="success">No Match</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">BlackList Matches</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {flagDatData.borrower.blacklistMatches}
+                    </p>
+                    {flagDatData.borrower.blacklistMatches > 0 ? (
+                      <Badge variant="destructive">{flagDatData.borrower.blacklistMatches} Match(es)</Badge>
+                    ) : (
+                      <Badge variant="success">No Match</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Last Checked</p>
+                  <p className="text-sm font-medium">{flagDatData.borrower.lastChecked}</p>
                 </div>
               </div>
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">BlackList Matches</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold">
-                    {flagDatData.blacklistMatches}
-                  </p>
-                  {flagDatData.blacklistMatches > 0 ? (
-                    <Badge variant="destructive">{flagDatData.blacklistMatches} Match(es)</Badge>
-                  ) : (
-                    <Badge variant="success">No Match</Badge>
-                  )}
+
+              {(flagDatData.borrower.watchlistMatches > 0 || flagDatData.borrower.blacklistMatches > 0) ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">⚠ {flagDatData.borrower.watchlistMatches + flagDatData.borrower.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
                 </div>
-              </div>
-              <div className="p-4 border rounded space-y-2">
-                <p className="text-xs text-muted-foreground">Last Checked</p>
-                <p className="text-sm font-medium">{flagDatData.lastChecked}</p>
-              </div>
+              ) : (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
+                </div>
+              )}
             </div>
-            {(flagDatData.watchlistMatches > 0 || flagDatData.blacklistMatches > 0) ? (
-              <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded">
-                <p className="text-sm font-medium text-destructive">⚠ {flagDatData.watchlistMatches + flagDatData.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
+
+            {/* Co-Borrower FlagDat */}
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">{flagDatData.coBorrower.name}</h4>
               </div>
-            ) : (
-              <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded">
-                <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">WatchList Matches</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {flagDatData.coBorrower.watchlistMatches}
+                    </p>
+                    {flagDatData.coBorrower.watchlistMatches > 0 ? (
+                      <Badge variant="destructive">{flagDatData.coBorrower.watchlistMatches} Match(es)</Badge>
+                    ) : (
+                      <Badge variant="success">No Match</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">BlackList Matches</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {flagDatData.coBorrower.blacklistMatches}
+                    </p>
+                    {flagDatData.coBorrower.blacklistMatches > 0 ? (
+                      <Badge variant="destructive">{flagDatData.coBorrower.blacklistMatches} Match(es)</Badge>
+                    ) : (
+                      <Badge variant="success">No Match</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-3 border rounded space-y-2">
+                  <p className="text-xs text-muted-foreground">Last Checked</p>
+                  <p className="text-sm font-medium">{flagDatData.coBorrower.lastChecked}</p>
+                </div>
               </div>
-            )}
+
+              {(flagDatData.coBorrower.watchlistMatches > 0 || flagDatData.coBorrower.blacklistMatches > 0) ? (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                  <p className="text-sm font-medium text-destructive">⚠ {flagDatData.coBorrower.watchlistMatches + flagDatData.coBorrower.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
+                </div>
+              ) : (
+                <div className="p-3 bg-success/10 border border-success/20 rounded">
+                  <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
+                </div>
+              )}
+            </div>
           </CardContent>
         )}
       </Card>
