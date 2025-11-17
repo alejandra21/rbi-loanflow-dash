@@ -522,11 +522,7 @@ export const CreditReportV2Tab = ({
                               {isCreditReportDateValid(guarantor.pullDate) ? <CheckCircle className="h-3 w-3 text-green-600" /> : <AlertTriangle className="h-3 w-3 text-red-600" />}
                         </div>
                       </div>
-                      {guarantor.fico >= productMin && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                          <p className="text-sm text-green-700 dark:text-green-300">
-                            ✓ FICO Score Meets Product Minimum - Continue workflow
-                          </p>
-                        </div>}
+                      {guarantor.fico >= productMin}
                     </div>
                       </div>
                     </div>
@@ -552,11 +548,7 @@ export const CreditReportV2Tab = ({
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.utilization}%</p>
-                          {guarantor.utilization < 50 ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-amber-600" />
-                          )}
+                          {guarantor.utilization < 50 ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-amber-600" />}
                         </div>
                       </div>
 
