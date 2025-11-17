@@ -409,189 +409,223 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           {expandedGuarantors[guarantor.name] && (
             <CardContent className="space-y-6">
               {/* Credit Report Validations */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-creditReport`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}
+              >
+                <CollapsibleTrigger className="flex items-center gap-2 w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <CreditCard className="h-4 w-4" />
-                  Credit Report Validations
-                </h3>
+                  <h3 className="text-sm font-semibold text-muted-foreground">Credit Report Validations</h3>
+                  {(() => {
+                    // Calculate overall validation status for Credit Report
+                    const hasFails = !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ||
+                                    !isCreditReportDateValid(guarantor.pullDate) ||
+                                    guarantor.latePayments.ninetyDays > 0 ||
+                                    guarantor.publicRecords.count > 0;
+                    const hasWarnings = !isUtilizationValid(guarantor.utilization) ||
+                                       guarantor.latePayments.thirtyDays > 0 ||
+                                       guarantor.latePayments.sixtyDays > 0;
+                    
+                    return hasFails ? getStatusBadge('fail') :
+                           hasWarnings ? getStatusBadge('warn') :
+                           getStatusBadge('pass');
+                  })()}
+                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? '' : '-rotate-90'}`} />
+                </CollapsibleTrigger>
                 
-                <div className="space-y-4">
-                  {/* Identity */}
-                  <div>
-                    <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Identity</h5>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">DOB</p>
-                        <p className="font-medium text-sm">{guarantor.dob}</p>
-                      </div>
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Foreign National</p>
-                        <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
-                      </div>
-                      
-                      {guarantor.ssnIssueDate && (
+                <CollapsibleContent>
+                  <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                    {/* Identity */}
+                    <div>
+                      <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Identity</h5>
+                      <div className="grid grid-cols-2 gap-3">
                         <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <p className="text-xs text-muted-foreground">SSN Issued Date</p>
-                          <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
+                          <p className="text-xs text-muted-foreground">DOB</p>
+                          <p className="font-medium text-sm">{guarantor.dob}</p>
                         </div>
-                      )}
-                      
+                        
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Foreign National</p>
+                          <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
+                        </div>
+                        
+                        {guarantor.ssnIssueDate && (
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">SSN Issued Date</p>
+                            <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
+                          </div>
+                        )}
+                        
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <div className="flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground">DOB vs SSN Issued</p>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="h-3 w-3 text-muted-foreground" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Validates that SSN was issued after the borrower&apos;s date of birth</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                          {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) !== null ? (
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm">
+                                {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? 'Valid' : 'Invalid'}
+                              </p>
+                              {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                              )}
+                            </div>
+                          ) : (
+                            <p className="font-medium text-sm">N/A</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Credit Authorization */}
+                    <div>
+                      <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Authorization</h5>
                       <div className="p-3 bg-muted/20 rounded space-y-1">
                         <div className="flex items-center gap-1">
-                          <p className="text-xs text-muted-foreground">DOB vs SSN Issued</p>
+                          <p className="text-xs text-muted-foreground">Credit Authorization</p>
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
                                 <Info className="h-3 w-3 text-muted-foreground" />
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Validates that SSN was issued after the borrower&apos;s date of birth</p>
+                                <p>Confirms borrower has authorized credit report pull</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) !== null ? (
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-sm">{guarantor.hasCreditAuth ? "Received" : "Not Received"}</p>
+                          {guarantor.hasCreditAuth && (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Credit Report */}
+                    <div>
+                      <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Report</h5>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Credit Bureau</p>
+                          <p className="font-medium text-sm">{guarantor.bureau}</p>
+                        </div>
+                        
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">FICO Score</p>
+                          <p className="font-medium text-sm">{guarantor.fico}</p>
+                        </div>
+                        
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <div className="flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground">FICO vs Product Minimum</p>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="h-3 w-3 text-muted-foreground" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Product Minimum: {productMin}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-sm">
-                              {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? 'Valid' : 'Invalid'}
+                              {guarantor.fico >= productMin ? 'Pass' : 'Fail'}
                             </p>
-                            {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? (
+                            {guarantor.fico >= productMin ? (
                               <CheckCircle className="h-4 w-4 text-green-600" />
                             ) : (
-                              <AlertTriangle className="h-4 w-4 text-red-600" />
+                              <XCircle className="h-4 w-4 text-red-600" />
                             )}
                           </div>
-                        ) : (
-                          <p className="font-medium text-sm">N/A</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Credit Authorization */}
-                  <div>
-                    <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Authorization</h5>
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <div className="flex items-center gap-1">
-                        <p className="text-xs text-muted-foreground">Credit Authorization</p>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="h-3 w-3 text-muted-foreground" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Borrower authorization to pull credit report</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm">{guarantor.hasCreditAuth ? 'Yes' : 'No'}</p>
-                          {guarantor.hasCreditAuth ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
-                          )}
                         </div>
-                        {guarantor.hasCreditAuth && (
-                          <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                            <Download className="h-3 w-3 mr-1" />
-                            Download Authorization
-                          </Button>
-                        )}
+                        
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Credit Pull Date</p>
+                          <div className="space-y-1">
+                            <p className="font-medium text-sm">{guarantor.pullDate}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs text-muted-foreground">
+                                {isCreditReportDateValid(guarantor.pullDate) ? '✓ Within 90 days' : '✗ Older than 90 days'}
+                              </p>
+                              {isCreditReportDateValid(guarantor.pullDate) ? (
+                                <CheckCircle className="h-3 w-3 text-green-600" />
+                              ) : (
+                                <AlertTriangle className="h-3 w-3 text-red-600" />
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <Separator />
+                    <Separator />
 
-                  {/* Credit Score & Usage */}
-                  <div>
-                    <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Credit Score & Usage</h5>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Middle FICO Score</p>
-                        <p className="font-medium text-sm flex items-center">
-                          {guarantor.isForeignNational && !guarantor.ssn ? "N/A" : guarantor.fico}
-                          <CreditCard className="h-4 w-4 ml-1" />
-                        </p>
-                      </div>
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">Bureau</p>
-                        <p className="font-medium text-sm">{guarantor.bureau}</p>
-                      </div>
-                      
+                    {/* Utilization Analysis */}
+                    <div>
+                      <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Utilization Analysis</h5>
                       <div className="p-3 bg-muted/20 rounded space-y-1">
                         <div className="flex items-center gap-1">
-                          <p className="text-xs text-muted-foreground">Utilization</p>
+                          <p className="text-xs text-muted-foreground">Utilization Ratio</p>
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
                                 <Info className="h-3 w-3 text-muted-foreground" />
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Credit utilization should be below 50% for optimal approval</p>
+                                <p>Credit utilization as percentage of available credit</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-between">
                           <p className="font-medium text-sm">{guarantor.utilization}%</p>
                           {isUtilizationValid(guarantor.utilization) ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <Badge variant="success" className="gap-1">
+                              <CheckCircle className="h-3 w-3" />
+                              Pass
+                            </Badge>
                           ) : (
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
+                            <Badge variant="warning" className="gap-1">
+                              <AlertTriangle className="h-3 w-3" />
+                              Review
+                            </Badge>
                           )}
                         </div>
                       </div>
-                      
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <div className="flex items-center gap-1">
-                          <p className="text-xs text-muted-foreground">Credit Report Date</p>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="h-3 w-3 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Credit report must be less than 90 days old from closing date</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm">{guarantor.pullDate}</p>
-                          {isCreditReportDateValid(guarantor.pullDate) ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
-                          )}
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Utilization Business Rules */}
-                    <Collapsible
-                      open={expandedCards.utilizationRules}
-                      onOpenChange={() => toggleCard('utilizationRules')}
-                    >
-                      <div className="space-y-3 mt-3">
-                        <CollapsibleTrigger className="flex items-center gap-2 w-full">
-                          <h6 className="text-xs font-semibold text-muted-foreground">Utilization Business Rules</h6>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.utilizationRules ? '' : '-rotate-90'}`} />
-                        </CollapsibleTrigger>
-                        
-                        <CollapsibleContent>
-                          <div className="rounded-lg border border-border">
+                      <Collapsible className="mt-3">
+                        <div className="flex items-center justify-between">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-xs text-primary hover:underline">
+                            View Utilization Guidelines
+                            <ChevronDown className="h-3 w-3" />
+                          </CollapsibleTrigger>
+                        </div>
+                        <CollapsibleContent className="mt-2">
+                          <div className="p-3 bg-muted/10 rounded text-xs space-y-2">
+                            <p className="font-semibold">Utilization Thresholds:</p>
                             <Table>
                               <TableHeader>
                                 <TableRow>
-                                  <TableHead className="text-xs">Utilization Range</TableHead>
+                                  <TableHead className="text-xs">Range</TableHead>
                                   <TableHead className="text-xs">Decision</TableHead>
                                 </TableRow>
                               </TableHeader>
@@ -612,93 +646,99 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             </Table>
                           </div>
                         </CollapsibleContent>
-                      </div>
-                    </Collapsible>
-                  </div>
-
-                  <Separator />
-
-                  {/* Late Payment History */}
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
-                      <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                        <Download className="h-3 w-3 mr-1" />
-                        Download Report
-                      </Button>
+                      </Collapsible>
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">30 Days</p>
-                        <p className="font-medium text-sm">{guarantor.latePayments.thirtyDays}</p>
-                      </div>
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">60 Days</p>
-                        <p className="font-medium text-sm">{guarantor.latePayments.sixtyDays}</p>
-                      </div>
-                      <div className="p-3 bg-muted/20 rounded space-y-1">
-                        <p className="text-xs text-muted-foreground">90+ Days</p>
-                        <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
-                      </div>
-                    </div>
-                    {guarantor.latePayments.thirtyDays === 0 && 
-                     guarantor.latePayments.sixtyDays === 0 && 
-                     guarantor.latePayments.ninetyDays === 0 && (
-                      <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <p className="text-sm text-green-700 dark:text-green-300">
-                          ✓ No Late Payments - Continue workflow
-                        </p>
-                      </div>
-                    )}
-                  </div>
 
-                  <Separator />
+                    <Separator />
 
-                  {/* Public Record Review */}
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h5 className="text-sm font-semibold text-muted-foreground">Public Record Review</h5>
-                      <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                        <Download className="h-3 w-3 mr-1" />
-                        Download Report
-                      </Button>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
+                    {/* Late Payment History */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
+                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                          <Download className="h-3 w-3 mr-1" />
+                          Download Report
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <p className="text-xs text-muted-foreground">Public Records</p>
-                          <div className="flex items-center justify-between">
-                            <p className="font-medium text-sm">{guarantor.publicRecords.count}</p>
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          <p className="text-xs text-muted-foreground">30 Days</p>
+                          <p className="font-medium text-sm">{guarantor.latePayments.thirtyDays}</p>
+                        </div>
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">60 Days</p>
+                          <p className="font-medium text-sm">{guarantor.latePayments.sixtyDays}</p>
+                        </div>
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">90+ Days</p>
+                          <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
+                        </div>
+                      </div>
+                      {guarantor.latePayments.thirtyDays === 0 && 
+                       guarantor.latePayments.sixtyDays === 0 && 
+                       guarantor.latePayments.ninetyDays === 0 && (
+                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <p className="text-sm text-green-700 dark:text-green-300">
+                            ✓ No Late Payments - Continue workflow
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <Separator />
+
+                    {/* Public Record Review */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="text-sm font-semibold text-muted-foreground">Public Record Review</h5>
+                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                          <Download className="h-3 w-3 mr-1" />
+                          Download Report
+                        </Button>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Public Records</p>
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-sm">{guarantor.publicRecords.count}</p>
+                              {guarantor.publicRecords.count === 0 && (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Collections</p>
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-sm">{guarantor.publicRecords.collections}</p>
+                              {guarantor.publicRecords.collections === 0 && (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
+                            </div>
                           </div>
                         </div>
                         <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <p className="text-xs text-muted-foreground">Collection/charge-offs</p>
-                          <div className="flex items-center justify-between">
-                            <p className="font-medium text-sm">{guarantor.publicRecords.collections}</p>
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          </div>
-                        </div>
-                        <div className="p-3 bg-muted/20 rounded space-y-1 col-span-2">
                           <p className="text-xs text-muted-foreground">Bankruptcies</p>
                           <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">{guarantor.publicRecords.bankruptcies}</p>
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            {guarantor.publicRecords.bankruptcies === "No (0)" && (
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                            )}
                           </div>
                         </div>
+                        {guarantor.publicRecords.count === 0 && 
+                         guarantor.publicRecords.collections === 0 && (
+                          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                            <p className="text-sm text-green-700 dark:text-green-300">
+                              ✓ No Public Records or Collections - Continue workflow
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    {guarantor.publicRecords.count === 0 && 
-                     guarantor.publicRecords.collections === 0 && (
-                      <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <p className="text-sm text-green-700 dark:text-green-300">
-                          ✓ No Public Records Found - Continue workflow
-                        </p>
-                      </div>
-                    )}
                   </div>
-                </div>
-              </div>
+                </CollapsibleContent>
+              </Collapsible>
 
               <Separator className="my-6" />
 
