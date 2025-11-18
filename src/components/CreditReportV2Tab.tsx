@@ -1172,14 +1172,16 @@ export const CreditReportV2Tab = ({
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
               FlagDat Validations
+            </div>
+            <div className="flex items-center gap-2">
               {(() => {
                 const hasAnyMatches = Object.values(flagDatData).some(data => 
                   data.watchlistMatches > 0 || data.blacklistMatches > 0
                 );
                 return hasAnyMatches ? getStatusBadge('fail') : getStatusBadge('pass');
               })()}
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? '' : '-rotate-90'}`} />
             </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.flagDat && <CardContent className="space-y-4">
