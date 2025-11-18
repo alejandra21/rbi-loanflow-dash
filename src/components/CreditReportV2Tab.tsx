@@ -562,7 +562,7 @@ export const CreditReportV2Tab = ({
               {/* Credit Report Validations */}
               <Collapsible open={expandedGuarantorSections[`${guarantor.name}-creditReport`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}>
                 <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
-                  <CreditCard className="h-4 w-4 mr-2" />
+                  <CheckCircle className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">
                     Credit Report Validations
                   </h3>
