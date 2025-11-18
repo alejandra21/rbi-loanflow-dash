@@ -155,7 +155,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const tierChanged = true;
   const previousTier = "Gold";
   const tierChangeReason =
-    "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines.";
+    "FICO score below 680 threshold. Auto-assigned from previous tier (Platinum/Gold in Experience Tiering) to Silver/Bronze per credit review policy.";
 
   // Mock data for TLO, LexisNexis, and FlagDat
   const tloData = {
