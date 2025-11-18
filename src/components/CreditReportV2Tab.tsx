@@ -739,12 +739,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
 
                     {/* Credit Authorization */}
                     <div>
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="mb-3">
                         <h5 className="text-sm font-semibold text-muted-foreground">Credit Authorization</h5>
-                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                          <Download className="h-3 w-3 mr-1" />
-                          Download Report
-                        </Button>
                       </div>
                       <div className="p-3 bg-muted/20 rounded space-y-1">
                         <div className="flex items-center gap-1">
@@ -772,6 +768,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           </p>
                         </div>
                       )}
+                      <div className="mt-3">
+                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                          <Download className="h-3 w-3 mr-1" />
+                          Download Report
+                        </Button>
+                      </div>
                     </div>
 
                     <Separator />
