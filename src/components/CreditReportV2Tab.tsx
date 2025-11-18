@@ -150,7 +150,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const ltv = 68;
   const loanLimit = 500000;
   const productMin = 680;
-  const loanProgram = "DSCR";
+  const loanProgram = "Fix & Flip";
   const verifiedProjects = 3;
   const tierChanged = true;
   const previousTier = "Gold";
