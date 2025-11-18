@@ -1094,6 +1094,11 @@ export const CreditReportV2Tab = ({
               const isReportStale = reportAge > 60;
               const hasMatch = lexisData.matchStatus === "match";
               return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download LexisNexis Report
+                        </Button>
+
                         <div className="grid grid-cols-3 gap-4">
                           <div className="p-3 border rounded space-y-2">
                             <p className="text-xs text-muted-foreground">Match Status</p>
@@ -1116,11 +1121,6 @@ export const CreditReportV2Tab = ({
                             </div>
                           </div>
                         </div>
-
-                        <Button variant="outline" size="sm" className="w-full">
-                          <Download className="h-4 w-4 mr-2" />
-                          Download LexisNexis Report
-                        </Button>
 
                         {hasMatch && lexisData.matchedEntities.length > 0 && <>
                             <Separator />
