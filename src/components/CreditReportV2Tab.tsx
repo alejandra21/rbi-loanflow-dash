@@ -17,6 +17,7 @@ export const CreditReportV2Tab = ({
 }: CreditReportV2TabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     creditReviewSummary: true,
+    flagDat: false,
     logs: false
   });
   const [expandedGuarantors, setExpandedGuarantors] = useState<Record<string, boolean>>({
@@ -27,11 +28,9 @@ export const CreditReportV2Tab = ({
     'John Doe-creditReport': false,
     'John Doe-tlo': false,
     'John Doe-lexisNexis': false,
-    'John Doe-flagDat': false,
     'Jane Smith-creditReport': false,
     'Jane Smith-tlo': false,
-    'Jane Smith-lexisNexis': false,
-    'Jane Smith-flagDat': false
+    'Jane Smith-lexisNexis': false
   });
   const [expandedBackgroundCheckDetails, setExpandedBackgroundCheckDetails] = useState<Record<string, boolean>>({
     'John Doe': false,
@@ -1062,64 +1061,77 @@ export const CreditReportV2Tab = ({
                 </CollapsibleContent>
               </Collapsible>
 
-              <Separator className="my-6" />
-
-              {/* FlagDat Validations */}
-              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-flagDat`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-flagDat`)}>
-                <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
-                  <AlertCircleIcon className="h-4 w-4 mr-2" />
-                  <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">FlagDat Validations</h3>
-                  <div className="flex items-center gap-2 ml-auto">
-                    {(() => {
-                const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
-                const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
-                return hasMatches ? getStatusBadge('fail') : getStatusBadge('pass');
-              })()}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-flagDat`] ? '' : '-rotate-90'}`} />
-                  </div>
-                </CollapsibleTrigger>
-                
-                <CollapsibleContent>
-                  {(() => {
-              const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
-              const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
-              return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="p-3 border rounded space-y-2">
-                            <p className="text-xs text-muted-foreground">WatchList Matches</p>
-                            <div className="flex items-center gap-2">
-                              <p className="text-lg font-semibold">
-                                {flagData.watchlistMatches}
-                              </p>
-                              {flagData.watchlistMatches > 0 ? <Badge variant="destructive">{flagData.watchlistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
-                            </div>
-                          </div>
-                          <div className="p-3 border rounded space-y-2">
-                            <p className="text-xs text-muted-foreground">BlackList Matches</p>
-                            <div className="flex items-center gap-2">
-                              <p className="text-lg font-semibold">
-                                {flagData.blacklistMatches}
-                              </p>
-                              {flagData.blacklistMatches > 0 ? <Badge variant="destructive">{flagData.blacklistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
-                            </div>
-                          </div>
-                          <div className="p-3 border rounded space-y-2">
-                            <p className="text-xs text-muted-foreground">Last Checked</p>
-                            <p className="text-sm font-medium">{flagData.lastChecked}</p>
-                          </div>
-                        </div>
-
-                        {hasMatches ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
-                            <p className="text-sm font-medium text-destructive">⚠ {flagData.watchlistMatches + flagData.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
-                          </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
-                            <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
-                          </div>}
-                      </div>;
-            })()}
-                </CollapsibleContent>
-              </Collapsible>
             </CardContent>}
         </Card>)}
+
+      {/* FlagDat Validations */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('flagDat')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertCircleIcon className="h-4 w-4" />
+              FlagDat Validations
+              {(() => {
+                const hasAnyMatches = Object.values(flagDatData).some(data => 
+                  data.watchlistMatches > 0 || data.blacklistMatches > 0
+                );
+                return hasAnyMatches ? getStatusBadge('fail') : getStatusBadge('pass');
+              })()}
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.flagDat && <CardContent className="space-y-4">
+            {guarantors.map(guarantor => {
+              const flagData = flagDatData[guarantor.name as keyof typeof flagDatData];
+              const hasMatches = flagData.watchlistMatches > 0 || flagData.blacklistMatches > 0;
+              
+              return (
+                <div key={guarantor.name} className="p-4 bg-muted/30 rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold">{guarantor.name}</h3>
+                    {hasMatches ? getStatusBadge('fail') : getStatusBadge('pass')}
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="p-3 border rounded space-y-2">
+                      <p className="text-xs text-muted-foreground">WatchList Matches</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-lg font-semibold">
+                          {flagData.watchlistMatches}
+                        </p>
+                        {flagData.watchlistMatches > 0 ? <Badge variant="destructive">{flagData.watchlistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
+                      </div>
+                    </div>
+                    <div className="p-3 border rounded space-y-2">
+                      <p className="text-xs text-muted-foreground">BlackList Matches</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-lg font-semibold">
+                          {flagData.blacklistMatches}
+                        </p>
+                        {flagData.blacklistMatches > 0 ? <Badge variant="destructive">{flagData.blacklistMatches} Match(es)</Badge> : <Badge variant="success">No Match</Badge>}
+                      </div>
+                    </div>
+                    <div className="p-3 border rounded space-y-2">
+                      <p className="text-xs text-muted-foreground">Last Checked</p>
+                      <p className="text-sm font-medium">{flagData.lastChecked}</p>
+                    </div>
+                  </div>
+
+                  {hasMatches ? (
+                    <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                      <p className="text-sm font-medium text-destructive">⚠ {flagData.watchlistMatches + flagData.blacklistMatches} match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-success/10 border border-success/20 rounded">
+                      <p className="text-sm font-medium text-success">✓ No matches - Continue workflow</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </CardContent>}
+      </Card>
 
       {/* Logs */}
       <Card>
