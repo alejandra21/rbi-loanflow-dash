@@ -538,7 +538,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <span className="font-medium">Credit Report v2</span>
+          <span className="font-medium">Credit Review v2</span>
           <StatusBadge status={phase.status} />
         </div>
         <Button variant="outline" size="sm" className="flex items-center gap-2">
