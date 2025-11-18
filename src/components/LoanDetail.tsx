@@ -1692,16 +1692,6 @@ export const LoanDetail = () => {
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="creditReview" className="relative text-sm px-4 py-2 flex-shrink-0">
-                Credit Review
-                {loan.phases.creditReview.status === "failed" && (
-                  <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
-                )}
-                {loan.phases.creditReview.status === "manual" && (
-                  <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
-                )}
-                {loan.phases.creditReview.status === "passed" && <CheckCircle className="h-3 w-3 ml-1 text-success" />}
-              </TabsTrigger>
               <TabsTrigger value="creditReportV2" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Credit Review v2
                 {loan.phases.creditReview.status === "failed" && (
@@ -1815,9 +1805,6 @@ export const LoanDetail = () => {
                 <ExperienceTieringCopyTab phase={loan.phases.experienceTiering} />
               </TabsContent>
 
-              <TabsContent value="creditReview" className="mt-0">
-                <CreditReviewTab phase={loan.phases.creditReview} />
-              </TabsContent>
 
               <TabsContent value="creditReportV2" className="mt-0">
                 <CreditReportV2Tab phase={loan.phases.creditReview} />
