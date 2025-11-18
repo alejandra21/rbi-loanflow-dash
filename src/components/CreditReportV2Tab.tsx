@@ -451,7 +451,7 @@ export const CreditReportV2Tab = ({
     ssnIssueDate: "2000-01-01",
     utilization: 35,
     hasCreditAuth: true,
-    validation: "warn" as const,
+    validation: "pass" as const,
     latePayments: {
       thirtyDays: 0,
       sixtyDays: 0,
