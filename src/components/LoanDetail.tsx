@@ -1693,7 +1693,7 @@ export const LoanDetail = () => {
                 )}
               </TabsTrigger>
               <TabsTrigger value="creditReportV2" className="relative text-sm px-4 py-2 flex-shrink-0">
-                Credit Review v2
+                Credit Review
                 {loan.phases.creditReview.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
@@ -1804,7 +1804,6 @@ export const LoanDetail = () => {
               <TabsContent value="experienceTieringCopy" className="mt-0">
                 <ExperienceTieringCopyTab phase={loan.phases.experienceTiering} />
               </TabsContent>
-
 
               <TabsContent value="creditReportV2" className="mt-0">
                 <CreditReportV2Tab phase={loan.phases.creditReview} />
