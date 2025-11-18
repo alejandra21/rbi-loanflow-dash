@@ -996,7 +996,7 @@ export const CreditReviewTab = ({
 
               {/* Background Check Details */}
               <div>
-                <p className="text-sm font-semibold mb-3">Background Check Details (Rule CR-24)</p>
+                <p className="text-sm font-semibold mb-3">Background Check Details</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
@@ -1150,7 +1150,7 @@ export const CreditReviewTab = ({
 
               {/* Background Check Details */}
               <div>
-                <p className="text-sm font-semibold mb-3">Background Check Details (Rule CR-24)</p>
+                <p className="text-sm font-semibold mb-3">Background Check Details</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 border rounded">
                     <div className="flex items-center justify-between mb-2">
