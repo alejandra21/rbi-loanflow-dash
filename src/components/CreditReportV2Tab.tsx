@@ -845,6 +845,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           </p>
                         </div>
                       )}
+                      {guarantor.utilization >= 50 && (
+                        <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                          <p className="text-sm text-amber-700 dark:text-amber-300">
+                            ⚠ High Utilization - Manual Review Required
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
