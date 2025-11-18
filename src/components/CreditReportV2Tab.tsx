@@ -507,7 +507,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     {
       name: "John Doe",
       ownership: 60,
-      fico: 720,
+      fico: 665,
       pullDate: "2025-11-01",
       bureau: "Experian",
       pullType: "Hard Pull" as const,
