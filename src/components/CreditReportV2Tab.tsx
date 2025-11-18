@@ -164,8 +164,8 @@ export const CreditReportV2Tab = ({
       backgroundCheck: {
         liens: {
           count: 2,
-          recent: 1,
-          old: 1,
+          recent: 0,
+          old: 2,
           monthsSinceLatest: 118,
           items: [{
             type: "Tax Lien",
