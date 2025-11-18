@@ -1300,11 +1300,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     const hasMatch = lexisData.matchStatus === "match";
                     return (
                       <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
-                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                          <Download className="h-3 w-3 mr-1" />
-                          Download Report
-                        </Button>
-
                         <div className="flex items-center justify-between">
                           <Button variant="outline" size="sm" className="gap-2">
                             <Download className="h-3 w-3" />
