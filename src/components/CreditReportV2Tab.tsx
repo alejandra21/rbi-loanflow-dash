@@ -38,10 +38,20 @@ export const CreditReportV2Tab = ({
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const [expandedFlagDatResults, setExpandedFlagDatResults] = useState(false);
+  const [expandedLexisNexisMatches, setExpandedLexisNexisMatches] = useState<Record<string, boolean>>({
+    'John Doe': false,
+    'Jane Smith': false
+  });
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
+    }));
+  };
+  const toggleLexisNexisMatches = (name: string) => {
+    setExpandedLexisNexisMatches(prev => ({
+      ...prev,
+      [name]: !prev[name]
     }));
   };
   const toggleGuarantor = (name: string) => {
@@ -1107,47 +1117,60 @@ export const CreditReportV2Tab = ({
                           </div>
                         </div>
 
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download LexisNexis Report
+                        </Button>
+
                         {hasMatch && lexisData.matchedEntities.length > 0 && <>
                             <Separator />
-                            <div>
-                              <p className="text-sm font-semibold mb-3">Matched Entities</p>
-                              <div className="space-y-3">
-                                {lexisData.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
-                                     <div className="grid grid-cols-2 gap-3">
-                                      <div>
-                                        <p className="text-xs text-muted-foreground">Name</p>
-                                        <p className="text-sm font-medium">{entity.name}</p>
+                            <Collapsible 
+                              open={expandedLexisNexisMatches[guarantor.name]}
+                              onOpenChange={() => toggleLexisNexisMatches(guarantor.name)}
+                            >
+                              <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors w-full justify-between">
+                                <span>Matched Entities</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform ${expandedLexisNexisMatches[guarantor.name] ? '' : '-rotate-90'}`} />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent>
+                                <div className="space-y-3 mt-3">
+                                  {lexisData.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                                       <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Name</p>
+                                          <p className="text-sm font-medium">{entity.name}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Match Score</p>
+                                          <p className="text-sm font-medium">{entity.matchScore}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Type</p>
+                                          <p className="text-sm font-medium">{entity.type}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Risk</p>
+                                          <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
+                                            {entity.risk}
+                                          </Badge>
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Country</p>
+                                          <p className="text-sm font-medium">{entity.country}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Class</p>
+                                          <p className="text-sm font-medium">{entity.class}</p>
+                                        </div>
+                                        <div className="col-span-2">
+                                          <p className="text-xs text-muted-foreground">Description</p>
+                                          <p className="text-sm font-medium">{entity.description}</p>
+                                        </div>
                                       </div>
-                                      <div>
-                                        <p className="text-xs text-muted-foreground">Match Score</p>
-                                        <p className="text-sm font-medium">{entity.matchScore}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-xs text-muted-foreground">Type</p>
-                                        <p className="text-sm font-medium">{entity.type}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-xs text-muted-foreground">Risk</p>
-                                        <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
-                                          {entity.risk}
-                                        </Badge>
-                                      </div>
-                                      <div>
-                                        <p className="text-xs text-muted-foreground">Country</p>
-                                        <p className="text-sm font-medium">{entity.country}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-xs text-muted-foreground">Class</p>
-                                        <p className="text-sm font-medium">{entity.class}</p>
-                                      </div>
-                                      <div className="col-span-2">
-                                        <p className="text-xs text-muted-foreground">Description</p>
-                                        <p className="text-sm font-medium">{entity.description}</p>
-                                      </div>
-                                    </div>
-                                  </div>)}
-                              </div>
-                            </div>
+                                    </div>)}
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
                           </>}
 
                         {hasMatch ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
