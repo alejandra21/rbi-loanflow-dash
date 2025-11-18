@@ -764,7 +764,14 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.hasCreditAuth ? "Received" : "Not Received"}</p>
-                          {guarantor.hasCreditAuth && <CheckCircle className="h-4 w-4 text-green-600" />}
+                          {guarantor.hasCreditAuth && (
+                            <>
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto">
+                                <Download className="h-3 w-3" />
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </div>
                       {guarantor.hasCreditAuth && (
