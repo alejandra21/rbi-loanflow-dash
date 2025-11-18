@@ -745,7 +745,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                       <div className="mt-3">
                         <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
                           <Download className="h-3 w-3 mr-1" />
-                          Download Report
+                          Download Authorization
                         </Button>
                       </div>
                       <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -774,12 +774,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           </p>
                         </div>
                       )}
-                      <div className="mt-3">
-                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                          <Download className="h-3 w-3 mr-1" />
-                          Download Report
-                        </Button>
-                      </div>
                     </div>
 
                     <Separator />
