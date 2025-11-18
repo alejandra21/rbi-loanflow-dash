@@ -282,7 +282,7 @@ export const CreditReportV2Tab = ({
       zipCode: "62701",
       addressSimilarity: 0.88,
       similarityScore: 0.90,
-      severity: "High",
+      severity: "blacklist",
       type: "borrower"
     },
     {
@@ -294,7 +294,7 @@ export const CreditReportV2Tab = ({
       zipCode: "62702",
       addressSimilarity: 0.75,
       similarityScore: 0.80,
-      severity: "Medium",
+      severity: "watchlist",
       type: "appraiser"
     },
     {
@@ -306,7 +306,7 @@ export const CreditReportV2Tab = ({
       zipCode: "60601",
       addressSimilarity: 0.45,
       similarityScore: 0.62,
-      severity: "Low",
+      severity: "watchlist",
       type: "borrower"
     },
     {
@@ -318,7 +318,7 @@ export const CreditReportV2Tab = ({
       zipCode: "62701",
       addressSimilarity: 0.92,
       similarityScore: 0.94,
-      severity: "Critical",
+      severity: "blacklist",
       type: "guarantor"
     },
     {
@@ -330,7 +330,7 @@ export const CreditReportV2Tab = ({
       zipCode: "61602",
       addressSimilarity: 0.65,
       similarityScore: 0.77,
-      severity: "Medium",
+      severity: "blacklist",
       type: "broker"
     },
     {
@@ -342,7 +342,7 @@ export const CreditReportV2Tab = ({
       zipCode: "61101",
       addressSimilarity: 0.52,
       similarityScore: 0.71,
-      severity: "Low",
+      severity: "watchlist",
       type: "appraiser"
     },
     {
@@ -354,7 +354,7 @@ export const CreditReportV2Tab = ({
       zipCode: "60505",
       addressSimilarity: 0.48,
       similarityScore: 0.65,
-      severity: "Low",
+      severity: "blacklist",
       type: "borrower"
     },
     {
@@ -366,7 +366,7 @@ export const CreditReportV2Tab = ({
       zipCode: "60431",
       addressSimilarity: 0.70,
       similarityScore: 0.81,
-      severity: "High",
+      severity: "blacklist",
       type: "guarantor"
     }
   ];
@@ -1212,11 +1212,7 @@ export const CreditReportV2Tab = ({
             <Collapsible open={expandedFlagDatResults} onOpenChange={setExpandedFlagDatResults}>
               <CollapsibleTrigger className="w-full">
                 <div className="flex items-center justify-between p-3 border rounded hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-2">
-                    <Info className="h-4 w-4" />
-                    <span className="text-sm font-medium">View Detailed Match Results</span>
-                    <Badge variant="outline">{flagDatDetailedResults.length} results</Badge>
-                  </div>
+                  <span className="text-sm font-medium">View Detailed Match Results</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${expandedFlagDatResults ? '' : '-rotate-90'}`} />
                 </div>
               </CollapsibleTrigger>
@@ -1239,7 +1235,7 @@ export const CreditReportV2Tab = ({
                         <TableRow key={index}>
                           <TableCell className="font-medium">{result.name}</TableCell>
                           <TableCell>
-                            <Badge variant={result.nameSimilarity >= 0.9 ? "destructive" : result.nameSimilarity >= 0.8 ? "warning" : "outline"}>
+                            <Badge variant="outline" className="bg-muted/50">
                               {(result.nameSimilarity * 100).toFixed(0)}%
                             </Badge>
                           </TableCell>
@@ -1248,22 +1244,17 @@ export const CreditReportV2Tab = ({
                             <div className="text-muted-foreground">{result.city}, {result.state} {result.zipCode}</div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={result.addressSimilarity >= 0.9 ? "destructive" : result.addressSimilarity >= 0.7 ? "warning" : "outline"}>
+                            <Badge variant="outline" className="bg-muted/50">
                               {(result.addressSimilarity * 100).toFixed(0)}%
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={result.similarityScore >= 0.9 ? "destructive" : result.similarityScore >= 0.7 ? "warning" : "outline"}>
+                            <Badge variant="outline" className="bg-muted/50">
                               {(result.similarityScore * 100).toFixed(0)}%
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={
-                              result.severity === "Critical" ? "destructive" :
-                              result.severity === "High" ? "destructive" :
-                              result.severity === "Medium" ? "warning" :
-                              "outline"
-                            }>
+                            <Badge variant={result.severity === "blacklist" ? "destructive" : "warning"} className="capitalize">
                               {result.severity}
                             </Badge>
                           </TableCell>
