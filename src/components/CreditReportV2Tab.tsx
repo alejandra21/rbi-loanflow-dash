@@ -127,6 +127,23 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "pass":
+      case "verified":
+        return <CheckCircle className="h-5 w-5 text-success" />;
+      case "warn":
+      case "pending":
+      case "review":
+        return <AlertTriangle className="h-5 w-5 text-warning" />;
+      case "fail":
+      case "critical":
+        return <XCircle className="h-5 w-5 text-destructive" />;
+      default:
+        return <AlertCircleIcon className="h-5 w-5 text-muted-foreground" />;
+    }
+  };
+
   // Mock data
   const closingDate = "2025-11-15";
   const companyTier = "Gold";
@@ -607,23 +624,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     <Badge variant="default" className="text-xs">
                       {guarantor.pullType}
                     </Badge>
-                    {(() => {
-                      // Calculate overall validation status for Credit Report
-                      const hasFails =
-                        !isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ||
-                        !isCreditReportDateValid(guarantor.pullDate) ||
-                        guarantor.latePayments.ninetyDays > 0 ||
-                        guarantor.publicRecords.count > 0;
-                      const hasWarnings =
-                        !isUtilizationValid(guarantor.utilization) ||
-                        guarantor.latePayments.thirtyDays > 0 ||
-                        guarantor.latePayments.sixtyDays > 0;
-                      return hasFails
-                        ? getStatusBadge("fail")
-                        : hasWarnings
-                          ? getStatusBadge("warn")
-                          : getStatusBadge("pass");
-                    })()}
+                    {getStatusIcon(guarantor.validation)}
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? "" : "-rotate-90"}`}
                     />
@@ -955,10 +956,10 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     {(() => {
                       const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
                       return tloResult.decision === "non_pass"
-                        ? getStatusBadge("fail")
+                        ? getStatusIcon("fail")
                         : tloResult.decision === "manual_validation"
-                          ? getStatusBadge("warn")
-                          : getStatusBadge("pass");
+                          ? getStatusIcon("warn")
+                          : getStatusIcon("pass");
                     })()}
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? "" : "-rotate-90"}`}
@@ -1275,13 +1276,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                   <div className="flex items-center gap-2 ml-auto">
                     {(() => {
                       const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
-                      const reportAge = Math.floor(
-                        (new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) /
-                          (1000 * 60 * 60 * 24),
-                      );
-                      const isReportStale = reportAge > 60;
-                      const hasMatch = lexisData.matchStatus === "match";
-                      return hasMatch || isReportStale ? getStatusBadge("fail") : getStatusBadge("pass");
+                      const hasMatches = lexisData.matchStatus === "match" && lexisData.matchedEntities.length > 0;
+                      return hasMatches ? getStatusIcon("fail") : getStatusIcon("pass");
                     })()}
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? "" : "-rotate-90"}`}
