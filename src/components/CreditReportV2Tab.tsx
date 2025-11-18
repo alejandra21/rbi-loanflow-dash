@@ -235,12 +235,18 @@ export const CreditReportV2Tab = ({
         name: "John Doe",
         matchScore: 95,
         type: "Exact Name Match",
-        risk: "Low"
+        risk: "Low",
+        country: "United States",
+        description: "Sentenced to 100 months in prison for fraud.",
+        class: "Enforcement"
       }, {
         name: "Jonathan Doe",
         matchScore: 78,
         type: "Similar Name Match",
-        risk: "Medium"
+        risk: "Medium",
+        country: "United States",
+        description: "Sentenced to 168 months in prison for embezzlement.",
+        class: "Enforcement"
       }],
       reportDate: "2025-10-15",
       closeDate: "2025-11-10"
@@ -1007,7 +1013,7 @@ export const CreditReportV2Tab = ({
                               <p className="text-sm font-semibold mb-3">Matched Entities</p>
                               <div className="space-y-3">
                                 {lexisData.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
-                                    <div className="grid grid-cols-2 gap-3">
+                                     <div className="grid grid-cols-2 gap-3">
                                       <div>
                                         <p className="text-xs text-muted-foreground">Name</p>
                                         <p className="text-sm font-medium">{entity.name}</p>
@@ -1025,6 +1031,18 @@ export const CreditReportV2Tab = ({
                                         <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
                                           {entity.risk}
                                         </Badge>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground">Country</p>
+                                        <p className="text-sm font-medium">{entity.country}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground">Class</p>
+                                        <p className="text-sm font-medium">{entity.class}</p>
+                                      </div>
+                                      <div className="col-span-2">
+                                        <p className="text-xs text-muted-foreground">Description</p>
+                                        <p className="text-sm font-medium">{entity.description}</p>
                                       </div>
                                     </div>
                                   </div>)}
