@@ -83,13 +83,13 @@ export const CreditReviewTab = ({
   const ltv = 68; // Loan to Value
   const loanLimit = 500000; // Loan Limit
   const productMin = 680; // Product Minimum FICO Score requirement
-  const loanProgram = "DSCR"; // Loan Program
+  const loanProgram = "Fix & Flip"; // Loan Program
   const verifiedProjects = 3; // Verified Projects count
 
   // Tier change tracking
   const tierChanged = true; // Whether tier was forced to change
   const previousTier = "Silver"; // Previous tier before change
-  const tierChangeReason = "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines."; // Reason for tier change
+  const tierChangeReason = "FICO score below 680 threshold. Auto-assigned from previous tier (Platinum/Gold in Experience Tiering) to Silver/Bronze per credit review policy."; // Reason for tier change
 
   const creditPullData = {
     borrower: {
