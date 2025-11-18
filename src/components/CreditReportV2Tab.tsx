@@ -756,6 +756,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                             </Tooltip>
                           </TooltipProvider>
                         </div>
+                        <div className="mt-3">
+                          <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                            <Download className="h-3 w-3 mr-1" />
+                            Download Report
+                          </Button>
+                        </div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.hasCreditAuth ? "Received" : "Not Received"}</p>
                           {guarantor.hasCreditAuth && <CheckCircle className="h-4 w-4 text-green-600" />}
