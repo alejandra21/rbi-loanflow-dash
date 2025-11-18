@@ -37,6 +37,7 @@ export const CreditReportV2Tab = ({
     'Jane Smith': false
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+  const [expandedFlagDatResults, setExpandedFlagDatResults] = useState(false);
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
@@ -269,6 +270,106 @@ export const CreditReportV2Tab = ({
       lastChecked: "2025-11-10"
     }
   };
+
+  // Mock FlagDat detailed results
+  const flagDatDetailedResults = [
+    {
+      name: "John Doe Sr.",
+      nameSimilarity: 0.92,
+      address: "123 Main St",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62701",
+      addressSimilarity: 0.88,
+      similarityScore: 0.90,
+      severity: "High",
+      type: "borrower"
+    },
+    {
+      name: "Johnny Doe",
+      nameSimilarity: 0.85,
+      address: "456 Oak Ave",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62702",
+      addressSimilarity: 0.75,
+      similarityScore: 0.80,
+      severity: "Medium",
+      type: "appraiser"
+    },
+    {
+      name: "J. Doe",
+      nameSimilarity: 0.78,
+      address: "789 Pine Rd",
+      city: "Chicago",
+      state: "IL",
+      zipCode: "60601",
+      addressSimilarity: 0.45,
+      similarityScore: 0.62,
+      severity: "Low",
+      type: "borrower"
+    },
+    {
+      name: "John David Doe",
+      nameSimilarity: 0.95,
+      address: "321 Elm St",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62701",
+      addressSimilarity: 0.92,
+      similarityScore: 0.94,
+      severity: "Critical",
+      type: "guarantor"
+    },
+    {
+      name: "Johnathan Doe",
+      nameSimilarity: 0.88,
+      address: "555 Maple Dr",
+      city: "Peoria",
+      state: "IL",
+      zipCode: "61602",
+      addressSimilarity: 0.65,
+      similarityScore: 0.77,
+      severity: "Medium",
+      type: "broker"
+    },
+    {
+      name: "John A. Doe",
+      nameSimilarity: 0.90,
+      address: "999 Cedar Ln",
+      city: "Rockford",
+      state: "IL",
+      zipCode: "61101",
+      addressSimilarity: 0.52,
+      similarityScore: 0.71,
+      severity: "Low",
+      type: "appraiser"
+    },
+    {
+      name: "Jon Doe",
+      nameSimilarity: 0.82,
+      address: "777 Birch Way",
+      city: "Aurora",
+      state: "IL",
+      zipCode: "60505",
+      addressSimilarity: 0.48,
+      similarityScore: 0.65,
+      severity: "Low",
+      type: "borrower"
+    },
+    {
+      name: "John M. Doe",
+      nameSimilarity: 0.91,
+      address: "222 Walnut St",
+      city: "Joliet",
+      state: "IL",
+      zipCode: "60431",
+      addressSimilarity: 0.70,
+      similarityScore: 0.81,
+      severity: "High",
+      type: "guarantor"
+    }
+  ];
   const calculateTLODecision = (guarantorData: typeof tloData["John Doe"]) => {
     const requiresIdentityManualValidation = !guarantorData.validation.ssnMatch || Math.abs(guarantorData.validation.dobYearDiff) > 1 || guarantorData.validation.missingFields.length > 0;
     const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.recent > 0 || guarantorData.backgroundCheck.judgments.recent > 0 || guarantorData.backgroundCheck.bankruptcies.recent > 0;
@@ -1106,6 +1207,78 @@ export const CreditReportV2Tab = ({
             <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
               <p className="text-sm font-medium text-destructive">⚠ 8 match(es) found - Manual Review by Underwriting/Credit Analyst required</p>
             </div>
+
+            {/* Detailed Results Toggle */}
+            <Collapsible open={expandedFlagDatResults} onOpenChange={setExpandedFlagDatResults}>
+              <CollapsibleTrigger className="w-full">
+                <div className="flex items-center justify-between p-3 border rounded hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4" />
+                    <span className="text-sm font-medium">View Detailed Match Results</span>
+                    <Badge variant="outline">{flagDatDetailedResults.length} results</Badge>
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${expandedFlagDatResults ? '' : '-rotate-90'}`} />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3">
+                <div className="border rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Name Similarity</TableHead>
+                        <TableHead>Address</TableHead>
+                        <TableHead>Address Similarity</TableHead>
+                        <TableHead>Similarity Score</TableHead>
+                        <TableHead>Severity</TableHead>
+                        <TableHead>Type</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {flagDatDetailedResults.map((result, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{result.name}</TableCell>
+                          <TableCell>
+                            <Badge variant={result.nameSimilarity >= 0.9 ? "destructive" : result.nameSimilarity >= 0.8 ? "warning" : "outline"}>
+                              {(result.nameSimilarity * 100).toFixed(0)}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            <div>{result.address}</div>
+                            <div className="text-muted-foreground">{result.city}, {result.state} {result.zipCode}</div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={result.addressSimilarity >= 0.9 ? "destructive" : result.addressSimilarity >= 0.7 ? "warning" : "outline"}>
+                              {(result.addressSimilarity * 100).toFixed(0)}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={result.similarityScore >= 0.9 ? "destructive" : result.similarityScore >= 0.7 ? "warning" : "outline"}>
+                              {(result.similarityScore * 100).toFixed(0)}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              result.severity === "Critical" ? "destructive" :
+                              result.severity === "High" ? "destructive" :
+                              result.severity === "Medium" ? "warning" :
+                              "outline"
+                            }>
+                              {result.severity}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="capitalize">
+                              {result.type}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>}
       </Card>
 
