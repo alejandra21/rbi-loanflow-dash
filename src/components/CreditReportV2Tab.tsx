@@ -682,6 +682,11 @@ export const CreditReportV2Tab = ({
                           <p className="text-xs text-muted-foreground">Credit Pull Date</p>
                           <p className="font-medium text-sm">{guarantor.pullDate}</p>
                         </div>
+
+                        <div className="p-3 bg-muted/20 rounded space-y-1">
+                          <p className="text-xs text-muted-foreground">Pull Type</p>
+                          <p className="font-medium text-sm">{guarantor.pullType}</p>
+                        </div>
                       </div>
 
                       {isCreditReportDateValid(guarantor.pullDate) && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
