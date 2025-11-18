@@ -6,23 +6,34 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, Shield, AlertCircleIcon, CreditCard, Info, ArrowRight } from "lucide-react";
+import {
+  Download,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  ChevronDown,
+  FileText,
+  TrendingUp,
+  Shield,
+  AlertCircleIcon,
+  CreditCard,
+  Info,
+  ArrowRight,
+} from "lucide-react";
 import { useState } from "react";
 import { CreditReviewSummary } from "@/components/CreditReviewSummary";
 interface CreditReportV2TabProps {
   phase: any;
 }
-export const CreditReportV2Tab = ({
-  phase
-}: CreditReportV2TabProps) => {
+export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     creditReviewSummary: true,
     flagDat: false,
-    logs: false
+    logs: false,
   });
   const [expandedGuarantors, setExpandedGuarantors] = useState<Record<string, boolean>>({
     "John Doe": false,
-    "Jane Smith": false
+    "Jane Smith": false,
   });
   const [expandedGuarantorSections, setExpandedGuarantorSections] = useState<Record<string, boolean>>({
     "John Doe-creditReport": false,
@@ -30,52 +41,52 @@ export const CreditReportV2Tab = ({
     "John Doe-lexisNexis": false,
     "Jane Smith-creditReport": false,
     "Jane Smith-tlo": false,
-    "Jane Smith-lexisNexis": false
+    "Jane Smith-lexisNexis": false,
   });
   const [expandedBackgroundCheckDetails, setExpandedBackgroundCheckDetails] = useState<Record<string, boolean>>({
     "John Doe": false,
-    "Jane Smith": false
+    "Jane Smith": false,
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const [expandedFlagDatResults, setExpandedFlagDatResults] = useState(false);
   const [expandedLexisNexisMatches, setExpandedLexisNexisMatches] = useState<Record<string, boolean>>({
     "John Doe": false,
-    "Jane Smith": false
+    "Jane Smith": false,
   });
   const toggleCard = (cardId: string) => {
-    setExpandedCards(prev => ({
+    setExpandedCards((prev) => ({
       ...prev,
-      [cardId]: !prev[cardId]
+      [cardId]: !prev[cardId],
     }));
   };
   const toggleLexisNexisMatches = (name: string) => {
-    setExpandedLexisNexisMatches(prev => ({
+    setExpandedLexisNexisMatches((prev) => ({
       ...prev,
-      [name]: !prev[name]
+      [name]: !prev[name],
     }));
   };
   const toggleGuarantor = (name: string) => {
-    setExpandedGuarantors(prev => ({
+    setExpandedGuarantors((prev) => ({
       ...prev,
-      [name]: !prev[name]
+      [name]: !prev[name],
     }));
   };
   const toggleGuarantorSection = (key: string) => {
-    setExpandedGuarantorSections(prev => ({
+    setExpandedGuarantorSections((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
   const toggleBackgroundCheckDetails = (name: string) => {
-    setExpandedBackgroundCheckDetails(prev => ({
+    setExpandedBackgroundCheckDetails((prev) => ({
       ...prev,
-      [name]: !prev[name]
+      [name]: !prev[name],
     }));
   };
   const toggleLog = (logId: string) => {
-    setExpandedLogs(prev => ({
+    setExpandedLogs((prev) => ({
       ...prev,
-      [logId]: !prev[logId]
+      [logId]: !prev[logId],
     }));
   };
   const getTierColor = (tier: string): string => {
@@ -83,7 +94,7 @@ export const CreditReportV2Tab = ({
       Platinum: "bg-gradient-to-r from-slate-400 to-slate-600 text-white",
       Gold: "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white",
       Silver: "bg-gradient-to-r from-gray-300 to-gray-500 text-white",
-      Bronze: "bg-gradient-to-r from-orange-400 to-orange-600 text-white"
+      Bronze: "bg-gradient-to-r from-orange-400 to-orange-600 text-white",
     };
     return colors[tier] || "bg-muted";
   };
@@ -91,20 +102,26 @@ export const CreditReportV2Tab = ({
     switch (status) {
       case "pass":
       case "verified":
-        return <Badge variant="success" className="gap-1">
+        return (
+          <Badge variant="success" className="gap-1">
             <CheckCircle className="h-3 w-3" /> Pass
-          </Badge>;
+          </Badge>
+        );
       case "warn":
       case "pending":
       case "review":
-        return <Badge variant="warning" className="gap-1">
+        return (
+          <Badge variant="warning" className="gap-1">
             <AlertTriangle className="h-3 w-3" /> Warning
-          </Badge>;
+          </Badge>
+        );
       case "fail":
       case "critical":
-        return <Badge variant="destructive" className="gap-1">
+        return (
+          <Badge variant="destructive" className="gap-1">
             <XCircle className="h-3 w-3" /> Fail
-          </Badge>;
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -137,7 +154,8 @@ export const CreditReportV2Tab = ({
   const verifiedProjects = 3;
   const tierChanged = true;
   const previousTier = "Silver";
-  const tierChangeReason = "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines.";
+  const tierChangeReason =
+    "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines.";
 
   // Mock data for TLO, LexisNexis, and FlagDat
   const tloData = {
@@ -147,19 +165,19 @@ export const CreditReportV2Tab = ({
       extracted: {
         fullName: "John Doe",
         last4SSN: "1234",
-        dateOfBirth: "1985-06-15"
+        dateOfBirth: "1985-06-15",
       },
       posData: {
         fullName: "John Doe",
         last4SSN: "1234",
-        dateOfBirth: "1985-06-15"
+        dateOfBirth: "1985-06-15",
       },
       validation: {
         nameMatch: true,
         ssnMatch: true,
         dobMatch: true,
         dobYearDiff: 0,
-        missingFields: [] as string[]
+        missingFields: [] as string[],
       },
       backgroundCheck: {
         liens: {
@@ -167,50 +185,57 @@ export const CreditReportV2Tab = ({
           recent: 1,
           old: 1,
           monthsSinceLatest: 118,
-          items: [{
-            type: "Tax Lien",
-            amount: "$15,000",
-            date: "2015-03-15",
-            status: "Satisfied"
-          }, {
-            type: "Judgment Lien",
-            amount: "$8,500",
-            date: "2024-01-10",
-            status: "Active"
-          }]
+          items: [
+            {
+              type: "Tax Lien",
+              amount: "$15,000",
+              date: "2015-03-15",
+              status: "Satisfied",
+            },
+            {
+              type: "Judgment Lien",
+              amount: "$8,500",
+              date: "2024-01-10",
+              status: "Active",
+            },
+          ],
         },
         judgments: {
           count: 0,
           recent: 0,
           old: 0,
           monthsSinceLatest: null,
-          items: []
+          items: [],
         },
         bankruptcies: {
           count: 1,
           recent: 0,
           old: 1,
           monthsSinceLatest: 140,
-          items: [{
-            type: "Chapter 7",
-            filingDate: "2013-03-20",
-            dischargeDate: "2013-09-15",
-            status: "Discharged"
-          }]
+          items: [
+            {
+              type: "Chapter 7",
+              filingDate: "2013-03-20",
+              dischargeDate: "2013-09-15",
+              status: "Discharged",
+            },
+          ],
         },
         foreclosures: {
           count: 1,
           recent: 1,
           old: 0,
           monthsSinceLatest: 48,
-          items: [{
-            address: "123 Main St, City, ST",
-            date: "2021-01-15",
-            status: "Completed"
-          }]
+          items: [
+            {
+              address: "123 Main St, City, ST",
+              date: "2021-01-15",
+              status: "Completed",
+            },
+          ],
         },
-        unclearDisposition: false
-      }
+        unclearDisposition: false,
+      },
     },
     "Jane Smith": {
       pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_Jane.pdf",
@@ -218,19 +243,19 @@ export const CreditReportV2Tab = ({
       extracted: {
         fullName: "Jane Smith",
         last4SSN: "5678",
-        dateOfBirth: "1988-08-12"
+        dateOfBirth: "1988-08-12",
       },
       posData: {
         fullName: "Jane Smith",
         last4SSN: "5678",
-        dateOfBirth: "1988-08-12"
+        dateOfBirth: "1988-08-12",
       },
       validation: {
         nameMatch: true,
         ssnMatch: false,
         dobMatch: true,
         dobYearDiff: 0,
-        missingFields: [] as string[]
+        missingFields: [] as string[],
       },
       backgroundCheck: {
         liens: {
@@ -238,195 +263,235 @@ export const CreditReportV2Tab = ({
           recent: 1,
           old: 1,
           monthsSinceLatest: 118,
-          items: [{
-            type: "Tax Lien",
-            amount: "$12,000",
-            date: "2016-05-20",
-            status: "Satisfied"
-          }, {
-            type: "Contractor Lien",
-            amount: "$5,000",
-            date: "2024-02-10",
-            status: "Active"
-          }]
+          items: [
+            {
+              type: "Tax Lien",
+              amount: "$12,000",
+              date: "2016-05-20",
+              status: "Satisfied",
+            },
+            {
+              type: "Contractor Lien",
+              amount: "$5,000",
+              date: "2024-02-10",
+              status: "Active",
+            },
+          ],
         },
         judgments: {
           count: 0,
           recent: 0,
           old: 0,
           monthsSinceLatest: null,
-          items: []
+          items: [],
         },
         bankruptcies: {
           count: 1,
           recent: 0,
           old: 1,
           monthsSinceLatest: 140,
-          items: [{
-            type: "Chapter 13",
-            filingDate: "2013-05-10",
-            dischargeDate: "2018-06-20",
-            status: "Discharged"
-          }]
+          items: [
+            {
+              type: "Chapter 13",
+              filingDate: "2013-05-10",
+              dischargeDate: "2018-06-20",
+              status: "Discharged",
+            },
+          ],
         },
         foreclosures: {
           count: 1,
           recent: 1,
           old: 0,
           monthsSinceLatest: 48,
-          items: [{
-            address: "456 Oak Ave, City, ST",
-            date: "2021-03-22",
-            status: "Completed"
-          }]
+          items: [
+            {
+              address: "456 Oak Ave, City, ST",
+              date: "2021-03-22",
+              status: "Completed",
+            },
+          ],
         },
-        unclearDisposition: false
-      }
-    }
+        unclearDisposition: false,
+      },
+    },
   };
   const lexisNexisData = {
     "John Doe": {
       matchStatus: "match",
-      matchedEntities: [{
-        name: "John Doe",
-        matchScore: 95,
-        type: "Exact Name Match",
-        risk: "Low",
-        country: "United States",
-        description: "Sentenced to 100 months in prison for fraud.",
-        class: "Enforcement"
-      }, {
-        name: "Jonathan Doe",
-        matchScore: 78,
-        type: "Similar Name Match",
-        risk: "Medium",
-        country: "United States",
-        description: "Sentenced to 168 months in prison for embezzlement.",
-        class: "Enforcement"
-      }],
+      matchedEntities: [
+        {
+          name: "John Doe",
+          matchScore: 95,
+          type: "Exact Name Match",
+          risk: "Low",
+          country: "United States",
+          description: "Sentenced to 100 months in prison for fraud.",
+          class: "Enforcement",
+        },
+        {
+          name: "Jonathan Doe",
+          matchScore: 78,
+          type: "Similar Name Match",
+          risk: "Medium",
+          country: "United States",
+          description: "Sentenced to 168 months in prison for embezzlement.",
+          class: "Enforcement",
+        },
+      ],
       reportDate: "2025-10-15",
-      closeDate: "2025-11-10"
+      closeDate: "2025-11-10",
     },
     "Jane Smith": {
       matchStatus: "clear",
       matchedEntities: [],
       reportDate: "2025-10-16",
-      closeDate: "2025-11-10"
-    }
+      closeDate: "2025-11-10",
+    },
   };
   const flagDatData = {
     "John Doe": {
       watchlistMatches: 2,
       blacklistMatches: 0,
-      lastChecked: "2025-11-10"
+      lastChecked: "2025-11-10",
     },
     "Jane Smith": {
       watchlistMatches: 0,
       blacklistMatches: 0,
-      lastChecked: "2025-11-10"
-    }
+      lastChecked: "2025-11-10",
+    },
   };
 
   // Mock FlagDat detailed results
-  const flagDatDetailedResults = [{
-    name: "John Doe Sr.",
-    nameSimilarity: 0.92,
-    address: "123 Main St",
-    city: "Springfield",
-    state: "IL",
-    zipCode: "62701",
-    addressSimilarity: 0.88,
-    similarityScore: 0.9,
-    severity: "blacklist",
-    type: "borrower"
-  }, {
-    name: "Johnny Doe",
-    nameSimilarity: 0.85,
-    address: "456 Oak Ave",
-    city: "Springfield",
-    state: "IL",
-    zipCode: "62702",
-    addressSimilarity: 0.75,
-    similarityScore: 0.8,
-    severity: "watchlist",
-    type: "appraiser"
-  }, {
-    name: "J. Doe",
-    nameSimilarity: 0.78,
-    address: "789 Pine Rd",
-    city: "Chicago",
-    state: "IL",
-    zipCode: "60601",
-    addressSimilarity: 0.45,
-    similarityScore: 0.62,
-    severity: "watchlist",
-    type: "borrower"
-  }, {
-    name: "John David Doe",
-    nameSimilarity: 0.95,
-    address: "321 Elm St",
-    city: "Springfield",
-    state: "IL",
-    zipCode: "62701",
-    addressSimilarity: 0.92,
-    similarityScore: 0.94,
-    severity: "blacklist",
-    type: "guarantor"
-  }, {
-    name: "Johnathan Doe",
-    nameSimilarity: 0.88,
-    address: "555 Maple Dr",
-    city: "Peoria",
-    state: "IL",
-    zipCode: "61602",
-    addressSimilarity: 0.65,
-    similarityScore: 0.77,
-    severity: "blacklist",
-    type: "broker"
-  }, {
-    name: "John A. Doe",
-    nameSimilarity: 0.9,
-    address: "999 Cedar Ln",
-    city: "Rockford",
-    state: "IL",
-    zipCode: "61101",
-    addressSimilarity: 0.52,
-    similarityScore: 0.71,
-    severity: "watchlist",
-    type: "appraiser"
-  }, {
-    name: "Jon Doe",
-    nameSimilarity: 0.82,
-    address: "777 Birch Way",
-    city: "Aurora",
-    state: "IL",
-    zipCode: "60505",
-    addressSimilarity: 0.48,
-    similarityScore: 0.65,
-    severity: "blacklist",
-    type: "borrower"
-  }, {
-    name: "John M. Doe",
-    nameSimilarity: 0.91,
-    address: "222 Walnut St",
-    city: "Joliet",
-    state: "IL",
-    zipCode: "60431",
-    addressSimilarity: 0.7,
-    similarityScore: 0.81,
-    severity: "blacklist",
-    type: "guarantor"
-  }];
+  const flagDatDetailedResults = [
+    {
+      name: "John Doe Sr.",
+      nameSimilarity: 0.92,
+      address: "123 Main St",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62701",
+      addressSimilarity: 0.88,
+      similarityScore: 0.9,
+      severity: "blacklist",
+      type: "borrower",
+    },
+    {
+      name: "Johnny Doe",
+      nameSimilarity: 0.85,
+      address: "456 Oak Ave",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62702",
+      addressSimilarity: 0.75,
+      similarityScore: 0.8,
+      severity: "watchlist",
+      type: "appraiser",
+    },
+    {
+      name: "J. Doe",
+      nameSimilarity: 0.78,
+      address: "789 Pine Rd",
+      city: "Chicago",
+      state: "IL",
+      zipCode: "60601",
+      addressSimilarity: 0.45,
+      similarityScore: 0.62,
+      severity: "watchlist",
+      type: "borrower",
+    },
+    {
+      name: "John David Doe",
+      nameSimilarity: 0.95,
+      address: "321 Elm St",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62701",
+      addressSimilarity: 0.92,
+      similarityScore: 0.94,
+      severity: "blacklist",
+      type: "guarantor",
+    },
+    {
+      name: "Johnathan Doe",
+      nameSimilarity: 0.88,
+      address: "555 Maple Dr",
+      city: "Peoria",
+      state: "IL",
+      zipCode: "61602",
+      addressSimilarity: 0.65,
+      similarityScore: 0.77,
+      severity: "blacklist",
+      type: "broker",
+    },
+    {
+      name: "John A. Doe",
+      nameSimilarity: 0.9,
+      address: "999 Cedar Ln",
+      city: "Rockford",
+      state: "IL",
+      zipCode: "61101",
+      addressSimilarity: 0.52,
+      similarityScore: 0.71,
+      severity: "watchlist",
+      type: "appraiser",
+    },
+    {
+      name: "Jon Doe",
+      nameSimilarity: 0.82,
+      address: "777 Birch Way",
+      city: "Aurora",
+      state: "IL",
+      zipCode: "60505",
+      addressSimilarity: 0.48,
+      similarityScore: 0.65,
+      severity: "blacklist",
+      type: "borrower",
+    },
+    {
+      name: "John M. Doe",
+      nameSimilarity: 0.91,
+      address: "222 Walnut St",
+      city: "Joliet",
+      state: "IL",
+      zipCode: "60431",
+      addressSimilarity: 0.7,
+      similarityScore: 0.81,
+      severity: "blacklist",
+      type: "guarantor",
+    },
+  ];
   const calculateTLODecision = (guarantorData: (typeof tloData)["John Doe"]) => {
-    const requiresIdentityManualValidation = !guarantorData.validation.ssnMatch || Math.abs(guarantorData.validation.dobYearDiff) > 1 || guarantorData.validation.missingFields.length > 0;
-    const hasActiveLiensJudgmentsBankruptcies = guarantorData.backgroundCheck.liens.recent > 0 || guarantorData.backgroundCheck.judgments.recent > 0 || guarantorData.backgroundCheck.bankruptcies.recent > 0;
-    const hasActiveWithin120Months = guarantorData.backgroundCheck.liens.monthsSinceLatest !== null && guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 && guarantorData.backgroundCheck.liens.old === 0 || guarantorData.backgroundCheck.judgments.monthsSinceLatest !== null && guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 && guarantorData.backgroundCheck.judgments.old === 0 || guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest !== null && guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 && guarantorData.backgroundCheck.bankruptcies.old === 0;
-    const hasSatisfiedOrAged = guarantorData.backgroundCheck.liens.old > 0 || guarantorData.backgroundCheck.judgments.old > 0 || guarantorData.backgroundCheck.bankruptcies.old > 0;
+    const requiresIdentityManualValidation =
+      !guarantorData.validation.ssnMatch ||
+      Math.abs(guarantorData.validation.dobYearDiff) > 1 ||
+      guarantorData.validation.missingFields.length > 0;
+    const hasActiveLiensJudgmentsBankruptcies =
+      guarantorData.backgroundCheck.liens.recent > 0 ||
+      guarantorData.backgroundCheck.judgments.recent > 0 ||
+      guarantorData.backgroundCheck.bankruptcies.recent > 0;
+    const hasActiveWithin120Months =
+      (guarantorData.backgroundCheck.liens.monthsSinceLatest !== null &&
+        guarantorData.backgroundCheck.liens.monthsSinceLatest <= 120 &&
+        guarantorData.backgroundCheck.liens.old === 0) ||
+      (guarantorData.backgroundCheck.judgments.monthsSinceLatest !== null &&
+        guarantorData.backgroundCheck.judgments.monthsSinceLatest <= 120 &&
+        guarantorData.backgroundCheck.judgments.old === 0) ||
+      (guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest !== null &&
+        guarantorData.backgroundCheck.bankruptcies.monthsSinceLatest <= 120 &&
+        guarantorData.backgroundCheck.bankruptcies.old === 0);
+    const hasSatisfiedOrAged =
+      guarantorData.backgroundCheck.liens.old > 0 ||
+      guarantorData.backgroundCheck.judgments.old > 0 ||
+      guarantorData.backgroundCheck.bankruptcies.old > 0;
     const hasForeclosuresLast36 = guarantorData.backgroundCheck.foreclosures.recent > 0;
     let decision: "pass" | "manual_validation" | "non_pass" = "pass";
     if ((hasActiveLiensJudgmentsBankruptcies || hasActiveWithin120Months) && hasForeclosuresLast36) {
       decision = "non_pass";
-    } else if ((hasSatisfiedOrAged || requiresIdentityManualValidation || guarantorData.backgroundCheck.unclearDisposition) && hasForeclosuresLast36) {
+    } else if (
+      (hasSatisfiedOrAged || requiresIdentityManualValidation || guarantorData.backgroundCheck.unclearDisposition) &&
+      hasForeclosuresLast36
+    ) {
       decision = "manual_validation";
     } else if (!hasActiveWithin120Months && !hasForeclosuresLast36) {
       decision = "pass";
@@ -435,78 +500,83 @@ export const CreditReportV2Tab = ({
     }
     return {
       decision,
-      requiresIdentityManualValidation
+      requiresIdentityManualValidation,
     };
   };
-  const guarantors = [{
-    name: "John Doe",
-    ownership: 60,
-    fico: 720,
-    pullDate: "2025-11-01",
-    bureau: "Experian",
-    pullType: "Hard Pull" as const,
-    isForeignNational: false,
-    ssn: "***-**-1234",
-    dob: "1985-06-15",
-    ssnIssueDate: "2000-01-01",
-    utilization: 35,
-    hasCreditAuth: true,
-    validation: "pass" as const,
-    latePayments: {
-      thirtyDays: 0,
-      sixtyDays: 0,
-      ninetyDays: 0
-    },
-    publicRecords: {
-      count: 0,
-      collections: 0,
-      bankruptcies: "No (0)"
-    }
-  }, {
-    name: "Jane Smith",
-    ownership: 40,
-    fico: 695,
-    pullDate: "2025-11-01",
-    bureau: "TransUnion",
-    pullType: "Soft Pull" as const,
-    isForeignNational: false,
-    ssn: "***-**-5678",
-    dob: "1988-03-22",
-    ssnIssueDate: "2003-05-15",
-    utilization: 55,
-    hasCreditAuth: true,
-    validation: "warn" as const,
-    latePayments: {
-      thirtyDays: 1,
-      sixtyDays: 0,
-      ninetyDays: 0
-    },
-    publicRecords: {
-      count: 0,
-      collections: 0,
-      bankruptcies: "No (0)"
-    }
-  }];
-  const numGuarantors = guarantors.length;
-  const overallStatus = guarantors.some(g => g.validation === "warn") ? "warn" : "pass";
-  const lowestFICO = Math.min(...guarantors.map(g => g.fico));
-  const ficoMeetsProductMin = lowestFICO >= productMin;
-  const auditLogs = [{
-    id: "log-001",
-    tag: "credit_pull",
-    timestamp: "2025-11-10 14:25:32",
-    description: "Credit Report Pull",
-    action: "Credit Report Retrieved",
-    user: "System",
-    status: "completed",
-    exceptionTag: "credit_verification",
-    exceptionType: null,
-    jsonData: {
+  const guarantors = [
+    {
+      name: "John Doe",
+      ownership: 60,
+      fico: 720,
+      pullDate: "2025-11-01",
       bureau: "Experian",
-      fico_score: 720,
-      report_date: "2025-11-01"
-    }
-  }];
+      pullType: "Hard Pull" as const,
+      isForeignNational: false,
+      ssn: "***-**-1234",
+      dob: "1985-06-15",
+      ssnIssueDate: "2000-01-01",
+      utilization: 35,
+      hasCreditAuth: true,
+      validation: "pass" as const,
+      latePayments: {
+        thirtyDays: 0,
+        sixtyDays: 0,
+        ninetyDays: 0,
+      },
+      publicRecords: {
+        count: 0,
+        collections: 0,
+        bankruptcies: "No (0)",
+      },
+    },
+    {
+      name: "Jane Smith",
+      ownership: 40,
+      fico: 695,
+      pullDate: "2025-11-01",
+      bureau: "TransUnion",
+      pullType: "Soft Pull" as const,
+      isForeignNational: false,
+      ssn: "***-**-5678",
+      dob: "1988-03-22",
+      ssnIssueDate: "2003-05-15",
+      utilization: 55,
+      hasCreditAuth: true,
+      validation: "warn" as const,
+      latePayments: {
+        thirtyDays: 1,
+        sixtyDays: 0,
+        ninetyDays: 0,
+      },
+      publicRecords: {
+        count: 0,
+        collections: 0,
+        bankruptcies: "No (0)",
+      },
+    },
+  ];
+  const numGuarantors = guarantors.length;
+  const overallStatus = guarantors.some((g) => g.validation === "warn") ? "warn" : "pass";
+  const lowestFICO = Math.min(...guarantors.map((g) => g.fico));
+  const ficoMeetsProductMin = lowestFICO >= productMin;
+  const auditLogs = [
+    {
+      id: "log-001",
+      tag: "credit_pull",
+      timestamp: "2025-11-10 14:25:32",
+      description: "Credit Report Pull",
+      action: "Credit Report Retrieved",
+      user: "System",
+      status: "completed",
+      exceptionTag: "credit_verification",
+      exceptionType: null,
+      jsonData: {
+        bureau: "Experian",
+        fico_score: 720,
+        report_date: "2025-11-01",
+      },
+    },
+  ];
 
   // Calculate if DOB vs SSN is valid
   const isDobVsSsnValid = (dob: string, ssnIssueDate: string | undefined) => {
@@ -526,7 +596,8 @@ export const CreditReportV2Tab = ({
     const daysDiff = Math.floor((closingDateObj.getTime() - pullDateObj.getTime()) / (1000 * 60 * 60 * 24));
     return daysDiff <= 90;
   };
-  return <div className="space-y-4">
+  return (
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Review v2</span>
@@ -539,11 +610,33 @@ export const CreditReportV2Tab = ({
       </div>
 
       {/* Credit Review Summary */}
-      <CreditReviewSummary expandedCards={expandedCards} toggleCard={toggleCard} overallStatus={overallStatus} numGuarantors={numGuarantors} companyTier={companyTier} loanProgram={loanProgram} tierChanged={tierChanged} previousTier={previousTier} tierChangeReason={tierChangeReason} lowestFICO={lowestFICO} productMin={productMin} verifiedProjects={verifiedProjects} ficoMeetsProductMin={ficoMeetsProductMin} ltc={ltc} ltv={ltv} loanLimit={loanLimit} closingDate={closingDate} />
+      <CreditReviewSummary
+        expandedCards={expandedCards}
+        toggleCard={toggleCard}
+        overallStatus={overallStatus}
+        numGuarantors={numGuarantors}
+        companyTier={companyTier}
+        loanProgram={loanProgram}
+        tierChanged={tierChanged}
+        previousTier={previousTier}
+        tierChangeReason={tierChangeReason}
+        lowestFICO={lowestFICO}
+        productMin={productMin}
+        verifiedProjects={verifiedProjects}
+        ficoMeetsProductMin={ficoMeetsProductMin}
+        ltc={ltc}
+        ltv={ltv}
+        loanLimit={loanLimit}
+        closingDate={closingDate}
+      />
 
       {/* Guarantors */}
-      {guarantors.map(guarantor => <Card key={guarantor.name}>
-          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleGuarantor(guarantor.name)}>
+      {guarantors.map((guarantor) => (
+        <Card key={guarantor.name}>
+          <CardHeader
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => toggleGuarantor(guarantor.name)}
+          >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span>{guarantor.name}</span>
@@ -553,23 +646,30 @@ export const CreditReportV2Tab = ({
                   {guarantor.ownership}% Ownership
                 </Badge>
                 {getStatusBadge(guarantor.validation)}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? "" : "-rotate-90"}`} />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${expandedGuarantors[guarantor.name] ? "" : "-rotate-90"}`}
+                />
               </div>
             </CardTitle>
           </CardHeader>
 
-          {expandedGuarantors[guarantor.name] && <CardContent className="space-y-6">
+          {expandedGuarantors[guarantor.name] && (
+            <CardContent className="space-y-6">
               {/* Credit Report Validations */}
-              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-creditReport`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}>
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-creditReport`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-creditReport`)}
+              >
                 <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <CreditCard className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">
                     Credit Report Validations
                   </h3>
                   <div className="flex items-center gap-2 ml-auto">
-                    
                     {getStatusIcon(guarantor.validation)}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? "" : "-rotate-90"}`} />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? "" : "-rotate-90"}`}
+                    />
                   </div>
                 </CollapsibleTrigger>
 
@@ -596,10 +696,12 @@ export const CreditReportV2Tab = ({
                           <p className="font-medium text-sm">{guarantor.isForeignNational ? "Yes" : "No"}</p>
                         </div>
 
-                        {guarantor.ssnIssueDate && <div className="p-3 bg-muted/20 rounded space-y-1">
+                        {guarantor.ssnIssueDate && (
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
                             <p className="text-xs text-muted-foreground">SSN Issued Date</p>
                             <p className="font-medium text-sm">{guarantor.ssnIssueDate}</p>
-                          </div>}
+                          </div>
+                        )}
 
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <div className="flex items-center gap-1">
@@ -615,12 +717,20 @@ export const CreditReportV2Tab = ({
                               </Tooltip>
                             </TooltipProvider>
                           </div>
-                          {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) !== null ? <div className="flex items-center gap-2">
+                          {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) !== null ? (
+                            <div className="flex items-center gap-2">
                               <p className="font-medium text-sm">
                                 {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? "Valid" : "Invalid"}
                               </p>
-                              {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-red-600" />}
-                            </div> : <p className="font-medium text-sm">N/A</p>}
+                              {isDobVsSsnValid(guarantor.dob, guarantor.ssnIssueDate) ? (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                              )}
+                            </div>
+                          ) : (
+                            <p className="font-medium text-sm">N/A</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -655,11 +765,13 @@ export const CreditReportV2Tab = ({
                           {guarantor.hasCreditAuth && <CheckCircle className="h-4 w-4 text-green-600" />}
                         </div>
                       </div>
-                      {guarantor.hasCreditAuth && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      {guarantor.hasCreditAuth && (
+                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <p className="text-sm text-green-700 dark:text-green-300">
                             ✓ Credit Authorization Received - Continue workflow
                           </p>
-                        </div>}
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
@@ -684,22 +796,26 @@ export const CreditReportV2Tab = ({
                         </div>
 
                         <div className="p-3 bg-muted/20 rounded space-y-1">
-                          <p className="text-xs text-muted-foreground">Pull Type</p>
+                          <p className="text-xs text-muted-foreground">Report Type</p>
                           <p className="font-medium text-sm">{guarantor.pullType}</p>
                         </div>
                       </div>
 
-                      {isCreditReportDateValid(guarantor.pullDate) && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      {isCreditReportDateValid(guarantor.pullDate) && (
+                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <p className="text-sm text-green-700 dark:text-green-300">
                             ✓ Credit Pull Date Valid - Within 90 days
                           </p>
-                        </div>}
+                        </div>
+                      )}
 
-                      {!isCreditReportDateValid(guarantor.pullDate) && <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                      {!isCreditReportDateValid(guarantor.pullDate) && (
+                        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                           <p className="text-sm text-red-700 dark:text-red-300">
                             ✗ Credit Pull Date Invalid - Older than 90 days
                           </p>
-                        </div>}
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
@@ -723,7 +839,11 @@ export const CreditReportV2Tab = ({
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{guarantor.utilization}%</p>
-                          {guarantor.utilization < 50 ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-amber-600" />}
+                          {guarantor.utilization < 50 ? (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <AlertTriangle className="h-4 w-4 text-amber-600" />
+                          )}
                         </div>
                       </div>
 
@@ -765,16 +885,20 @@ export const CreditReportV2Tab = ({
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
-                      {guarantor.utilization < 50 && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      {guarantor.utilization < 50 && (
+                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <p className="text-sm text-green-700 dark:text-green-300">
                             ✓ Low Utilization - Continue workflow
                           </p>
-                        </div>}
-                      {guarantor.utilization >= 50 && <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        </div>
+                      )}
+                      {guarantor.utilization >= 50 && (
+                        <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                           <p className="text-sm text-amber-700 dark:text-amber-300">
                             ⚠ High Utilization - Manual Review Required
                           </p>
-                        </div>}
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
@@ -807,11 +931,15 @@ export const CreditReportV2Tab = ({
                           </div>
                         </div>
                       </div>
-                      {guarantor.latePayments.thirtyDays === 0 && guarantor.latePayments.sixtyDays === 0 && guarantor.latePayments.ninetyDays === 0 && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      {guarantor.latePayments.thirtyDays === 0 &&
+                        guarantor.latePayments.sixtyDays === 0 &&
+                        guarantor.latePayments.ninetyDays === 0 && (
+                          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                             <p className="text-sm text-green-700 dark:text-green-300">
                               ✓ No Late Payments - Continue workflow
                             </p>
-                          </div>}
+                          </div>
+                        )}
                     </div>
 
                     <Separator />
@@ -831,14 +959,18 @@ export const CreditReportV2Tab = ({
                             <p className="text-xs text-muted-foreground">Public Records</p>
                             <div className="flex items-center justify-between">
                               <p className="font-medium text-sm">{guarantor.publicRecords.count}</p>
-                              {guarantor.publicRecords.count === 0 && <CheckCircle className="h-4 w-4 text-green-600" />}
+                              {guarantor.publicRecords.count === 0 && (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
                             </div>
                           </div>
                           <div className="p-3 bg-muted/20 rounded space-y-1">
                             <p className="text-xs text-muted-foreground">Collections</p>
                             <div className="flex items-center justify-between">
                               <p className="font-medium text-sm">{guarantor.publicRecords.collections}</p>
-                              {guarantor.publicRecords.collections === 0 && <CheckCircle className="h-4 w-4 text-green-600" />}
+                              {guarantor.publicRecords.collections === 0 && (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
                             </div>
                           </div>
                         </div>
@@ -846,14 +978,18 @@ export const CreditReportV2Tab = ({
                           <p className="text-xs text-muted-foreground">Bankruptcies</p>
                           <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">{guarantor.publicRecords.bankruptcies}</p>
-                            {guarantor.publicRecords.bankruptcies === "No (0)" && <CheckCircle className="h-4 w-4 text-green-600" />}
+                            {guarantor.publicRecords.bankruptcies === "No (0)" && (
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                            )}
                           </div>
                         </div>
-                        {guarantor.publicRecords.count === 0 && guarantor.publicRecords.collections === 0 && <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        {guarantor.publicRecords.count === 0 && guarantor.publicRecords.collections === 0 && (
+                          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                             <p className="text-sm text-green-700 dark:text-green-300">
                               ✓ No Public Records or Collections - Continue workflow
                             </p>
-                          </div>}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -863,24 +999,34 @@ export const CreditReportV2Tab = ({
               <Separator className="my-6" />
 
               {/* TLO Validations */}
-              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-tlo`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}>
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-tlo`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-tlo`)}
+              >
                 <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">TLO Validations</h3>
                   <div className="flex items-center gap-2 ml-auto">
                     {(() => {
-                const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
-                return tloResult.decision === "non_pass" ? getStatusIcon("fail") : tloResult.decision === "manual_validation" ? getStatusIcon("warn") : getStatusIcon("pass");
-              })()}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? "" : "-rotate-90"}`} />
+                      const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
+                      return tloResult.decision === "non_pass"
+                        ? getStatusIcon("fail")
+                        : tloResult.decision === "manual_validation"
+                          ? getStatusIcon("warn")
+                          : getStatusIcon("pass");
+                    })()}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-tlo`] ? "" : "-rotate-90"}`}
+                    />
                   </div>
                 </CollapsibleTrigger>
 
                 <CollapsibleContent>
                   {(() => {
-              const tloGuarantorData = tloData[guarantor.name as keyof typeof tloData];
-              const tloResult = calculateTLODecision(tloGuarantorData);
-              return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                    const tloGuarantorData = tloData[guarantor.name as keyof typeof tloData];
+                    const tloResult = calculateTLODecision(tloGuarantorData);
+                    return (
+                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
                         <div className="flex items-center justify-between">
                           <Button variant="outline" size="sm" className="gap-2">
                             <Download className="h-3 w-3" />
@@ -903,13 +1049,17 @@ export const CreditReportV2Tab = ({
                             <div className="p-3 border rounded">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-muted-foreground">Full Name</span>
-                                {tloGuarantorData.validation.nameMatch ? <Badge variant="success" className="gap-1">
+                                {tloGuarantorData.validation.nameMatch ? (
+                                  <Badge variant="success" className="gap-1">
                                     <CheckCircle className="h-3 w-3" />
                                     Match
-                                  </Badge> : <Badge variant="destructive" className="gap-1">
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="destructive" className="gap-1">
                                     <XCircle className="h-3 w-3" />
                                     Mismatch
-                                  </Badge>}
+                                  </Badge>
+                                )}
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
@@ -927,13 +1077,19 @@ export const CreditReportV2Tab = ({
                             <div className="p-3 border rounded">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-muted-foreground">Last 4 SSN</span>
-                                {tloGuarantorData.validation.missingFields.includes("SSN") ? <Badge variant="destructive">Missing</Badge> : tloGuarantorData.validation.ssnMatch ? <Badge variant="success" className="gap-1">
+                                {tloGuarantorData.validation.missingFields.includes("SSN") ? (
+                                  <Badge variant="destructive">Missing</Badge>
+                                ) : tloGuarantorData.validation.ssnMatch ? (
+                                  <Badge variant="success" className="gap-1">
                                     <CheckCircle className="h-3 w-3" />
                                     Match
-                                  </Badge> : <Badge variant="destructive" className="gap-1">
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="destructive" className="gap-1">
                                     <XCircle className="h-3 w-3" />
                                     Mismatch
-                                  </Badge>}
+                                  </Badge>
+                                )}
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
@@ -951,13 +1107,19 @@ export const CreditReportV2Tab = ({
                             <div className="p-3 border rounded">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-muted-foreground">Date of Birth</span>
-                                {tloGuarantorData.validation.missingFields.includes("DOB") ? <Badge variant="destructive">Missing</Badge> : tloGuarantorData.validation.dobMatch ? <Badge variant="success" className="gap-1">
+                                {tloGuarantorData.validation.missingFields.includes("DOB") ? (
+                                  <Badge variant="destructive">Missing</Badge>
+                                ) : tloGuarantorData.validation.dobMatch ? (
+                                  <Badge variant="success" className="gap-1">
                                     <CheckCircle className="h-3 w-3" />
                                     Match
-                                  </Badge> : <Badge variant="warning" className="gap-1">
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="warning" className="gap-1">
                                     <AlertTriangle className="h-3 w-3" />
                                     {Math.abs(tloGuarantorData.validation.dobYearDiff)} year diff
-                                  </Badge>}
+                                  </Badge>
+                                )}
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
@@ -1061,68 +1223,105 @@ export const CreditReportV2Tab = ({
                           </Table>
 
                           {/* Detailed Items */}
-                          {(tloGuarantorData.backgroundCheck.liens.items.length > 0 || tloGuarantorData.backgroundCheck.judgments.items.length > 0 || tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 || tloGuarantorData.backgroundCheck.foreclosures.items.length > 0) && <Collapsible open={expandedBackgroundCheckDetails[guarantor.name]} onOpenChange={() => toggleBackgroundCheckDetails(guarantor.name)} className="mt-4">
+                          {(tloGuarantorData.backgroundCheck.liens.items.length > 0 ||
+                            tloGuarantorData.backgroundCheck.judgments.items.length > 0 ||
+                            tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 ||
+                            tloGuarantorData.backgroundCheck.foreclosures.items.length > 0) && (
+                            <Collapsible
+                              open={expandedBackgroundCheckDetails[guarantor.name]}
+                              onOpenChange={() => toggleBackgroundCheckDetails(guarantor.name)}
+                              className="mt-4"
+                            >
                               <CollapsibleTrigger className="flex items-center gap-2 text-xs font-medium hover:text-primary transition-colors">
-                                <ChevronDown className={`h-4 w-4 transition-transform ${expandedBackgroundCheckDetails[guarantor.name] ? "transform rotate-180" : ""}`} />
+                                <ChevronDown
+                                  className={`h-4 w-4 transition-transform ${expandedBackgroundCheckDetails[guarantor.name] ? "transform rotate-180" : ""}`}
+                                />
                                 View Detailed Items Found
                               </CollapsibleTrigger>
                               <CollapsibleContent className="mt-3 space-y-3">
-                                {tloGuarantorData.backgroundCheck.liens.items.length > 0 && <div className="p-3 bg-muted/30 rounded border">
+                                {tloGuarantorData.backgroundCheck.liens.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Liens Found:</p>
-                                    {tloGuarantorData.backgroundCheck.liens.items.map((item, idx) => <div key={idx} className="text-xs mb-2 last:mb-0">
+                                    {tloGuarantorData.backgroundCheck.liens.items.map((item, idx) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
                                         <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} |{" "}
                                         <span className={item.status === "Active" ? "text-warning" : "text-success"}>
                                           {item.status}
                                         </span>
-                                      </div>)}
-                                  </div>}
-                                {tloGuarantorData.backgroundCheck.judgments.items.length > 0 && <div className="p-3 bg-muted/30 rounded border">
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {tloGuarantorData.backgroundCheck.judgments.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Judgments Found:</p>
-                                    {tloGuarantorData.backgroundCheck.judgments.items.map((item: any, idx: number) => <div key={idx} className="text-xs mb-2 last:mb-0">
+                                    {tloGuarantorData.backgroundCheck.judgments.items.map((item: any, idx: number) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
                                         <span className="font-medium">{item.type}</span> - {item.amount} | {item.date} |{" "}
                                         <span className={item.status === "Active" ? "text-warning" : "text-success"}>
                                           {item.status}
                                         </span>
-                                      </div>)}
-                                  </div>}
-                                {tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 && <div className="p-3 bg-muted/30 rounded border">
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Bankruptcies Found:</p>
-                                    {tloGuarantorData.backgroundCheck.bankruptcies.items.map((item, idx) => <div key={idx} className="text-xs mb-2 last:mb-0">
+                                    {tloGuarantorData.backgroundCheck.bankruptcies.items.map((item, idx) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
                                         <span className="font-medium">{item.type}</span> | Filed: {item.filingDate} |
                                         Discharged: {item.dischargeDate} |{" "}
                                         <span className="text-muted-foreground">{item.status}</span>
-                                      </div>)}
-                                  </div>}
-                                {tloGuarantorData.backgroundCheck.foreclosures.items.length > 0 && <div className="p-3 bg-muted/30 rounded border">
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {tloGuarantorData.backgroundCheck.foreclosures.items.length > 0 && (
+                                  <div className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Foreclosures Found:</p>
-                                    {tloGuarantorData.backgroundCheck.foreclosures.items.map((item, idx) => <div key={idx} className="text-xs mb-2 last:mb-0">
+                                    {tloGuarantorData.backgroundCheck.foreclosures.items.map((item, idx) => (
+                                      <div key={idx} className="text-xs mb-2 last:mb-0">
                                         <span className="font-medium">{item.address}</span> | {item.date} |{" "}
                                         <span className="text-muted-foreground">{item.status}</span>
-                                      </div>)}
-                                  </div>}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </CollapsibleContent>
-                            </Collapsible>}
+                            </Collapsible>
+                          )}
                         </div>
 
                         {/* Decision */}
-                        {tloResult.decision === "non_pass" && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                        {tloResult.decision === "non_pass" && (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">🔴 Non-Pass</p>
-                          </div>}
-                        {tloResult.decision === "manual_validation" && <div className="p-3 bg-warning/10 border border-warning/20 rounded">
+                          </div>
+                        )}
+                        {tloResult.decision === "manual_validation" && (
+                          <div className="p-3 bg-warning/10 border border-warning/20 rounded">
                             <p className="text-sm font-medium text-warning">⚠ Manual Validation Required</p>
-                          </div>}
-                        {tloResult.decision === "pass" && <div className="p-3 bg-success/10 border border-success/20 rounded">
+                          </div>
+                        )}
+                        {tloResult.decision === "pass" && (
+                          <div className="p-3 bg-success/10 border border-success/20 rounded">
                             <p className="text-sm font-medium text-success">✓ Pass</p>
-                          </div>}
-                      </div>;
-            })()}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </CollapsibleContent>
               </Collapsible>
 
               <Separator className="my-6" />
 
               {/* LexisNexis Validations */}
-              <Collapsible open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]} onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}>
+              <Collapsible
+                open={expandedGuarantorSections[`${guarantor.name}-lexisNexis`]}
+                onOpenChange={() => toggleGuarantorSection(`${guarantor.name}-lexisNexis`)}
+              >
                 <CollapsibleTrigger className="flex items-center w-full hover:bg-muted/30 p-3 rounded transition-colors">
                   <Shield className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">
@@ -1130,21 +1329,27 @@ export const CreditReportV2Tab = ({
                   </h3>
                   <div className="flex items-center gap-2 ml-auto">
                     {(() => {
-                const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
-                const hasMatches = lexisData.matchStatus === "match" && lexisData.matchedEntities.length > 0;
-                return hasMatches ? getStatusIcon("fail") : getStatusIcon("pass");
-              })()}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? "" : "-rotate-90"}`} />
+                      const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+                      const hasMatches = lexisData.matchStatus === "match" && lexisData.matchedEntities.length > 0;
+                      return hasMatches ? getStatusIcon("fail") : getStatusIcon("pass");
+                    })()}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-lexisNexis`] ? "" : "-rotate-90"}`}
+                    />
                   </div>
                 </CollapsibleTrigger>
 
                 <CollapsibleContent>
                   {(() => {
-              const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
-              const reportAge = Math.floor((new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) / (1000 * 60 * 60 * 24));
-              const isReportStale = reportAge > 60;
-              const hasMatch = lexisData.matchStatus === "match";
-              return <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
+                    const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
+                    const reportAge = Math.floor(
+                      (new Date(lexisData.closeDate).getTime() - new Date(lexisData.reportDate).getTime()) /
+                        (1000 * 60 * 60 * 24),
+                    );
+                    const isReportStale = reportAge > 60;
+                    const hasMatch = lexisData.matchStatus === "match";
+                    return (
+                      <div className="p-4 bg-muted/20 rounded-lg mt-3 space-y-4">
                         <div className="flex items-center justify-between">
                           <Button variant="outline" size="sm" className="gap-2">
                             <Download className="h-3 w-3" />
@@ -1159,7 +1364,11 @@ export const CreditReportV2Tab = ({
                               <p className="text-sm font-semibold">
                                 {lexisData.matchStatus === "match" ? "Match/Hit" : "Clear"}
                               </p>
-                              {lexisData.matchStatus === "match" ? <Badge variant="destructive">Match Found</Badge> : <Badge variant="success">Clear</Badge>}
+                              {lexisData.matchStatus === "match" ? (
+                                <Badge variant="destructive">Match Found</Badge>
+                              ) : (
+                                <Badge variant="success">Clear</Badge>
+                              )}
                             </div>
                           </div>
                           <div className="p-3 border rounded space-y-2">
@@ -1175,16 +1384,23 @@ export const CreditReportV2Tab = ({
                           </div>
                         </div>
 
-                        {hasMatch && lexisData.matchedEntities.length > 0 && <>
+                        {hasMatch && lexisData.matchedEntities.length > 0 && (
+                          <>
                             <Separator />
-                            <Collapsible open={expandedLexisNexisMatches[guarantor.name]} onOpenChange={() => toggleLexisNexisMatches(guarantor.name)}>
+                            <Collapsible
+                              open={expandedLexisNexisMatches[guarantor.name]}
+                              onOpenChange={() => toggleLexisNexisMatches(guarantor.name)}
+                            >
                               <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors w-full justify-between">
                                 <span>Matched Entities</span>
-                                <ChevronDown className={`h-4 w-4 transition-transform ${expandedLexisNexisMatches[guarantor.name] ? "" : "-rotate-90"}`} />
+                                <ChevronDown
+                                  className={`h-4 w-4 transition-transform ${expandedLexisNexisMatches[guarantor.name] ? "" : "-rotate-90"}`}
+                                />
                               </CollapsibleTrigger>
                               <CollapsibleContent>
                                 <div className="space-y-3 mt-3">
-                                  {lexisData.matchedEntities.map((entity, index) => <div key={index} className="p-3 bg-muted/20 rounded-lg">
+                                  {lexisData.matchedEntities.map((entity, index) => (
+                                    <div key={index} className="p-3 bg-muted/20 rounded-lg">
                                       <div className="grid grid-cols-2 gap-3">
                                         <div>
                                           <p className="text-xs text-muted-foreground">Name</p>
@@ -1200,7 +1416,15 @@ export const CreditReportV2Tab = ({
                                         </div>
                                         <div>
                                           <p className="text-xs text-muted-foreground">Risk</p>
-                                          <Badge variant={entity.risk === "Low" ? "success" : entity.risk === "Medium" ? "warning" : "destructive"}>
+                                          <Badge
+                                            variant={
+                                              entity.risk === "Low"
+                                                ? "success"
+                                                : entity.risk === "Medium"
+                                                  ? "warning"
+                                                  : "destructive"
+                                            }
+                                          >
                                             {entity.risk}
                                           </Badge>
                                         </div>
@@ -1217,33 +1441,47 @@ export const CreditReportV2Tab = ({
                                           <p className="text-sm font-medium">{entity.description}</p>
                                         </div>
                                       </div>
-                                    </div>)}
+                                    </div>
+                                  ))}
                                 </div>
                               </CollapsibleContent>
                             </Collapsible>
-                          </>}
+                          </>
+                        )}
 
-                        {hasMatch ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                        {hasMatch ? (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">
                               🔴 Match Found - Manual Review Required
                             </p>
-                          </div> : isReportStale ? <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
+                          </div>
+                        ) : isReportStale ? (
+                          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded">
                             <p className="text-sm font-medium text-destructive">
                               🔴 Report is {">"}60 days old - Manual Review required
                             </p>
-                          </div> : <div className="p-3 bg-success/10 border border-success/20 rounded">
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-success/10 border border-success/20 rounded">
                             <p className="text-sm font-medium text-success">✓ Clear - Continue workflow</p>
-                          </div>}
-                      </div>;
-            })()}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </CollapsibleContent>
               </Collapsible>
-            </CardContent>}
-        </Card>)}
+            </CardContent>
+          )}
+        </Card>
+      ))}
 
       {/* FlagDat Validations */}
       <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard("flagDat")}>
+        <CardHeader
+          className="cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => toggleCard("flagDat")}
+        >
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircleIcon className="h-4 w-4" />
@@ -1251,14 +1489,17 @@ export const CreditReportV2Tab = ({
             </div>
             <div className="flex items-center gap-2">
               {(() => {
-              const hasAnyMatches = Object.values(flagDatData).some(data => data.watchlistMatches > 0 || data.blacklistMatches > 0);
-              return hasAnyMatches ? getStatusBadge("fail") : getStatusBadge("pass");
-            })()}
+                const hasAnyMatches = Object.values(flagDatData).some(
+                  (data) => data.watchlistMatches > 0 || data.blacklistMatches > 0,
+                );
+                return hasAnyMatches ? getStatusBadge("fail") : getStatusBadge("pass");
+              })()}
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.flagDat ? "" : "-rotate-90"}`} />
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.flagDat && <CardContent className="space-y-4">
+        {expandedCards.flagDat && (
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div className="p-3 border rounded space-y-2">
                 <p className="text-xs text-muted-foreground">WatchList Matches</p>
@@ -1291,7 +1532,9 @@ export const CreditReportV2Tab = ({
               <CollapsibleTrigger className="w-full">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">View Detailed Match Results</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${expandedFlagDatResults ? "" : "-rotate-90"}`} />
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${expandedFlagDatResults ? "" : "-rotate-90"}`}
+                  />
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-3">
@@ -1309,7 +1552,8 @@ export const CreditReportV2Tab = ({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {flagDatDetailedResults.map((result, index) => <TableRow key={index}>
+                      {flagDatDetailedResults.map((result, index) => (
+                        <TableRow key={index}>
                           <TableCell className="font-medium">{result.name}</TableCell>
                           <TableCell>
                             <Badge variant="outline" className="bg-muted/50">
@@ -1333,7 +1577,10 @@ export const CreditReportV2Tab = ({
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={result.severity === "blacklist" ? "destructive" : "warning"} className="capitalize">
+                            <Badge
+                              variant={result.severity === "blacklist" ? "destructive" : "warning"}
+                              className="capitalize"
+                            >
                               {result.severity}
                             </Badge>
                           </TableCell>
@@ -1342,13 +1589,15 @@ export const CreditReportV2Tab = ({
                               {result.type}
                             </Badge>
                           </TableCell>
-                        </TableRow>)}
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
               </CollapsibleContent>
             </Collapsible>
-          </CardContent>}
+          </CardContent>
+        )}
       </Card>
 
       {/* Logs */}
@@ -1362,9 +1611,14 @@ export const CreditReportV2Tab = ({
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.logs ? "" : "-rotate-90"}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.logs && <CardContent className="space-y-3">
-            {auditLogs.map(log => <div key={log.id} className="border rounded-lg">
-                <div className="p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
+        {expandedCards.logs && (
+          <CardContent className="space-y-3">
+            {auditLogs.map((log) => (
+              <div key={log.id} className="border rounded-lg">
+                <div
+                  className="p-3 cursor-pointer hover:bg-muted/30 transition-colors"
+                  onClick={() => toggleLog(log.id)}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                       <Badge variant="outline" className="text-xs">
@@ -1373,11 +1627,14 @@ export const CreditReportV2Tab = ({
                       <span className="text-sm font-medium">{log.description}</span>
                       <span className="text-xs text-muted-foreground">{log.timestamp}</span>
                     </div>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? "" : "-rotate-90"}`} />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? "" : "-rotate-90"}`}
+                    />
                   </div>
                 </div>
 
-                {expandedLogs[log.id] && <div className="p-3 bg-muted/20 border-t space-y-2">
+                {expandedLogs[log.id] && (
+                  <div className="p-3 bg-muted/20 border-t space-y-2">
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-muted-foreground">Action:</span>
@@ -1391,20 +1648,28 @@ export const CreditReportV2Tab = ({
                         <span className="text-muted-foreground">Status:</span>
                         <span className="ml-2 font-medium">{log.status}</span>
                       </div>
-                      {log.exceptionTag && <div>
+                      {log.exceptionTag && (
+                        <div>
                           <span className="text-muted-foreground">Exception Tag:</span>
                           <span className="ml-2 font-medium">{log.exceptionTag}</span>
-                        </div>}
+                        </div>
+                      )}
                     </div>
-                    {log.jsonData && <div className="mt-3">
+                    {log.jsonData && (
+                      <div className="mt-3">
                         <p className="text-xs text-muted-foreground mb-2">JSON Data:</p>
                         <pre className="text-xs bg-background p-2 rounded border overflow-x-auto">
                           {JSON.stringify(log.jsonData, null, 2)}
                         </pre>
-                      </div>}
-                  </div>}
-              </div>)}
-          </CardContent>}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        )}
       </Card>
-    </div>;
+    </div>
+  );
 };
