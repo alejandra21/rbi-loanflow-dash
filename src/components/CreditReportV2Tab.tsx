@@ -1305,6 +1305,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                           Download Report
                         </Button>
 
+                        <div className="flex items-center justify-between">
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <Download className="h-3 w-3" />
+                            Download Report
+                          </Button>
+                        </div>
+
                         <div className="grid grid-cols-3 gap-4">
                           <div className="p-3 border rounded space-y-2">
                             <p className="text-xs text-muted-foreground">Match Status</p>
