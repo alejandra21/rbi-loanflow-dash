@@ -13,7 +13,25 @@ import { CreditReviewTab } from "@/components/CreditReviewTab";
 import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
-import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp } from "lucide-react";
+import {
+  ArrowLeft,
+  Play,
+  CheckSquare,
+  Clock,
+  User,
+  Settings,
+  AlertTriangle,
+  CheckCircle,
+  Building,
+  Users,
+  CreditCard,
+  FileText,
+  ChevronDown,
+  Download,
+  AlertCircle,
+  XCircle,
+  TrendingUp,
+} from "lucide-react";
 import { useState } from "react";
 
 export const LoanDetail = () => {
@@ -40,15 +58,15 @@ export const LoanDetail = () => {
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
 
   const toggleCard = (cardId: string) => {
-    setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
+    setExpandedCards((prev) => ({ ...prev, [cardId]: !prev[cardId] }));
   };
 
   const toggleLog = (logId: string) => {
-    setExpandedLogs(prev => ({ ...prev, [logId]: !prev[logId] }));
+    setExpandedLogs((prev) => ({ ...prev, [logId]: !prev[logId] }));
   };
-  
-  const loan = mockLoans.find(l => l.id === id);
-  
+
+  const loan = mockLoans.find((l) => l.id === id);
+
   if (!loan) {
     return (
       <div className="text-center py-8">
@@ -59,16 +77,16 @@ export const LoanDetail = () => {
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       maximumFractionDigits: 0,
     }).format(amount);
   };
 
   const getProgressPercentage = () => {
     const phases = Object.values(loan.phases);
-    const completed = phases.filter(p => p.status === 'passed').length;
+    const completed = phases.filter((p) => p.status === "passed").length;
     return (completed / phases.length) * 100;
   };
 
@@ -89,19 +107,19 @@ export const LoanDetail = () => {
     return phaseMap[activeTab] || phaseMap.borrowerEligibility;
   };
 
-  const handlePollingAction = async (actionType: 'workflow' | 'phase') => {
+  const handlePollingAction = async (actionType: "workflow" | "phase") => {
     setIsPolling(true);
     setPollingProgress(0);
-    
+
     // Random duration between 40-60 seconds
     const duration = Math.floor(Math.random() * (60000 - 40000) + 40000);
     const startTime = Date.now();
-    
+
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min((elapsed / duration) * 100, 100);
       setPollingProgress(progress);
-      
+
       if (progress >= 100) {
         clearInterval(interval);
         setIsPolling(false);
@@ -112,7 +130,7 @@ export const LoanDetail = () => {
 
   const StatusTimeline = () => {
     const currentPhaseData = getCurrentPhase();
-    
+
     return (
       <div className="mb-6 grid grid-cols-3 gap-6">
         <div className="col-span-2">
@@ -122,7 +140,7 @@ export const LoanDetail = () => {
                 <span>Processing Timeline</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-64 bg-muted rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-primary h-2 rounded-full transition-all"
                       style={{ width: `${getProgressPercentage()}%` }}
                     />
@@ -137,11 +155,11 @@ export const LoanDetail = () => {
                   <div key={index} className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-primary rounded-full" />
                     <span className="font-medium">{event.phase}</span>
-                    <Badge variant="outline" className="text-xs">{event.status}</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {event.status}
+                    </Badge>
                     <span className="text-muted-foreground">{event.date}</span>
-                    {event.status !== 'pending' && (
-                      <span className="text-muted-foreground">by {event.user}</span>
-                    )}
+                    {event.status !== "pending" && <span className="text-muted-foreground">by {event.user}</span>}
                   </div>
                 ))}
               </div>
@@ -158,11 +176,11 @@ export const LoanDetail = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button 
-                variant="outline" 
-                className="w-full justify-start" 
+              <Button
+                variant="outline"
+                className="w-full justify-start"
                 size="sm"
-                onClick={() => handlePollingAction('workflow')}
+                onClick={() => handlePollingAction("workflow")}
                 disabled={isPolling}
               >
                 {isPolling ? (
@@ -179,17 +197,17 @@ export const LoanDetail = () => {
               </Button>
               {isPolling && (
                 <div className="w-full bg-muted rounded-full h-1.5">
-                  <div 
+                  <div
                     className="bg-primary h-1.5 rounded-full transition-all"
                     style={{ width: `${pollingProgress}%` }}
                   />
                 </div>
               )}
-              <Button 
-                variant="outline" 
-                className="w-full justify-start" 
+              <Button
+                variant="outline"
+                className="w-full justify-start"
                 size="sm"
-                onClick={() => handlePollingAction('phase')}
+                onClick={() => handlePollingAction("phase")}
                 disabled={isPolling}
               >
                 {isPolling ? (
@@ -217,28 +235,31 @@ export const LoanDetail = () => {
       const issueDate = new Date(documentIssueDate);
       const today = new Date();
       const daysSinceIssue = Math.floor((today.getTime() - issueDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+
       const rules: Record<string, { maxDays: number; description: string }> = {
-        'Bridge': { maxDays: 90, description: 'Certificate must be issued within 90 days for Bridge loans' },
-        'DSCR': { maxDays: 180, description: 'Certificate must be issued within 180 days for DSCR loans' },
-        'Construction': { maxDays: 60, description: 'Certificate must be issued within 60 days for Construction loans' },
-        'Fix and Flip': { maxDays: 90, description: 'Certificate must be issued within 90 days for Fix and Flip loans' }
+        Bridge: { maxDays: 90, description: "Certificate must be issued within 90 days for Bridge loans" },
+        DSCR: { maxDays: 180, description: "Certificate must be issued within 180 days for DSCR loans" },
+        Construction: { maxDays: 60, description: "Certificate must be issued within 60 days for Construction loans" },
+        "Fix and Flip": {
+          maxDays: 90,
+          description: "Certificate must be issued within 90 days for Fix and Flip loans",
+        },
       };
-      
-      const rule = rules[loanType] || { maxDays: 180, description: 'Certificate must be issued within 180 days' };
+
+      const rule = rules[loanType] || { maxDays: 180, description: "Certificate must be issued within 180 days" };
       const isValid = daysSinceIssue <= rule.maxDays;
-      
+
       return {
         ...rule,
         daysSinceIssue,
         isValid,
-        status: isValid ? 'Valid' : 'Expired'
+        status: isValid ? "Valid" : "Expired",
       };
     };
 
-    const certificateRule = phase.eligibilityData ? 
-      getCertificateValidationRule(loan.loanType, phase.eligibilityData.documentIssuedDate) : 
-      null;
+    const certificateRule = phase.eligibilityData
+      ? getCertificateValidationRule(loan.loanType, phase.eligibilityData.documentIssuedDate)
+      : null;
 
     const downloadEligibilityData = () => {
       const eligibilityData = {
@@ -246,7 +267,7 @@ export const LoanDetail = () => {
         applicantName: loan.applicantName,
         loanAmount: loan.loanAmount,
         loanType: loan.loanType,
-        phase: 'Eligibility',
+        phase: "Eligibility",
         status: phase.status,
         completedAt: phase.completedAt,
         entityValidations: {
@@ -255,25 +276,25 @@ export const LoanDetail = () => {
           entityNameValid: phase.eligibilityData.entityNameValid,
           entityTypeValid: phase.eligibilityData.entityTypeValid,
           ein: phase.eligibilityData.ein,
-          einValidated: phase.eligibilityData.einValidated
+          einValidated: phase.eligibilityData.einValidated,
         },
         ownershipAndStructure: {
-          signatories: phase.eligibilityData.signatories
+          signatories: phase.eligibilityData.signatories,
         },
         certificateOfGoodStanding: {
           document: phase.eligibilityData.validationDocument,
           issuedDate: phase.eligibilityData.documentIssuedDate,
-          validationRule: certificateRule
+          validationRule: certificateRule,
         },
-        auditLog: phase.auditLog
+        auditLog: phase.auditLog,
       };
 
       const dataStr = JSON.stringify(eligibilityData, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${loan.id}-eligibility-${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `${loan.id}-eligibility-${new Date().toISOString().split("T")[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -281,536 +302,583 @@ export const LoanDetail = () => {
     };
 
     return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <span className="font-medium">Eligibility Check</span>
-          <StatusBadge status={phase.status} />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <span className="font-medium">Eligibility Check</span>
+            <StatusBadge status={phase.status} />
+          </div>
+          <Button variant="outline" size="sm" onClick={downloadEligibilityData} className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            Download Report
+          </Button>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={downloadEligibilityData}
-          className="flex items-center gap-2"
-        >
-          <Download className="h-4 w-4" />
-          Download Report
-        </Button>
-      </div>
 
-      {phase.eligibilityData && (
+        {phase.eligibilityData && (
           <>
-        {/* Entity Information */}
-        <Card>
-          <CardHeader 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('entity')}
-          >
-            <CardTitle className="text-base flex items-center justify-between">
-              <div className="flex items-center">
-                <Building className="h-4 w-4 mr-2" />
-                Entity Validations
-              </div>
-              <div className="flex items-center space-x-2">
-                {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
-                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                    <CheckCircle className="h-4 w-4" />
-                    Validated
-                  </Badge>
-                )}
-                {(!phase.eligibilityData.entityNameValid || !phase.eligibilityData.entityTypeValid) && (
-                  <Badge variant="destructive" className="inline-flex items-center gap-1">
-                    <AlertTriangle className="h-4 w-4" />
-                    Requires Review
-                  </Badge>
-                )}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.entity ? '' : '-rotate-90'}`} />
-              </div>
-            </CardTitle>
-          </CardHeader>
-          {expandedCards.entity && (
-            <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <p className="font-medium text-base">{phase.eligibilityData.entityName}</p>
-                {phase.eligibilityData.entityType && (
-                  <p className="text-sm text-muted-foreground">Type: {phase.eligibilityData.entityType}</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 bg-muted/30 rounded space-y-1">
-                  <p className="text-xs text-muted-foreground">Entity Name</p>
-                  <div className="flex items-center space-x-2">
-                    <p className="font-medium text-sm">
-                      {phase.eligibilityData.entityNameValid ? "Valid" : "Invalid"}
-                    </p>
-                    {phase.eligibilityData.entityNameValid ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
-                    )}
+            {/* Entity Information */}
+            <Card>
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => toggleCard("entity")}
+              >
+                <CardTitle className="text-base flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Building className="h-4 w-4 mr-2" />
+                    Entity Validations
                   </div>
-                </div>
-                
-                <div className="p-3 bg-muted/30 rounded space-y-1">
-                  <p className="text-xs text-muted-foreground">Entity Type</p>
                   <div className="flex items-center space-x-2">
-                    <p className="font-medium text-sm">
-                      {phase.eligibilityData.entityTypeValid ? "Valid" : "Invalid"}
-                    </p>
-                    {phase.eligibilityData.entityTypeValid ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                    {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid && (
+                      <Badge
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        Validated
+                      </Badge>
                     )}
-                  </div>
-                </div>
-
-                <div className="p-3 bg-muted/30 rounded space-y-1">
-                  <p className="text-xs text-muted-foreground">EIN</p>
-                  <p className="font-medium text-sm">{phase.eligibilityData.ein}</p>
-                  <div className="flex items-center space-x-2">
-                    <p className="font-medium text-xs">
-                      {phase.eligibilityData.einValidated ? "Valid" : "Invalid"}
-                    </p>
-                    {phase.eligibilityData.einValidated ? (
-                      <CheckCircle className="h-3 w-3 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-3 w-3 text-red-600" />
+                    {(!phase.eligibilityData.entityNameValid || !phase.eligibilityData.entityTypeValid) && (
+                      <Badge variant="destructive" className="inline-flex items-center gap-1">
+                        <AlertTriangle className="h-4 w-4" />
+                        Requires Review
+                      </Badge>
                     )}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedCards.entity ? "" : "-rotate-90"}`}
+                    />
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            {phase.eligibilityData.entityNameValidation && (
-              <Collapsible>
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" size="sm" className="w-full justify-between">
-                    <span>View Validation Details</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="mt-3">
-                  <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
-                    <div>
-                      <p className="font-medium mb-2">Verification Summary:</p>
-                      <p className="text-xs text-muted-foreground">
-                        {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid 
-                          ? "Both entity name and type validations passed successfully."
-                          : !phase.eligibilityData.entityNameValid && !phase.eligibilityData.entityTypeValid
-                          ? "Both entity name and type validations failed. Manual review required."
-                          : !phase.eligibilityData.entityNameValid
-                          ? "Entity name validation failed. Entity type is valid."
-                          : "Entity type validation failed. Entity name is valid."
-                        }
-                      </p>
+                </CardTitle>
+              </CardHeader>
+              {expandedCards.entity && (
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <p className="font-medium text-base">{phase.eligibilityData.entityName}</p>
+                      {phase.eligibilityData.entityType && (
+                        <p className="text-sm text-muted-foreground">Type: {phase.eligibilityData.entityType}</p>
+                      )}
                     </div>
-                    
-                    <div className="space-y-1 text-xs">
-                      <p><span className="text-muted-foreground">Provider:</span> {phase.eligibilityData.entityNameValidation.provider}</p>
-                      <p><span className="text-muted-foreground">Date:</span> {new Date(phase.eligibilityData.entityNameValidation.validationDate).toLocaleString()}</p>
-                      <p><span className="text-muted-foreground">Match Confidence:</span> {phase.eligibilityData.entityNameValidation.matchConfidence}%</p>
-                      <div className="mt-2 p-2 bg-muted/30 rounded">
-                        <p className="font-medium mb-1">API Response:</p>
-                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify(phase.eligibilityData.entityNameValidation.apiResponse, null, 2)}</pre>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="p-3 bg-muted/30 rounded space-y-1">
+                        <p className="text-xs text-muted-foreground">Entity Name</p>
+                        <div className="flex items-center space-x-2">
+                          <p className="font-medium text-sm">
+                            {phase.eligibilityData.entityNameValid ? "Valid" : "Invalid"}
+                          </p>
+                          {phase.eligibilityData.entityNameValid ? (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <AlertTriangle className="h-4 w-4 text-red-600" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-muted/30 rounded space-y-1">
+                        <p className="text-xs text-muted-foreground">Entity Type</p>
+                        <div className="flex items-center space-x-2">
+                          <p className="font-medium text-sm">
+                            {phase.eligibilityData.entityTypeValid ? "Valid" : "Invalid"}
+                          </p>
+                          {phase.eligibilityData.entityTypeValid ? (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <AlertTriangle className="h-4 w-4 text-red-600" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-muted/30 rounded space-y-1">
+                        <p className="text-xs text-muted-foreground">EIN</p>
+                        <p className="font-medium text-sm">{phase.eligibilityData.ein}</p>
+                        <div className="flex items-center space-x-2">
+                          <p className="font-medium text-xs">
+                            {phase.eligibilityData.einValidated ? "Valid" : "Invalid"}
+                          </p>
+                          {phase.eligibilityData.einValidated ? (
+                            <CheckCircle className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <AlertTriangle className="h-3 w-3 text-red-600" />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </CollapsibleContent>
-              </Collapsible>
-            )}
-          </CardContent>
-          )}
-        </Card>
 
-        {/* Signatories */}
-        <Card>
-          <CardHeader 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('signatories')}
-          >
-            <CardTitle className="text-base flex items-center justify-between">
-              <div className="flex items-center">
-                <Users className="h-4 w-4 mr-2" />
-                Ownership & Structure Review
-              </div>
-              <div className="flex items-center space-x-2">
-                {phase.eligibilityData.signatories.every((s: Signatory) => 
-                  s.idvDetails?.status === 'verified' && s.ssnVerification?.verified && s.citizenship === 'US' && !s.ofacFlag
-                ) && (
-                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                    <CheckCircle className="h-4 w-4" />
-                    Validated
-                  </Badge>
-                )}
-                {phase.eligibilityData.signatories.some((s: Signatory) => 
-                  s.idvDetails?.status !== 'verified' || !s.ssnVerification?.verified || s.citizenship !== 'US' || s.ofacFlag
-                ) && (
-                  <Badge variant="destructive" className="inline-flex items-center gap-1">
-                    <AlertTriangle className="h-4 w-4" />
-                    Requires Review
-                  </Badge>
-                )}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.signatories ? '' : '-rotate-90'}`} />
-              </div>
-            </CardTitle>
-          </CardHeader>
-          {expandedCards.signatories && (
-            <CardContent>
-            <div className="space-y-4">
-              {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
-                <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium">{signatory.name}</h4>
-                    <Badge variant="outline">{signatory.ownershipPercentage}% ownership</Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Citizenship</p>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium text-sm">{signatory.citizenship}</p>
-                        {signatory.citizenship !== 'US' && (
-                          <AlertTriangle className="h-4 w-4 text-red-600" />
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">DOB</p>
-                      <p className="font-medium text-sm">{new Date(signatory.dob).toLocaleDateString()}</p>
-                    </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">Credit Score</p>
-                      <p className="font-medium text-sm flex items-center">
-                        {signatory.creditScore}
-                        <CreditCard className="h-4 w-4 ml-1" />
-                      </p>
-                    </div>
-
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">OFAC Flag</p>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium text-sm">
-                          {signatory.ofacFlag ? 'Flagged' : 'Clear'}
-                        </p>
-                        {signatory.ofacFlag ? (
-                          <AlertTriangle className="h-4 w-4 text-red-600" />
-                        ) : (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">ID Document</p>
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-sm">
-                          {signatory.idvDetails?.documentType} - {signatory.idvDetails?.documentNumber}
-                        </p>
-                        <Button variant="ghost" size="sm" className="h-7 px-2">
-                          <Download className="h-4 w-4" />
+                  {phase.eligibilityData.entityNameValidation && (
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="outline" size="sm" className="w-full justify-between">
+                          <span>View Validation Details</span>
+                          <ChevronDown className="h-4 w-4" />
                         </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">ID Verification</p>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium text-sm">
-                          {signatory.idvDetails?.status === 'verified' ? 'Valid' : 'Invalid'}
-                        </p>
-                        {signatory.idvDetails?.status === 'verified' ? (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <AlertTriangle className="h-4 w-4 text-red-600" />
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">SSN</p>
-                      <p className="font-medium text-sm">{signatory.ssn}</p>
-                    </div>
-                    
-                    <div className="p-3 bg-muted/20 rounded space-y-1">
-                      <p className="text-xs text-muted-foreground">SSN Verification</p>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium text-sm">
-                          {signatory.ssnVerification?.verified ? 'Valid' : 'Invalid'}
-                        </p>
-                        {signatory.ssnVerification?.verified ? (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <AlertTriangle className="h-4 w-4 text-red-600" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-3">
+                        <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                          <div>
+                            <p className="font-medium mb-2">Verification Summary:</p>
+                            <p className="text-xs text-muted-foreground">
+                              {phase.eligibilityData.entityNameValid && phase.eligibilityData.entityTypeValid
+                                ? "Both entity name and type validations passed successfully."
+                                : !phase.eligibilityData.entityNameValid && !phase.eligibilityData.entityTypeValid
+                                  ? "Both entity name and type validations failed. Manual review required."
+                                  : !phase.eligibilityData.entityNameValid
+                                    ? "Entity name validation failed. Entity type is valid."
+                                    : "Entity type validation failed. Entity name is valid."}
+                            </p>
+                          </div>
 
-                  <Collapsible>
-                    <CollapsibleTrigger asChild>
-                      <Button variant="outline" size="sm" className="w-full justify-between">
-                        <span>View Validation Details</span>
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-3">
-                      <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
-                        {/* IDV Verification Details */}
-                        {signatory.idvDetails && (
-                          <div className="space-y-2">
-                            <p className="font-medium">ID Verification Details:</p>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <span className="text-muted-foreground">Status:</span>
-                                <p className="font-medium">{signatory.idvDetails.status}</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Provider:</span>
-                                <p className="font-medium">{signatory.idvDetails.provider}</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Confidence:</span>
-                                <p className="font-medium">{signatory.idvDetails.confidence}%</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Verified:</span>
-                                <p className="font-medium">{new Date(signatory.idvDetails.verificationDate).toLocaleString()}</p>
-                              </div>
+                          <div className="space-y-1 text-xs">
+                            <p>
+                              <span className="text-muted-foreground">Provider:</span>{" "}
+                              {phase.eligibilityData.entityNameValidation.provider}
+                            </p>
+                            <p>
+                              <span className="text-muted-foreground">Date:</span>{" "}
+                              {new Date(phase.eligibilityData.entityNameValidation.validationDate).toLocaleString()}
+                            </p>
+                            <p>
+                              <span className="text-muted-foreground">Match Confidence:</span>{" "}
+                              {phase.eligibilityData.entityNameValidation.matchConfidence}%
+                            </p>
+                            <div className="mt-2 p-2 bg-muted/30 rounded">
+                              <p className="font-medium mb-1">API Response:</p>
+                              <pre className="text-xs overflow-auto max-h-40">
+                                {JSON.stringify(phase.eligibilityData.entityNameValidation.apiResponse, null, 2)}
+                              </pre>
                             </div>
                           </div>
-                        )}
-
-                        {/* Credit Score Request Details */}
-                        {signatory.creditScoreRequest && (
-                          <div className="space-y-2 pt-3 border-t">
-                            <p className="font-medium">Credit Score Request:</p>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <span className="text-muted-foreground">Provider:</span>
-                                <p className="font-medium">{signatory.creditScoreRequest.provider}</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Status:</span>
-                                <p className="font-medium">{signatory.creditScoreRequest.status}</p>
-                              </div>
-                              <div className="col-span-2">
-                                <span className="text-muted-foreground">Request Date:</span>
-                                <p className="font-medium">{new Date(signatory.creditScoreRequest.requestDate).toLocaleString()}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* SSN Verification Details */}
-                        {signatory.ssnVerification && (
-                          <div className="space-y-2 pt-3 border-t">
-                            <p className="font-medium">SSN Verification Details:</p>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <span className="text-muted-foreground">Provider:</span>
-                                <p className="font-medium">{signatory.ssnVerification.provider}</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Status:</span>
-                                <p className="font-medium">{signatory.ssnVerification.verified ? 'Verified' : 'Failed'}</p>
-                              </div>
-                              <div className="col-span-2">
-                                <span className="text-muted-foreground">Verification Date:</span>
-                                <p className="font-medium">{new Date(signatory.ssnVerification.verificationDate).toLocaleString()}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-          )}
-        </Card>
-
-        {/* Validation Documents */}
-        <Card>
-          <CardHeader 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('documents')}
-          >
-            <CardTitle className="text-base flex items-center justify-between">
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2" />
-                Certificate of Good Standing Check
-              </div>
-              <div className="flex items-center space-x-2">
-                {phase.eligibilityData.validationDocuments.length > 0 && (
-                  <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                    <CheckCircle className="h-4 w-4" />
-                    Validated
-                  </Badge>
-                )}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.documents ? '' : '-rotate-90'}`} />
-              </div>
-            </CardTitle>
-          </CardHeader>
-          {expandedCards.documents && (
-            <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                <span className="text-sm text-muted-foreground">Document Issue Date:</span>
-                <span className="font-medium">{phase.eligibilityData.documentIssuedDate}</span>
-              </div>
-              
-              {/* Certificate Validation Rule */}
-              {certificateRule && (
-                <div className={`p-3 rounded border ${certificateRule.isValid ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                  <div className="flex items-start space-x-2">
-                    {certificateRule.isValid ? (
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-sm">Certificate Age Validation</span>
-                        <Badge variant={certificateRule.isValid ? 'default' : 'destructive'} className="text-xs">
-                          {certificateRule.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-2">{certificateRule.description}</p>
-                      <div className="flex items-center space-x-4 text-xs">
-                        <span className="text-muted-foreground">Days since issue: <span className="font-medium">{certificateRule.daysSinceIssue}</span></span>
-                        <span className="text-muted-foreground">Maximum allowed: <span className="font-medium">{certificateRule.maxDays} days</span></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+                </CardContent>
               )}
-              
-              <div className="space-y-3">
-                {phase.eligibilityData.validationDocuments.map((doc: any, index: number) => (
-                  <div key={index} className="p-3 bg-muted/20 rounded">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="font-medium text-sm">{typeof doc === 'string' ? doc : doc.name}</span>
-                    </div>
-                    {typeof doc === 'object' && doc.proof && (
-                      <div className="ml-6 space-y-1">
-                        <div className="text-xs">
-                          <span className="text-muted-foreground">Verification Method:</span>
-                          <p className="font-medium">{doc.verificationMethod}</p>
-                        </div>
-                        <div className="text-xs mt-2 p-2 bg-muted/30 rounded">
-                          <span className="text-muted-foreground">Proof:</span>
-                          <p className="mt-1">{doc.proof}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-          )}
-        </Card>
+            </Card>
 
-        {/* Eligibility Audit Log */}
-        <Card>
-          <CardHeader 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('auditLog')}
-          >
-            <CardTitle className="text-base flex items-center justify-between">
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
-                Eligibility Phase Audit Log
-              </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? '' : '-rotate-90'}`} />
-            </CardTitle>
-          </CardHeader>
-          {expandedCards.auditLog && (
-            <CardContent>
-            <div className="space-y-3">
-              {phase.auditLog && phase.auditLog.length > 0 ? (
-                phase.auditLog.map((log: any) => (
-                  <div key={log.id} className="border rounded-lg">
-                    <div className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
-                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between">
+            {/* Signatories */}
+            <Card>
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => toggleCard("signatories")}
+              >
+                <CardTitle className="text-base flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Users className="h-4 w-4 mr-2" />
+                    Ownership & Structure Review
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {phase.eligibilityData.signatories.every(
+                      (s: Signatory) =>
+                        s.idvDetails?.status === "verified" &&
+                        s.ssnVerification?.verified &&
+                        s.citizenship === "US" &&
+                        !s.ofacFlag,
+                    ) && (
+                      <Badge
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        Validated
+                      </Badge>
+                    )}
+                    {phase.eligibilityData.signatories.some(
+                      (s: Signatory) =>
+                        s.idvDetails?.status !== "verified" ||
+                        !s.ssnVerification?.verified ||
+                        s.citizenship !== "US" ||
+                        s.ofacFlag,
+                    ) && (
+                      <Badge variant="destructive" className="inline-flex items-center gap-1">
+                        <AlertTriangle className="h-4 w-4" />
+                        Requires Review
+                      </Badge>
+                    )}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedCards.signatories ? "" : "-rotate-90"}`}
+                    />
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              {expandedCards.signatories && (
+                <CardContent>
+                  <div className="space-y-4">
+                    {phase.eligibilityData.signatories.map((signatory: Signatory, index: number) => (
+                      <div key={index} className="p-4 bg-muted/30 rounded-lg space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium">{signatory.name}</h4>
+                          <Badge variant="outline">{signatory.ownershipPercentage}% ownership</Badge>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Citizenship</p>
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-sm">{signatory.citizenship}</p>
+                              {signatory.citizenship !== "US" && <AlertTriangle className="h-4 w-4 text-red-600" />}
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">DOB</p>
+                            <p className="font-medium text-sm">{new Date(signatory.dob).toLocaleDateString()}</p>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">Credit Score</p>
+                            <p className="font-medium text-sm flex items-center">
+                              {signatory.creditScore}
+                              <CreditCard className="h-4 w-4 ml-1" />
+                            </p>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">OFAC Flag</p>
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-sm">{signatory.ofacFlag ? "Flagged" : "Clear"}</p>
+                              {signatory.ofacFlag ? (
+                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                              ) : (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">ID Document</p>
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-sm">
+                                {signatory.idvDetails?.documentType} - {signatory.idvDetails?.documentNumber}
+                              </p>
+                              <Button variant="ghost" size="sm" className="h-7 px-2">
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">ID Verification</p>
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-sm">
+                                {signatory.idvDetails?.status === "verified" ? "Valid" : "Invalid"}
+                              </p>
+                              {signatory.idvDetails?.status === "verified" ? (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">SSN</p>
+                            <p className="font-medium text-sm">{signatory.ssn}</p>
+                          </div>
+
+                          <div className="p-3 bg-muted/20 rounded space-y-1">
+                            <p className="text-xs text-muted-foreground">SSN Verification</p>
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-sm">
+                                {signatory.ssnVerification?.verified ? "Valid" : "Invalid"}
+                              </p>
+                              {signatory.ssnVerification?.verified ? (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <Collapsible>
+                          <CollapsibleTrigger asChild>
+                            <Button variant="outline" size="sm" className="w-full justify-between">
+                              <span>View Validation Details</span>
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="mt-3">
+                            <div className="p-3 bg-muted/20 rounded text-sm space-y-3">
+                              {/* IDV Verification Details */}
+                              {signatory.idvDetails && (
+                                <div className="space-y-2">
+                                  <p className="font-medium">ID Verification Details:</p>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                      <span className="text-muted-foreground">Status:</span>
+                                      <p className="font-medium">{signatory.idvDetails.status}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Provider:</span>
+                                      <p className="font-medium">{signatory.idvDetails.provider}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Confidence:</span>
+                                      <p className="font-medium">{signatory.idvDetails.confidence}%</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Verified:</span>
+                                      <p className="font-medium">
+                                        {new Date(signatory.idvDetails.verificationDate).toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Credit Score Request Details */}
+                              {signatory.creditScoreRequest && (
+                                <div className="space-y-2 pt-3 border-t">
+                                  <p className="font-medium">Credit Score Request:</p>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                      <span className="text-muted-foreground">Provider:</span>
+                                      <p className="font-medium">{signatory.creditScoreRequest.provider}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Status:</span>
+                                      <p className="font-medium">{signatory.creditScoreRequest.status}</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <span className="text-muted-foreground">Request Date:</span>
+                                      <p className="font-medium">
+                                        {new Date(signatory.creditScoreRequest.requestDate).toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* SSN Verification Details */}
+                              {signatory.ssnVerification && (
+                                <div className="space-y-2 pt-3 border-t">
+                                  <p className="font-medium">SSN Verification Details:</p>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                      <span className="text-muted-foreground">Provider:</span>
+                                      <p className="font-medium">{signatory.ssnVerification.provider}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-muted-foreground">Status:</span>
+                                      <p className="font-medium">
+                                        {signatory.ssnVerification.verified ? "Verified" : "Failed"}
+                                      </p>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <span className="text-muted-foreground">Verification Date:</span>
+                                      <p className="font-medium">
+                                        {new Date(signatory.ssnVerification.verificationDate).toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+
+            {/* Validation Documents */}
+            <Card>
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => toggleCard("documents")}
+              >
+                <CardTitle className="text-base flex items-center justify-between">
+                  <div className="flex items-center">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Certificate of Good Standing Check
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {phase.eligibilityData.validationDocuments.length > 0 && (
+                      <Badge
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        Validated
+                      </Badge>
+                    )}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${expandedCards.documents ? "" : "-rotate-90"}`}
+                    />
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              {expandedCards.documents && (
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded">
+                      <span className="text-sm text-muted-foreground">Document Issue Date:</span>
+                      <span className="font-medium">{phase.eligibilityData.documentIssuedDate}</span>
+                    </div>
+
+                    {/* Certificate Validation Rule */}
+                    {certificateRule && (
+                      <div
+                        className={`p-3 rounded border ${certificateRule.isValid ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}
+                      >
+                        <div className="flex items-start space-x-2">
+                          {certificateRule.isValid ? (
+                            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                          ) : (
+                            <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                          )}
                           <div className="flex-1">
-                            <span className="font-medium text-sm">{log.tag || log.action}</span>
-                            <p className="text-xs text-muted-foreground mt-0.5">{log.timestamp || new Date(log.actionDate).toLocaleString()}</p>
-                            <p className="text-sm mt-1">{log.description || log.details}</p>
-                          </div>
-                          <div className="flex items-center gap-2 ml-4 flex-wrap justify-end">
-                            {log.exceptionTag && (
-                              <Badge variant="outline" className="text-xs">
-                                {log.exceptionTag}
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-medium text-sm">Certificate Age Validation</span>
+                              <Badge variant={certificateRule.isValid ? "default" : "destructive"} className="text-xs">
+                                {certificateRule.status}
                               </Badge>
-                            )}
-                            {log.exceptionType && (
-                              <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
-                                {log.exceptionType}
-                              </Badge>
-                            )}
-                            <Badge 
-                              variant={
-                                log.status === 'completed' || log.status === 'verified' || log.decision === 'approved' 
-                                  ? 'default' 
-                                  : log.status === 'warning' || log.decision === 'review' 
-                                  ? 'warning' 
-                                  : 'outline'
-                              } 
-                              className="text-xs"
-                            >
-                              {log.status || log.decision}
-                            </Badge>
-                            <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
+                            </div>
+                            <p className="text-xs text-muted-foreground mb-2">{certificateRule.description}</p>
+                            <div className="flex items-center space-x-4 text-xs">
+                              <span className="text-muted-foreground">
+                                Days since issue: <span className="font-medium">{certificateRule.daysSinceIssue}</span>
+                              </span>
+                              <span className="text-muted-foreground">
+                                Maximum allowed: <span className="font-medium">{certificateRule.maxDays} days</span>
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
+                    )}
+
+                    <div className="space-y-3">
+                      {phase.eligibilityData.validationDocuments.map((doc: any, index: number) => (
+                        <div key={index} className="p-3 bg-muted/20 rounded">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-sm">{typeof doc === "string" ? doc : doc.name}</span>
+                          </div>
+                          {typeof doc === "object" && doc.proof && (
+                            <div className="ml-6 space-y-1">
+                              <div className="text-xs">
+                                <span className="text-muted-foreground">Verification Method:</span>
+                                <p className="font-medium">{doc.verificationMethod}</p>
+                              </div>
+                              <div className="text-xs mt-2 p-2 bg-muted/30 rounded">
+                                <span className="text-muted-foreground">Proof:</span>
+                                <p className="mt-1">{doc.proof}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                    {expandedLogs[log.id] && (
-                      <div className="px-3 pb-3 border-t bg-muted/20">
-                        <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
-                          {JSON.stringify(log.jsonData || log, null, 2)}
-                        </pre>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+
+            {/* Eligibility Audit Log */}
+            <Card>
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => toggleCard("auditLog")}
+              >
+                <CardTitle className="text-base flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-2" />
+                    Eligibility Phase Audit Log
+                  </div>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? "" : "-rotate-90"}`}
+                  />
+                </CardTitle>
+              </CardHeader>
+              {expandedCards.auditLog && (
+                <CardContent>
+                  <div className="space-y-3">
+                    {phase.auditLog && phase.auditLog.length > 0 ? (
+                      phase.auditLog.map((log: any) => (
+                        <div key={log.id} className="border rounded-lg">
+                          <div
+                            className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
+                            onClick={() => toggleLog(log.id)}
+                          >
+                            <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <span className="font-medium text-sm">{log.tag || log.action}</span>
+                                  <p className="text-xs text-muted-foreground mt-0.5">
+                                    {log.timestamp || new Date(log.actionDate).toLocaleString()}
+                                  </p>
+                                  <p className="text-sm mt-1">{log.description || log.details}</p>
+                                </div>
+                                <div className="flex items-center gap-2 ml-4 flex-wrap justify-end">
+                                  {log.exceptionTag && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {log.exceptionTag}
+                                    </Badge>
+                                  )}
+                                  {log.exceptionType && (
+                                    <Badge variant="destructive" className="text-xs font-semibold px-2.5 py-1">
+                                      {log.exceptionType}
+                                    </Badge>
+                                  )}
+                                  <Badge
+                                    variant={
+                                      log.status === "completed" ||
+                                      log.status === "verified" ||
+                                      log.decision === "approved"
+                                        ? "default"
+                                        : log.status === "warning" || log.decision === "review"
+                                          ? "warning"
+                                          : "outline"
+                                    }
+                                    className="text-xs"
+                                  >
+                                    {log.status || log.decision}
+                                  </Badge>
+                                  <ChevronDown
+                                    className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? "" : "-rotate-90"}`}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {expandedLogs[log.id] && (
+                            <div className="px-3 pb-3 border-t bg-muted/20">
+                              <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
+                                {JSON.stringify(log.jsonData || log, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
+                        <div className="flex-1">
+                          <p className="text-muted-foreground">No audit log entries available</p>
+                        </div>
                       </div>
                     )}
                   </div>
-                ))
-              ) : (
-                <div className="flex items-start space-x-3 p-3 bg-muted/20 rounded text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
-                  <div className="flex-1">
-                    <p className="text-muted-foreground">No audit log entries available</p>
-                  </div>
-                </div>
+                </CardContent>
               )}
-            </div>
-          </CardContent>
-          )}
-        </Card>
-      </>
-      )}
+            </Card>
+          </>
+        )}
 
-      {/* JSON Viewer */}
-      {phase.rawOutput && (
-        <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
-      )}
-    </div>
+        {/* JSON Viewer */}
+        {phase.rawOutput && <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />}
+      </div>
     );
   };
 
   const ExperienceTieringTab = ({ phase }: { phase: any }) => {
     const data = phase.experienceTieringData;
-    
+
     if (!data) {
       return (
         <div className="space-y-4">
@@ -828,21 +896,21 @@ export const LoanDetail = () => {
     const getTierColor = (tier: TierLevel | null): string => {
       if (!tier) return "";
       const colors: Record<TierLevel, string> = {
-        'Platinum': 'bg-gradient-to-r from-slate-400 to-slate-600 text-white',
-        'Gold': 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white',
-        'Silver': 'bg-gradient-to-r from-gray-300 to-gray-500 text-white',
-        'Bronze': 'bg-gradient-to-r from-orange-400 to-orange-600 text-white'
+        Platinum: "bg-gradient-to-r from-slate-400 to-slate-600 text-white",
+        Gold: "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white",
+        Silver: "bg-gradient-to-r from-gray-300 to-gray-500 text-white",
+        Bronze: "bg-gradient-to-r from-orange-400 to-orange-600 text-white",
       };
       return colors[tier];
     };
 
     const downloadExperienceTieringData = () => {
       const dataStr = JSON.stringify(data, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${loan.id}-experience-tiering-${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `${loan.id}-experience-tiering-${new Date().toISOString().split("T")[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -861,8 +929,8 @@ export const LoanDetail = () => {
             )}
             <StatusBadge status={phase.status} />
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={downloadExperienceTieringData}
             className="flex items-center gap-2"
@@ -874,9 +942,9 @@ export const LoanDetail = () => {
 
         {/* Status Summary */}
         <Card>
-          <CardHeader 
+          <CardHeader
             className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('tierSummary')}
+            onClick={() => toggleCard("tierSummary")}
           >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
@@ -884,25 +952,27 @@ export const LoanDetail = () => {
                 Tier Assignment & Evaluation
               </div>
               <div className="flex items-center space-x-2">
-                {data.status === 'pass' && (
+                {data.status === "pass" && (
                   <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
                     <CheckCircle className="h-4 w-4" />
                     Passed
                   </Badge>
                 )}
-                {data.status === 'warn' && (
+                {data.status === "warn" && (
                   <Badge variant="warning" className="inline-flex items-center gap-1">
                     <AlertTriangle className="h-4 w-4" />
                     Manual Review
                   </Badge>
                 )}
-                {data.status === 'fail' && (
+                {data.status === "fail" && (
                   <Badge variant="destructive" className="inline-flex items-center gap-1">
                     <XCircle className="h-4 w-4" />
                     Failed
                   </Badge>
                 )}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.tierSummary ? '' : '-rotate-90'}`} />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${expandedCards.tierSummary ? "" : "-rotate-90"}`}
+                />
               </div>
             </CardTitle>
           </CardHeader>
@@ -910,9 +980,9 @@ export const LoanDetail = () => {
             <CardContent className="space-y-4">
               <div className="p-4 bg-muted/30 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-2">Evaluation Outcome</div>
-                <div className="text-lg font-semibold text-foreground">{data.evaluation_outcome || 'N/A'}</div>
+                <div className="text-lg font-semibold text-foreground">{data.evaluation_outcome || "N/A"}</div>
               </div>
-              
+
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-3 bg-muted/30 rounded-lg">
                   <div className="text-2xl font-bold text-primary">{data.metrics.verified_exits_count}</div>
@@ -942,22 +1012,28 @@ export const LoanDetail = () => {
                     <div>
                       <p className="font-medium mb-2">Tier Assignment Summary:</p>
                       <p className="text-xs text-muted-foreground">
-                        The borrower has been assigned to the <strong>{data.assigned_tier}</strong> tier based on verified transaction history 
-                        and comprehensive evaluation. Over the past {data.metrics.lookback_months} months, {data.metrics.verified_exits_count} exits 
-                        have been verified with a total volume of ${(data.metrics.verified_volume_usd / 1000000).toFixed(2)}M USD.
-                        {data.evaluation_outcome === 'Pass' && ' The evaluation passed all required criteria.'}
-                        {data.evaluation_outcome === 'Manual Review' && ' Manual review is required for final approval.'}
+                        The borrower has been assigned to the <strong>{data.assigned_tier}</strong> tier based on
+                        verified transaction history and comprehensive evaluation. Over the past{" "}
+                        {data.metrics.lookback_months} months, {data.metrics.verified_exits_count} exits have been
+                        verified with a total volume of ${(data.metrics.verified_volume_usd / 1000000).toFixed(2)}M USD.
+                        {data.evaluation_outcome === "Pass" && " The evaluation passed all required criteria."}
+                        {data.evaluation_outcome === "Manual Review" &&
+                          " Manual review is required for final approval."}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-2 bg-muted/30 rounded">
                         <p className="text-xs text-muted-foreground mb-1">Confidence Score</p>
-                        <p className="text-lg font-bold text-foreground">{((data.confidence_score || 0) * 100).toFixed(1)}%</p>
+                        <p className="text-lg font-bold text-foreground">
+                          {((data.confidence_score || 0) * 100).toFixed(1)}%
+                        </p>
                       </div>
                       <div className="p-2 bg-muted/30 rounded">
                         <p className="text-xs text-muted-foreground mb-1">Exposure Limit</p>
-                        <p className="text-lg font-bold text-foreground">${((data.exposure_limit_usd || 0) / 1000000).toFixed(1)}M</p>
+                        <p className="text-lg font-bold text-foreground">
+                          ${((data.exposure_limit_usd || 0) / 1000000).toFixed(1)}M
+                        </p>
                       </div>
                       <div className="p-2 bg-muted/30 rounded">
                         <p className="text-xs text-muted-foreground mb-1">Recommended LTC Cap</p>
@@ -974,9 +1050,7 @@ export const LoanDetail = () => {
                         <div className="p-3 bg-muted/30 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">Tiering & Product Type Rules</p>
                           <div className="flex items-center space-x-2">
-                            <p className="font-medium text-sm">
-                              {data.exception_flag ? 'Exception' : 'Compliant'}
-                            </p>
+                            <p className="font-medium text-sm">{data.exception_flag ? "Exception" : "Compliant"}</p>
                             {data.exception_flag ? (
                               <AlertTriangle className="h-4 w-4 text-orange-600" />
                             ) : (
@@ -984,13 +1058,11 @@ export const LoanDetail = () => {
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="p-3 bg-muted/30 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">Contractor Validation</p>
                           <div className="flex items-center space-x-2">
-                            <p className="font-medium text-sm">
-                              {data.exception_flag ? 'Required' : 'Not Required'}
-                            </p>
+                            <p className="font-medium text-sm">{data.exception_flag ? "Required" : "Not Required"}</p>
                             {data.exception_flag ? (
                               <AlertTriangle className="h-4 w-4 text-orange-600" />
                             ) : (
@@ -1012,7 +1084,9 @@ export const LoanDetail = () => {
                       <div className="grid grid-cols-2 gap-2">
                         <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
                           <span className="text-muted-foreground">Borrower Experience (60%)</span>
-                          <span className="font-semibold">{(data.metrics.borrower_experience_score || 0).toFixed(1)}</span>
+                          <span className="font-semibold">
+                            {(data.metrics.borrower_experience_score || 0).toFixed(1)}
+                          </span>
                         </div>
                         <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
                           <span className="text-muted-foreground">Guarantor Record (20%)</span>
@@ -1024,15 +1098,24 @@ export const LoanDetail = () => {
                         </div>
                         <div className="flex justify-between p-2 bg-muted/30 rounded text-xs">
                           <span className="text-muted-foreground">Performance Record (10%)</span>
-                          <span className="font-semibold">{(data.metrics.performance_record_score || 0).toFixed(1)}</span>
+                          <span className="font-semibold">
+                            {(data.metrics.performance_record_score || 0).toFixed(1)}
+                          </span>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="pt-2 border-t space-y-1 text-xs">
-                      <p><span className="text-muted-foreground">Evaluation Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
-                      <p><span className="text-muted-foreground">Loan Type:</span> {loan.loanType}</p>
-                      <p><span className="text-muted-foreground">Evaluated By:</span> {data.ran_by}</p>
+                      <p>
+                        <span className="text-muted-foreground">Evaluation Date:</span>{" "}
+                        {new Date(data.ran_at).toLocaleString()}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Loan Type:</span> {loan.loanType}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Evaluated By:</span> {data.ran_by}
+                      </p>
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -1043,9 +1126,9 @@ export const LoanDetail = () => {
 
         {/* Entity Matching */}
         <Card>
-          <CardHeader 
+          <CardHeader
             className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('entityMatch')}
+            onClick={() => toggleCard("entityMatch")}
           >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
@@ -1059,7 +1142,9 @@ export const LoanDetail = () => {
                     Matched
                   </Badge>
                 )}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.entityMatch ? '' : '-rotate-90'}`} />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${expandedCards.entityMatch ? "" : "-rotate-90"}`}
+                />
               </div>
             </CardTitle>
           </CardHeader>
@@ -1077,11 +1162,11 @@ export const LoanDetail = () => {
                 <div className="p-3 bg-muted/30 rounded space-y-1 col-span-2">
                   <p className="text-xs text-muted-foreground">Method</p>
                   <p className="font-medium text-sm">
-                    {data.entity_match?.method === 'entity_search' ? 'Entity Search' : 'Property Search Fallback'}
+                    {data.entity_match?.method === "entity_search" ? "Entity Search" : "Property Search Fallback"}
                   </p>
                 </div>
               </div>
-              
+
               <Collapsible>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" size="sm" className="w-full justify-between">
@@ -1094,25 +1179,41 @@ export const LoanDetail = () => {
                     <div>
                       <p className="font-medium mb-2">Entity Search Summary:</p>
                       <p className="text-xs text-muted-foreground">
-                        The entity matching process successfully identified "{data.entity_match?.entityName}" 
-                        using {data.entity_match?.method === 'entity_search' ? 'direct entity search' : 'property search fallback method'} 
+                        The entity matching process successfully identified "{data.entity_match?.entityName}" using{" "}
+                        {data.entity_match?.method === "entity_search"
+                          ? "direct entity search"
+                          : "property search fallback method"}
                         with a confidence score of {data.entity_match?.confidence}%.
-                        {data.entity_match?.alternativesCount && ` ${data.entity_match.alternativesCount} alternative matches were found.`}
+                        {data.entity_match?.alternativesCount &&
+                          ` ${data.entity_match.alternativesCount} alternative matches were found.`}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-1 text-xs">
-                      <p><span className="text-muted-foreground">Provider:</span> PrequalDat</p>
-                      <p><span className="text-muted-foreground">Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
-                      <p><span className="text-muted-foreground">Match Confidence:</span> {data.entity_match?.confidence}%</p>
+                      <p>
+                        <span className="text-muted-foreground">Provider:</span> PrequalDat
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Date:</span> {new Date(data.ran_at).toLocaleString()}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Match Confidence:</span> {data.entity_match?.confidence}
+                        %
+                      </p>
                       <div className="mt-2 p-2 bg-muted/30 rounded">
                         <p className="font-medium mb-1">API Response:</p>
-                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify({
-                          entity_name: data.entity_match?.entityName,
-                          confidence: data.entity_match?.confidence,
-                          method: data.entity_match?.method,
-                          status: 'matched'
-                        }, null, 2)}</pre>
+                        <pre className="text-xs overflow-auto max-h-40">
+                          {JSON.stringify(
+                            {
+                              entity_name: data.entity_match?.entityName,
+                              confidence: data.entity_match?.confidence,
+                              method: data.entity_match?.method,
+                              status: "matched",
+                            },
+                            null,
+                            2,
+                          )}
+                        </pre>
                       </div>
                     </div>
                   </div>
@@ -1124,9 +1225,9 @@ export const LoanDetail = () => {
 
         {/* Ownership Verification */}
         <Card>
-          <CardHeader 
+          <CardHeader
             className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('ownership')}
+            onClick={() => toggleCard("ownership")}
           >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
@@ -1145,7 +1246,9 @@ export const LoanDetail = () => {
                     Not Verified
                   </Badge>
                 )}
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.ownership ? '' : '-rotate-90'}`} />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${expandedCards.ownership ? "" : "-rotate-90"}`}
+                />
               </div>
             </CardTitle>
           </CardHeader>
@@ -1154,12 +1257,10 @@ export const LoanDetail = () => {
               <div className="p-3 bg-muted/30 rounded">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Owner/Key Member Confirmed:</span>
-                  <span className="font-medium text-sm text-foreground">
-                    {data.ownership_verified ? 'Yes' : 'No'}
-                  </span>
+                  <span className="font-medium text-sm text-foreground">{data.ownership_verified ? "Yes" : "No"}</span>
                 </div>
               </div>
-              
+
               <Collapsible>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" size="sm" className="w-full justify-between">
@@ -1172,24 +1273,38 @@ export const LoanDetail = () => {
                     <div>
                       <p className="font-medium mb-2">Verification Summary:</p>
                       <p className="text-xs text-muted-foreground">
-                        {data.ownership_verified 
-                          ? 'Borrower/guarantor has been confirmed as a listed owner or key member through OpenCorporates verification. The ownership structure meets all requirements.'
-                          : 'Ownership verification failed. The borrower/guarantor could not be confirmed as a listed owner or key member.'}
+                        {data.ownership_verified
+                          ? "Borrower/guarantor has been confirmed as a listed owner or key member through OpenCorporates verification. The ownership structure meets all requirements."
+                          : "Ownership verification failed. The borrower/guarantor could not be confirmed as a listed owner or key member."}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-1 text-xs">
-                      <p><span className="text-muted-foreground">Provider:</span> PrequalDat (OpenCorporates)</p>
-                      <p><span className="text-muted-foreground">Verification Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
-                      <p><span className="text-muted-foreground">Status:</span> {data.ownership_verified ? 'Verified' : 'Failed'}</p>
+                      <p>
+                        <span className="text-muted-foreground">Provider:</span> PrequalDat (OpenCorporates)
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Verification Date:</span>{" "}
+                        {new Date(data.ran_at).toLocaleString()}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Status:</span>{" "}
+                        {data.ownership_verified ? "Verified" : "Failed"}
+                      </p>
                       <div className="mt-2 p-2 bg-muted/30 rounded">
                         <p className="font-medium mb-1">API Response:</p>
-                        <pre className="text-xs overflow-auto max-h-40">{JSON.stringify({
-                          ownership_verified: data.ownership_verified,
-                          entity: data.entity_match?.entityName,
-                          verification_method: 'opencorporates_api',
-                          status: data.ownership_verified ? 'confirmed' : 'not_confirmed'
-                        }, null, 2)}</pre>
+                        <pre className="text-xs overflow-auto max-h-40">
+                          {JSON.stringify(
+                            {
+                              ownership_verified: data.ownership_verified,
+                              entity: data.entity_match?.entityName,
+                              verification_method: "opencorporates_api",
+                              status: data.ownership_verified ? "confirmed" : "not_confirmed",
+                            },
+                            null,
+                            2,
+                          )}
+                        </pre>
                       </div>
                     </div>
                   </div>
@@ -1201,16 +1316,16 @@ export const LoanDetail = () => {
 
         {/* Validation Checks */}
         <Card>
-          <CardHeader 
+          <CardHeader
             className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('checks')}
+            onClick={() => toggleCard("checks")}
           >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <CheckSquare className="h-4 w-4 mr-2" />
                 Validation Checks
               </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.checks ? '' : '-rotate-90'}`} />
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.checks ? "" : "-rotate-90"}`} />
             </CardTitle>
           </CardHeader>
           {expandedCards.checks && (
@@ -1224,7 +1339,7 @@ export const LoanDetail = () => {
                       <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                     )}
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-foreground">{check.name.replace(/_/g, ' ')}</div>
+                      <div className="font-medium text-sm text-foreground">{check.name.replace(/_/g, " ")}</div>
                       <div className="text-xs text-muted-foreground mt-1">{check.detail}</div>
                     </div>
                   </div>
@@ -1243,20 +1358,32 @@ export const LoanDetail = () => {
                     <div>
                       <p className="font-medium mb-2">Validation Check Summary:</p>
                       <p className="text-xs text-muted-foreground">
-                        A comprehensive series of {data.checks.length} validation checks were performed to assess 
-                        entity matching, ownership verification, exit history, and evaluation logic. 
-                        {data.checks.every((c: any) => c.ok) 
-                          ? ' All checks passed successfully.' 
+                        A comprehensive series of {data.checks.length} validation checks were performed to assess entity
+                        matching, ownership verification, exit history, and evaluation logic.
+                        {data.checks.every((c: any) => c.ok)
+                          ? " All checks passed successfully."
                           : ` ${data.checks.filter((c: any) => !c.ok).length} check(s) failed and require attention.`}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-1 text-xs">
-                      <p><span className="text-muted-foreground">Provider:</span> PrequalDat</p>
-                      <p><span className="text-muted-foreground">Date:</span> {new Date(data.ran_at).toLocaleString()}</p>
-                      <p><span className="text-muted-foreground">Total Checks:</span> {data.checks.length}</p>
-                      <p><span className="text-muted-foreground">Passed:</span> {data.checks.filter((c: any) => c.ok).length}</p>
-                      <p><span className="text-muted-foreground">Failed:</span> {data.checks.filter((c: any) => !c.ok).length}</p>
+                      <p>
+                        <span className="text-muted-foreground">Provider:</span> PrequalDat
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Date:</span> {new Date(data.ran_at).toLocaleString()}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Total Checks:</span> {data.checks.length}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Passed:</span>{" "}
+                        {data.checks.filter((c: any) => c.ok).length}
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Failed:</span>{" "}
+                        {data.checks.filter((c: any) => !c.ok).length}
+                      </p>
                       <div className="mt-2 p-2 bg-muted/30 rounded">
                         <p className="font-medium mb-1">Full Check Results:</p>
                         <pre className="text-xs overflow-auto max-h-40">{JSON.stringify(data.checks, null, 2)}</pre>
@@ -1272,9 +1399,9 @@ export const LoanDetail = () => {
         {/* Discrepancies */}
         {data.discrepancies && data.discrepancies.length > 0 && (
           <Card>
-            <CardHeader 
+            <CardHeader
               className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('discrepancies')}
+              onClick={() => toggleCard("discrepancies")}
             >
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center">
@@ -1285,7 +1412,9 @@ export const LoanDetail = () => {
                   <Badge variant="warning" className="inline-flex items-center gap-1">
                     {data.discrepancies.length} Found
                   </Badge>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.discrepancies ? '' : '-rotate-90'}`} />
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${expandedCards.discrepancies ? "" : "-rotate-90"}`}
+                  />
                 </div>
               </CardTitle>
             </CardHeader>
@@ -1298,7 +1427,7 @@ export const LoanDetail = () => {
                         <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />
                         <div>
                           <div className="text-xs font-medium text-muted-foreground uppercase">
-                            {discrepancy.type.replace(/_/g, ' ')}
+                            {discrepancy.type.replace(/_/g, " ")}
                           </div>
                           <div className="text-sm text-foreground mt-1">{discrepancy.message}</div>
                           {discrepancy.severity && (
@@ -1319,9 +1448,9 @@ export const LoanDetail = () => {
         {/* Manual Validation */}
         {data.manual_validation?.required && (
           <Card>
-            <CardHeader 
+            <CardHeader
               className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => toggleCard('manualValidation')}
+              onClick={() => toggleCard("manualValidation")}
             >
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -1333,7 +1462,9 @@ export const LoanDetail = () => {
                     <div className="text-xs text-muted-foreground font-normal">Review details and approval status</div>
                   </div>
                 </div>
-                <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.manualValidation ? '' : '-rotate-90'}`} />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${expandedCards.manualValidation ? "" : "-rotate-90"}`}
+                />
               </CardTitle>
             </CardHeader>
             {expandedCards.manualValidation && (
@@ -1342,21 +1473,25 @@ export const LoanDetail = () => {
                   {data.manual_validation.reason && (
                     <div className="border-l-4 border-primary pl-4 py-2">
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="secondary" className="text-xs">Reason</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          Reason
+                        </Badge>
                       </div>
                       <p className="text-sm font-medium leading-relaxed">{data.manual_validation.reason}</p>
                     </div>
                   )}
-                  
+
                   {data.manual_validation.comment && (
                     <div className="p-4 bg-muted/50 rounded-lg border border-border">
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">Comment</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Comment
+                        </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed">{data.manual_validation.comment}</p>
                     </div>
                   )}
-                  
+
                   <div className="grid grid-cols-2 gap-3 pt-2">
                     {data.manual_validation.validatedBy && (
                       <div className="p-3 rounded-lg bg-background border border-border">
@@ -1381,16 +1516,16 @@ export const LoanDetail = () => {
 
         {/* Phase Log */}
         <Card>
-          <CardHeader 
+          <CardHeader
             className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleCard('phaseLog')}
+            onClick={() => toggleCard("phaseLog")}
           >
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center">
                 <Clock className="h-4 w-4 mr-2" />
                 Experience Tiering Phase Log
               </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.phaseLog ? '' : '-rotate-90'}`} />
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.phaseLog ? "" : "-rotate-90"}`} />
             </CardTitle>
           </CardHeader>
           {expandedCards.phaseLog && (
@@ -1404,11 +1539,13 @@ export const LoanDetail = () => {
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-medium">{entry.action}</span>
                           {entry.decision && (
-                            <Badge 
+                            <Badge
                               variant={
-                                entry.decision === 'approved' ? 'default' : 
-                                entry.decision === 'rejected' ? 'destructive' : 
-                                'outline'
+                                entry.decision === "approved"
+                                  ? "default"
+                                  : entry.decision === "rejected"
+                                    ? "destructive"
+                                    : "outline"
                               }
                               className="text-xs"
                             >
@@ -1417,7 +1554,9 @@ export const LoanDetail = () => {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">{new Date(entry.timestamp).toLocaleString()}</p>
-                        <p className="text-xs mt-1">{entry.details} - by {entry.user}</p>
+                        <p className="text-xs mt-1">
+                          {entry.details} - by {entry.user}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -1434,16 +1573,14 @@ export const LoanDetail = () => {
     );
   };
 
-  const PhaseTab = ({ phase, phaseName }: { phase: any, phaseName: string }) => (
+  const PhaseTab = ({ phase, phaseName }: { phase: any; phaseName: string }) => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <StatusBadge status={phase.status} />
           <span className="font-medium">{phaseName}</span>
           {phase.completedDate && (
-            <span className="text-sm text-muted-foreground">
-              Completed: {phase.completedDate}
-            </span>
+            <span className="text-sm text-muted-foreground">Completed: {phase.completedDate}</span>
           )}
         </div>
       </div>
@@ -1475,9 +1612,7 @@ export const LoanDetail = () => {
       )}
 
       {/* JSON Viewer */}
-      {phase.rawOutput && (
-        <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />
-      )}
+      {phase.rawOutput && <JsonViewer data={phase.rawOutput} title="Raw Workflow Output" />}
 
       {phase.conditions && (
         <Card>
@@ -1492,9 +1627,7 @@ export const LoanDetail = () => {
                     {condition.passed ? "✓" : "✗"}
                   </span>
                   <span className="text-sm">{condition.name}</span>
-                  {condition.details && (
-                    <span className="text-xs text-muted-foreground">- {condition.details}</span>
-                  )}
+                  {condition.details && <span className="text-xs text-muted-foreground">- {condition.details}</span>}
                 </div>
               ))}
             </div>
@@ -1508,23 +1641,22 @@ export const LoanDetail = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate("/")}
-          >
+          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to List
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
             <p className="text-muted-foreground">
-              {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} - {formatCurrency(loan.loanAmount)}
-              <Badge variant="outline" className="ml-3">{loan.loanType}</Badge>
+              {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} -{" "}
+              {formatCurrency(loan.loanAmount)}
+              <Badge variant="outline" className="ml-3">
+                {loan.loanType}
+              </Badge>
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <StatusBadge status={loan.overallStatus} />
         </div>
@@ -1538,195 +1670,187 @@ export const LoanDetail = () => {
             <TabsList className="flex w-full overflow-x-auto gap-2 p-2 h-auto flex-wrap">
               <TabsTrigger value="borrowerEligibility" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Borrower Eligibility
-                {loan.phases.borrowerEligibility.status === 'failed' && (
+                {loan.phases.borrowerEligibility.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.borrowerEligibility.status === 'manual' && (
+                {loan.phases.borrowerEligibility.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.borrowerEligibility.status === 'passed' && (
+                {loan.phases.borrowerEligibility.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="experienceTieringCopy" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Experience Tiering
-                {loan.phases.experienceTiering.status === 'failed' && (
+                {loan.phases.experienceTiering.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.experienceTiering.status === 'manual' && (
+                {loan.phases.experienceTiering.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.experienceTiering.status === 'passed' && (
+                {loan.phases.experienceTiering.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="creditReview" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Credit Review
-                {loan.phases.creditReview.status === 'failed' && (
+                {loan.phases.creditReview.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.creditReview.status === 'manual' && (
+                {loan.phases.creditReview.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.creditReview.status === 'passed' && (
-                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
-                )}
+                {loan.phases.creditReview.status === "passed" && <CheckCircle className="h-3 w-3 ml-1 text-success" />}
               </TabsTrigger>
               <TabsTrigger value="creditReportV2" className="relative text-sm px-4 py-2 flex-shrink-0">
-                Credit Report v2
-                {loan.phases.creditReview.status === 'failed' && (
+                Credit Review v2
+                {loan.phases.creditReview.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.creditReview.status === 'manual' && (
+                {loan.phases.creditReview.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.creditReview.status === 'passed' && (
-                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
-                )}
+                {loan.phases.creditReview.status === "passed" && <CheckCircle className="h-3 w-3 ml-1 text-success" />}
               </TabsTrigger>
               <TabsTrigger value="nonOwnerOccupancy" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Non-Owner Occupancy
-                {loan.phases.nonOwnerOccupancy.status === 'failed' && (
+                {loan.phases.nonOwnerOccupancy.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.nonOwnerOccupancy.status === 'manual' && (
+                {loan.phases.nonOwnerOccupancy.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.nonOwnerOccupancy.status === 'passed' && (
+                {loan.phases.nonOwnerOccupancy.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="collateralReview" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Collateral Review
-                {loan.phases.collateralReview.status === 'failed' && (
+                {loan.phases.collateralReview.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.collateralReview.status === 'manual' && (
+                {loan.phases.collateralReview.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.collateralReview.status === 'passed' && (
+                {loan.phases.collateralReview.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="dscrCashFlow" className="relative text-sm px-4 py-2 flex-shrink-0">
                 DSCR Cash Flow
-                {loan.phases.dscrCashFlow.status === 'failed' && (
+                {loan.phases.dscrCashFlow.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.dscrCashFlow.status === 'manual' && (
+                {loan.phases.dscrCashFlow.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.dscrCashFlow.status === 'passed' && (
-                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
-                )}
+                {loan.phases.dscrCashFlow.status === "passed" && <CheckCircle className="h-3 w-3 ml-1 text-success" />}
               </TabsTrigger>
               <TabsTrigger value="titleInsurance" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Title Insurance
-                {loan.phases.titleInsurance.status === 'failed' && (
+                {loan.phases.titleInsurance.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.titleInsurance.status === 'manual' && (
+                {loan.phases.titleInsurance.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.titleInsurance.status === 'passed' && (
+                {loan.phases.titleInsurance.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="closingProtection" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Closing Protection
-                {loan.phases.closingProtection.status === 'failed' && (
+                {loan.phases.closingProtection.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.closingProtection.status === 'manual' && (
+                {loan.phases.closingProtection.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.closingProtection.status === 'passed' && (
+                {loan.phases.closingProtection.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="insurancePolicy" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Insurance Policy
-                {loan.phases.insurancePolicy.status === 'failed' && (
+                {loan.phases.insurancePolicy.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.insurancePolicy.status === 'manual' && (
+                {loan.phases.insurancePolicy.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.insurancePolicy.status === 'passed' && (
+                {loan.phases.insurancePolicy.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="assetVerification" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Asset Verification
-                {loan.phases.assetVerification.status === 'failed' && (
+                {loan.phases.assetVerification.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.assetVerification.status === 'manual' && (
+                {loan.phases.assetVerification.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.assetVerification.status === 'passed' && (
+                {loan.phases.assetVerification.status === "passed" && (
                   <CheckCircle className="h-3 w-3 ml-1 text-success" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="finalApproval" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Final Approval
-                {loan.phases.finalApproval.status === 'failed' && (
+                {loan.phases.finalApproval.status === "failed" && (
                   <AlertCircle className="h-3 w-3 ml-1 text-destructive" />
                 )}
-                {loan.phases.finalApproval.status === 'manual' && (
+                {loan.phases.finalApproval.status === "manual" && (
                   <AlertTriangle className="h-3 w-3 ml-1 text-warning" />
                 )}
-                {loan.phases.finalApproval.status === 'passed' && (
-                  <CheckCircle className="h-3 w-3 ml-1 text-success" />
-                )}
+                {loan.phases.finalApproval.status === "passed" && <CheckCircle className="h-3 w-3 ml-1 text-success" />}
               </TabsTrigger>
             </TabsList>
-            
+
             <div className="mt-6">
               <TabsContent value="borrowerEligibility" className="mt-0">
                 <EligibilityTab phase={loan.phases.borrowerEligibility} />
               </TabsContent>
-              
+
               <TabsContent value="experienceTieringCopy" className="mt-0">
                 <ExperienceTieringCopyTab phase={loan.phases.experienceTiering} />
               </TabsContent>
-              
+
               <TabsContent value="creditReview" className="mt-0">
                 <CreditReviewTab phase={loan.phases.creditReview} />
               </TabsContent>
-              
+
               <TabsContent value="creditReportV2" className="mt-0">
                 <CreditReportV2Tab phase={loan.phases.creditReview} />
               </TabsContent>
-              
+
               <TabsContent value="nonOwnerOccupancy" className="mt-0">
                 <PhaseTab phase={loan.phases.nonOwnerOccupancy} phaseName="Non-Owner Occupancy Verification" />
               </TabsContent>
-              
+
               <TabsContent value="collateralReview" className="mt-0">
                 <PhaseTab phase={loan.phases.collateralReview} phaseName="Collateral Review" />
               </TabsContent>
-              
+
               <TabsContent value="dscrCashFlow" className="mt-0">
                 <PhaseTab phase={loan.phases.dscrCashFlow} phaseName="DSCR-Specific Cash Flow Review" />
               </TabsContent>
-              
+
               <TabsContent value="titleInsurance" className="mt-0">
                 <PhaseTab phase={loan.phases.titleInsurance} phaseName="Title Insurance Verification" />
               </TabsContent>
-              
+
               <TabsContent value="closingProtection" className="mt-0">
                 <PhaseTab phase={loan.phases.closingProtection} phaseName="Closing Protection Letter" />
               </TabsContent>
-              
+
               <TabsContent value="insurancePolicy" className="mt-0">
                 <PhaseTab phase={loan.phases.insurancePolicy} phaseName="Insurance Policy Review" />
               </TabsContent>
-              
+
               <TabsContent value="assetVerification" className="mt-0">
                 <PhaseTab phase={loan.phases.assetVerification} phaseName="Asset Verification" />
               </TabsContent>
-              
+
               <TabsContent value="finalApproval" className="mt-0">
                 <PhaseTab phase={loan.phases.finalApproval} phaseName="Final Approval" />
               </TabsContent>
