@@ -1211,7 +1211,7 @@ export const CreditReportV2Tab = ({
             {/* Detailed Results Toggle */}
             <Collapsible open={expandedFlagDatResults} onOpenChange={setExpandedFlagDatResults}>
               <CollapsibleTrigger className="w-full">
-                <div className="flex items-center justify-between p-3 border rounded hover:bg-muted/50 transition-colors">
+                <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">View Detailed Match Results</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${expandedFlagDatResults ? '' : '-rotate-90'}`} />
                 </div>
