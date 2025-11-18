@@ -94,7 +94,7 @@ export const CreditReviewTab = ({
   const creditPullData = {
     borrower: {
       name: "John Doe",
-      fico: 720,
+      fico: 665,
       pullDate: "2025-11-01",
       bureau: "Experian",
       isForeignNational: false,
