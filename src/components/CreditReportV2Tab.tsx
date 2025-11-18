@@ -145,7 +145,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
 
   // Mock data
   const closingDate = "2025-11-15";
-  const companyTier = "Gold";
+  const companyTier = "Silver";
   const ltc = 75;
   const ltv = 68;
   const loanLimit = 500000;
