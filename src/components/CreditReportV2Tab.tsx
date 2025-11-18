@@ -153,7 +153,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const loanProgram = "DSCR";
   const verifiedProjects = 3;
   const tierChanged = true;
-  const previousTier = "Silver";
+  const previousTier = "Gold";
   const tierChangeReason =
     "LTV ratio exceeded threshold for Silver tier. Required upgrade to Gold tier to meet product guidelines.";
 
