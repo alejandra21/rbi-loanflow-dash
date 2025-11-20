@@ -6,6 +6,10 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Download,
   CheckCircle,
@@ -19,6 +23,7 @@ import {
   CreditCard,
   Info,
   ArrowRight,
+  Check,
 } from "lucide-react";
 import { useState } from "react";
 import { CreditReviewSummary } from "@/components/CreditReviewSummary";
@@ -53,6 +58,16 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     "John Doe": false,
     "Jane Smith": false,
   });
+
+  // Review state management
+  const [phaseReviewStatus, setPhaseReviewStatus] = useState<string | null>(null);
+  const [phaseReviewComments, setPhaseReviewComments] = useState<string>("");
+  const [subsectionReviews, setSubsectionReviews] = useState<Record<string, { reviewed: boolean; comments: string }>>({});
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [currentReviewSection, setCurrentReviewSection] = useState<string>("");
+  const [currentReviewType, setCurrentReviewType] = useState<"phase" | "subsection">("subsection");
+  const [tempReviewStatus, setTempReviewStatus] = useState<string>("");
+  const [tempReviewComments, setTempReviewComments] = useState<string>("");
   const toggleCard = (cardId: string) => {
     setExpandedCards((prev) => ({
       ...prev,
@@ -88,6 +103,40 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
       ...prev,
       [logId]: !prev[logId],
     }));
+  };
+
+  const openReviewDialog = (sectionId: string, type: "phase" | "subsection") => {
+    setCurrentReviewSection(sectionId);
+    setCurrentReviewType(type);
+    
+    if (type === "phase") {
+      setTempReviewStatus(phaseReviewStatus || "");
+      setTempReviewComments(phaseReviewComments || "");
+    } else {
+      setTempReviewStatus(subsectionReviews[sectionId]?.reviewed ? "reviewed" : "");
+      setTempReviewComments(subsectionReviews[sectionId]?.comments || "");
+    }
+    
+    setReviewDialogOpen(true);
+  };
+
+  const handleReviewSubmit = () => {
+    if (currentReviewType === "phase") {
+      setPhaseReviewStatus(tempReviewStatus);
+      setPhaseReviewComments(tempReviewComments);
+    } else {
+      setSubsectionReviews((prev) => ({
+        ...prev,
+        [currentReviewSection]: {
+          reviewed: true,
+          comments: tempReviewComments,
+        },
+      }));
+    }
+    
+    setReviewDialogOpen(false);
+    setTempReviewStatus("");
+    setTempReviewComments("");
   };
   const getTierColor = (tier: string): string => {
     const colors: Record<string, string> = {
@@ -602,11 +651,28 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Review</span>
           <StatusBadge status={phase.status} />
+          {phaseReviewStatus && (
+            <Badge variant="secondary" className="gap-1">
+              <Check className="h-3 w-3" />
+              Reviewed: {phaseReviewStatus}
+            </Badge>
+          )}
         </div>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
-          <Download className="h-4 w-4" />
-          Download Report
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={phaseReviewStatus ? "secondary" : "default"}
+            size="sm"
+            onClick={() => openReviewDialog("phase", "phase")}
+            className="flex items-center gap-2"
+          >
+            <Check className="h-4 w-4" />
+            {phaseReviewStatus ? "Update Review" : "Mark as Reviewed"}
+          </Button>
+          <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            Download Report
+          </Button>
+        </div>
       </div>
 
       {/* Credit Review Summary */}
@@ -666,6 +732,24 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     Credit Report Validations
                   </h3>
                   <div className="flex items-center gap-2 ml-auto">
+                    {subsectionReviews[`${guarantor.name}-creditReport`]?.reviewed && (
+                      <Badge variant="secondary" className="gap-1 text-xs">
+                        <Check className="h-3 w-3" />
+                        Reviewed
+                      </Badge>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openReviewDialog(`${guarantor.name}-creditReport`, "subsection");
+                      }}
+                      className="h-7 px-2 text-xs"
+                    >
+                      <Check className="h-3 w-3 mr-1" />
+                      {subsectionReviews[`${guarantor.name}-creditReport`]?.reviewed ? "Update" : "Mark as Reviewed"}
+                    </Button>
                     {getStatusIcon(guarantor.validation)}
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${expandedGuarantorSections[`${guarantor.name}-creditReport`] ? "" : "-rotate-90"}`}
@@ -1004,6 +1088,24 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                   <Shield className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">TLO Validations</h3>
                   <div className="flex items-center gap-2 ml-auto">
+                    {subsectionReviews[`${guarantor.name}-tlo`]?.reviewed && (
+                      <Badge variant="secondary" className="gap-1 text-xs">
+                        <Check className="h-3 w-3" />
+                        Reviewed
+                      </Badge>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openReviewDialog(`${guarantor.name}-tlo`, "subsection");
+                      }}
+                      className="h-7 px-2 text-xs"
+                    >
+                      <Check className="h-3 w-3 mr-1" />
+                      {subsectionReviews[`${guarantor.name}-tlo`]?.reviewed ? "Update" : "Mark as Reviewed"}
+                    </Button>
                     {(() => {
                       const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
                       return tloResult.decision === "non_pass"
@@ -1381,6 +1483,24 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     LexisNexis Validations
                   </h3>
                   <div className="flex items-center gap-2 ml-auto">
+                    {subsectionReviews[`${guarantor.name}-lexisNexis`]?.reviewed && (
+                      <Badge variant="secondary" className="gap-1 text-xs">
+                        <Check className="h-3 w-3" />
+                        Reviewed
+                      </Badge>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openReviewDialog(`${guarantor.name}-lexisNexis`, "subsection");
+                      }}
+                      className="h-7 px-2 text-xs"
+                    >
+                      <Check className="h-3 w-3 mr-1" />
+                      {subsectionReviews[`${guarantor.name}-lexisNexis`]?.reviewed ? "Update" : "Mark as Reviewed"}
+                    </Button>
                     {(() => {
                       const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
                       const hasMatches = lexisData.matchStatus === "match" && lexisData.matchedEntities.length > 0;
@@ -1541,6 +1661,24 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
               FlagDat Validations
             </div>
             <div className="flex items-center gap-2">
+              {subsectionReviews["flagDat"]?.reviewed && (
+                <Badge variant="secondary" className="gap-1">
+                  <Check className="h-3 w-3" />
+                  Reviewed
+                </Badge>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openReviewDialog("flagDat", "subsection");
+                }}
+                className="h-7 px-2 text-xs"
+              >
+                <Check className="h-3 w-3 mr-1" />
+                {subsectionReviews["flagDat"]?.reviewed ? "Update" : "Mark as Reviewed"}
+              </Button>
               {(() => {
                 const hasAnyMatches = Object.values(flagDatData).some(
                   (data) => data.watchlistMatches > 0 || data.blacklistMatches > 0,
@@ -1723,6 +1861,66 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           </CardContent>
         )}
       </Card>
+
+      {/* Review Dialog */}
+      <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {currentReviewType === "phase" ? "Review Credit Review Phase" : "Review Subsection"}
+            </DialogTitle>
+            <DialogDescription>
+              {currentReviewType === "phase"
+                ? "Mark the entire Credit Review phase as reviewed and select the overall status"
+                : "Mark this subsection as reviewed and add any comments"}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {currentReviewType === "phase" && (
+              <div className="space-y-2">
+                <Label htmlFor="phase-status">Review Status</Label>
+                <Select value={tempReviewStatus} onValueChange={setTempReviewStatus}>
+                  <SelectTrigger id="phase-status">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Acceptable">Acceptable</SelectItem>
+                    <SelectItem value="Acceptable – With Conditions">Acceptable – With Conditions</SelectItem>
+                    <SelectItem value="Manual Review - Low">Manual Review - Low</SelectItem>
+                    <SelectItem value="Manual Review - High">Manual Review - High</SelectItem>
+                    <SelectItem value="Unacceptable">Unacceptable</SelectItem>
+                    <SelectItem value="Suspended">Suspended</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="review-comments">Comments {currentReviewType === "subsection" && "(Optional)"}</Label>
+              <Textarea
+                id="review-comments"
+                placeholder="Add any comments about this review..."
+                value={tempReviewComments}
+                onChange={(e) => setTempReviewComments(e.target.value)}
+                rows={5}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReviewDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleReviewSubmit}
+              disabled={currentReviewType === "phase" && !tempReviewStatus}
+            >
+              Save Review
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
