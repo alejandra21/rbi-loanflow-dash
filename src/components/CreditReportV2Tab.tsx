@@ -24,6 +24,7 @@ import {
   Info,
   ArrowRight,
   Check,
+  Square,
 } from "lucide-react";
 import { useState } from "react";
 import { CreditReviewSummary } from "@/components/CreditReviewSummary";
@@ -666,7 +667,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
               </>
             ) : (
               <>
-                <Check className="h-4 w-4 opacity-50" />
+                <Square className="h-4 w-4 border-2 border-current rounded" />
                 Mark as Reviewed
               </>
             )}
@@ -751,7 +752,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </>
                       ) : (
                         <>
-                          <Check className="h-3 w-3 mr-1 opacity-50" />
+                          <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
                           Mark as Reviewed
                         </>
                       )}
@@ -1110,7 +1111,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </>
                       ) : (
                         <>
-                          <Check className="h-3 w-3 mr-1 opacity-50" />
+                          <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
                           Mark as Reviewed
                         </>
                       )}
@@ -1508,7 +1509,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                         </>
                       ) : (
                         <>
-                          <Check className="h-3 w-3 mr-1 opacity-50" />
+                          <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
                           Mark as Reviewed
                         </>
                       )}
@@ -1689,7 +1690,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                   </>
                 ) : (
                   <>
-                    <Check className="h-3 w-3 mr-1 opacity-50" />
+                    <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
                     Mark as Reviewed
                   </>
                 )}
