@@ -144,7 +144,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   };
 
   // Mock data
-  const closingDate = "2025-11-15";
+  const closingDate = "11/15/2025";
   const companyTier = "Silver";
   const ltc = 75;
   const ltv = 68;
@@ -161,16 +161,16 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const tloData = {
     "John Doe": {
       pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_John.pdf",
-      reportDate: "2025-10-20",
+      reportDate: "10/20/2025",
       extracted: {
         fullName: "John Doe",
         last4SSN: "1234",
-        dateOfBirth: "1985-06-15",
+        dateOfBirth: "06/15/1985",
       },
       posData: {
         fullName: "John Doe",
         last4SSN: "1234",
-        dateOfBirth: "1985-06-15",
+        dateOfBirth: "06/15/1985",
       },
       validation: {
         nameMatch: true,
@@ -189,13 +189,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
             {
               type: "Tax Lien",
               amount: "$15,000",
-              date: "2015-03-15",
+              date: "03/15/2015",
               status: "Satisfied",
             },
             {
               type: "Judgment Lien",
               amount: "$8,500",
-              date: "2024-01-10",
+              date: "01/10/2024",
               status: "Active",
             },
           ],
@@ -215,8 +215,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           items: [
             {
               type: "Chapter 7",
-              filingDate: "2013-03-20",
-              dischargeDate: "2013-09-15",
+              filingDate: "03/20/2013",
+              dischargeDate: "09/15/2013",
               status: "Discharged",
             },
           ],
@@ -229,7 +229,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           items: [
             {
               address: "123 Main St, City, ST",
-              date: "2021-01-15",
+              date: "01/15/2021",
               status: "Completed",
             },
           ],
@@ -239,16 +239,16 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     },
     "Jane Smith": {
       pdfReport: "s3://bucket-name/tlo-reports/LOAN123456/TLO_Report_Jane.pdf",
-      reportDate: "2025-10-20",
+      reportDate: "10/20/2025",
       extracted: {
         fullName: "Jane Smith",
         last4SSN: "5678",
-        dateOfBirth: "1988-08-12",
+        dateOfBirth: "08/12/1988",
       },
       posData: {
         fullName: "Jane Smith",
         last4SSN: "5678",
-        dateOfBirth: "1988-08-12",
+        dateOfBirth: "08/12/1988",
       },
       validation: {
         nameMatch: true,
@@ -267,13 +267,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
             {
               type: "Tax Lien",
               amount: "$12,000",
-              date: "2016-05-20",
+              date: "05/20/2016",
               status: "Satisfied",
             },
             {
               type: "Contractor Lien",
               amount: "$5,000",
-              date: "2024-02-10",
+              date: "02/10/2024",
               status: "Active",
             },
           ],
@@ -293,8 +293,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           items: [
             {
               type: "Chapter 13",
-              filingDate: "2013-05-10",
-              dischargeDate: "2018-06-20",
+              filingDate: "05/10/2013",
+              dischargeDate: "06/20/2018",
               status: "Discharged",
             },
           ],
@@ -307,7 +307,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           items: [
             {
               address: "456 Oak Ave, City, ST",
-              date: "2021-03-22",
+              date: "03/22/2021",
               status: "Completed",
             },
           ],
@@ -339,26 +339,26 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           class: "Enforcement",
         },
       ],
-      reportDate: "2025-10-15",
-      closeDate: "2025-11-10",
+      reportDate: "10/15/2025",
+      closeDate: "11/10/2025",
     },
     "Jane Smith": {
       matchStatus: "clear",
       matchedEntities: [],
-      reportDate: "2025-10-16",
-      closeDate: "2025-11-10",
+      reportDate: "10/16/2025",
+      closeDate: "11/10/2025",
     },
   };
   const flagDatData = {
     "John Doe": {
       watchlistMatches: 2,
       blacklistMatches: 0,
-      lastChecked: "2025-11-10",
+      lastChecked: "11/10/2025",
     },
     "Jane Smith": {
       watchlistMatches: 0,
       blacklistMatches: 0,
-      lastChecked: "2025-11-10",
+      lastChecked: "11/10/2025",
     },
   };
 
