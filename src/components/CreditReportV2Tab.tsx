@@ -1160,8 +1160,22 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              <TableRow>
-                                <TableCell className="text-xs font-semibold">Liens</TableCell>
+                              <TableRow id={`${guarantor.name}-liens`}>
+                                <TableCell className="text-xs font-semibold">
+                                  <button 
+                                    onClick={() => {
+                                      if (!expandedBackgroundCheckDetails[guarantor.name]) {
+                                        toggleBackgroundCheckDetails(guarantor.name);
+                                      }
+                                      setTimeout(() => {
+                                        document.getElementById(`${guarantor.name}-liens-details`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                      }, 100);
+                                    }}
+                                    className="text-primary hover:underline cursor-pointer"
+                                  >
+                                    Liens
+                                  </button>
+                                </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.liens.count}
                                 </TableCell>
@@ -1173,8 +1187,22 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   {tloGuarantorData.backgroundCheck.liens.monthsSinceLatest}
                                 </TableCell>
                               </TableRow>
-                              <TableRow>
-                                <TableCell className="text-xs font-semibold">Judgments</TableCell>
+                              <TableRow id={`${guarantor.name}-judgments`}>
+                                <TableCell className="text-xs font-semibold">
+                                  <button 
+                                    onClick={() => {
+                                      if (!expandedBackgroundCheckDetails[guarantor.name]) {
+                                        toggleBackgroundCheckDetails(guarantor.name);
+                                      }
+                                      setTimeout(() => {
+                                        document.getElementById(`${guarantor.name}-judgments-details`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                      }, 100);
+                                    }}
+                                    className="text-primary hover:underline cursor-pointer"
+                                  >
+                                    Judgments
+                                  </button>
+                                </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.judgments.count}
                                 </TableCell>
@@ -1188,8 +1216,22 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   {tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest ?? "—"}
                                 </TableCell>
                               </TableRow>
-                              <TableRow>
-                                <TableCell className="text-xs font-semibold">Bankruptcies</TableCell>
+                              <TableRow id={`${guarantor.name}-bankruptcies`}>
+                                <TableCell className="text-xs font-semibold">
+                                  <button 
+                                    onClick={() => {
+                                      if (!expandedBackgroundCheckDetails[guarantor.name]) {
+                                        toggleBackgroundCheckDetails(guarantor.name);
+                                      }
+                                      setTimeout(() => {
+                                        document.getElementById(`${guarantor.name}-bankruptcies-details`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                      }, 100);
+                                    }}
+                                    className="text-primary hover:underline cursor-pointer"
+                                  >
+                                    Bankruptcies
+                                  </button>
+                                </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.bankruptcies.count}
                                 </TableCell>
@@ -1203,8 +1245,22 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   {tloGuarantorData.backgroundCheck.bankruptcies.monthsSinceLatest}
                                 </TableCell>
                               </TableRow>
-                              <TableRow>
-                                <TableCell className="text-xs font-semibold">Foreclosures</TableCell>
+                              <TableRow id={`${guarantor.name}-foreclosures`}>
+                                <TableCell className="text-xs font-semibold">
+                                  <button 
+                                    onClick={() => {
+                                      if (!expandedBackgroundCheckDetails[guarantor.name]) {
+                                        toggleBackgroundCheckDetails(guarantor.name);
+                                      }
+                                      setTimeout(() => {
+                                        document.getElementById(`${guarantor.name}-foreclosures-details`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                      }, 100);
+                                    }}
+                                    className="text-primary hover:underline cursor-pointer"
+                                  >
+                                    Foreclosures
+                                  </button>
+                                </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.foreclosures.count}
                                 </TableCell>
@@ -1239,7 +1295,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               </CollapsibleTrigger>
                               <CollapsibleContent className="mt-3 space-y-3">
                                 {tloGuarantorData.backgroundCheck.liens.items.length > 0 && (
-                                  <div className="p-3 bg-muted/30 rounded border">
+                                  <div id={`${guarantor.name}-liens-details`} className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Liens Found:</p>
                                     {tloGuarantorData.backgroundCheck.liens.items.map((item, idx) => (
                                       <div key={idx} className="text-xs mb-2 last:mb-0">
@@ -1252,7 +1308,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   </div>
                                 )}
                                 {tloGuarantorData.backgroundCheck.judgments.items.length > 0 && (
-                                  <div className="p-3 bg-muted/30 rounded border">
+                                  <div id={`${guarantor.name}-judgments-details`} className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Judgments Found:</p>
                                     {tloGuarantorData.backgroundCheck.judgments.items.map((item: any, idx: number) => (
                                       <div key={idx} className="text-xs mb-2 last:mb-0">
@@ -1265,7 +1321,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   </div>
                                 )}
                                 {tloGuarantorData.backgroundCheck.bankruptcies.items.length > 0 && (
-                                  <div className="p-3 bg-muted/30 rounded border">
+                                  <div id={`${guarantor.name}-bankruptcies-details`} className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Bankruptcies Found:</p>
                                     {tloGuarantorData.backgroundCheck.bankruptcies.items.map((item, idx) => (
                                       <div key={idx} className="text-xs mb-2 last:mb-0">
@@ -1277,7 +1333,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   </div>
                                 )}
                                 {tloGuarantorData.backgroundCheck.foreclosures.items.length > 0 && (
-                                  <div className="p-3 bg-muted/30 rounded border">
+                                  <div id={`${guarantor.name}-foreclosures-details`} className="p-3 bg-muted/30 rounded border">
                                     <p className="text-xs font-semibold mb-2">Foreclosures Found:</p>
                                     {tloGuarantorData.backgroundCheck.foreclosures.items.map((item, idx) => (
                                       <div key={idx} className="text-xs mb-2 last:mb-0">
