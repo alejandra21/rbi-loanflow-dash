@@ -916,7 +916,32 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
 
                     {/* Utilization Analysis */}
                     <div>
-                      <h5 className="text-sm font-semibold mb-3 text-muted-foreground">Utilization Analysis</h5>
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="text-sm font-semibold text-muted-foreground">Utilization Analysis</h5>
+                        {guarantor.utilization >= 50 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openReviewDialog(`${guarantor.name}-utilization`, "subsection");
+                            }}
+                            className="h-7 px-2 text-xs"
+                          >
+                            {subsectionReviews[`${guarantor.name}-utilization`]?.reviewed ? (
+                              <>
+                                <Check className="h-3 w-3 mr-1" />
+                                Reviewed
+                              </>
+                            ) : (
+                              <>
+                                <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
+                                Mark as Reviewed
+                              </>
+                            )}
+                          </Button>
+                        )}
+                      </div>
                       <div className="p-3 bg-muted/20 rounded space-y-1">
                         <div className="flex items-center gap-1">
                           <p className="text-xs text-muted-foreground">Utilization Ratio</p>
@@ -1001,13 +1026,40 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
-                        {guarantor.latePayments.thirtyDays === 0 &&
-                          guarantor.latePayments.sixtyDays === 0 &&
-                          guarantor.latePayments.ninetyDays === 0 ? (
-                          <CheckCircle className="h-5 w-5 text-success" />
-                        ) : (
-                          <XCircle className="h-5 w-5 text-destructive" />
-                        )}
+                        <div className="flex items-center gap-2">
+                          {(guarantor.latePayments.thirtyDays > 0 ||
+                            guarantor.latePayments.sixtyDays > 0 ||
+                            guarantor.latePayments.ninetyDays > 0) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openReviewDialog(`${guarantor.name}-latePayments`, "subsection");
+                              }}
+                              className="h-7 px-2 text-xs"
+                            >
+                              {subsectionReviews[`${guarantor.name}-latePayments`]?.reviewed ? (
+                                <>
+                                  <Check className="h-3 w-3 mr-1" />
+                                  Reviewed
+                                </>
+                              ) : (
+                                <>
+                                  <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
+                                  Mark as Reviewed
+                                </>
+                              )}
+                            </Button>
+                          )}
+                          {guarantor.latePayments.thirtyDays === 0 &&
+                            guarantor.latePayments.sixtyDays === 0 &&
+                            guarantor.latePayments.ninetyDays === 0 ? (
+                            <CheckCircle className="h-5 w-5 text-success" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-destructive" />
+                          )}
+                        </div>
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 bg-muted/20 rounded space-y-1">
@@ -1040,6 +1092,29 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <h5 className="text-sm font-semibold text-muted-foreground">Public Record Review</h5>
+                        {(guarantor.publicRecords.count > 0 || guarantor.publicRecords.collections > 0) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openReviewDialog(`${guarantor.name}-publicRecords`, "subsection");
+                            }}
+                            className="h-7 px-2 text-xs"
+                          >
+                            {subsectionReviews[`${guarantor.name}-publicRecords`]?.reviewed ? (
+                              <>
+                                <Check className="h-3 w-3 mr-1" />
+                                Reviewed
+                              </>
+                            ) : (
+                              <>
+                                <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
+                                Mark as Reviewed
+                              </>
+                            )}
+                          </Button>
+                        )}
                       </div>
                       <div className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
