@@ -910,28 +910,26 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
+                        {guarantor.latePayments.thirtyDays === 0 &&
+                          guarantor.latePayments.sixtyDays === 0 &&
+                          guarantor.latePayments.ninetyDays === 0 ? (
+                          <CheckCircle className="h-5 w-5 text-success" />
+                        ) : (
+                          <XCircle className="h-5 w-5 text-destructive" />
+                        )}
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">30 Days</p>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">{guarantor.latePayments.thirtyDays}</p>
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          </div>
+                          <p className="font-medium text-sm">{guarantor.latePayments.thirtyDays}</p>
                         </div>
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">60 Days</p>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">{guarantor.latePayments.sixtyDays}</p>
-                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                          </div>
+                          <p className="font-medium text-sm">{guarantor.latePayments.sixtyDays}</p>
                         </div>
                         <div className="p-3 bg-muted/20 rounded space-y-1">
                           <p className="text-xs text-muted-foreground">90+ Days</p>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
-                            <XCircle className="h-4 w-4 text-red-600" />
-                          </div>
+                          <p className="font-medium text-sm">{guarantor.latePayments.ninetyDays}</p>
                         </div>
                       </div>
                       {guarantor.latePayments.thirtyDays === 0 &&
