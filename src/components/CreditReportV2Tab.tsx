@@ -1027,9 +1027,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                       <div className="flex items-center justify-between mb-3">
                         <h5 className="text-sm font-semibold text-muted-foreground">Late Payment History</h5>
                         <div className="flex items-center gap-2">
-                          {(guarantor.latePayments.thirtyDays > 0 ||
-                            guarantor.latePayments.sixtyDays > 0 ||
-                            guarantor.latePayments.ninetyDays > 0) && (
+                          {(guarantor.latePayments.sixtyDays > 0 || guarantor.latePayments.ninetyDays > 0) && (
                             <Button
                               variant="ghost"
                               size="sm"
@@ -1052,9 +1050,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               )}
                             </Button>
                           )}
-                          {guarantor.latePayments.thirtyDays === 0 &&
-                            guarantor.latePayments.sixtyDays === 0 &&
-                            guarantor.latePayments.ninetyDays === 0 ? (
+                          {guarantor.latePayments.sixtyDays === 0 && guarantor.latePayments.ninetyDays === 0 ? (
                             <CheckCircle className="h-5 w-5 text-success" />
                           ) : (
                             <XCircle className="h-5 w-5 text-destructive" />
