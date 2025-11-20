@@ -31,7 +31,13 @@ import {
   AlertCircle,
   XCircle,
   TrendingUp,
+  Check,
+  Square,
 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
 export const LoanDetail = () => {
@@ -42,6 +48,11 @@ export const LoanDetail = () => {
   const [activeTab, setActiveTab] = useState("eligibility");
   const [isPolling, setIsPolling] = useState(false);
   const [pollingProgress, setPollingProgress] = useState(0);
+  const [showReviewSection, setShowReviewSection] = useState(false);
+  const [reviewDecision, setReviewDecision] = useState<string>("");
+  const [reviewComment, setReviewComment] = useState<string>("");
+  const [savedReviewDecision, setSavedReviewDecision] = useState<string | null>(null);
+  const [savedReviewComment, setSavedReviewComment] = useState<string>("");
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     entity: false,
     signatories: false,
@@ -176,6 +187,109 @@ export const LoanDetail = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              {/* Mark as Reviewed Section */}
+              <div className="space-y-3 pb-3 border-b">
+                <Button
+                  variant={savedReviewDecision ? "secondary" : "outline"}
+                  className="w-full justify-start"
+                  size="sm"
+                  onClick={() => setShowReviewSection(!showReviewSection)}
+                >
+                  {savedReviewDecision ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Reviewed: {savedReviewDecision}
+                    </>
+                  ) : (
+                    <>
+                      <Square className="h-4 w-4 mr-2 stroke-[2.5]" />
+                      Mark as Reviewed
+                    </>
+                  )}
+                </Button>
+
+                {showReviewSection && (
+                  <div className="space-y-3 pt-2">
+                    {savedReviewDecision ? (
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground">Decision</Label>
+                          <Badge variant="secondary" className="w-full justify-center py-1.5">
+                            {savedReviewDecision}
+                          </Badge>
+                        </div>
+                        {savedReviewComment && (
+                          <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Comments</Label>
+                            <div className="text-xs bg-muted p-2 rounded-md">
+                              {savedReviewComment}
+                            </div>
+                          </div>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setSavedReviewDecision(null);
+                            setSavedReviewComment("");
+                            setReviewDecision("");
+                            setReviewComment("");
+                          }}
+                        >
+                          Clear Review
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="decision" className="text-xs">Decision</Label>
+                          <Select value={reviewDecision} onValueChange={setReviewDecision}>
+                            <SelectTrigger id="decision" className="h-8 text-xs">
+                              <SelectValue placeholder="Select decision..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Acceptable">Acceptable</SelectItem>
+                              <SelectItem value="Accept - With Conditions">Accept - With Conditions</SelectItem>
+                              <SelectItem value="Manual Review - Low">Manual Review - Low</SelectItem>
+                              <SelectItem value="Manual Review - High">Manual Review - High</SelectItem>
+                              <SelectItem value="Unacceptable">Unacceptable</SelectItem>
+                              <SelectItem value="Suspended">Suspended</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="comment" className="text-xs">Comments (Optional)</Label>
+                          <Textarea
+                            id="comment"
+                            placeholder="Add comments..."
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            rows={3}
+                            className="text-xs"
+                          />
+                        </div>
+
+                        <Button
+                          size="sm"
+                          className="w-full"
+                          disabled={!reviewDecision}
+                          onClick={() => {
+                            setSavedReviewDecision(reviewDecision);
+                            setSavedReviewComment(reviewComment);
+                            setShowReviewSection(false);
+                          }}
+                        >
+                          <Check className="h-4 w-4 mr-2" />
+                          Save Review
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <Button
                 variant="outline"
                 className="w-full justify-start"
