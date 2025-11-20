@@ -651,22 +651,25 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Review</span>
           <StatusBadge status={phase.status} />
-          {phaseReviewStatus && (
-            <Badge variant="secondary" className="gap-1">
-              <Check className="h-3 w-3" />
-              Reviewed: {phaseReviewStatus}
-            </Badge>
-          )}
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant={phaseReviewStatus ? "secondary" : "default"}
+            variant={phaseReviewStatus ? "secondary" : "outline"}
             size="sm"
             onClick={() => openReviewDialog("phase", "phase")}
             className="flex items-center gap-2"
           >
-            <Check className="h-4 w-4" />
-            {phaseReviewStatus ? "Update Review" : "Mark as Reviewed"}
+            {phaseReviewStatus ? (
+              <>
+                <Check className="h-4 w-4" />
+                Reviewed: {phaseReviewStatus}
+              </>
+            ) : (
+              <>
+                <Check className="h-4 w-4 opacity-50" />
+                Mark as Reviewed
+              </>
+            )}
           </Button>
           <Button variant="outline" size="sm" className="flex items-center gap-2">
             <Download className="h-4 w-4" />
@@ -732,12 +735,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     Credit Report Validations
                   </h3>
                   <div className="flex items-center gap-2 ml-auto">
-                    {subsectionReviews[`${guarantor.name}-creditReport`]?.reviewed && (
-                      <Badge variant="secondary" className="gap-1 text-xs">
-                        <Check className="h-3 w-3" />
-                        Reviewed
-                      </Badge>
-                    )}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -747,8 +744,17 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                       }}
                       className="h-7 px-2 text-xs"
                     >
-                      <Check className="h-3 w-3 mr-1" />
-                      {subsectionReviews[`${guarantor.name}-creditReport`]?.reviewed ? "Update" : "Mark as Reviewed"}
+                      {subsectionReviews[`${guarantor.name}-creditReport`]?.reviewed ? (
+                        <>
+                          <Check className="h-3 w-3 mr-1" />
+                          Reviewed
+                        </>
+                      ) : (
+                        <>
+                          <Check className="h-3 w-3 mr-1 opacity-50" />
+                          Mark as Reviewed
+                        </>
+                      )}
                     </Button>
                     {getStatusIcon(guarantor.validation)}
                     <ChevronDown
@@ -1088,12 +1094,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                   <Shield className="h-4 w-4 mr-2" />
                   <h3 className="text-sm font-semibold text-muted-foreground flex-1 text-left">TLO Validations</h3>
                   <div className="flex items-center gap-2 ml-auto">
-                    {subsectionReviews[`${guarantor.name}-tlo`]?.reviewed && (
-                      <Badge variant="secondary" className="gap-1 text-xs">
-                        <Check className="h-3 w-3" />
-                        Reviewed
-                      </Badge>
-                    )}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -1103,8 +1103,17 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                       }}
                       className="h-7 px-2 text-xs"
                     >
-                      <Check className="h-3 w-3 mr-1" />
-                      {subsectionReviews[`${guarantor.name}-tlo`]?.reviewed ? "Update" : "Mark as Reviewed"}
+                      {subsectionReviews[`${guarantor.name}-tlo`]?.reviewed ? (
+                        <>
+                          <Check className="h-3 w-3 mr-1" />
+                          Reviewed
+                        </>
+                      ) : (
+                        <>
+                          <Check className="h-3 w-3 mr-1 opacity-50" />
+                          Mark as Reviewed
+                        </>
+                      )}
                     </Button>
                     {(() => {
                       const tloResult = calculateTLODecision(tloData[guarantor.name as keyof typeof tloData]);
@@ -1483,12 +1492,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                     LexisNexis Validations
                   </h3>
                   <div className="flex items-center gap-2 ml-auto">
-                    {subsectionReviews[`${guarantor.name}-lexisNexis`]?.reviewed && (
-                      <Badge variant="secondary" className="gap-1 text-xs">
-                        <Check className="h-3 w-3" />
-                        Reviewed
-                      </Badge>
-                    )}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -1498,8 +1501,17 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                       }}
                       className="h-7 px-2 text-xs"
                     >
-                      <Check className="h-3 w-3 mr-1" />
-                      {subsectionReviews[`${guarantor.name}-lexisNexis`]?.reviewed ? "Update" : "Mark as Reviewed"}
+                      {subsectionReviews[`${guarantor.name}-lexisNexis`]?.reviewed ? (
+                        <>
+                          <Check className="h-3 w-3 mr-1" />
+                          Reviewed
+                        </>
+                      ) : (
+                        <>
+                          <Check className="h-3 w-3 mr-1 opacity-50" />
+                          Mark as Reviewed
+                        </>
+                      )}
                     </Button>
                     {(() => {
                       const lexisData = lexisNexisData[guarantor.name as keyof typeof lexisNexisData];
@@ -1661,12 +1673,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
               FlagDat Validations
             </div>
             <div className="flex items-center gap-2">
-              {subsectionReviews["flagDat"]?.reviewed && (
-                <Badge variant="secondary" className="gap-1">
-                  <Check className="h-3 w-3" />
-                  Reviewed
-                </Badge>
-              )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -1676,8 +1682,17 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                 }}
                 className="h-7 px-2 text-xs"
               >
-                <Check className="h-3 w-3 mr-1" />
-                {subsectionReviews["flagDat"]?.reviewed ? "Update" : "Mark as Reviewed"}
+                {subsectionReviews["flagDat"]?.reviewed ? (
+                  <>
+                    <Check className="h-3 w-3 mr-1" />
+                    Reviewed
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-3 w-3 mr-1 opacity-50" />
+                    Mark as Reviewed
+                  </>
+                )}
               </Button>
               {(() => {
                 const hasAnyMatches = Object.values(flagDatData).some(
