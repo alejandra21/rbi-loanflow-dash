@@ -69,6 +69,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   const [currentReviewType, setCurrentReviewType] = useState<"phase" | "subsection">("subsection");
   const [tempReviewStatus, setTempReviewStatus] = useState<string>("");
   const [tempReviewComments, setTempReviewComments] = useState<string>("");
+  const [showReviewDropdown, setShowReviewDropdown] = useState(false);
   const toggleCard = (cardId: string) => {
     setExpandedCards((prev) => ({
       ...prev,
@@ -647,37 +648,20 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
     return daysDiff <= 90;
   };
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <span className="font-medium">Credit Review</span>
-          <StatusBadge status={phase.status} />
+    <div className="grid grid-cols-3 gap-6">
+      <div className="col-span-2 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <span className="font-medium">Credit Review</span>
+            <StatusBadge status={phase.status} />
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              Download Report
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={phaseReviewStatus ? "secondary" : "outline"}
-            size="sm"
-            onClick={() => openReviewDialog("phase", "phase")}
-            className="flex items-center gap-2"
-          >
-            {phaseReviewStatus ? (
-              <>
-                <Check className="h-4 w-4" />
-                Reviewed: {phaseReviewStatus}
-              </>
-            ) : (
-              <>
-                <Square className="h-4 w-4 border-2 border-current rounded" />
-                Mark as Reviewed
-              </>
-            )}
-          </Button>
-          <Button variant="outline" size="sm" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Download Report
-          </Button>
-        </div>
-      </div>
 
       {/* Credit Review Summary */}
       <CreditReviewSummary
@@ -2008,6 +1992,98 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
+
+      {/* Right Sidebar - Review Panel */}
+      <div className="col-span-1">
+        <Card className="sticky top-4">
+          <CardHeader>
+            <CardTitle className="text-base">Review Status</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {phaseReviewStatus ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Check className="h-5 w-5 text-success" />
+                  <span className="font-medium">Reviewed</span>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Decision</Label>
+                  <Badge variant="secondary" className="w-full justify-center py-2">
+                    {phaseReviewStatus}
+                  </Badge>
+                </div>
+                {phaseReviewComments && (
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Comments</Label>
+                    <div className="text-sm bg-muted p-3 rounded-md">
+                      {phaseReviewComments}
+                    </div>
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    setPhaseReviewStatus(null);
+                    setPhaseReviewComments("");
+                  }}
+                >
+                  Clear Review
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="review-decision">Decision</Label>
+                  <Select
+                    value={tempReviewStatus}
+                    onValueChange={setTempReviewStatus}
+                  >
+                    <SelectTrigger id="review-decision">
+                      <SelectValue placeholder="Select decision..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Acceptable">Acceptable</SelectItem>
+                      <SelectItem value="Accept - With Conditions">Accept - With Conditions</SelectItem>
+                      <SelectItem value="Manual Review - Low">Manual Review - Low</SelectItem>
+                      <SelectItem value="Manual Review - High">Manual Review - High</SelectItem>
+                      <SelectItem value="Unacceptable">Unacceptable</SelectItem>
+                      <SelectItem value="Suspended">Suspended</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="review-comment">Comments (Optional)</Label>
+                  <Textarea
+                    id="review-comment"
+                    placeholder="Add comments..."
+                    value={tempReviewComments}
+                    onChange={(e) => setTempReviewComments(e.target.value)}
+                    rows={4}
+                  />
+                </div>
+
+                <Button
+                  className="w-full"
+                  disabled={!tempReviewStatus}
+                  onClick={() => {
+                    setPhaseReviewStatus(tempReviewStatus);
+                    setPhaseReviewComments(tempReviewComments);
+                    setTempReviewStatus("");
+                    setTempReviewComments("");
+                  }}
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  Mark as Reviewed
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
