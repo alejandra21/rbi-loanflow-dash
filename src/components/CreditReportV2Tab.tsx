@@ -1728,27 +1728,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
               FlagDat Validations
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openReviewDialog("flagDat", "subsection");
-                }}
-                className="h-7 px-2 text-xs"
-              >
-                {subsectionReviews["flagDat"]?.reviewed ? (
-                  <>
-                    <Check className="h-3 w-3 mr-1" />
-                    Reviewed
-                  </>
-                ) : (
-                  <>
-                    <Square className="h-3 w-3 mr-1 stroke-[2.5]" />
-                    Mark as Reviewed
-                  </>
-                )}
-              </Button>
               {(() => {
                 const hasAnyMatches = Object.values(flagDatData).some(
                   (data) => data.watchlistMatches > 0 || data.blacklistMatches > 0,
@@ -1761,6 +1740,33 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         </CardHeader>
         {expandedCards.flagDat && (
           <CardContent className="space-y-4">
+            {/* Mark as Reviewed Section */}
+            <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openReviewDialog("flagDat", "subsection");
+                  }}
+                >
+                  {subsectionReviews["flagDat"]?.reviewed ? (
+                    <Check className="h-5 w-5" />
+                  ) : (
+                    <Square className="h-5 w-5 stroke-[2.5]" />
+                  )}
+                </Button>
+                <span className="font-medium text-sm">Mark as Reviewed</span>
+                {subsectionReviews["flagDat"]?.reviewed && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                    Reviewed
+                  </Badge>
+                )}
+              </div>
+            </div>
+
             <div className="grid grid-cols-3 gap-4">
               <div className="p-3 border rounded space-y-2">
                 <p className="text-xs text-muted-foreground">WatchList Matches</p>
