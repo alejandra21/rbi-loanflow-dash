@@ -1743,46 +1743,55 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         {expandedCards.flagDat && (
           <CardContent className="space-y-4">
             {/* Mark as Reviewed Section */}
-            <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 p-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openReviewDialog("flagDat", "subsection");
-                  }}
-                >
-                  {subsectionReviews["flagDat"]?.reviewed ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    <Square className="h-5 w-5 stroke-[2.5]" />
+            {subsectionReviews["flagDat"]?.reviewed ? (
+              <Card className="border">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Manual Validation</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-600" />
+                    <span className="text-green-600 font-medium">Data Validated</span>
+                  </div>
+                  
+                  {subsectionReviews["flagDat"]?.validatedBy && (
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Validated by: </span>
+                      <span className="text-foreground font-medium">{subsectionReviews["flagDat"].validatedBy}</span>
+                    </div>
                   )}
-                </Button>
-                <span className="font-medium text-sm">Mark as Reviewed</span>
-                {subsectionReviews["flagDat"]?.reviewed && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                    Reviewed
-                  </Badge>
-                )}
-              </div>
-            </div>
-
-            {subsectionReviews["flagDat"]?.reviewed && (subsectionReviews["flagDat"]?.comments || subsectionReviews["flagDat"]?.validatedBy) && (
-              <div className="space-y-2 pt-2 border-t">
-                {subsectionReviews["flagDat"]?.comments && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Comment: </span>
-                    <span className="text-foreground">{subsectionReviews["flagDat"].comments}</span>
-                  </div>
-                )}
-                {subsectionReviews["flagDat"]?.validatedBy && (
-                  <div className="text-sm text-muted-foreground">
-                    Validated by {subsectionReviews["flagDat"].validatedBy}
-                    {subsectionReviews["flagDat"]?.validatedAt && ` on ${subsectionReviews["flagDat"].validatedAt}`}
-                  </div>
-                )}
+                  
+                  {subsectionReviews["flagDat"]?.validatedAt && (
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Validated at: </span>
+                      <span className="text-foreground">{subsectionReviews["flagDat"].validatedAt}</span>
+                    </div>
+                  )}
+                  
+                  {subsectionReviews["flagDat"]?.comments && (
+                    <div className="text-sm">
+                      <div className="text-muted-foreground mb-1">Notes:</div>
+                      <div className="text-foreground">{subsectionReviews["flagDat"].comments}</div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openReviewDialog("flagDat", "subsection");
+                    }}
+                  >
+                    <Square className="h-5 w-5 stroke-[2.5]" />
+                  </Button>
+                  <span className="font-medium text-sm">Mark as Reviewed</span>
+                </div>
               </div>
             )}
 
