@@ -63,7 +63,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   // Review state management
   const [phaseReviewStatus, setPhaseReviewStatus] = useState<string | null>(null);
   const [phaseReviewComments, setPhaseReviewComments] = useState<string>("");
-  const [subsectionReviews, setSubsectionReviews] = useState<Record<string, { reviewed: boolean; comments: string }>>({});
+  const [subsectionReviews, setSubsectionReviews] = useState<Record<string, { reviewed: boolean; comments: string; validatedBy?: string; validatedAt?: string }>>({});
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [currentReviewSection, setCurrentReviewSection] = useState<string>("");
   const [currentReviewType, setCurrentReviewType] = useState<"phase" | "subsection">("subsection");
@@ -132,6 +132,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         [currentReviewSection]: {
           reviewed: true,
           comments: tempReviewComments,
+          validatedBy: "Current User", // Replace with actual user
+          validatedAt: new Date().toLocaleString(),
         },
       }));
     }
@@ -1766,6 +1768,23 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                 )}
               </div>
             </div>
+
+            {subsectionReviews["flagDat"]?.reviewed && (subsectionReviews["flagDat"]?.comments || subsectionReviews["flagDat"]?.validatedBy) && (
+              <div className="space-y-2 pt-2 border-t">
+                {subsectionReviews["flagDat"]?.comments && (
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">Comment: </span>
+                    <span className="text-foreground">{subsectionReviews["flagDat"].comments}</span>
+                  </div>
+                )}
+                {subsectionReviews["flagDat"]?.validatedBy && (
+                  <div className="text-sm text-muted-foreground">
+                    Validated by {subsectionReviews["flagDat"].validatedBy}
+                    {subsectionReviews["flagDat"]?.validatedAt && ` on ${subsectionReviews["flagDat"].validatedAt}`}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-3 gap-4">
               <div className="p-3 border rounded space-y-2">
