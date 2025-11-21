@@ -11,6 +11,7 @@ import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { ExperienceTieringCopyTab } from "@/components/ExperienceTieringCopyTab";
 import { CreditReviewTab } from "@/components/CreditReviewTab";
 import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
+import { ReviewStatusOverview } from "@/components/ReviewStatusOverview";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import {
@@ -179,6 +180,22 @@ export const LoanDetail = () => {
         </div>
 
         <div className="space-y-3">
+          {/* Review Status Overview */}
+          <ReviewStatusOverview
+            phaseReview={{
+              reviewed: !!savedReviewDecision,
+              decision: savedReviewDecision || undefined,
+              validatedBy: savedReviewDecision ? "Current User" : undefined,
+              validatedAt: savedReviewDecision ? new Date().toLocaleString() : undefined,
+            }}
+            subsections={[
+              { name: "Credit Report V2", reviewed: false },
+              { name: "Credit Review", reviewed: false },
+              { name: "FlagDat Validations", reviewed: false },
+              { name: "Experience Tiering", reviewed: false },
+            ]}
+          />
+
           {/* Actions Card */}
           <Card>
             <CardHeader>
