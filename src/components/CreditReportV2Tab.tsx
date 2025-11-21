@@ -63,7 +63,13 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   // Review state management
   const [phaseReviewStatus, setPhaseReviewStatus] = useState<string | null>(null);
   const [phaseReviewComments, setPhaseReviewComments] = useState<string>("");
-  const [subsectionReviews, setSubsectionReviews] = useState<Record<string, { reviewed: boolean; comments: string }>>({});
+  const [subsectionReviews, setSubsectionReviews] = useState<Record<string, { 
+    reviewed: boolean; 
+    comments: string;
+    decision?: string;
+    reviewedBy?: string;
+    reviewedAt?: string;
+  }>>({});
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [currentReviewSection, setCurrentReviewSection] = useState<string>("");
   const [currentReviewType, setCurrentReviewType] = useState<"phase" | "subsection">("subsection");
@@ -132,6 +138,16 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         [currentReviewSection]: {
           reviewed: true,
           comments: tempReviewComments,
+          decision: tempReviewStatus,
+          reviewedBy: "John Smith", // Mock user - in real app, get from auth context
+          reviewedAt: new Date().toLocaleString('en-US', { 
+            month: '2-digit', 
+            day: '2-digit', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+          }),
         },
       }));
     }
@@ -1741,31 +1757,101 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
         {expandedCards.flagDat && (
           <CardContent className="space-y-4">
             {/* Mark as Reviewed Section */}
-            <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 p-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openReviewDialog("flagDat", "subsection");
-                  }}
-                >
-                  {subsectionReviews["flagDat"]?.reviewed ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    <Square className="h-5 w-5 stroke-[2.5]" />
+            <Collapsible
+              open={expandedCards["flagDat-review"]}
+              onOpenChange={() => toggleCard("flagDat-review")}
+            >
+              <div className="p-3 border rounded-lg bg-muted/30 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 p-0"
+                      >
+                        {subsectionReviews["flagDat"]?.reviewed ? (
+                          <Check className="h-5 w-5" />
+                        ) : (
+                          <Square className="h-5 w-5 stroke-[2.5]" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <span className="font-medium text-sm">Mark as Reviewed</span>
+                    {subsectionReviews["flagDat"]?.reviewed && (
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                        Reviewed
+                      </Badge>
+                    )}
+                  </div>
+                  {!subsectionReviews["flagDat"]?.reviewed && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openReviewDialog("flagDat", "subsection");
+                      }}
+                    >
+                      Add Review
+                    </Button>
                   )}
-                </Button>
-                <span className="font-medium text-sm">Mark as Reviewed</span>
+                </div>
+
                 {subsectionReviews["flagDat"]?.reviewed && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                    Reviewed
-                  </Badge>
+                  <CollapsibleContent>
+                    <div className="pt-3 border-t space-y-3">
+                      {subsectionReviews["flagDat"]?.decision && (
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground">Decision</span>
+                          <div>
+                            <Badge 
+                              variant="secondary"
+                              className={`${
+                                subsectionReviews["flagDat"]?.decision === "Unacceptable" || 
+                                subsectionReviews["flagDat"]?.decision === "Suspended" 
+                                  ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400" 
+                                  : subsectionReviews["flagDat"]?.decision === "Acceptable"
+                                  ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                  : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                              }`}
+                            >
+                              {subsectionReviews["flagDat"]?.decision}
+                            </Badge>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {subsectionReviews["flagDat"]?.comments && (
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground">Comments</span>
+                          <div className="text-sm bg-background p-3 rounded border">
+                            {subsectionReviews["flagDat"]?.comments}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
+                        <span>Reviewed by: {subsectionReviews["flagDat"]?.reviewedBy}</span>
+                        <span>{subsectionReviews["flagDat"]?.reviewedAt}</span>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openReviewDialog("flagDat", "subsection");
+                        }}
+                      >
+                        Edit Review
+                      </Button>
+                    </div>
+                  </CollapsibleContent>
                 )}
               </div>
-            </div>
+            </Collapsible>
 
             <div className="grid grid-cols-3 gap-4">
               <div className="p-3 border rounded space-y-2">
@@ -1963,6 +2049,25 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                   <SelectContent>
                     <SelectItem value="Acceptable">Acceptable</SelectItem>
                     <SelectItem value="Acceptable – With Conditions">Acceptable – With Conditions</SelectItem>
+                    <SelectItem value="Manual Review - Low">Manual Review - Low</SelectItem>
+                    <SelectItem value="Manual Review - High">Manual Review - High</SelectItem>
+                    <SelectItem value="Unacceptable">Unacceptable</SelectItem>
+                    <SelectItem value="Suspended">Suspended</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {currentReviewType === "subsection" && (
+              <div className="space-y-2">
+                <Label htmlFor="subsection-decision">Decision (Optional)</Label>
+                <Select value={tempReviewStatus} onValueChange={setTempReviewStatus}>
+                  <SelectTrigger id="subsection-decision">
+                    <SelectValue placeholder="Select decision" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Acceptable">Acceptable</SelectItem>
+                    <SelectItem value="Accept - With Conditions">Accept - With Conditions</SelectItem>
                     <SelectItem value="Manual Review - Low">Manual Review - Low</SelectItem>
                     <SelectItem value="Manual Review - High">Manual Review - High</SelectItem>
                     <SelectItem value="Unacceptable">Unacceptable</SelectItem>
