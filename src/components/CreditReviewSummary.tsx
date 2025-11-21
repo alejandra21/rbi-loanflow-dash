@@ -4,7 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { CheckCircle, AlertCircle, XCircle, ChevronDown, TrendingUp, ArrowRight, Info, AlertTriangle } from "lucide-react";
+import { CheckCircle, AlertCircle, XCircle, ChevronDown, TrendingUp, ArrowRight, Info, AlertTriangle, CheckSquare, User } from "lucide-react";
+
+interface SectionValidation {
+  isValidated: boolean;
+  validatedBy?: string;
+  validatedAt?: string;
+}
 
 interface CreditReviewSummaryProps {
   expandedCards: Record<string, boolean>;
@@ -24,6 +30,10 @@ interface CreditReviewSummaryProps {
   ltv: number;
   loanLimit: number;
   closingDate: string;
+  borrowerValidation?: SectionValidation;
+  creditworthinessValidation?: SectionValidation;
+  exposureValidation?: SectionValidation;
+  flagDatValidation?: SectionValidation;
 }
 
 export const CreditReviewSummary = ({
@@ -43,7 +53,11 @@ export const CreditReviewSummary = ({
   ltc,
   ltv,
   loanLimit,
-  closingDate
+  closingDate,
+  borrowerValidation,
+  creditworthinessValidation,
+  exposureValidation,
+  flagDatValidation
 }: CreditReviewSummaryProps) => {
   
   const getTierColor = (tier: string): string => {
@@ -73,6 +87,44 @@ export const CreditReviewSummary = ({
     }
   };
 
+  const ValidationIndicator = ({ validation }: { validation?: SectionValidation }) => {
+    if (!validation?.isValidated) {
+      return (
+        <Badge variant="outline" className="gap-1 text-xs">
+          <AlertCircle className="h-3 w-3" />
+          Not Validated
+        </Badge>
+      );
+    }
+    
+    return (
+      <div className="flex items-center gap-2">
+        <Badge variant="success" className="gap-1 text-xs">
+          <CheckSquare className="h-3 w-3" />
+          Validated
+        </Badge>
+        {validation.validatedBy && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <User className="h-3 w-3" />
+                  <span>{validation.validatedBy}</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">
+                  Validated by {validation.validatedBy}
+                  {validation.validatedAt && ` on ${validation.validatedAt}`}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Card>
       <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('creditReviewSummary')}>
@@ -91,7 +143,10 @@ export const CreditReviewSummary = ({
         <CardContent className="space-y-6">
           {/* Section 1: Borrower & Program */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-muted-foreground">Borrower & Program</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-muted-foreground">Borrower & Program</h3>
+              <ValidationIndicator validation={borrowerValidation} />
+            </div>
             <div className="grid grid-cols-4 gap-4">
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <p className="text-xs text-muted-foreground">Number of Guarantors</p>
@@ -140,7 +195,10 @@ export const CreditReviewSummary = ({
 
           {/* Section 2: Creditworthiness */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-muted-foreground">Creditworthiness</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-muted-foreground">Creditworthiness</h3>
+              <ValidationIndicator validation={creditworthinessValidation} />
+            </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <div className="flex items-center gap-2">
@@ -184,7 +242,10 @@ export const CreditReviewSummary = ({
 
           {/* Section 3: Exposure Eligibility */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-muted-foreground">Exposure Eligibility</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-muted-foreground">Exposure Eligibility</h3>
+              <ValidationIndicator validation={exposureValidation} />
+            </div>
             <div className="grid grid-cols-4 gap-4">
               <div className="p-4 bg-muted/30 rounded-lg space-y-1">
                 <p className="text-xs text-muted-foreground">Closing Date</p>
@@ -202,6 +263,21 @@ export const CreditReviewSummary = ({
                 <p className="text-xs text-muted-foreground">Loan Limit</p>
                 <p className="text-lg font-bold">${loanLimit.toLocaleString()}</p>
               </div>
+            </div>
+          </div>
+
+          <Separator className="bg-border/50" />
+
+          {/* Section 4: FlagDat Validation */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-muted-foreground">FlagDat Validation</h3>
+              <ValidationIndicator validation={flagDatValidation} />
+            </div>
+            <div className="p-4 bg-muted/30 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                FlagDat validation checks have been completed for this credit review.
+              </p>
             </div>
           </div>
 
