@@ -525,24 +525,6 @@ export const CreditReviewTab = ({
         ltv={ltv}
         loanLimit={loanLimit}
         closingDate={closingDate}
-        borrowerValidation={{
-          isValidated: true,
-          validatedBy: "John Doe",
-          validatedAt: "2024-03-15"
-        }}
-        creditworthinessValidation={{
-          isValidated: true,
-          validatedBy: "Jane Smith",
-          validatedAt: "2024-03-16"
-        }}
-        exposureValidation={{
-          isValidated: false
-        }}
-        flagDatValidation={{
-          isValidated: true,
-          validatedBy: "FlagDat System",
-          validatedAt: "2024-03-14"
-        }}
       />
 
 
