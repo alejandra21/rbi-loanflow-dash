@@ -83,6 +83,7 @@ export interface PhaseStep {
     rawOutput?: Record<string, any>;
     eligibilityData?: EligibilityData;
     experienceTieringData?: any;
+    nonOwnerOccupancyData?: any;
     auditLog?: AuditLogEntry[];
 }
 
@@ -376,12 +377,136 @@ export const mockLoans: LoanApplication[] = [
             },
             nonOwnerOccupancy: {
                 name: "Non-Owner Occupancy Verification",
-                status: "pending",
-                notes: "Property documents require verification",
-                keyValueData: {
-                    "Property Type": "Residential Apartment",
-                    "Location": "New York, NY",
-                    "Occupancy Status": "Non-Owner Occupied"
+                status: "passed",
+                nonOwnerOccupancyData: {
+                    loan_id: "LOA-2024-001",
+                    stage_code: 'nonOwnerOccupancy' as const,
+                    status: 'pass' as const,
+                    transaction_type: 'Refinance' as const,
+                    
+                    property_address: "456 Investment Ave, Miami, FL 33101",
+                    property_address_normalized: "456 INVESTMENT AVE MIAMI FL 33101",
+                    
+                    borrower_addresses: [
+                        {
+                            original: "123 Main Street, New York, NY 10001",
+                            normalized: "123 MAIN ST NEW YORK NY 10001",
+                            source: 'borrower' as const,
+                            sourceDetail: "Application POS",
+                            matchScore: 15
+                        },
+                        {
+                            original: "789 Business Blvd, Brooklyn, NY 11201",
+                            normalized: "789 BUSINESS BLVD BROOKLYN NY 11201",
+                            source: 'borrower' as const,
+                            sourceDetail: "Bank Statement",
+                            matchScore: 12
+                        }
+                    ],
+                    guarantor_addresses: [
+                        {
+                            original: "321 Park Ave, Manhattan, NY 10022",
+                            normalized: "321 PARK AVE MANHATTAN NY 10022",
+                            source: 'guarantor' as const,
+                            sourceDetail: "John Smith - Gov ID",
+                            matchScore: 8
+                        }
+                    ],
+                    tlo_addresses: [
+                        {
+                            original: "123 Main St, New York, NY 10001",
+                            normalized: "123 MAIN ST NEW YORK NY 10001",
+                            source: 'tlo' as const,
+                            sourceDetail: "TLO Background Check",
+                            matchScore: 15
+                        }
+                    ],
+                    credit_report_addresses: [
+                        {
+                            original: "789 Business Boulevard, Brooklyn NY 11201",
+                            normalized: "789 BUSINESS BLVD BROOKLYN NY 11201",
+                            source: 'credit_report' as const,
+                            sourceDetail: "Xactus Credit Report",
+                            matchScore: 12
+                        }
+                    ],
+                    bank_statement_addresses: [
+                        {
+                            original: "789 Business Blvd, Brooklyn, NY 11201",
+                            normalized: "789 BUSINESS BLVD BROOKLYN NY 11201",
+                            source: 'bank_statement' as const,
+                            sourceDetail: "Chase Bank Statement",
+                            matchScore: 12
+                        }
+                    ],
+                    gov_id_addresses: [
+                        {
+                            original: "321 Park Avenue, Manhattan, NY 10022",
+                            normalized: "321 PARK AVE MANHATTAN NY 10022",
+                            source: 'gov_id' as const,
+                            sourceDetail: "Driver's License - John Smith",
+                            matchScore: 8
+                        }
+                    ],
+                    
+                    address_matches: [],
+                    has_any_match: false,
+                    
+                    title_owner_check: {
+                        titleOwner: "Tech Corp Ltd",
+                        titleOwnerAddress: "456 Investment Ave, Miami, FL 33101",
+                        borrowerEntity: "Tech Corp Ltd",
+                        guarantors: ["John Smith", "Emily Chen"],
+                        isMatch: true,
+                        reason: "Title owner matches borrower entity"
+                    },
+                    
+                    homestead_check: {
+                        hasHomestead: false,
+                        reason: "No homestead exemption found for property"
+                    },
+                    
+                    requires_manual_review: false,
+                    manual_review_reasons: [],
+                    
+                    override_applied: false,
+                    
+                    checks: [
+                        {
+                            name: "Property Address Validation",
+                            ok: true,
+                            detail: "Subject property address successfully normalized"
+                        },
+                        {
+                            name: "Address Comparison - Borrower",
+                            ok: true,
+                            detail: "No matches found (highest score: 15%)"
+                        },
+                        {
+                            name: "Address Comparison - Guarantor",
+                            ok: true,
+                            detail: "No matches found (highest score: 8%)"
+                        },
+                        {
+                            name: "Address Comparison - Third Party Sources",
+                            ok: true,
+                            detail: "No matches found across TLO, Credit Report, Bank Statements, Gov ID"
+                        },
+                        {
+                            name: "Title Owner Verification",
+                            ok: true,
+                            detail: "Title owner matches borrower entity (Tech Corp Ltd)"
+                        },
+                        {
+                            name: "Homestead Exemption Check",
+                            ok: true,
+                            detail: "No active homestead exemption found"
+                        }
+                    ],
+                    
+                    ran_at: "2024-01-12T14:30:00Z",
+                    ran_by: "AI Underwriting System",
+                    source: "AWS + TLO + Xactus"
                 }
             },
             collateralReview: { name: "Collateral Review", status: "pending" },
