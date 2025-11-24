@@ -1328,16 +1328,34 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableHead className="text-xs">Count</TableHead>
                                 <TableHead className="text-xs">$ Total Amount</TableHead>
                                 <TableHead className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    <AlertTriangle className="h-3 w-3 text-warning" />
-                                    <span className="text-warning"># Recent</span>
-                                  </div>
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className="flex items-center gap-1 cursor-help">
+                                          <AlertTriangle className="h-3 w-3 text-warning" />
+                                          <span className="text-warning"># Recent</span>
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p># foreclosures found within the last 36 months, and within the last 120 months for the rest backgrounds</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
                                 </TableHead>
                                 <TableHead className="text-xs">
-                                  <div className="flex items-center gap-1">
-                                    <CheckCircle className="h-3 w-3 text-success" />
-                                    # Old
-                                  </div>
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className="flex items-center gap-1 cursor-help">
+                                          <CheckCircle className="h-3 w-3 text-success" />
+                                          # Old
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p># foreclosures found with more than 36 months, and with more than 120 months for the rest backgrounds</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
                                 </TableHead>
                                 <TableHead className="text-xs">Months Since Latest</TableHead>
                                 <TableHead className="text-xs">Date</TableHead>
