@@ -1326,20 +1326,20 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                               <TableRow>
                                 <TableHead className="text-xs">Type</TableHead>
                                 <TableHead className="text-xs">Count</TableHead>
+                                <TableHead className="text-xs">$ Total Amount</TableHead>
                                 <TableHead className="text-xs">
                                   <div className="flex items-center gap-1">
                                     <AlertTriangle className="h-3 w-3 text-warning" />
-                                    <span className="text-warning">Recent</span>
+                                    <span className="text-warning"># Recent</span>
                                   </div>
                                 </TableHead>
                                 <TableHead className="text-xs">
                                   <div className="flex items-center gap-1">
                                     <CheckCircle className="h-3 w-3 text-success" />
-                                    Old
+                                    # Old
                                   </div>
                                 </TableHead>
                                 <TableHead className="text-xs">Months Since Latest</TableHead>
-                                <TableHead className="text-xs">$ Total Amount</TableHead>
                                 <TableHead className="text-xs">Date</TableHead>
                               </TableRow>
                             </TableHeader>
@@ -1363,15 +1363,15 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.liens.count}
                                 </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.liens.totalAmount}
+                                </TableCell>
                                 <TableCell className="text-xs text-warning">
                                   {tloGuarantorData.backgroundCheck.liens.recent}
                                 </TableCell>
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.old}</TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.liens.monthsSinceLatest}
-                                </TableCell>
-                                <TableCell className="text-xs font-medium">
-                                  {tloGuarantorData.backgroundCheck.liens.totalAmount}
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.liens.latestDate}
@@ -1396,6 +1396,9 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.judgments.count}
                                 </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.judgments.totalAmount}
+                                </TableCell>
                                 <TableCell className="text-xs text-warning">
                                   {tloGuarantorData.backgroundCheck.judgments.recent}
                                 </TableCell>
@@ -1404,9 +1407,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest ?? "—"}
-                                </TableCell>
-                                <TableCell className="text-xs font-medium">
-                                  {tloGuarantorData.backgroundCheck.judgments.totalAmount}
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.judgments.latestDate}
@@ -1431,6 +1431,9 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.bankruptcies.count}
                                 </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.bankruptcies.totalAmount}
+                                </TableCell>
                                 <TableCell className="text-xs text-warning">
                                   {tloGuarantorData.backgroundCheck.bankruptcies.recent}
                                 </TableCell>
@@ -1439,9 +1442,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.bankruptcies.monthsSinceLatest}
-                                </TableCell>
-                                <TableCell className="text-xs font-medium">
-                                  {tloGuarantorData.backgroundCheck.bankruptcies.totalAmount}
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.bankruptcies.latestDate}
@@ -1466,6 +1466,9 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.foreclosures.count}
                                 </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.foreclosures.totalAmount}
+                                </TableCell>
                                 <TableCell className="text-xs text-warning">
                                   {tloGuarantorData.backgroundCheck.foreclosures.recent}
                                 </TableCell>
@@ -1474,9 +1477,6 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.foreclosures.monthsSinceLatest}
-                                </TableCell>
-                                <TableCell className="text-xs font-medium">
-                                  {tloGuarantorData.backgroundCheck.foreclosures.totalAmount}
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.foreclosures.latestDate}
