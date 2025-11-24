@@ -238,6 +238,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 0,
           old: 2,
           monthsSinceLatest: 118,
+          totalAmount: "$23,500",
+          latestDate: "01/10/2024",
           items: [
             {
               type: "Tax Lien",
@@ -258,6 +260,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 0,
           old: 0,
           monthsSinceLatest: null,
+          totalAmount: "—",
+          latestDate: "—",
           items: [],
         },
         bankruptcies: {
@@ -265,6 +269,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 0,
           old: 1,
           monthsSinceLatest: 140,
+          totalAmount: "—",
+          latestDate: "03/20/2013",
           items: [
             {
               type: "Chapter 7",
@@ -279,6 +285,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 1,
           old: 0,
           monthsSinceLatest: 48,
+          totalAmount: "—",
+          latestDate: "01/15/2021",
           items: [
             {
               address: "123 Main St, City, ST",
@@ -316,6 +324,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 1,
           old: 1,
           monthsSinceLatest: 118,
+          totalAmount: "$17,000",
+          latestDate: "02/10/2024",
           items: [
             {
               type: "Tax Lien",
@@ -336,6 +346,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 0,
           old: 0,
           monthsSinceLatest: null,
+          totalAmount: "—",
+          latestDate: "—",
           items: [],
         },
         bankruptcies: {
@@ -343,6 +355,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 0,
           old: 1,
           monthsSinceLatest: 140,
+          totalAmount: "—",
+          latestDate: "05/10/2013",
           items: [
             {
               type: "Chapter 13",
@@ -357,6 +371,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
           recent: 1,
           old: 0,
           monthsSinceLatest: 48,
+          totalAmount: "—",
+          latestDate: "03/22/2021",
           items: [
             {
               address: "456 Oak Ave, City, ST",
@@ -1323,6 +1339,8 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                   </div>
                                 </TableHead>
                                 <TableHead className="text-xs">Months Since Latest</TableHead>
+                                <TableHead className="text-xs">$ Total Amount</TableHead>
+                                <TableHead className="text-xs">Date</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -1351,6 +1369,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">{tloGuarantorData.backgroundCheck.liens.old}</TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.liens.monthsSinceLatest}
+                                </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.liens.totalAmount}
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  {tloGuarantorData.backgroundCheck.liens.latestDate}
                                 </TableCell>
                               </TableRow>
                               <TableRow id={`${guarantor.name}-judgments`}>
@@ -1381,6 +1405,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.judgments.monthsSinceLatest ?? "—"}
                                 </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.judgments.totalAmount}
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  {tloGuarantorData.backgroundCheck.judgments.latestDate}
+                                </TableCell>
                               </TableRow>
                               <TableRow id={`${guarantor.name}-bankruptcies`}>
                                 <TableCell className="text-xs font-semibold">
@@ -1410,6 +1440,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.bankruptcies.monthsSinceLatest}
                                 </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.bankruptcies.totalAmount}
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  {tloGuarantorData.backgroundCheck.bankruptcies.latestDate}
+                                </TableCell>
                               </TableRow>
                               <TableRow id={`${guarantor.name}-foreclosures`}>
                                 <TableCell className="text-xs font-semibold">
@@ -1438,6 +1474,12 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {tloGuarantorData.backgroundCheck.foreclosures.monthsSinceLatest}
+                                </TableCell>
+                                <TableCell className="text-xs font-medium">
+                                  {tloGuarantorData.backgroundCheck.foreclosures.totalAmount}
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  {tloGuarantorData.backgroundCheck.foreclosures.latestDate}
                                 </TableCell>
                               </TableRow>
                             </TableBody>
