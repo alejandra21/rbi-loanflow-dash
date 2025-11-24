@@ -11,6 +11,7 @@ import { ValidationSidePanel } from "@/components/ValidationSidePanel";
 import { ExperienceTieringCopyTab } from "@/components/ExperienceTieringCopyTab";
 import { CreditReviewTab } from "@/components/CreditReviewTab";
 import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
+import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import {
@@ -1936,7 +1937,11 @@ export const LoanDetail = () => {
               </TabsContent>
 
               <TabsContent value="nonOwnerOccupancy" className="mt-0">
-                <PhaseTab phase={loan.phases.nonOwnerOccupancy} phaseName="Non-Owner Occupancy Verification" />
+                {loan.phases.nonOwnerOccupancy.nonOwnerOccupancyData ? (
+                  <NonOwnerOccupancyTab data={loan.phases.nonOwnerOccupancy.nonOwnerOccupancyData} />
+                ) : (
+                  <PhaseTab phase={loan.phases.nonOwnerOccupancy} phaseName="Non-Owner Occupancy Verification" />
+                )}
               </TabsContent>
 
               <TabsContent value="collateralReview" className="mt-0">
