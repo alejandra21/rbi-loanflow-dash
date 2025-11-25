@@ -43,14 +43,23 @@ export const NonOwnerOccupancyTab = ({ data }: NonOwnerOccupancyTabProps) => {
     addresses: false,
     refinanceChecks: false,
     override: false,
-    validations: false,
+    logs: false,
     execution: false
   });
+
+  const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
 
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
+    }));
+  };
+
+  const toggleLog = (logId: string) => {
+    setExpandedLogs(prev => ({
+      ...prev,
+      [logId]: !prev[logId]
     }));
   };
 
@@ -426,34 +435,77 @@ export const NonOwnerOccupancyTab = ({ data }: NonOwnerOccupancyTabProps) => {
         </Card>
       )}
 
-      {/* Validation Checks */}
+      {/* Logs */}
       <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('validations')}>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('logs')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Validation Checks
+              <FileText className="h-4 w-4" />
+              Logs
             </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.validations ? '' : '-rotate-90'}`} />
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.logs ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.validations && (
-          <CardContent>
-            <div className="space-y-2">
-              {data.checks.map((check, idx) => (
-                <div key={idx} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
-                  {check.ok ? (
-                    <CheckCircle className="h-4 w-4 text-success mt-0.5" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{check.name}</p>
-                    <p className="text-xs text-muted-foreground">{check.detail}</p>
+        {expandedCards.logs && (
+          <CardContent className="space-y-3">
+            {data.logs && data.logs.length > 0 ? (
+              data.logs.map((log) => (
+                <div key={log.id} className="border rounded-lg">
+                  <div
+                    className="p-3 cursor-pointer hover:bg-muted/30 transition-colors"
+                    onClick={() => toggleLog(log.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Badge variant="outline" className="text-xs">
+                          {log.tag}
+                        </Badge>
+                        <span className="text-sm font-medium">{log.description}</span>
+                        <span className="text-xs text-muted-foreground">{log.timestamp}</span>
+                      </div>
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`}
+                      />
+                    </div>
                   </div>
+
+                  {expandedLogs[log.id] && (
+                    <div className="p-3 bg-muted/20 border-t space-y-2">
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Action:</span>
+                          <span className="ml-2 font-medium">{log.action}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">User:</span>
+                          <span className="ml-2 font-medium">{log.user}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Status:</span>
+                          <span className="ml-2 font-medium">{log.status}</span>
+                        </div>
+                        {log.exceptionTag && (
+                          <div>
+                            <span className="text-muted-foreground">Exception Tag:</span>
+                            <span className="ml-2 font-medium">{log.exceptionTag}</span>
+                          </div>
+                        )}
+                      </div>
+                      {log.jsonData && (
+                        <div className="mt-3">
+                          <p className="text-xs text-muted-foreground mb-2">JSON Data:</p>
+                          <pre className="text-xs bg-background p-2 rounded border overflow-x-auto">
+                            {JSON.stringify(log.jsonData, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">No logs available</p>
+            )}
           </CardContent>
         )}
       </Card>

@@ -47,6 +47,18 @@ export interface ManualReviewReason {
   sourceDocumentLink?: string;
 }
 
+export interface AuditLog {
+  id: string;
+  timestamp: string;
+  tag: string;
+  description: string;
+  action: string;
+  user: string;
+  status: string;
+  exceptionTag?: string;
+  jsonData?: any;
+}
+
 export interface NonOwnerOccupancyResult {
   loan_id: string;
   stage_code: 'nonOwnerOccupancy';
@@ -82,8 +94,8 @@ export interface NonOwnerOccupancyResult {
   override_at?: string;
   override_reason?: string;
   
-  // Validation
-  checks: ValidationCheck[];
+  // Logs
+  logs?: AuditLog[];
   
   // Metadata
   ran_at: string;
