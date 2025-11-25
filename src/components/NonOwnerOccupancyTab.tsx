@@ -1,11 +1,12 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AlertTriangle, CheckCircle, Home, FileText, MapPin, ExternalLink } from "lucide-react";
+import { AlertTriangle, CheckCircle, Home, FileText, MapPin, ChevronDown, Download, XCircle, Info } from "lucide-react";
 import { NonOwnerOccupancyResult, MatchStatus } from "@/types/nonOwnerOccupancy";
+import { useState } from "react";
 
 interface NonOwnerOccupancyTabProps {
   data: NonOwnerOccupancyResult;
@@ -27,15 +28,45 @@ const getMatchStatusColor = (status: MatchStatus) => {
 const getMatchStatusIcon = (status: MatchStatus) => {
   switch (status) {
     case 'MATCH':
-      return <AlertTriangle className="h-4 w-4" />;
+      return <XCircle className="h-4 w-4 text-destructive" />;
     case 'NO MATCH':
-      return <CheckCircle className="h-4 w-4" />;
+      return <CheckCircle className="h-4 w-4 text-success" />;
     default:
-      return <AlertTriangle className="h-4 w-4" />;
+      return <AlertTriangle className="h-4 w-4 text-warning" />;
   }
 };
 
 export const NonOwnerOccupancyTab = ({ data }: NonOwnerOccupancyTabProps) => {
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
+    overview: true,
+    property: false,
+    addresses: false,
+    refinanceChecks: false,
+    override: false,
+    validations: false,
+    execution: false
+  });
+
+  const toggleCard = (cardId: string) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "pass":
+        return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Pass</Badge>;
+      case "warn":
+        return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Warning</Badge>;
+      case "fail":
+        return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
   const allAddresses = [
     ...data.borrower_addresses,
     ...data.guarantor_addresses,
@@ -46,339 +77,416 @@ export const NonOwnerOccupancyTab = ({ data }: NonOwnerOccupancyTabProps) => {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5" />
-                Non-Owner Occupancy Verification
-              </CardTitle>
-              <CardDescription className="mt-2">
-                Phase 4: Verifying that the subject property is not owner-occupied by any borrower, guarantor, or entity
-              </CardDescription>
-            </div>
-            <Badge variant={data.status === 'pass' ? 'success' : data.status === 'warn' ? 'warning' : 'destructive'}>
-              {data.status.toUpperCase()}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Transaction Type</p>
-              <p className="font-medium">{data.transaction_type}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Requires Manual Review</p>
-              <div className="flex items-center gap-2">
-                <p className="font-medium">{data.requires_manual_review ? 'Yes' : 'No'}</p>
-                {data.requires_manual_review && (
-                  <AlertTriangle className="h-4 w-4 text-warning" />
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <span className="font-medium">Non-Owner Occupancy Check</span>
+          {getStatusBadge(data.status)}
+        </div>
+        <Button variant="outline" size="sm" className="flex items-center gap-2">
+          <Download className="h-4 w-4" />
+          Download Report
+        </Button>
+      </div>
 
-      {/* Property Address */}
+      {/* Overview Card */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
-            Subject Property Address
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('overview')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Overview
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.overview ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div>
-              <p className="text-sm text-muted-foreground">Original</p>
-              <p className="font-medium">{data.property_address}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Normalized</p>
-              <p className="font-mono text-sm">{data.property_address_normalized}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Manual Review Reasons */}
-      {data.requires_manual_review && data.manual_review_reasons.length > 0 && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <p className="font-semibold mb-2">Manual Review Required:</p>
-            <ul className="list-disc list-inside space-y-1">
-              {data.manual_review_reasons.map((reason, idx) => (
-                <li key={idx} className="text-sm">
-                  <span className="font-medium">{reason.type}:</span> {reason.description}
-                  {reason.sourceDocumentLink && (
-                    <a
-                      href={reason.sourceDocumentLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-2 inline-flex items-center gap-1 text-primary hover:underline"
-                    >
-                      View Document <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Address Comparison Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Address Comparison</CardTitle>
-          <CardDescription>
-            Comparing subject property against all borrower, guarantor, and third-party data sources
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-xs">Source</TableHead>
-                  <TableHead className="text-xs">Source Detail</TableHead>
-                  <TableHead className="text-xs">Address</TableHead>
-                  <TableHead className="text-xs">Normalized</TableHead>
-                  <TableHead className="text-xs">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="cursor-help">Match Score</span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Fuzzy match score (0-100). Score ≥90 triggers manual review.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableHead>
-                  <TableHead className="text-xs">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allAddresses.map((addr, idx) => {
-                  const matchResult = data.address_matches.find(
-                    m => m.address.normalized === addr.normalized
-                  );
-                  const matchStatus = matchResult?.matchStatus || 'NO MATCH';
-                  const matchScore = addr.matchScore || 0;
-
-                  return (
-                    <TableRow
-                      key={idx}
-                      className={matchStatus === 'MATCH' ? 'bg-destructive/10' : ''}
-                    >
-                      <TableCell className="font-medium capitalize">
-                        {addr.source.replace('_', ' ')}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {addr.sourceDetail || '-'}
-                      </TableCell>
-                      <TableCell className="text-sm">{addr.original}</TableCell>
-                      <TableCell className="text-xs font-mono text-muted-foreground">
-                        {addr.normalized}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={matchScore >= 90 ? 'destructive' : matchScore >= 70 ? 'warning' : 'secondary'}
-                        >
-                          {matchScore}%
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getMatchStatusIcon(matchStatus)}
-                          <Badge variant={getMatchStatusColor(matchStatus)}>
-                            {matchStatus}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Refinance-Specific Checks */}
-      {data.transaction_type === 'Refinance' && (
-        <>
-          <Separator />
-          
-          {/* Title Owner Check */}
-          {data.title_owner_check && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Title Owner Verification
-                </CardTitle>
-                <CardDescription>
-                  Verifying title owner matches borrower entity or guarantors
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Title Owner</p>
-                    <p className="font-medium">{data.title_owner_check.titleOwner}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Title Owner Address</p>
-                    <p className="font-medium">{data.title_owner_check.titleOwnerAddress || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Borrower Entity</p>
-                    <p className="font-medium">{data.title_owner_check.borrowerEntity}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Guarantors</p>
-                    <p className="font-medium">{data.title_owner_check.guarantors.join(', ') || 'None'}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 pt-2">
-                  {data.title_owner_check.isMatch ? (
+        {expandedCards.overview && (
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Overall Status</p>
+                <div className="flex items-center gap-2 mt-1">
+                  {data.status === 'pass' ? (
                     <CheckCircle className="h-4 w-4 text-success" />
+                  ) : data.status === 'fail' ? (
+                    <XCircle className="h-4 w-4 text-destructive" />
                   ) : (
-                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                    <AlertTriangle className="h-4 w-4 text-warning" />
                   )}
-                  <p className="text-sm">
-                    <span className="font-medium">Status: </span>
-                    {data.title_owner_check.isMatch ? 'Owner matches' : 'Owner mismatch - Manual Review Required'}
-                  </p>
+                  <span className="text-lg font-bold">
+                    {data.status === 'pass' ? 'Pass' : 
+                     data.status === 'fail' ? 'Manual Review' : 
+                     'Warning'}
+                  </span>
                 </div>
-                
-                {data.title_owner_check.reason && (
-                  <Alert>
-                    <AlertDescription>{data.title_owner_check.reason}</AlertDescription>
-                  </Alert>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Homestead Exemption Check */}
-          {data.homestead_check && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  Homestead Exemption Check
-                </CardTitle>
-                <CardDescription>
-                  Checking for active homestead exemptions under borrower or guarantor names
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Transaction Type</p>
+                <p className="text-lg font-bold">{data.transaction_type}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Manual Review Required</p>
                 <div className="flex items-center gap-2">
-                  {data.homestead_check.hasHomestead ? (
-                    <AlertTriangle className="h-4 w-4 text-destructive" />
-                  ) : (
-                    <CheckCircle className="h-4 w-4 text-success" />
+                  <p className="text-lg font-bold">{data.requires_manual_review ? 'Yes' : 'No'}</p>
+                  {data.requires_manual_review && (
+                    <AlertTriangle className="h-4 w-4 text-warning" />
                   )}
-                  <p className="text-sm">
-                    <span className="font-medium">Homestead Exemption: </span>
-                    {data.homestead_check.hasHomestead ? 'Active - Manual Review Required' : 'None Found'}
-                  </p>
                 </div>
-                
-                {data.homestead_check.hasHomestead && (
+              </div>
+            </div>
+
+            {data.requires_manual_review && data.manual_review_reasons.length > 0 && (
+              <>
+                <Separator className="bg-border/50" />
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-muted-foreground">Manual Review Reasons</h3>
+                  <div className="space-y-2">
+                    {data.manual_review_reasons.map((reason, index) => (
+                      <div key={index} className="flex items-start gap-2 p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                        <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                        <div className="flex-1">
+                          <span className="text-sm font-medium">{reason.type}: </span>
+                          <span className="text-sm">{reason.description}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+        )}
+      </Card>
+
+      {/* Subject Property Address */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('property')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Subject Property Address
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.property ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.property && (
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Original Address</p>
+                <p className="font-medium">{data.property_address}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Normalized Address</p>
+                <p className="font-mono text-sm">{data.property_address_normalized}</p>
+              </div>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {/* Address Comparison */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('addresses')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Address Comparison
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.addresses ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.addresses && (
+          <CardContent>
+            <div className="rounded-lg border border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Source Detail</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span className="cursor-help">Match Score</span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-xs">Fuzzy match score (0-100). Score ≥90 triggers manual review.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {allAddresses.map((addr, idx) => {
+                    const matchResult = data.address_matches.find(
+                      m => m.address.normalized === addr.normalized
+                    );
+                    const matchStatus = matchResult?.matchStatus || 'NO MATCH';
+                    const matchScore = addr.matchScore || 0;
+
+                    return (
+                      <TableRow
+                        key={idx}
+                        className={matchStatus === 'MATCH' ? 'bg-destructive/10' : ''}
+                      >
+                        <TableCell className="font-medium capitalize">
+                          {addr.source.replace('_', ' ')}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {addr.sourceDetail || '-'}
+                        </TableCell>
+                        <TableCell className="text-sm max-w-md">
+                          <div className="space-y-0.5">
+                            <div>{addr.original}</div>
+                            <div className="text-xs font-mono text-muted-foreground">{addr.normalized}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={matchScore >= 90 ? 'destructive' : matchScore >= 70 ? 'warning' : 'secondary'}
+                          >
+                            {matchScore}%
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getMatchStatusIcon(matchStatus)}
+                            <Badge variant={getMatchStatusColor(matchStatus)}>
+                              {matchStatus}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {/* Refinance Specific Checks */}
+      {data.transaction_type === 'Refinance' && (data.title_owner_check || data.homestead_check) && (
+        <Card>
+          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('refinanceChecks')}>
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Refinance-Specific Checks
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.refinanceChecks ? '' : '-rotate-90'}`} />
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.refinanceChecks && (
+            <CardContent className="space-y-4">
+              {/* Title Owner Check */}
+              {data.title_owner_check && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-muted-foreground">Title Owner Verification</h3>
+                    {data.title_owner_check.isMatch ? (
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Pass
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive" className="gap-1">
+                        <XCircle className="h-3 w-3" /> Fail
+                      </Badge>
+                    )}
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Exemption Holder</p>
-                      <p className="font-medium">{data.homestead_check.exemptionHolder || 'N/A'}</p>
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">Title Owner</p>
+                      <p className="font-medium">{data.title_owner_check.titleOwner}</p>
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Exemption Date</p>
-                      <p className="font-medium">{data.homestead_check.exemptionDate || 'N/A'}</p>
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">Borrower Entity</p>
+                      <p className="font-medium">{data.title_owner_check.borrowerEntity}</p>
+                    </div>
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">Guarantors</p>
+                      <p className="font-medium">{data.title_owner_check.guarantors.join(', ') || 'None'}</p>
+                    </div>
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">Match Result</p>
+                      <div className="flex items-center gap-2">
+                        {data.title_owner_check.isMatch ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-destructive" />
+                        )}
+                        <span className="font-medium">
+                          {data.title_owner_check.isMatch ? 'Matches' : 'Mismatch'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                )}
-                
-                {data.homestead_check.reason && (
-                  <Alert variant={data.homestead_check.hasHomestead ? 'destructive' : 'default'}>
-                    <AlertDescription>{data.homestead_check.reason}</AlertDescription>
-                  </Alert>
-                )}
-              </CardContent>
-            </Card>
+                  {data.title_owner_check.reason && (
+                    <div className="p-3 bg-muted/30 rounded-lg">
+                      <p className="text-sm">{data.title_owner_check.reason}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {data.title_owner_check && data.homestead_check && (
+                <Separator className="bg-border/50" />
+              )}
+
+              {/* Homestead Exemption Check */}
+              {data.homestead_check && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-muted-foreground">Homestead Exemption Check</h3>
+                    {data.homestead_check.hasHomestead ? (
+                      <Badge variant="destructive" className="gap-1">
+                        <XCircle className="h-3 w-3" /> Active
+                      </Badge>
+                    ) : (
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> None
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">Homestead Exemption Active</p>
+                      <div className="flex items-center gap-2">
+                        {data.homestead_check.hasHomestead ? (
+                          <XCircle className="h-4 w-4 text-destructive" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        )}
+                        <span className="font-medium">
+                          {data.homestead_check.hasHomestead ? 'Yes - Review Required' : 'No'}
+                        </span>
+                      </div>
+                    </div>
+                    {data.homestead_check.hasHomestead && data.homestead_check.exemptionHolder && (
+                      <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                        <p className="text-xs text-muted-foreground">Exemption Holder</p>
+                        <p className="font-medium">{data.homestead_check.exemptionHolder}</p>
+                      </div>
+                    )}
+                  </div>
+                  {data.homestead_check.reason && (
+                    <div className={`p-3 rounded-lg ${data.homestead_check.hasHomestead ? 'bg-destructive/10 border border-destructive/20' : 'bg-muted/30'}`}>
+                      <p className="text-sm">{data.homestead_check.reason}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
           )}
-        </>
+        </Card>
       )}
 
       {/* Override Information */}
       {data.override_applied && (
-        <Alert>
-          <AlertDescription>
-            <p className="font-semibold mb-1">Override Applied</p>
-            <p className="text-sm">
-              By: {data.override_by} on {new Date(data.override_at!).toLocaleString()}
-            </p>
-            {data.override_reason && (
-              <p className="text-sm mt-1">Reason: {data.override_reason}</p>
-            )}
-          </AlertDescription>
-        </Alert>
+        <Card>
+          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('override')}>
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4" />
+                Override Applied
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.override ? '' : '-rotate-90'}`} />
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.override && (
+            <CardContent>
+              <div className="p-4 bg-warning/10 rounded-lg border border-warning/20 space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Override By</p>
+                    <p className="font-medium mt-1">{data.override_by}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Override Date</p>
+                    <p className="font-medium mt-1">{data.override_at ? new Date(data.override_at).toLocaleString() : 'N/A'}</p>
+                  </div>
+                </div>
+                {data.override_reason && (
+                  <>
+                    <Separator className="bg-border/50" />
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Reason</p>
+                      <p className="text-sm">{data.override_reason}</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          )}
+        </Card>
       )}
 
       {/* Validation Checks */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Validation Checks</CardTitle>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('validations')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Validation Checks
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.validations ? '' : '-rotate-90'}`} />
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {data.checks.map((check, idx) => (
-              <div key={idx} className="flex items-start gap-2">
-                {check.ok ? (
-                  <CheckCircle className="h-4 w-4 text-success mt-0.5" />
-                ) : (
-                  <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
-                )}
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{check.name}</p>
-                  <p className="text-xs text-muted-foreground">{check.detail}</p>
+        {expandedCards.validations && (
+          <CardContent>
+            <div className="space-y-2">
+              {data.checks.map((check, idx) => (
+                <div key={idx} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
+                  {check.ok ? (
+                    <CheckCircle className="h-4 w-4 text-success mt-0.5" />
+                  ) : (
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{check.name}</p>
+                    <p className="text-xs text-muted-foreground">{check.detail}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
+              ))}
+            </div>
+          </CardContent>
+        )}
       </Card>
 
-      {/* Metadata */}
+      {/* Execution Details */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Execution Details</CardTitle>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('execution')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Info className="h-4 w-4" />
+              Execution Details
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.execution ? '' : '-rotate-90'}`} />
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <p className="text-muted-foreground">Ran At</p>
-              <p className="font-medium">{new Date(data.ran_at).toLocaleString()}</p>
+        {expandedCards.execution && (
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Ran At</p>
+                <p className="font-medium">{new Date(data.ran_at).toLocaleString()}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Ran By</p>
+                <p className="font-medium">{data.ran_by}</p>
+              </div>
+              <div className="p-4 bg-muted/30 rounded-lg space-y-1">
+                <p className="text-xs text-muted-foreground">Data Source</p>
+                <p className="font-medium">{data.source}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-muted-foreground">Ran By</p>
-              <p className="font-medium">{data.ran_by}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Data Source</p>
-              <p className="font-medium">{data.source}</p>
-            </div>
-          </div>
-        </CardContent>
+          </CardContent>
+        )}
       </Card>
     </div>
   );
