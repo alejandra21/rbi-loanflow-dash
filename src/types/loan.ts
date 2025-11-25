@@ -471,36 +471,87 @@ export const mockLoans: LoanApplication[] = [
                     
                     override_applied: false,
                     
-                    checks: [
+                    logs: [
                         {
-                            name: "Property Address Validation",
-                            ok: true,
-                            detail: "Subject property address successfully normalized"
+                            id: "log-1",
+                            timestamp: "2024-01-12T14:30:00Z",
+                            tag: "INIT",
+                            description: "Phase 4 initiated for refinance transaction",
+                            action: "PHASE_START",
+                            user: "AI Underwriting System",
+                            status: "Success",
+                            jsonData: {
+                                transactionType: "Refinance",
+                                loanId: "LOA-2024-001"
+                            }
                         },
                         {
-                            name: "Address Comparison - Borrower",
-                            ok: true,
-                            detail: "No matches found (highest score: 15%)"
+                            id: "log-2",
+                            timestamp: "2024-01-12T14:30:15Z",
+                            tag: "ADDRESS_NORMALIZATION",
+                            description: "Property and borrower addresses normalized",
+                            action: "NORMALIZE_ADDRESSES",
+                            user: "AI Underwriting System",
+                            status: "Success",
+                            jsonData: {
+                                propertyAddressNormalized: "456 INVESTMENT AVE MIAMI FL 33101",
+                                totalAddressesProcessed: 8
+                            }
                         },
                         {
-                            name: "Address Comparison - Guarantor",
-                            ok: true,
-                            detail: "No matches found (highest score: 8%)"
+                            id: "log-3",
+                            timestamp: "2024-01-12T14:30:30Z",
+                            tag: "ADDRESS_COMPARISON",
+                            description: "Address match comparison completed",
+                            action: "COMPARE_ADDRESSES",
+                            user: "AI Underwriting System",
+                            status: "Success",
+                            jsonData: {
+                                totalComparisons: 8,
+                                matchesFound: 0,
+                                highestMatchScore: 15
+                            }
                         },
                         {
-                            name: "Address Comparison - Third Party Sources",
-                            ok: true,
-                            detail: "No matches found across TLO, Credit Report, Bank Statements, Gov ID"
+                            id: "log-4",
+                            timestamp: "2024-01-12T14:30:45Z",
+                            tag: "TITLE_CHECK",
+                            description: "Title owner verification completed",
+                            action: "VERIFY_TITLE_OWNER",
+                            user: "AI Underwriting System",
+                            status: "Success",
+                            jsonData: {
+                                titleOwner: "Tech Corp Ltd",
+                                borrowerEntity: "Tech Corp Ltd",
+                                isMatch: true
+                            }
                         },
                         {
-                            name: "Title Owner Verification",
-                            ok: true,
-                            detail: "Title owner matches borrower entity (Tech Corp Ltd)"
+                            id: "log-5",
+                            timestamp: "2024-01-12T14:31:00Z",
+                            tag: "HOMESTEAD_CHECK",
+                            description: "Homestead exemption check completed",
+                            action: "CHECK_HOMESTEAD",
+                            user: "AI Underwriting System",
+                            status: "Success",
+                            jsonData: {
+                                hasHomesteadExemption: false,
+                                taxRecordOwner: "Tech Corp Ltd"
+                            }
                         },
                         {
-                            name: "Homestead Exemption Check",
-                            ok: true,
-                            detail: "No active homestead exemption found"
+                            id: "log-6",
+                            timestamp: "2024-01-12T14:31:15Z",
+                            tag: "PHASE_COMPLETE",
+                            description: "Phase 4 completed - No owner occupancy detected",
+                            action: "PHASE_END",
+                            user: "AI Underwriting System",
+                            status: "Pass",
+                            jsonData: {
+                                finalStatus: "pass",
+                                requiresManualReview: false,
+                                executionTimeMs: 75000
+                            }
                         }
                     ],
                     
