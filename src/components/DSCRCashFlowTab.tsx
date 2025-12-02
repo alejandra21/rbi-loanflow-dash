@@ -60,7 +60,7 @@ export const DSCRCashFlowTab = ({
       case "minor":
         return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Minor</Badge>;
       case "major":
-        return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Major</Badge>;
+        return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
       default:
         return <Badge variant="outline">{flag}</Badge>;
     }
@@ -319,7 +319,7 @@ export const DSCRCashFlowTab = ({
               if (hasMajor) {
                 return <Badge variant="destructive" className="inline-flex items-center gap-1">
                       <XCircle className="h-4 w-4" />
-                      Major Flag
+                      Manual Review
                     </Badge>;
               }
               if (hasMinor) {
