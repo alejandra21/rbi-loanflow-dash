@@ -104,13 +104,7 @@ export const DSCRCashFlowTab = ({
               <FileText className="h-4 w-4 mr-2" />
               POS & Appraisal Inputs
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" />
-                Validated
-              </Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.appraisalInputs ? '' : '-rotate-90'}`} />
-            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.appraisalInputs ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.appraisalInputs && <CardContent className="space-y-6">
@@ -267,13 +261,7 @@ export const DSCRCashFlowTab = ({
               <Calculator className="h-4 w-4 mr-2" />
               DSCR Calculation
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" />
-                Validated
-              </Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.dscrCalculation ? '' : '-rotate-90'}`} />
-            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.dscrCalculation ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.dscrCalculation && <CardContent className="space-y-4">
