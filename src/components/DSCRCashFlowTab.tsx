@@ -87,8 +87,8 @@ export const DSCRCashFlowTab = ({
   return <div className="space-y-4">
       {/* Phase Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h2 className="text-base font-medium">DSCR Cash Flow</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-base font-medium">DSCR Underwriting</h2>
           {getStatusBadge(phaseStatus)}
         </div>
         <Button variant="outline" size="sm">
@@ -101,14 +101,15 @@ export const DSCRCashFlowTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('appraisalInputs')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <FileText className="h-4 w-4 text-primary" />
-              </div>
-              <span>Appraisal Inputs & AI Rent Decision</span>
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Appraisal Inputs & AI Rent Decision
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">Validated</Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Validated
+              </Badge>
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.appraisalInputs ? '' : '-rotate-90'}`} />
             </div>
           </CardTitle>
@@ -206,14 +207,15 @@ export const DSCRCashFlowTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('dscrCalculation')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Calculator className="h-4 w-4 text-primary" />
-              </div>
-              <span>DSCR Calculation</span>
+            <div className="flex items-center">
+              <Calculator className="h-4 w-4 mr-2" />
+              DSCR Calculation
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">Validated</Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Validated
+              </Badge>
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.dscrCalculation ? '' : '-rotate-90'}`} />
             </div>
           </CardTitle>
@@ -254,14 +256,15 @@ export const DSCRCashFlowTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('posComparison')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Scale className="h-4 w-4 text-primary" />
-              </div>
-              <span>POS Comparison & Tolerance Analysis</span>
+            <div className="flex items-center">
+              <Scale className="h-4 w-4 mr-2" />
+              POS Comparison & Tolerance Analysis
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">Validated</Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Validated
+              </Badge>
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.posComparison ? '' : '-rotate-90'}`} />
             </div>
           </CardTitle>
@@ -307,14 +310,15 @@ export const DSCRCashFlowTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('leverageTier')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <TrendingUp className="h-4 w-4 text-primary" />
-              </div>
-              <span>Leverage Tier Change</span>
+            <div className="flex items-center">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Leverage Tier Change
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">Validated</Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Validated
+              </Badge>
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.leverageTier ? '' : '-rotate-90'}`} />
             </div>
           </CardTitle>
@@ -353,16 +357,11 @@ export const DSCRCashFlowTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('toleranceRules')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Info className="h-4 w-4 text-primary" />
-              </div>
-              <span>Tolerance Rules (Legend)</span>
+            <div className="flex items-center">
+              <Info className="h-4 w-4 mr-2" />
+              Tolerance Rules (Legend)
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="outline">Reference</Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.toleranceRules ? '' : '-rotate-90'}`} />
-            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.toleranceRules ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.toleranceRules && <CardContent>
@@ -385,14 +384,11 @@ export const DSCRCashFlowTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('auditLog')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
               Audit Log
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">Reference</Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? '' : '-rotate-90'}`} />
-            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.auditLog && <CardContent>
