@@ -356,19 +356,31 @@ export const DSCRCashFlowTab = ({
               </Button>
 
               {showToleranceRules && (
-                <div className="space-y-3 mt-4">
-                  {data.toleranceRules.map((rule, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                      <Badge variant={rule.deviationType === "minor" ? "warning" : "destructive"} className="text-xs">
-                        {rule.deviationType === "minor" ? "Minor" : "Major"}
-                      </Badge>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{rule.metric}</p>
-                        <p className="text-xs text-muted-foreground">{rule.threshold}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{rule.action}</p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-xs">Deviation Type</TableHead>
+                        <TableHead className="text-xs">Metric</TableHead>
+                        <TableHead className="text-xs">Threshold</TableHead>
+                        <TableHead className="text-xs">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {data.toleranceRules.map((rule, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            <Badge variant={rule.deviationType === "minor" ? "warning" : "destructive"} className="text-xs">
+                              {rule.deviationType === "minor" ? "Minor" : "Major"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm font-medium">{rule.metric}</TableCell>
+                          <TableCell className="text-sm">{rule.threshold}</TableCell>
+                          <TableCell className="text-sm">{rule.action}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               )}
             </div>
