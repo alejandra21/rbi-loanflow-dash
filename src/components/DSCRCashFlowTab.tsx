@@ -294,9 +294,7 @@ export const DSCRCashFlowTab = ({
                 <p className="text-sm font-bold text-primary">
                   {data.dscrCalculation.calculatedDSCR.toFixed(2)}
                 </p>
-                <Badge variant={getDSCRBadgeVariant(data.dscrCalculation.calculatedDSCR)} className="mt-2">
-                  {getDSCRStatus(data.dscrCalculation.calculatedDSCR)}
-                </Badge>
+                
               </div>
             </div>
             <div className="bg-muted/30 p-3 rounded text-xs text-muted-foreground">
