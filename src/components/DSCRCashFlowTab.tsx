@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, DollarSign, AlertCircle, Info, Calculator, Scale, Bell } from "lucide-react";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, DollarSign, AlertCircle, Info, Calculator, Scale } from "lucide-react";
 import { useState } from "react";
 import { DSCRCashFlowData } from "@/types/dscrCashFlow";
 interface DSCRCashFlowTabProps {
@@ -22,8 +22,6 @@ export const DSCRCashFlowTab = ({
     dscrCalculation: true,
     posComparison: true,
     leverageTier: true,
-    aiDecision: true,
-    downstreamNotifications: false,
     toleranceRules: false,
     auditLog: false
   });
@@ -350,94 +348,6 @@ export const DSCRCashFlowTab = ({
           </CardContent>}
       </Card>
 
-      {/* AI Decision & Required Action */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('aiDecision')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <CheckCircle className="h-4 w-4 text-primary" />
-              </div>
-              <span>AI Decision & Required Action</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">Validated</Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.aiDecision ? '' : '-rotate-90'}`} />
-            </div>
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.aiDecision && <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">Outcome</p>
-              {getStatusBadge(data.aiDecision.outcome)}
-            </div>
-            
-            {data.aiDecision.reason && <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="text-sm">{data.aiDecision.reason}</p>
-              </div>}
-
-            <p className="text-xs text-muted-foreground">
-              {data.aiDecision.outcome === "pass" && "All values within tolerance. Ready to proceed."}
-              {data.aiDecision.outcome === "minor_deviation" && "Minor deviations detected. AI will automatically reprice the loan."}
-              {data.aiDecision.outcome === "major_deviation" && "Major deviations or tier changes detected. Manual underwriter review required."}
-            </p>
-
-            <Separator />
-
-            <div className="flex gap-2">
-              {data.aiDecision.action === 'auto_reprice' && <Button variant="default">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Reprice Loan in POS
-                </Button>}
-              {data.aiDecision.action === 'manual_review' && <Button variant="destructive">
-                  <AlertCircle className="h-4 w-4 mr-2" />
-                  Send to Manual Review
-                </Button>}
-              {data.aiDecision.action === 'proceed_phase_7' && <Button variant="default">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Proceed to Phase 7
-                </Button>}
-            </div>
-          </CardContent>}
-      </Card>
-
-      {/* Downstream Notifications */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('downstreamNotifications')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Bell className="h-4 w-4 text-primary" />
-              </div>
-              <span>Downstream Notifications</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">Validated</Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.downstreamNotifications ? '' : '-rotate-90'}`} />
-            </div>
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.downstreamNotifications && <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="text-xs text-muted-foreground">POS Updated</span>
-                <Badge variant={data.downstreamNotification.posUpdated ? "success" : "secondary"}>
-                  {data.downstreamNotification.posUpdated ? "Yes" : "No"}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="text-xs text-muted-foreground">Downstream Services Notified</span>
-                <Badge variant={data.downstreamNotification.downstreamServicesNotified ? "success" : "secondary"}>
-                  {data.downstreamNotification.downstreamServicesNotified ? "Yes" : "No"}
-                </Badge>
-              </div>
-              {data.downstreamNotification.lastUpdateTimestamp && <div className="p-3 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">Last Update</p>
-                  <p className="text-sm font-medium">{data.downstreamNotification.lastUpdateTimestamp}</p>
-                </div>}
-            </div>
-          </CardContent>}
-      </Card>
 
       {/* Tolerance Rules (Legend) */}
       <Card>
