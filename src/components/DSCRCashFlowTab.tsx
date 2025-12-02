@@ -356,7 +356,10 @@ export const DSCRCashFlowTab = ({
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <span className="cursor-help underline decoration-dotted">{metric.tolerance}</span>
+                              <span className="cursor-help inline-flex items-center gap-1">
+                                {metric.tolerance}
+                                <Info className="h-3 w-3 text-muted-foreground" />
+                              </span>
                             </TooltipTrigger>
                             <TooltipContent>
                               <p className="text-xs">Exact Match</p>
