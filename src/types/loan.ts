@@ -629,7 +629,7 @@ export const mockLoans: LoanApplication[] = [
                             posValue: "80%",
                             aiValue: "80%",
                             difference: "0%",
-                            tolerance: "±2%",
+                            tolerance: "Any tier change",
                             flag: 'none' as const,
                             flagDetails: "Within tolerance. No difference detected."
                         },
@@ -638,9 +638,9 @@ export const mockLoans: LoanApplication[] = [
                             posValue: "75%",
                             aiValue: "74%",
                             difference: "-1%",
-                            tolerance: "±2%",
+                            tolerance: "Any tier change",
                             flag: 'none' as const,
-                            flagDetails: "Within tolerance. Difference of 1% is less than ±2% threshold."
+                            flagDetails: "Within tolerance. Difference does not cause tier change."
                         }
                     ],
                     tierChange: {
@@ -678,19 +678,7 @@ export const mockLoans: LoanApplication[] = [
                             action: "Auto-reprice in POS"
                         },
                         {
-                            metric: "LTV",
-                            threshold: "±2%",
-                            deviationType: 'minor' as const,
-                            action: "Auto-reprice in POS"
-                        },
-                        {
-                            metric: "LTC",
-                            threshold: "±2%",
-                            deviationType: 'minor' as const,
-                            action: "Auto-reprice in POS"
-                        },
-                        {
-                            metric: "Leverage Tier Change",
+                            metric: "Leverage Tier Change (LTV/LTC)",
                             threshold: "Any tier change",
                             deviationType: 'major' as const,
                             action: "Manual Underwriter Review"
