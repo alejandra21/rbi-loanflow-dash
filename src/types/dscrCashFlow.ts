@@ -11,6 +11,12 @@ export interface AppraisalInput {
   interestRate: number;
   term: number;
   termsFileSource: string;
+  // LTV and LTC from POS
+  posLTV: number;
+  posLTC: number;
+  // LTV and LTC extracted from Appraisal PDF
+  appraisalLTV: number;
+  appraisalLTC: number;
 }
 
 export interface RentDecision {

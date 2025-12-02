@@ -579,7 +579,11 @@ export const mockLoans: LoanApplication[] = [
                         loanAmount: 388000,
                         interestRate: 7.25,
                         term: 30,
-                        termsFileSource: "s3://rbi-loan-docs/terms/LOA-2024-001_loan_terms.pdf"
+                        termsFileSource: "s3://rbi-loan-docs/terms/LOA-2024-001_loan_terms.pdf",
+                        posLTV: 80,
+                        posLTC: 75,
+                        appraisalLTV: 80,
+                        appraisalLTC: 74
                     },
                     rentDecision: {
                         selectedRent: 2800,
@@ -618,6 +622,24 @@ export const mockLoans: LoanApplication[] = [
                             tolerance: "±5%",
                             flag: 'none' as const,
                             flagDetails: "Within tolerance. Difference of 3% is less than ±5% threshold."
+                        },
+                        {
+                            metric: "LTV",
+                            posValue: "80%",
+                            aiValue: "80%",
+                            difference: "0%",
+                            tolerance: "±2%",
+                            flag: 'none' as const,
+                            flagDetails: "Within tolerance. No difference detected."
+                        },
+                        {
+                            metric: "LTC",
+                            posValue: "75%",
+                            aiValue: "74%",
+                            difference: "-1%",
+                            tolerance: "±2%",
+                            flag: 'none' as const,
+                            flagDetails: "Within tolerance. Difference of 1% is less than ±2% threshold."
                         }
                     ],
                     tierChange: {
@@ -651,6 +673,18 @@ export const mockLoans: LoanApplication[] = [
                         {
                             metric: "Appraised Value",
                             threshold: "±5%",
+                            deviationType: 'minor' as const,
+                            action: "Auto-reprice in POS"
+                        },
+                        {
+                            metric: "LTV",
+                            threshold: "±2%",
+                            deviationType: 'minor' as const,
+                            action: "Auto-reprice in POS"
+                        },
+                        {
+                            metric: "LTC",
+                            threshold: "±2%",
                             deviationType: 'minor' as const,
                             action: "Auto-reprice in POS"
                         },

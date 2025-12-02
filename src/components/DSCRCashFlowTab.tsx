@@ -147,7 +147,15 @@ export const DSCRCashFlowTab = ({
                   <p className="text-xs text-muted-foreground mb-2">Term</p>
                   <p className="text-sm font-medium">{data.appraisalInput.term} years</p>
                 </div>
-                <div className="col-span-3">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">LTV</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.posLTV}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">LTC</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.posLTC}%</p>
+                </div>
+                <div>
                   <p className="text-xs text-muted-foreground mb-2">Terms File Source</p>
                   <Button size="sm" variant="outline" onClick={() => window.open(data.appraisalInput.termsFileSource, '_blank')}>
                     <FileText className="h-4 w-4 mr-1" />
@@ -191,6 +199,14 @@ export const DSCRCashFlowTab = ({
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">Appraisal Date</p>
                   <p className="text-sm font-medium">{data.appraisalInput.appraisalDate}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">LTV</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.appraisalLTV}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">LTC</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.appraisalLTC}%</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">PDF Source</p>
