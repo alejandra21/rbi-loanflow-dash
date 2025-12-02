@@ -22,9 +22,9 @@ export const DSCRCashFlowTab = ({
     dscrCalculation: true,
     posComparison: true,
     leverageTier: true,
-    toleranceRules: false,
     auditLog: false
   });
+  const [showToleranceRules, setShowToleranceRules] = useState(false);
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
@@ -304,7 +304,7 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.posComparison && <CardContent>
+        {expandedCards.posComparison && <CardContent className="space-y-4">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -338,6 +338,40 @@ export const DSCRCashFlowTab = ({
                   </TableRow>)}
               </TableBody>
             </Table>
+
+            <Separator />
+
+            <div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowToleranceRules(!showToleranceRules)}
+                className="w-full justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  <Info className="h-4 w-4" />
+                  Tolerance Rules (Legend)
+                </span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showToleranceRules ? '' : '-rotate-90'}`} />
+              </Button>
+
+              {showToleranceRules && (
+                <div className="space-y-3 mt-4">
+                  {data.toleranceRules.map((rule, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+                      <Badge variant={rule.deviationType === "minor" ? "warning" : "destructive"} className="text-xs">
+                        {rule.deviationType === "minor" ? "Minor" : "Major"}
+                      </Badge>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{rule.metric}</p>
+                        <p className="text-xs text-muted-foreground">{rule.threshold}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{rule.action}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </CardContent>}
       </Card>
 
@@ -384,34 +418,6 @@ export const DSCRCashFlowTab = ({
                   </div>
                 </div>
               </div>}
-          </CardContent>}
-      </Card>
-
-
-      {/* Tolerance Rules (Legend) */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('toleranceRules')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center">
-              <Info className="h-4 w-4 mr-2" />
-              Tolerance Rules (Legend)
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.toleranceRules ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.toleranceRules && <CardContent>
-            <div className="space-y-3">
-              {data.toleranceRules.map((rule, index) => <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                  <Badge variant={rule.deviationType === "minor" ? "warning" : "destructive"} className="text-xs">
-                    {rule.deviationType === "minor" ? "Minor" : "Major"}
-                  </Badge>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{rule.metric}</p>
-                    <p className="text-xs text-muted-foreground">{rule.threshold}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{rule.action}</p>
-                  </div>
-                </div>)}
-            </div>
           </CardContent>}
       </Card>
 
