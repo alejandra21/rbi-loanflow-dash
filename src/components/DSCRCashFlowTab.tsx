@@ -337,21 +337,36 @@ export const DSCRCashFlowTab = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-xs">Metric</TableHead>
-                  <TableHead className="text-xs">POS Value</TableHead>
-                  <TableHead className="text-xs">AI Value</TableHead>
-                  <TableHead className="text-xs">Difference</TableHead>
-                  <TableHead className="text-xs">Tolerance</TableHead>
-                  <TableHead className="text-xs">Evaluation</TableHead>
+                  <TableHead className="text-sm font-semibold">Metric</TableHead>
+                  <TableHead className="text-sm font-semibold">POS Value</TableHead>
+                  <TableHead className="text-sm font-semibold">AI Value</TableHead>
+                  <TableHead className="text-sm font-semibold">Difference</TableHead>
+                  <TableHead className="text-sm font-semibold">Tolerance</TableHead>
+                  <TableHead className="text-sm font-semibold">Evaluation</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.comparisonMetrics.map((metric, index) => <TableRow key={index}>
                     <TableCell className="text-sm font-medium">{metric.metric}</TableCell>
-                    <TableCell className="text-sm">{metric.posValue}</TableCell>
-                    <TableCell className="text-sm">{metric.aiValue}</TableCell>
-                    <TableCell className="text-sm">{metric.difference}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{metric.tolerance}</TableCell>
+                    <TableCell className="text-xs">{metric.posValue}</TableCell>
+                    <TableCell className="text-xs">{metric.aiValue}</TableCell>
+                    <TableCell className="text-xs">{metric.difference}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {metric.tolerance === "0%" ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="cursor-help underline decoration-dotted">{metric.tolerance}</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">Exact Match</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        metric.tolerance
+                      )}
+                    </TableCell>
                     <TableCell>
                       <TooltipProvider>
                         <Tooltip>
