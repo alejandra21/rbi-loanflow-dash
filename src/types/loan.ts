@@ -629,18 +629,18 @@ export const mockLoans: LoanApplication[] = [
                             posValue: "80%",
                             aiValue: "80%",
                             difference: "0%",
-                            tolerance: "±2%",
+                            tolerance: "Exact match",
                             flag: 'none' as const,
-                            flagDetails: "Within tolerance. No difference detected."
+                            flagDetails: "No difference detected. Values match exactly."
                         },
                         {
                             metric: "LTC",
                             posValue: "75%",
                             aiValue: "74%",
                             difference: "-1%",
-                            tolerance: "±2%",
-                            flag: 'none' as const,
-                            flagDetails: "Within tolerance. Difference of 1% is less than ±2% threshold."
+                            tolerance: "Exact match",
+                            flag: 'major' as const,
+                            flagDetails: "Mismatch detected. Any difference in LTV/LTC requires manual review."
                         }
                     ],
                     tierChange: {
@@ -679,15 +679,15 @@ export const mockLoans: LoanApplication[] = [
                         },
                         {
                             metric: "LTV",
-                            threshold: "±2%",
-                            deviationType: 'minor' as const,
-                            action: "Auto-reprice in POS"
+                            threshold: "Exact match (0%)",
+                            deviationType: 'major' as const,
+                            action: "Manual Underwriter Review"
                         },
                         {
                             metric: "LTC",
-                            threshold: "±2%",
-                            deviationType: 'minor' as const,
-                            action: "Auto-reprice in POS"
+                            threshold: "Exact match (0%)",
+                            deviationType: 'major' as const,
+                            action: "Manual Underwriter Review"
                         },
                         {
                             metric: "Leverage Tier Change",
