@@ -142,7 +142,19 @@ export const DSCRCashFlowTab = ({
                   <p className="text-sm font-medium">{data.appraisalInput.term} years</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-2">As Is Value</p>
+                  <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                    Appraised Value
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">As is Value</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </p>
                   <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.asIsValue)}</p>
                 </div>
                 <div>
