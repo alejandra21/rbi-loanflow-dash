@@ -12,6 +12,7 @@ import { ExperienceTieringCopyTab } from "@/components/ExperienceTieringCopyTab"
 import { CreditReviewTab } from "@/components/CreditReviewTab";
 import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
+import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import {
@@ -1949,7 +1950,15 @@ export const LoanDetail = () => {
               </TabsContent>
 
               <TabsContent value="dscrCashFlow" className="mt-0">
-                <PhaseTab phase={loan.phases.dscrCashFlow} phaseName="DSCR-Specific Cash Flow Review" />
+                {loan.phases.dscrCashFlow.dscrCashFlowData ? (
+                  <DSCRCashFlowTab 
+                    data={loan.phases.dscrCashFlow.dscrCashFlowData}
+                    phaseStatus={loan.phases.dscrCashFlow.status}
+                    lastUpdated={loan.phases.dscrCashFlow.completedDate || loan.lastUpdated}
+                  />
+                ) : (
+                  <PhaseTab phase={loan.phases.dscrCashFlow} phaseName="DSCR-Specific Cash Flow Review" />
+                )}
               </TabsContent>
 
               <TabsContent value="titleInsurance" className="mt-0">
