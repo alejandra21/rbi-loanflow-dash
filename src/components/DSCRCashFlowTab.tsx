@@ -88,34 +88,32 @@ export const DSCRCashFlowTab = ({
   };
   return <div className="space-y-4">
       {/* Phase Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
           <h2 className="text-2xl font-bold">DSCR Underwriting</h2>
-          <p className="text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
-        </div>
-        <div className="flex items-center gap-2">
           {getStatusBadge(phaseStatus)}
-          <Button variant="outline" size="sm">
-            <FileText className="h-4 w-4 mr-2" />
-            View Audit Log
-          </Button>
         </div>
+        <Button variant="outline" size="sm">
+          <Download className="h-4 w-4 mr-2" />
+          Download Report
+        </Button>
       </div>
-
-      <Separator />
 
       {/* Appraisal Inputs & AI Rent Decision */}
       <Collapsible open={expandedCards.appraisal} onOpenChange={() => toggleCard('appraisal')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Appraisal Inputs & AI Rent Decision
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">Appraisal Inputs & AI Rent Decision</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="success" className="gap-1">
+                <CheckCircle className="h-3 w-3" /> Validated
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.appraisal ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <div className="space-y-6">
@@ -198,15 +196,18 @@ export const DSCRCashFlowTab = ({
       {/* DSCR Calculation */}
       <Collapsible open={expandedCards.dscr} onOpenChange={() => toggleCard('dscr')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                DSCR Calculation
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <DollarSign className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">DSCR Calculation</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="success" className="gap-1">
+                <CheckCircle className="h-3 w-3" /> Validated
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.dscr ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <div className="space-y-4">
@@ -238,15 +239,18 @@ export const DSCRCashFlowTab = ({
       {/* POS Comparison Table */}
       <Collapsible open={expandedCards.comparison} onOpenChange={() => toggleCard('comparison')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                POS Comparison (Deviation & Tolerance Analysis)
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">POS Comparison & Tolerance Analysis</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="success" className="gap-1">
+                <CheckCircle className="h-3 w-3" /> Validated
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.comparison ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <Table>
@@ -290,15 +294,18 @@ export const DSCRCashFlowTab = ({
       {/* Leverage Tier Change Panel */}
       <Collapsible open={expandedCards.tierChange} onOpenChange={() => toggleCard('tierChange')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5" />
-                Leverage Tier Change
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">Leverage Tier Change</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="success" className="gap-1">
+                <CheckCircle className="h-3 w-3" /> Validated
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.tierChange ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <div className="space-y-4">
@@ -336,15 +343,18 @@ export const DSCRCashFlowTab = ({
       {/* AI Decision & Required Action */}
       <Collapsible open={expandedCards.decision} onOpenChange={() => toggleCard('decision')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
-                AI Decision & Required Action
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">AI Decision & Required Action</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="success" className="gap-1">
+                <CheckCircle className="h-3 w-3" /> Validated
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.decision ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <div className="space-y-4">
@@ -382,15 +392,18 @@ export const DSCRCashFlowTab = ({
       {/* Downstream Notifications */}
       <Collapsible open={expandedCards.downstream} onOpenChange={() => toggleCard('downstream')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <Info className="h-5 w-5" />
-                Downstream Notifications
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <Info className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">Downstream Notifications</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="success" className="gap-1">
+                <CheckCircle className="h-3 w-3" /> Validated
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.downstream ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
@@ -419,15 +432,18 @@ export const DSCRCashFlowTab = ({
       {/* Tolerance Rules */}
       <Collapsible open={expandedCards.rules} onOpenChange={() => toggleCard('rules')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <Info className="h-5 w-5" />
-                Tolerance Rules (Legend)
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <Info className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">Tolerance Rules (Legend)</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="gap-1">
+                <Info className="h-3 w-3" /> Reference
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.rules ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <Table>
@@ -460,15 +476,18 @@ export const DSCRCashFlowTab = ({
       {/* Audit Log */}
       <Collapsible open={expandedCards.logs} onOpenChange={() => toggleCard('logs')}>
         <Card>
-          <CardHeader>
-            <CollapsibleTrigger className="flex items-center justify-between w-full hover:opacity-70 transition-opacity">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Audit Log
-              </CardTitle>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-6 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">Audit Log</h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="gap-1">
+                <FileText className="h-3 w-3" /> {data.logs.length} Entries
+              </Badge>
               <ChevronDown className={`h-5 w-5 transition-transform ${expandedCards.logs ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-          </CardHeader>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent>
               <div className="space-y-2">
