@@ -90,7 +90,7 @@ export const DSCRCashFlowTab = ({
       {/* Phase Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="font-semibold text-base">DSCR Cash Flow</h2>
+          <h2 className="text-base font-medium">DSCR Cash Flow</h2>
           {getStatusBadge(phaseStatus)}
         </div>
         <Button variant="outline" size="sm">
