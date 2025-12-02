@@ -150,11 +150,7 @@ export const DSCRCashFlowTab = ({
                 </div>
                 <div className="col-span-3">
                   <p className="text-xs text-muted-foreground mb-2">Terms File Source</p>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => window.open(data.appraisalInput.termsFileSource, '_blank')}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => window.open(data.appraisalInput.termsFileSource, '_blank')}>
                     <FileText className="h-4 w-4 mr-1" />
                     View
                   </Button>
@@ -199,11 +195,7 @@ export const DSCRCashFlowTab = ({
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">PDF Source</p>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => window.open(data.appraisalInput.pdfSource, '_blank')}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => window.open(data.appraisalInput.pdfSource, '_blank')}>
                     <FileText className="h-4 w-4 mr-1" />
                     View
                   </Button>
@@ -321,7 +313,7 @@ export const DSCRCashFlowTab = ({
                   <TableHead className="text-xs">AI Value</TableHead>
                   <TableHead className="text-xs">Difference</TableHead>
                   <TableHead className="text-xs">Tolerance</TableHead>
-                  <TableHead className="text-xs">Flag</TableHead>
+                  <TableHead className="text-xs">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
