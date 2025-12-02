@@ -573,7 +573,12 @@ export const mockLoans: LoanApplication[] = [
                         marketRent: 3000,
                         appraisedValue: 485000,
                         appraisalDate: "2024-01-05",
-                        pdfSource: "s3://rbi-loan-docs/appraisals/LOA-2024-001_appraisal.pdf"
+                        pdfSource: "s3://rbi-loan-docs/appraisals/LOA-2024-001_appraisal.pdf",
+                        borrowerCreditScorePOS: 720,
+                        borrowerCreditScoreBureau: 718,
+                        loanAmount: 388000,
+                        interestRate: 7.25,
+                        term: 30
                     },
                     rentDecision: {
                         selectedRent: 2800,

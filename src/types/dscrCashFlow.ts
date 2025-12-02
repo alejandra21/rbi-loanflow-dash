@@ -5,6 +5,11 @@ export interface AppraisalInput {
   appraisedValue: number;
   appraisalDate: string;
   pdfSource: string;
+  borrowerCreditScorePOS: number;
+  borrowerCreditScoreBureau: number;
+  loanAmount: number;
+  interestRate: number;
+  term: number;
 }
 
 export interface RentDecision {
