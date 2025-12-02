@@ -7,6 +7,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, DollarSign, AlertCircle, Info, Calculator, Scale } from "lucide-react";
 import { useState } from "react";
 import { DSCRCashFlowData } from "@/types/dscrCashFlow";
+import { ManualReviewModal } from "./ManualReviewModal";
+import { RepricingModal } from "./RepricingModal";
 interface DSCRCashFlowTabProps {
   data: DSCRCashFlowData;
   phaseStatus: string;
@@ -25,6 +27,26 @@ export const DSCRCashFlowTab = ({
   });
   const [showToleranceRules, setShowToleranceRules] = useState(false);
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+  
+  // Modal state
+  const [manualReviewOpen, setManualReviewOpen] = useState(false);
+  const [repricingOpen, setRepricingOpen] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState<{
+    metric: string;
+    posValue: string | number;
+    aiValue: string | number;
+    difference: string | number;
+  } | null>(null);
+
+  const openManualReview = (metric: { metric: string; posValue: string | number; aiValue: string | number; difference: string | number }) => {
+    setSelectedMetric(metric);
+    setManualReviewOpen(true);
+  };
+
+  const openRepricing = (metric: { metric: string; posValue: string | number; aiValue: string | number; difference: string | number }) => {
+    setSelectedMetric(metric);
+    setRepricingOpen(true);
+  };
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
@@ -53,7 +75,7 @@ export const DSCRCashFlowTab = ({
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  const getFlagBadge = (flag: 'none' | 'minor' | 'major', metric?: string) => {
+  const getFlagBadge = (flag: 'none' | 'minor' | 'major', metric?: string, onManualReview?: () => void, onReprice?: () => void) => {
     const isLtvLtcMetric = metric === 'LTV' || metric === 'LTC';
     const isAutoRepriceMetric = metric === 'DSCR' || metric === 'Credit Score' || metric === 'Appraised Value';
     
@@ -62,21 +84,57 @@ export const DSCRCashFlowTab = ({
         return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> OK</Badge>;
       case "minor":
         // Minor flags always trigger Auto-reprice
-        return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
+        return (
+          <Badge 
+            variant="warning" 
+            className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={onReprice}
+          >
+            <AlertTriangle className="h-3 w-3" /> Auto-reprice
+          </Badge>
+        );
       case "major":
         if (isLtvLtcMetric) {
           // LTV/LTC require exact match - any difference triggers Manual Review
-          return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
+          return (
+            <Badge 
+              variant="destructive" 
+              className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={onManualReview}
+            >
+              <XCircle className="h-3 w-3" /> Manual Review
+            </Badge>
+          );
         }
         if (isAutoRepriceMetric) {
           // DSCR, Credit Score, Appraised Value trigger Auto-reprice for deviations
-          return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
+          return (
+            <Badge 
+              variant="warning" 
+              className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={onReprice}
+            >
+              <AlertTriangle className="h-3 w-3" /> Auto-reprice
+            </Badge>
+          );
         }
         // Default for other metrics with major flags - both actions needed
         return (
           <div className="flex gap-1">
-            <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>
-            <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Reprice</Badge>
+            <Badge 
+              variant="destructive" 
+              className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={onManualReview}
+            >
+              <XCircle className="h-3 w-3" /> Manual Review
+            </Badge>
+            <Badge 
+              variant="warning" 
+              className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={onReprice}
+            >
+              <AlertTriangle className="h-3 w-3" /> Reprice
+            </Badge>
           </div>
         );
       default:
@@ -392,7 +450,14 @@ export const DSCRCashFlowTab = ({
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div>{getFlagBadge(metric.flag, metric.metric)}</div>
+                            <div>
+                              {getFlagBadge(
+                                metric.flag, 
+                                metric.metric,
+                                () => openManualReview(metric),
+                                () => openRepricing(metric)
+                              )}
+                            </div>
                           </TooltipTrigger>
                           {metric.flagDetails && <TooltipContent>
                               <p className="text-xs max-w-xs">{metric.flagDetails}</p>
@@ -485,5 +550,27 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardContent>}
       </Card>
+
+      {/* Modals */}
+      {selectedMetric && (
+        <>
+          <ManualReviewModal
+            open={manualReviewOpen}
+            onOpenChange={setManualReviewOpen}
+            metricName={selectedMetric.metric}
+            posValue={selectedMetric.posValue}
+            aiValue={selectedMetric.aiValue}
+            deviation={selectedMetric.difference}
+          />
+          <RepricingModal
+            open={repricingOpen}
+            onOpenChange={setRepricingOpen}
+            metricName={selectedMetric.metric}
+            posValue={selectedMetric.posValue}
+            aiValue={selectedMetric.aiValue}
+            deviation={selectedMetric.difference}
+          />
+        </>
+      )}
     </div>;
 };
