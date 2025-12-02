@@ -407,10 +407,10 @@ export const DSCRCashFlowTab = ({
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-xs">Deviation Type</TableHead>
-                        <TableHead className="text-xs">Metric</TableHead>
-                        <TableHead className="text-xs">Threshold</TableHead>
-                        <TableHead className="text-xs">Action</TableHead>
+                        <TableHead className="text-sm font-semibold">Deviation Type</TableHead>
+                        <TableHead className="text-sm font-semibold">Metric</TableHead>
+                        <TableHead className="text-sm font-semibold">Threshold</TableHead>
+                        <TableHead className="text-sm font-semibold">Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -422,8 +422,8 @@ export const DSCRCashFlowTab = ({
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm font-medium">{rule.metric}</TableCell>
-                          <TableCell className="text-sm">{rule.threshold}</TableCell>
-                          <TableCell className="text-sm">{rule.action}</TableCell>
+                          <TableCell className="text-xs">{rule.threshold}</TableCell>
+                          <TableCell className="text-xs">{rule.action}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
