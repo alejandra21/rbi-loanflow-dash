@@ -53,13 +53,25 @@ export const DSCRCashFlowTab = ({
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  const getFlagBadge = (flag: 'none' | 'minor' | 'major') => {
+  const getFlagBadge = (flag: 'none' | 'minor' | 'major', metric?: string) => {
+    const isLtvLtcMetric = metric === 'LTV' || metric === 'LTC';
+    const isAutoRepriceMetric = metric === 'DSCR' || metric === 'Credit Score' || metric === 'Appraised Value';
+    
     switch (flag) {
       case "none":
-        return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /></Badge>;
+        return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> OK</Badge>;
       case "minor":
+        if (isAutoRepriceMetric) {
+          return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
+        }
         return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Minor</Badge>;
       case "major":
+        if (isLtvLtcMetric) {
+          return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
+        }
+        if (isAutoRepriceMetric) {
+          return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
+        }
         return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
       default:
         return <Badge variant="outline">{flag}</Badge>;
@@ -374,7 +386,7 @@ export const DSCRCashFlowTab = ({
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div>{getFlagBadge(metric.flag)}</div>
+                            <div>{getFlagBadge(metric.flag, metric.metric)}</div>
                           </TooltipTrigger>
                           {metric.flagDetails && <TooltipContent>
                               <p className="text-xs max-w-xs">{metric.flagDetails}</p>
