@@ -167,28 +167,25 @@ export const DSCRCashFlowTab = ({
 
             {/* Appraisal PDF Inputs */}
             <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Appraisal PDF (AI Extracted Inputs)
+              <h4 className="text-sm font-semibold mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Appraisal PDF (AI Extracted Inputs)
+                </div>
+                <Badge variant={data.appraisalInput.occupancy === 'Occupied' ? 'default' : 'secondary'}>
+                  {data.appraisalInput.occupancy}
+                </Badge>
               </h4>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-2">Occupancy</p>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={data.appraisalInput.occupancy === 'Occupied' ? 'default' : 'secondary'}>
-                      {data.appraisalInput.occupancy}
-                    </Badge>
-                  </div>
+                  <p className="text-xs text-muted-foreground mb-2">Market Rent</p>
+                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.marketRent)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">Actual Lease Rent</p>
                   <p className="text-sm font-medium">
                     {data.appraisalInput.actualLeaseRent ? formatCurrency(data.appraisalInput.actualLeaseRent) : 'N/A'}
                   </p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Market Rent</p>
-                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.marketRent)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">Appraised Value</p>
