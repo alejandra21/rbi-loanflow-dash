@@ -602,27 +602,27 @@ export const mockLoans: LoanApplication[] = [
                             posValue: "1.35",
                             aiValue: "1.33",
                             difference: "-0.02",
-                            tolerance: "±0.05",
+                            tolerance: "+0.05",
                             flag: 'none' as const,
-                            flagDetails: "Within tolerance. Difference of -0.02 is less than ±0.05 threshold."
+                            flagDetails: "Within tolerance. Difference of -0.02 is less than +0.05 threshold."
                         },
                         {
                             metric: "Credit Score",
                             posValue: "720",
                             aiValue: "718",
                             difference: "-2",
-                            tolerance: "±20 points",
+                            tolerance: "+20 points",
                             flag: 'none' as const,
-                            flagDetails: "Within tolerance. Difference of -2 points is less than ±20 threshold."
+                            flagDetails: "Within tolerance. Difference of -2 points is less than +20 threshold."
                         },
                         {
                             metric: "Appraised Value",
                             posValue: "$500,000",
                             aiValue: "$485,000",
                             difference: "-$15,000 (-3%)",
-                            tolerance: "±5%",
+                            tolerance: "+5%",
                             flag: 'none' as const,
-                            flagDetails: "Within tolerance. Difference of 3% is less than ±5% threshold."
+                            flagDetails: "Within tolerance. Difference of 3% is less than +5% threshold."
                         },
                         {
                             metric: "LTV",
@@ -661,19 +661,19 @@ export const mockLoans: LoanApplication[] = [
                     toleranceRules: [
                         {
                             metric: "DSCR",
-                            threshold: "±0.05",
+                            threshold: "+0.05",
                             deviationType: 'minor' as const,
                             action: "Auto-reprice in POS"
                         },
                         {
                             metric: "Credit Score",
-                            threshold: "±20 points",
+                            threshold: "+20 points",
                             deviationType: 'minor' as const,
                             action: "Auto-reprice in POS"
                         },
                         {
                             metric: "Appraised Value",
-                            threshold: "±5%",
+                            threshold: "+5%",
                             deviationType: 'minor' as const,
                             action: "Auto-reprice in POS"
                         },
