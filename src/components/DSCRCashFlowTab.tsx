@@ -97,13 +97,13 @@ export const DSCRCashFlowTab = ({
         </Button>
       </div>
 
-      {/* Appraisal Inputs & AI Rent Decision */}
+      {/* POS & Appraisal Inputs */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('appraisalInputs')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <FileText className="h-4 w-4 mr-2" />
-              Appraisal Inputs & AI Rent Decision
+              POS & Appraisal Inputs
             </div>
             <div className="flex items-center space-x-2">
               <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
@@ -115,6 +115,44 @@ export const DSCRCashFlowTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.appraisalInputs && <CardContent className="space-y-6">
+            {/* Borrower Credit Score */}
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Borrower Credit Score</h4>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">From POS</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.borrowerCreditScorePOS}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">From Credit Bureau Feed</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.borrowerCreditScoreBureau}</p>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* LOI Values from POS */}
+            <div>
+              <h4 className="text-sm font-semibold mb-3">LOI Values from POS</h4>
+              <div className="grid grid-cols-3 gap-6">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">Loan Amount</p>
+                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.loanAmount)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">Interest Rate</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.interestRate}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">Term</p>
+                  <p className="text-sm font-medium">{data.appraisalInput.term} years</p>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
             {/* Appraisal PDF Inputs */}
             <div>
               <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
