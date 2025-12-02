@@ -8,14 +8,16 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, DollarSign, AlertCircle, Info } from "lucide-react";
 import { useState } from "react";
 import { DSCRCashFlowData } from "@/types/dscrCashFlow";
-
 interface DSCRCashFlowTabProps {
   data: DSCRCashFlowData;
   phaseStatus: string;
   lastUpdated: string;
 }
-
-export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlowTabProps) => {
+export const DSCRCashFlowTab = ({
+  data,
+  phaseStatus,
+  lastUpdated
+}: DSCRCashFlowTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     appraisal: true,
     dscr: true,
@@ -24,25 +26,21 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
     decision: true,
     downstream: false,
     rules: false,
-    logs: false,
+    logs: false
   });
-
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
-
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
   };
-
   const toggleLog = (logId: string) => {
     setExpandedLogs(prev => ({
       ...prev,
       [logId]: !prev[logId]
     }));
   };
-
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pass":
@@ -59,7 +57,6 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
   const getFlagBadge = (flag: 'none' | 'minor' | 'major') => {
     switch (flag) {
       case "none":
@@ -72,7 +69,6 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
         return <Badge variant="outline">{flag}</Badge>;
     }
   };
-
   const getDSCRBadge = (dscr: number) => {
     if (dscr >= 1.25) {
       return <Badge variant="success" className="gap-1 text-base font-bold">{dscr.toFixed(2)}</Badge>;
@@ -82,22 +78,19 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
       return <Badge variant="destructive" className="gap-1 text-base font-bold">{dscr.toFixed(2)}</Badge>;
     }
   };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value);
   };
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       {/* Phase Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Phase 6 — DSCR Underwriting</h2>
+          <h2 className="text-2xl font-bold">DSCR Underwriting</h2>
           <p className="text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -268,8 +261,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.comparisonMetrics.map((metric, index) => (
-                    <TableRow key={index}>
+                  {data.comparisonMetrics.map((metric, index) => <TableRow key={index}>
                       <TableCell className="font-medium">{metric.metric}</TableCell>
                       <TableCell>{metric.posValue}</TableCell>
                       <TableCell>{metric.aiValue}</TableCell>
@@ -281,16 +273,13 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                             <TooltipTrigger asChild>
                               <div>{getFlagBadge(metric.flag)}</div>
                             </TooltipTrigger>
-                            {metric.flagDetails && (
-                              <TooltipContent>
+                            {metric.flagDetails && <TooltipContent>
                                 <p className="text-xs max-w-xs">{metric.flagDetails}</p>
-                              </TooltipContent>
-                            )}
+                              </TooltipContent>}
                           </Tooltip>
                         </TooltipProvider>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -329,8 +318,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                     </Badge>
                   </div>
                 </div>
-                {data.tierChange.tierChanged && (
-                  <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
+                {data.tierChange.tierChanged && <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
                     <div className="flex items-start gap-2">
                       <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
                       <div>
@@ -338,8 +326,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                         <p className="text-sm text-muted-foreground mt-1">{data.tierChange.reason}</p>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </CardContent>
           </CollapsibleContent>
@@ -366,33 +353,25 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                   {getStatusBadge(data.aiDecision.outcome)}
                 </div>
                 
-                {data.aiDecision.reason && (
-                  <div className="bg-muted/50 p-3 rounded-lg">
+                {data.aiDecision.reason && <div className="bg-muted/50 p-3 rounded-lg">
                     <p className="text-sm">{data.aiDecision.reason}</p>
-                  </div>
-                )}
+                  </div>}
 
                 <Separator />
 
                 <div className="flex gap-2">
-                  {data.aiDecision.action === 'auto_reprice' && (
-                    <Button variant="default">
+                  {data.aiDecision.action === 'auto_reprice' && <Button variant="default">
                       <TrendingUp className="h-4 w-4 mr-2" />
                       Reprice Loan in POS
-                    </Button>
-                  )}
-                  {data.aiDecision.action === 'manual_review' && (
-                    <Button variant="destructive">
+                    </Button>}
+                  {data.aiDecision.action === 'manual_review' && <Button variant="destructive">
                       <AlertCircle className="h-4 w-4 mr-2" />
                       Send to Manual Review
-                    </Button>
-                  )}
-                  {data.aiDecision.action === 'proceed_phase_7' && (
-                    <Button variant="default">
+                    </Button>}
+                  {data.aiDecision.action === 'proceed_phase_7' && <Button variant="default">
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Proceed to Phase 7
-                    </Button>
-                  )}
+                    </Button>}
                 </div>
               </div>
             </CardContent>
@@ -427,12 +406,10 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                     {data.downstreamNotification.downstreamServicesNotified ? "Yes" : "No"}
                   </Badge>
                 </div>
-                {data.downstreamNotification.lastUpdateTimestamp && (
-                  <div className="space-y-1 col-span-2">
+                {data.downstreamNotification.lastUpdateTimestamp && <div className="space-y-1 col-span-2">
                     <label className="text-xs text-muted-foreground">Last Update</label>
                     <p className="text-sm">{data.downstreamNotification.lastUpdateTimestamp}</p>
-                  </div>
-                )}
+                  </div>}
               </div>
             </CardContent>
           </CollapsibleContent>
@@ -463,8 +440,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.toleranceRules.map((rule, index) => (
-                    <TableRow key={index}>
+                  {data.toleranceRules.map((rule, index) => <TableRow key={index}>
                       <TableCell className="font-medium">{rule.metric}</TableCell>
                       <TableCell>{rule.threshold}</TableCell>
                       <TableCell>
@@ -473,8 +449,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">{rule.action}</TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </CardContent>
@@ -497,12 +472,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
           <CollapsibleContent>
             <CardContent>
               <div className="space-y-2">
-                {data.logs.map((log) => (
-                  <Collapsible
-                    key={log.id}
-                    open={expandedLogs[log.id]}
-                    onOpenChange={() => toggleLog(log.id)}
-                  >
+                {data.logs.map(log => <Collapsible key={log.id} open={expandedLogs[log.id]} onOpenChange={() => toggleLog(log.id)}>
                     <Card className="border-l-4 border-l-primary/20">
                       <CardContent className="p-4">
                         <CollapsibleTrigger className="flex items-start justify-between w-full hover:opacity-70 transition-opacity">
@@ -514,15 +484,7 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                               <span className="text-xs text-muted-foreground">
                                 {log.timestamp}
                               </span>
-                              <Badge
-                                variant={
-                                  log.status === "completed"
-                                    ? "success"
-                                    : log.status === "failed"
-                                    ? "destructive"
-                                    : "secondary"
-                                }
-                              >
+                              <Badge variant={log.status === "completed" ? "success" : log.status === "failed" ? "destructive" : "secondary"}>
                                 {log.status}
                               </Badge>
                             </div>
@@ -531,31 +493,23 @@ export const DSCRCashFlowTab = ({ data, phaseStatus, lastUpdated }: DSCRCashFlow
                               {log.details}
                             </p>
                           </div>
-                          <ChevronDown
-                            className={`h-4 w-4 ml-2 transition-transform ${
-                              expandedLogs[log.id] ? "rotate-180" : ""
-                            }`}
-                          />
+                          <ChevronDown className={`h-4 w-4 ml-2 transition-transform ${expandedLogs[log.id] ? "rotate-180" : ""}`} />
                         </CollapsibleTrigger>
-                        {log.jsonData && (
-                          <CollapsibleContent>
+                        {log.jsonData && <CollapsibleContent>
                             <Separator className="my-3" />
                             <div className="bg-muted/50 p-3 rounded text-xs font-mono">
                               <pre className="whitespace-pre-wrap break-all">
                                 {JSON.stringify(log.jsonData, null, 2)}
                               </pre>
                             </div>
-                          </CollapsibleContent>
-                        )}
+                          </CollapsibleContent>}
                       </CardContent>
                     </Card>
-                  </Collapsible>
-                ))}
+                  </Collapsible>)}
               </div>
             </CardContent>
           </CollapsibleContent>
         </Card>
       </Collapsible>
-    </div>
-  );
+    </div>;
 };
