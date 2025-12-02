@@ -61,18 +61,24 @@ export const DSCRCashFlowTab = ({
       case "none":
         return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> OK</Badge>;
       case "minor":
-        if (isAutoRepriceMetric) {
-          return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
-        }
-        return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Minor</Badge>;
+        // Minor flags always trigger Auto-reprice
+        return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
       case "major":
         if (isLtvLtcMetric) {
+          // LTV/LTC require exact match - any difference triggers Manual Review
           return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
         }
         if (isAutoRepriceMetric) {
+          // DSCR, Credit Score, Appraised Value trigger Auto-reprice for deviations
           return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Auto-reprice</Badge>;
         }
-        return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>;
+        // Default for other metrics with major flags - both actions needed
+        return (
+          <div className="flex gap-1">
+            <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Manual Review</Badge>
+            <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Reprice</Badge>
+          </div>
+        );
       default:
         return <Badge variant="outline">{flag}</Badge>;
     }
