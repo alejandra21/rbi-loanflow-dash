@@ -616,7 +616,7 @@ export const mockLoans: LoanApplication[] = [
                             flagDetails: "Within tolerance. Difference of -2 points is less than ±20 threshold."
                         },
                         {
-                            metric: "As Is Value vs Appraised Value",
+                            metric: "Appraised Value",
                             posValue: "$500,000",
                             aiValue: "$485,000",
                             difference: "-$15,000 (-3%)",
@@ -629,7 +629,7 @@ export const mockLoans: LoanApplication[] = [
                             posValue: "80%",
                             aiValue: "80%",
                             difference: "0%",
-                            tolerance: "Exact match",
+                            tolerance: "0%",
                             flag: 'none' as const,
                             flagDetails: "No difference detected. Values match exactly."
                         },
@@ -638,7 +638,7 @@ export const mockLoans: LoanApplication[] = [
                             posValue: "75%",
                             aiValue: "74%",
                             difference: "-1%",
-                            tolerance: "Exact match",
+                            tolerance: "0%",
                             flag: 'major' as const,
                             flagDetails: "Mismatch detected. Any difference in LTV/LTC requires manual review."
                         }
@@ -672,20 +672,20 @@ export const mockLoans: LoanApplication[] = [
                             action: "Auto-reprice in POS"
                         },
                         {
-                            metric: "As Is Value vs Appraised Value",
+                            metric: "Appraised Value",
                             threshold: "±5%",
                             deviationType: 'minor' as const,
                             action: "Auto-reprice in POS"
                         },
                         {
                             metric: "LTV",
-                            threshold: "Exact match (0%)",
+                            threshold: "0%",
                             deviationType: 'major' as const,
                             action: "Manual Underwriter Review"
                         },
                         {
                             metric: "LTC",
-                            threshold: "Exact match (0%)",
+                            threshold: "0%",
                             deviationType: 'major' as const,
                             action: "Manual Underwriter Review"
                         },
