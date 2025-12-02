@@ -21,7 +21,6 @@ export const DSCRCashFlowTab = ({
     appraisalInputs: true,
     dscrCalculation: true,
     posComparison: true,
-    leverageTier: true,
     auditLog: false
   });
   const [showToleranceRules, setShowToleranceRules] = useState(false);
@@ -384,52 +383,6 @@ export const DSCRCashFlowTab = ({
                 </div>
               )}
             </div>
-          </CardContent>}
-      </Card>
-
-      {/* Leverage Tier Change */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('leverageTier')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center">
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Leverage Tier Change
-            </div>
-            <div className="flex items-center space-x-2">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" />
-                Validated
-              </Badge>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.leverageTier ? '' : '-rotate-90'}`} />
-            </div>
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.leverageTier && <CardContent className="space-y-4">
-            <div className="grid grid-cols-3 gap-6">
-              <div className="p-4 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">POS Tier</p>
-                <p className="text-sm font-medium">{data.tierChange.posTier}</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">AI-Calculated Tier</p>
-                <p className="text-sm font-medium">{data.tierChange.aiCalculatedTier}</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">Tier Changed?</p>
-                <Badge variant={data.tierChange.tierChanged ? "destructive" : "success"} className="text-sm">
-                  {data.tierChange.tierChanged ? "YES" : "NO"}
-                </Badge>
-              </div>
-            </div>
-            {data.tierChange.tierChanged && <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-destructive">Major Deviation: Manual Review Required</p>
-                    <p className="text-xs text-muted-foreground mt-1">{data.tierChange.reason}</p>
-                  </div>
-                </div>
-              </div>}
           </CardContent>}
       </Card>
 
