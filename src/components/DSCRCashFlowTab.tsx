@@ -313,7 +313,7 @@ export const DSCRCashFlowTab = ({
                   <TableHead className="text-xs">AI Value</TableHead>
                   <TableHead className="text-xs">Difference</TableHead>
                   <TableHead className="text-xs">Tolerance</TableHead>
-                  <TableHead className="text-xs">Status</TableHead>
+                  <TableHead className="text-xs">Evaluation</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
