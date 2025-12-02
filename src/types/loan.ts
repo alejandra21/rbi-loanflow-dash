@@ -679,18 +679,12 @@ export const mockLoans: LoanApplication[] = [
                         },
                         {
                             metric: "LTV",
-                            threshold: "0%",
+                            threshold: "Any tier change",
                             deviationType: 'major' as const,
                             action: "Manual Underwriter Review"
                         },
                         {
                             metric: "LTC",
-                            threshold: "0%",
-                            deviationType: 'major' as const,
-                            action: "Manual Underwriter Review"
-                        },
-                        {
-                            metric: "Leverage Tier Change",
                             threshold: "Any tier change",
                             deviationType: 'major' as const,
                             action: "Manual Underwriter Review"
