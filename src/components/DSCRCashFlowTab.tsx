@@ -303,10 +303,32 @@ export const DSCRCashFlowTab = ({
               POS Comparison & Tolerance Analysis
             </div>
             <div className="flex items-center space-x-2">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-600 inline-flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" />
-                Validated
-              </Badge>
+              {(() => {
+                const hasMajor = data.comparisonMetrics.some(m => m.flag === 'major');
+                const hasMinor = data.comparisonMetrics.some(m => m.flag === 'minor');
+                if (hasMajor) {
+                  return (
+                    <Badge variant="destructive" className="inline-flex items-center gap-1">
+                      <XCircle className="h-4 w-4" />
+                      Major Flag
+                    </Badge>
+                  );
+                }
+                if (hasMinor) {
+                  return (
+                    <Badge variant="warning" className="inline-flex items-center gap-1">
+                      <AlertTriangle className="h-4 w-4" />
+                      Minor Flag
+                    </Badge>
+                  );
+                }
+                return (
+                  <Badge variant="success" className="inline-flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Validated
+                  </Badge>
+                );
+              })()}
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.posComparison ? '' : '-rotate-90'}`} />
             </div>
           </CardTitle>
