@@ -7,13 +7,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, TrendingUp, DollarSign, AlertCircle, Info, Calculator, Scale, Bell } from "lucide-react";
 import { useState } from "react";
 import { DSCRCashFlowData } from "@/types/dscrCashFlow";
-
 interface DSCRCashFlowTabProps {
   data: DSCRCashFlowData;
   phaseStatus: string;
   lastUpdated: string;
 }
-
 export const DSCRCashFlowTab = ({
   data,
   phaseStatus,
@@ -29,23 +27,19 @@ export const DSCRCashFlowTab = ({
     toleranceRules: false,
     auditLog: false
   });
-
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
-
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
   };
-
   const toggleLog = (logId: string) => {
     setExpandedLogs(prev => ({
       ...prev,
       [logId]: !prev[logId]
     }));
   };
-
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pass":
@@ -62,7 +56,6 @@ export const DSCRCashFlowTab = ({
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
   const getFlagBadge = (flag: 'none' | 'minor' | 'major') => {
     switch (flag) {
       case "none":
@@ -75,19 +68,16 @@ export const DSCRCashFlowTab = ({
         return <Badge variant="outline">{flag}</Badge>;
     }
   };
-
   const getDSCRBadgeVariant = (dscr: number): "success" | "warning" | "destructive" => {
     if (dscr >= 1.25) return "success";
     if (dscr >= 1.0) return "warning";
     return "destructive";
   };
-
   const getDSCRStatus = (dscr: number): string => {
     if (dscr >= 1.25) return "Excellent";
     if (dscr >= 1.0) return "Acceptable";
     return "Below Minimum";
   };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -96,13 +86,11 @@ export const DSCRCashFlowTab = ({
       maximumFractionDigits: 0
     }).format(value);
   };
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       {/* Phase Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-semibold">Phase 6 — DSCR Underwriting</h2>
+          <h2 className="font-semibold text-lg">DSCR Cash Flow</h2>
           {getStatusBadge(phaseStatus)}
         </div>
         <Button variant="outline" size="sm">
@@ -127,8 +115,7 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.appraisalInputs && (
-          <CardContent className="space-y-6">
+        {expandedCards.appraisalInputs && <CardContent className="space-y-6">
             {/* Appraisal PDF Inputs */}
             <div>
               <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
@@ -206,9 +193,7 @@ export const DSCRCashFlowTab = ({
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Info className="h-4 w-4" />
                         <span>
-                          {data.appraisalInput.occupancy === "Occupied" 
-                            ? "Occupied property: Using lesser of lease rent or market rent"
-                            : "Vacant property: Using market rent only"}
+                          {data.appraisalInput.occupancy === "Occupied" ? "Occupied property: Using lesser of lease rent or market rent" : "Vacant property: Using market rent only"}
                         </span>
                       </div>
                     </div>
@@ -216,8 +201,7 @@ export const DSCRCashFlowTab = ({
                 </div>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* DSCR Calculation */}
@@ -236,8 +220,7 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.dscrCalculation && (
-          <CardContent className="space-y-4">
+        {expandedCards.dscrCalculation && <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-6">
               <div className="p-4 border rounded-lg bg-muted/20">
                 <p className="text-xs text-muted-foreground mb-2">Selected Rent</p>
@@ -258,10 +241,7 @@ export const DSCRCashFlowTab = ({
                 <p className="text-sm font-bold text-primary">
                   {data.dscrCalculation.calculatedDSCR.toFixed(2)}
                 </p>
-                <Badge 
-                  variant={getDSCRBadgeVariant(data.dscrCalculation.calculatedDSCR)}
-                  className="mt-2"
-                >
+                <Badge variant={getDSCRBadgeVariant(data.dscrCalculation.calculatedDSCR)} className="mt-2">
                   {getDSCRStatus(data.dscrCalculation.calculatedDSCR)}
                 </Badge>
               </div>
@@ -269,8 +249,7 @@ export const DSCRCashFlowTab = ({
             <div className="bg-muted/30 p-3 rounded text-xs text-muted-foreground">
               <strong>Formula:</strong> DSCR = Selected Rent ÷ POS Debt Service
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* POS Comparison & Tolerance Analysis */}
@@ -289,8 +268,7 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.posComparison && (
-          <CardContent>
+        {expandedCards.posComparison && <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -303,8 +281,7 @@ export const DSCRCashFlowTab = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.comparisonMetrics.map((metric, index) => (
-                  <TableRow key={index}>
+                {data.comparisonMetrics.map((metric, index) => <TableRow key={index}>
                     <TableCell className="text-sm font-medium">{metric.metric}</TableCell>
                     <TableCell className="text-sm">{metric.posValue}</TableCell>
                     <TableCell className="text-sm">{metric.aiValue}</TableCell>
@@ -316,20 +293,16 @@ export const DSCRCashFlowTab = ({
                           <TooltipTrigger asChild>
                             <div>{getFlagBadge(metric.flag)}</div>
                           </TooltipTrigger>
-                          {metric.flagDetails && (
-                            <TooltipContent>
+                          {metric.flagDetails && <TooltipContent>
                               <p className="text-xs max-w-xs">{metric.flagDetails}</p>
-                            </TooltipContent>
-                          )}
+                            </TooltipContent>}
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Leverage Tier Change */}
@@ -348,8 +321,7 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.leverageTier && (
-          <CardContent className="space-y-4">
+        {expandedCards.leverageTier && <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-6">
               <div className="p-4 border rounded-lg">
                 <p className="text-xs text-muted-foreground mb-2">POS Tier</p>
@@ -366,8 +338,7 @@ export const DSCRCashFlowTab = ({
                 </Badge>
               </div>
             </div>
-            {data.tierChange.tierChanged && (
-              <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
+            {data.tierChange.tierChanged && <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
                   <div>
@@ -375,10 +346,8 @@ export const DSCRCashFlowTab = ({
                     <p className="text-xs text-muted-foreground mt-1">{data.tierChange.reason}</p>
                   </div>
                 </div>
-              </div>
-            )}
-          </CardContent>
-        )}
+              </div>}
+          </CardContent>}
       </Card>
 
       {/* AI Decision & Required Action */}
@@ -397,18 +366,15 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.aiDecision && (
-          <CardContent className="space-y-4">
+        {expandedCards.aiDecision && <CardContent className="space-y-4">
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">Outcome</p>
               {getStatusBadge(data.aiDecision.outcome)}
             </div>
             
-            {data.aiDecision.reason && (
-              <div className="bg-muted/50 p-3 rounded-lg">
+            {data.aiDecision.reason && <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-sm">{data.aiDecision.reason}</p>
-              </div>
-            )}
+              </div>}
 
             <p className="text-xs text-muted-foreground">
               {data.aiDecision.outcome === "pass" && "All values within tolerance. Ready to proceed."}
@@ -419,27 +385,20 @@ export const DSCRCashFlowTab = ({
             <Separator />
 
             <div className="flex gap-2">
-              {data.aiDecision.action === 'auto_reprice' && (
-                <Button variant="default">
+              {data.aiDecision.action === 'auto_reprice' && <Button variant="default">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Reprice Loan in POS
-                </Button>
-              )}
-              {data.aiDecision.action === 'manual_review' && (
-                <Button variant="destructive">
+                </Button>}
+              {data.aiDecision.action === 'manual_review' && <Button variant="destructive">
                   <AlertCircle className="h-4 w-4 mr-2" />
                   Send to Manual Review
-                </Button>
-              )}
-              {data.aiDecision.action === 'proceed_phase_7' && (
-                <Button variant="default">
+                </Button>}
+              {data.aiDecision.action === 'proceed_phase_7' && <Button variant="default">
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Proceed to Phase 7
-                </Button>
-              )}
+                </Button>}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Downstream Notifications */}
@@ -458,8 +417,7 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.downstreamNotifications && (
-          <CardContent>
+        {expandedCards.downstreamNotifications && <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <span className="text-xs text-muted-foreground">POS Updated</span>
@@ -473,15 +431,12 @@ export const DSCRCashFlowTab = ({
                   {data.downstreamNotification.downstreamServicesNotified ? "Yes" : "No"}
                 </Badge>
               </div>
-              {data.downstreamNotification.lastUpdateTimestamp && (
-                <div className="p-3 border rounded-lg">
+              {data.downstreamNotification.lastUpdateTimestamp && <div className="p-3 border rounded-lg">
                   <p className="text-xs text-muted-foreground mb-1">Last Update</p>
                   <p className="text-sm font-medium">{data.downstreamNotification.lastUpdateTimestamp}</p>
-                </div>
-              )}
+                </div>}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Tolerance Rules (Legend) */}
@@ -500,11 +455,9 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.toleranceRules && (
-          <CardContent>
+        {expandedCards.toleranceRules && <CardContent>
             <div className="space-y-3">
-              {data.toleranceRules.map((rule, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+              {data.toleranceRules.map((rule, index) => <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
                   <Badge variant={rule.deviationType === "minor" ? "warning" : "destructive"} className="text-xs">
                     {rule.deviationType === "minor" ? "Minor" : "Major"}
                   </Badge>
@@ -513,11 +466,9 @@ export const DSCRCashFlowTab = ({
                     <p className="text-xs text-muted-foreground">{rule.threshold}</p>
                     <p className="text-xs text-muted-foreground mt-1">{rule.action}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Audit Log */}
@@ -534,15 +485,10 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.auditLog && (
-          <CardContent>
+        {expandedCards.auditLog && <CardContent>
             <div className="space-y-3">
-              {data.logs.map((log) => (
-                <div key={log.id} className="border rounded-lg">
-                  <div 
-                    className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors"
-                    onClick={() => toggleLog(log.id)}
-                  >
+              {data.logs.map(log => <div key={log.id} className="border rounded-lg">
+                  <div className="flex items-start space-x-3 p-3 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleLog(log.id)}>
                     <div className="w-2 h-2 bg-primary rounded-full mt-1.5" />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
@@ -553,10 +499,7 @@ export const DSCRCashFlowTab = ({
                         </div>
                         <div className="flex items-center gap-2 ml-4 flex-wrap justify-end">
                           <Badge variant="outline" className="text-xs">{log.tag}</Badge>
-                          <Badge 
-                            variant={log.status === "completed" ? "default" : log.status === "failed" ? "destructive" : "outline"}
-                            className="text-xs"
-                          >
+                          <Badge variant={log.status === "completed" ? "default" : log.status === "failed" ? "destructive" : "outline"} className="text-xs">
                             {log.status}
                           </Badge>
                           <ChevronDown className={`h-4 w-4 transition-transform ${expandedLogs[log.id] ? '' : '-rotate-90'}`} />
@@ -564,19 +507,14 @@ export const DSCRCashFlowTab = ({
                       </div>
                     </div>
                   </div>
-                  {expandedLogs[log.id] && log.jsonData && (
-                    <div className="px-3 pb-3 border-t bg-muted/20">
+                  {expandedLogs[log.id] && log.jsonData && <div className="px-3 pb-3 border-t bg-muted/20">
                       <pre className="text-xs overflow-x-auto p-3 bg-background rounded mt-2">
                         {JSON.stringify(log.jsonData, null, 2)}
                       </pre>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    </div>}
+                </div>)}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
-    </div>
-  );
+    </div>;
 };
