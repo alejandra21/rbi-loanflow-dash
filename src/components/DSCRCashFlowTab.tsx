@@ -299,7 +299,7 @@ export const DSCRCashFlowTab = ({
               </div>
             </div>
             <div className="bg-muted/30 p-3 rounded text-xs text-muted-foreground">
-              <strong>Formula:</strong> DSCR = Selected Rent ÷ POS Debt Service
+              <strong>Formula:</strong> DSCR = Selected Rent ÷ Debt Service
             </div>
           </CardContent>}
       </Card>
@@ -314,31 +314,25 @@ export const DSCRCashFlowTab = ({
             </div>
             <div className="flex items-center space-x-2">
               {(() => {
-                const hasMajor = data.comparisonMetrics.some(m => m.flag === 'major');
-                const hasMinor = data.comparisonMetrics.some(m => m.flag === 'minor');
-                if (hasMajor) {
-                  return (
-                    <Badge variant="destructive" className="inline-flex items-center gap-1">
+              const hasMajor = data.comparisonMetrics.some(m => m.flag === 'major');
+              const hasMinor = data.comparisonMetrics.some(m => m.flag === 'minor');
+              if (hasMajor) {
+                return <Badge variant="destructive" className="inline-flex items-center gap-1">
                       <XCircle className="h-4 w-4" />
                       Major Flag
-                    </Badge>
-                  );
-                }
-                if (hasMinor) {
-                  return (
-                    <Badge variant="warning" className="inline-flex items-center gap-1">
+                    </Badge>;
+              }
+              if (hasMinor) {
+                return <Badge variant="warning" className="inline-flex items-center gap-1">
                       <AlertTriangle className="h-4 w-4" />
                       Minor Flag
-                    </Badge>
-                  );
-                }
-                return (
-                  <Badge variant="success" className="inline-flex items-center gap-1">
+                    </Badge>;
+              }
+              return <Badge variant="success" className="inline-flex items-center gap-1">
                     <CheckCircle className="h-4 w-4" />
                     Validated
-                  </Badge>
-                );
-              })()}
+                  </Badge>;
+            })()}
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.posComparison ? '' : '-rotate-90'}`} />
             </div>
           </CardTitle>
@@ -362,8 +356,7 @@ export const DSCRCashFlowTab = ({
                     <TableCell className="text-xs">{metric.aiValue}</TableCell>
                     <TableCell className="text-xs">{metric.difference}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {metric.tolerance === "0%" ? (
-                        <TooltipProvider>
+                      {metric.tolerance === "0%" ? <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <span className="cursor-help inline-flex items-center gap-1">
@@ -375,10 +368,7 @@ export const DSCRCashFlowTab = ({
                               <p className="text-xs">Exact Match</p>
                             </TooltipContent>
                           </Tooltip>
-                        </TooltipProvider>
-                      ) : (
-                        metric.tolerance
-                      )}
+                        </TooltipProvider> : metric.tolerance}
                     </TableCell>
                     <TableCell>
                       <TooltipProvider>
@@ -399,12 +389,7 @@ export const DSCRCashFlowTab = ({
             <Separator />
 
             <div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowToleranceRules(!showToleranceRules)}
-                className="w-full justify-between"
-              >
+              <Button variant="outline" size="sm" onClick={() => setShowToleranceRules(!showToleranceRules)} className="w-full justify-between">
                 <span className="flex items-center gap-2">
                   <Info className="h-4 w-4" />
                   Tolerance Rules (Legend)
@@ -412,8 +397,7 @@ export const DSCRCashFlowTab = ({
                 <ChevronDown className={`h-4 w-4 transition-transform ${showToleranceRules ? '' : '-rotate-90'}`} />
               </Button>
 
-              {showToleranceRules && (
-                <div className="mt-4">
+              {showToleranceRules && <div className="mt-4">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -424,8 +408,7 @@ export const DSCRCashFlowTab = ({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {data.toleranceRules.map((rule, index) => (
-                        <TableRow key={index}>
+                      {data.toleranceRules.map((rule, index) => <TableRow key={index}>
                           <TableCell>
                             <Badge variant={rule.deviationType === "minor" ? "warning" : "destructive"} className="text-xs">
                               {rule.deviationType === "minor" ? "Minor" : "Major"}
@@ -434,12 +417,10 @@ export const DSCRCashFlowTab = ({
                           <TableCell className="text-sm font-medium">{rule.metric}</TableCell>
                           <TableCell className="text-xs">{rule.threshold}</TableCell>
                           <TableCell className="text-xs">{rule.action}</TableCell>
-                        </TableRow>
-                      ))}
+                        </TableRow>)}
                     </TableBody>
                   </Table>
-                </div>
-              )}
+                </div>}
             </div>
           </CardContent>}
       </Card>
