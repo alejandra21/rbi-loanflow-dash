@@ -114,143 +114,117 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.appraisalInputs && <CardContent className="space-y-6">
-            {/* Borrower Credit Score */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Borrower Credit Score</h4>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">From POS</p>
-                  <p className="text-sm font-medium">{data.appraisalInput.borrowerCreditScorePOS}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">From Credit Bureau Feed</p>
-                  <p className="text-sm font-medium">{data.appraisalInput.borrowerCreditScoreBureau}</p>
-                </div>
+        {expandedCards.appraisalInputs && <CardContent>
+            <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+              {/* Borrower Credit Score */}
+              <div>
+                <p className="text-sm text-muted-foreground">Borrower Credit Score (POS)</p>
+                <p className="text-base font-semibold mt-1">{data.appraisalInput.borrowerCreditScorePOS}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Borrower Credit Score (Bureau)</p>
+                <p className="text-base font-semibold mt-1">{data.appraisalInput.borrowerCreditScoreBureau}</p>
+              </div>
+
+              {/* LOI Values */}
+              <div>
+                <p className="text-sm text-muted-foreground">Loan Amount</p>
+                <p className="text-base font-semibold mt-1">{formatCurrency(data.appraisalInput.loanAmount)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Interest Rate</p>
+                <p className="text-base font-semibold mt-1">{data.appraisalInput.interestRate}%</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Term</p>
+                <p className="text-base font-semibold mt-1">{data.appraisalInput.term} years</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Terms File Source</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="sm" className="mt-1 h-8">
+                        <FileText className="h-3.5 w-3.5 mr-2" />
+                        {data.appraisalInput.termsFileSource.split('/').pop()}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs max-w-xs break-all">{data.appraisalInput.termsFileSource}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              {/* Appraisal Values */}
+              <div>
+                <p className="text-sm text-muted-foreground">Occupancy</p>
+                <Badge variant={data.appraisalInput.occupancy === 'Occupied' ? 'default' : 'secondary'} className="mt-1">
+                  {data.appraisalInput.occupancy}
+                </Badge>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Actual Lease Rent</p>
+                <p className="text-base font-semibold mt-1">
+                  {data.appraisalInput.actualLeaseRent ? formatCurrency(data.appraisalInput.actualLeaseRent) : 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Market Rent</p>
+                <p className="text-base font-semibold mt-1">{formatCurrency(data.appraisalInput.marketRent)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Appraised Value</p>
+                <p className="text-base font-semibold mt-1">{formatCurrency(data.appraisalInput.appraisedValue)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Appraisal Date</p>
+                <p className="text-base font-semibold mt-1">{data.appraisalInput.appraisalDate}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">PDF Source</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="sm" className="mt-1 h-8">
+                        <FileText className="h-3.5 w-3.5 mr-2" />
+                        {data.appraisalInput.pdfSource.split('/').pop()}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs max-w-xs break-all">{data.appraisalInput.pdfSource}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 
-            <Separator />
 
-            {/* LOI Values from POS */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3">LOI Values from POS</h4>
-              <div className="grid grid-cols-3 gap-6">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Loan Amount</p>
-                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.loanAmount)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Interest Rate</p>
-                  <p className="text-sm font-medium">{data.appraisalInput.interestRate}%</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Term</p>
-                  <p className="text-sm font-medium">{data.appraisalInput.term} years</p>
-                </div>
-                <div className="col-span-3">
-                  <p className="text-xs text-muted-foreground mb-2">Terms File Source</p>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <p className="text-sm font-medium text-primary cursor-pointer hover:underline truncate">
-                          {data.appraisalInput.termsFileSource.split('/').pop()}
-                        </p>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="text-xs max-w-xs break-all">{data.appraisalInput.termsFileSource}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Appraisal PDF Inputs */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Appraisal PDF (AI Extracted Inputs)
-              </h4>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Occupancy</p>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={data.appraisalInput.occupancy === 'Occupied' ? 'default' : 'secondary'}>
-                      {data.appraisalInput.occupancy}
-                    </Badge>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Actual Lease Rent</p>
-                  <p className="text-sm font-medium">
-                    {data.appraisalInput.actualLeaseRent ? formatCurrency(data.appraisalInput.actualLeaseRent) : 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Market Rent</p>
-                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.marketRent)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Appraised Value</p>
-                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.appraisedValue)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Appraisal Date</p>
-                  <p className="text-sm font-medium">{data.appraisalInput.appraisalDate}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">PDF Source</p>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <p className="text-sm font-medium text-primary cursor-pointer hover:underline truncate">
-                          {data.appraisalInput.pdfSource.split('/').pop()}
-                        </p>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="text-xs max-w-xs break-all">{data.appraisalInput.pdfSource}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
+            <Separator className="my-6" />
+            
             {/* AI Rent Decision */}
             <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
                 AI Rent Decision
               </h4>
-              <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <TrendingUp className="h-4 w-4 text-primary mt-0.5" />
-                  <div className="flex-1">
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Selected Rent</p>
-                        <p className="text-sm font-bold text-primary">
-                          {formatCurrency(data.rentDecision.selectedRent)}/mo
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Decision Rule</p>
-                        <p className="text-sm">{data.rentDecision.decisionRule}</p>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Info className="h-4 w-4" />
-                        <span>
-                          {data.appraisalInput.occupancy === "Occupied" ? "Occupied property: Using lesser of lease rent or market rent" : "Vacant property: Using market rent only"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+              <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Selected Rent</p>
+                  <p className="text-base font-semibold mt-1 text-primary">
+                    {formatCurrency(data.rentDecision.selectedRent)}/mo
+                  </p>
                 </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Decision Rule</p>
+                  <p className="text-base font-semibold mt-1">{data.rentDecision.decisionRule}</p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-3 rounded">
+                <Info className="h-4 w-4" />
+                <span>
+                  {data.appraisalInput.occupancy === "Occupied" ? "Occupied property: Using lesser of lease rent or market rent" : "Vacant property: Using market rent only"}
+                </span>
               </div>
             </div>
           </CardContent>}
@@ -273,31 +247,22 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.dscrCalculation && <CardContent className="space-y-4">
-            <div className="grid grid-cols-3 gap-6">
-              <div className="p-4 border rounded-lg bg-muted/20">
-                <p className="text-xs text-muted-foreground mb-2">Selected Rent</p>
-                <p className="text-sm font-bold">
-                  {formatCurrency(data.dscrCalculation.selectedRent)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">per month</p>
+        {expandedCards.dscrCalculation && <CardContent>
+            <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Selected Rent</p>
+                <p className="text-base font-semibold mt-1">{formatCurrency(data.dscrCalculation.selectedRent)}<span className="text-sm text-muted-foreground ml-1">per month</span></p>
               </div>
-              <div className="p-4 border rounded-lg bg-muted/20">
-                <p className="text-xs text-muted-foreground mb-2">POS Debt Service</p>
-                <p className="text-sm font-bold">
-                  {formatCurrency(data.dscrCalculation.posDebtService)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">per month</p>
+              <div>
+                <p className="text-sm text-muted-foreground">POS Debt Service</p>
+                <p className="text-base font-semibold mt-1">{formatCurrency(data.dscrCalculation.posDebtService)}<span className="text-sm text-muted-foreground ml-1">per month</span></p>
               </div>
-              <div className="p-4 border rounded-lg bg-primary/10">
-                <p className="text-xs text-muted-foreground mb-2">Calculated DSCR</p>
-                <p className="text-sm font-bold text-primary">
-                  {data.dscrCalculation.calculatedDSCR.toFixed(2)}
-                </p>
-                
+              <div>
+                <p className="text-sm text-muted-foreground">Calculated DSCR</p>
+                <p className="text-base font-semibold mt-1 text-primary">{data.dscrCalculation.calculatedDSCR.toFixed(2)}</p>
               </div>
             </div>
-            <div className="bg-muted/30 p-3 rounded text-xs text-muted-foreground">
+            <div className="bg-muted/30 p-3 rounded text-xs text-muted-foreground mt-4">
               <strong>Formula:</strong> DSCR = Selected Rent ÷ POS Debt Service
             </div>
           </CardContent>}
@@ -374,24 +339,24 @@ export const DSCRCashFlowTab = ({
             </div>
           </CardTitle>
         </CardHeader>
-        {expandedCards.leverageTier && <CardContent className="space-y-4">
-            <div className="grid grid-cols-3 gap-6">
-              <div className="p-4 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">POS Tier</p>
-                <p className="text-sm font-medium">{data.tierChange.posTier}</p>
+        {expandedCards.leverageTier && <CardContent>
+            <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">POS Tier</p>
+                <p className="text-base font-semibold mt-1">{data.tierChange.posTier}</p>
               </div>
-              <div className="p-4 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">AI-Calculated Tier</p>
-                <p className="text-sm font-medium">{data.tierChange.aiCalculatedTier}</p>
+              <div>
+                <p className="text-sm text-muted-foreground">AI-Calculated Tier</p>
+                <p className="text-base font-semibold mt-1">{data.tierChange.aiCalculatedTier}</p>
               </div>
-              <div className="p-4 border rounded-lg">
-                <p className="text-xs text-muted-foreground mb-2">Tier Changed?</p>
-                <Badge variant={data.tierChange.tierChanged ? "destructive" : "success"} className="text-sm">
-                  {data.tierChange.tierChanged ? "YES" : "NO"}
+              <div>
+                <p className="text-sm text-muted-foreground">Tier Changed</p>
+                <Badge variant={data.tierChange.tierChanged ? "destructive" : "success"} className="mt-1">
+                  {data.tierChange.tierChanged ? "Yes" : "No"}
                 </Badge>
               </div>
             </div>
-            {data.tierChange.tierChanged && <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
+            {data.tierChange.tierChanged && <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg mt-4">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
                   <div>
