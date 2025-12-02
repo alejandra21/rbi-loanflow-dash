@@ -11,6 +11,8 @@ export interface AppraisalInput {
   interestRate: number;
   term: number;
   termsFileSource: string;
+  // As Is Value from POS (LOI)
+  asIsValue: number;
   // LTV and LTC from POS
   posLTV: number;
   posLTC: number;

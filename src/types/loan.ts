@@ -580,6 +580,7 @@ export const mockLoans: LoanApplication[] = [
                         interestRate: 7.25,
                         term: 30,
                         termsFileSource: "s3://rbi-loan-docs/terms/LOA-2024-001_loan_terms.pdf",
+                        asIsValue: 500000,
                         posLTV: 80,
                         posLTC: 75,
                         appraisalLTV: 80,
@@ -615,7 +616,7 @@ export const mockLoans: LoanApplication[] = [
                             flagDetails: "Within tolerance. Difference of -2 points is less than ±20 threshold."
                         },
                         {
-                            metric: "Appraised Value",
+                            metric: "As Is Value vs Appraised Value",
                             posValue: "$500,000",
                             aiValue: "$485,000",
                             difference: "-$15,000 (-3%)",
@@ -671,7 +672,7 @@ export const mockLoans: LoanApplication[] = [
                             action: "Auto-reprice in POS"
                         },
                         {
-                            metric: "Appraised Value",
+                            metric: "As Is Value vs Appraised Value",
                             threshold: "±5%",
                             deviationType: 'minor' as const,
                             action: "Auto-reprice in POS"
