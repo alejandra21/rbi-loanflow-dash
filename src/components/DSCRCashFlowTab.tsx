@@ -148,6 +148,10 @@ export const DSCRCashFlowTab = ({
                   <p className="text-sm font-medium">{data.appraisalInput.term} years</p>
                 </div>
                 <div>
+                  <p className="text-xs text-muted-foreground mb-2">As Is Value</p>
+                  <p className="text-sm font-medium">{formatCurrency(data.appraisalInput.asIsValue)}</p>
+                </div>
+                <div>
                   <p className="text-xs text-muted-foreground mb-2">LTV</p>
                   <p className="text-sm font-medium">{data.appraisalInput.posLTV}%</p>
                 </div>
