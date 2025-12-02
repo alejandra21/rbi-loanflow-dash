@@ -57,7 +57,7 @@ export const DSCRCashFlowTab = ({
   const getFlagBadge = (flag: 'none' | 'minor' | 'major') => {
     switch (flag) {
       case "none":
-        return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> None</Badge>;
+        return null;
       case "minor":
         return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Minor</Badge>;
       case "major":
