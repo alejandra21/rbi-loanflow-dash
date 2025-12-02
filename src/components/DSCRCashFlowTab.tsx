@@ -150,28 +150,14 @@ export const DSCRCashFlowTab = ({
                 </div>
                 <div className="col-span-3">
                   <p className="text-xs text-muted-foreground mb-2">Terms File Source</p>
-                  <div className="flex items-center gap-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <p className="text-sm font-medium text-primary cursor-pointer hover:underline truncate">
-                            {data.appraisalInput.termsFileSource.split('/').pop()}
-                          </p>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs max-w-xs break-all">{data.appraisalInput.termsFileSource}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => window.open(data.appraisalInput.termsFileSource, '_blank')}
-                    >
-                      <FileText className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
-                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => window.open(data.appraisalInput.termsFileSource, '_blank')}
+                  >
+                    <FileText className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
                 </div>
               </div>
             </div>
@@ -213,28 +199,14 @@ export const DSCRCashFlowTab = ({
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">PDF Source</p>
-                  <div className="flex items-center gap-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <p className="text-sm font-medium text-primary cursor-pointer hover:underline truncate">
-                            {data.appraisalInput.pdfSource.split('/').pop()}
-                          </p>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs max-w-xs break-all">{data.appraisalInput.pdfSource}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => window.open(data.appraisalInput.pdfSource, '_blank')}
-                    >
-                      <FileText className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
-                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => window.open(data.appraisalInput.pdfSource, '_blank')}
+                  >
+                    <FileText className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
                 </div>
               </div>
             </div>
