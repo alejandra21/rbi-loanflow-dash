@@ -10,6 +10,7 @@ export interface AppraisalInput {
   loanAmount: number;
   interestRate: number;
   term: number;
+  termsFileSource: string;
 }
 
 export interface RentDecision {

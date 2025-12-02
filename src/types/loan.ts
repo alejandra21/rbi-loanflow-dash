@@ -578,7 +578,8 @@ export const mockLoans: LoanApplication[] = [
                         borrowerCreditScoreBureau: 718,
                         loanAmount: 388000,
                         interestRate: 7.25,
-                        term: 30
+                        term: 30,
+                        termsFileSource: "s3://rbi-loan-docs/terms/LOA-2024-001_loan_terms.pdf"
                     },
                     rentDecision: {
                         selectedRent: 2800,
