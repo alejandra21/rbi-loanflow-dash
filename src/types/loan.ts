@@ -84,6 +84,7 @@ export interface PhaseStep {
     eligibilityData?: EligibilityData;
     experienceTieringData?: any;
     nonOwnerOccupancyData?: any;
+    dscrCashFlowData?: any;
     auditLog?: AuditLogEntry[];
 }
 
@@ -561,7 +562,205 @@ export const mockLoans: LoanApplication[] = [
                 }
             },
             collateralReview: { name: "Collateral Review", status: "pending" },
-            dscrCashFlow: { name: "DSCR-Specific Cash Flow Review", status: "pending" },
+            dscrCashFlow: {
+                name: "DSCR-Specific Cash Flow Review",
+                status: "passed",
+                completedDate: "2024-01-14",
+                dscrCashFlowData: {
+                    appraisalInput: {
+                        occupancy: 'Occupied' as const,
+                        actualLeaseRent: 2800,
+                        marketRent: 3000,
+                        appraisedValue: 485000,
+                        appraisalDate: "2024-01-05",
+                        pdfSource: "s3://rbi-loan-docs/appraisals/LOA-2024-001_appraisal.pdf"
+                    },
+                    rentDecision: {
+                        selectedRent: 2800,
+                        decisionRule: "For occupied properties, selected the lesser of actual lease rent ($2,800) and market rent ($3,000)",
+                        ruleApplied: 'occupied_lesser' as const
+                    },
+                    dscrCalculation: {
+                        selectedRent: 2800,
+                        posDebtService: 2100,
+                        calculatedDSCR: 1.33
+                    },
+                    comparisonMetrics: [
+                        {
+                            metric: "DSCR",
+                            posValue: "1.35",
+                            aiValue: "1.33",
+                            difference: "-0.02",
+                            tolerance: "±0.05",
+                            flag: 'none' as const,
+                            flagDetails: "Within tolerance. Difference of -0.02 is less than ±0.05 threshold."
+                        },
+                        {
+                            metric: "Credit Score",
+                            posValue: "720",
+                            aiValue: "718",
+                            difference: "-2",
+                            tolerance: "±20 points",
+                            flag: 'none' as const,
+                            flagDetails: "Within tolerance. Difference of -2 points is less than ±20 threshold."
+                        },
+                        {
+                            metric: "Appraised Value",
+                            posValue: "$500,000",
+                            aiValue: "$485,000",
+                            difference: "-$15,000 (-3%)",
+                            tolerance: "±5%",
+                            flag: 'none' as const,
+                            flagDetails: "Within tolerance. Difference of 3% is less than ±5% threshold."
+                        }
+                    ],
+                    tierChange: {
+                        posTier: "Gold",
+                        aiCalculatedTier: "Gold",
+                        tierChanged: false
+                    },
+                    aiDecision: {
+                        outcome: 'pass' as const,
+                        action: 'proceed_phase_7' as const,
+                        reason: "All metrics within tolerance. DSCR of 1.33 exceeds minimum threshold of 1.25. No deviations detected. Proceeding to Phase 7."
+                    },
+                    downstreamNotification: {
+                        posUpdated: true,
+                        downstreamServicesNotified: true,
+                        lastUpdateTimestamp: "2024-01-14T16:45:00Z"
+                    },
+                    toleranceRules: [
+                        {
+                            metric: "DSCR",
+                            threshold: "±0.05",
+                            deviationType: 'minor' as const,
+                            action: "Auto-reprice in POS"
+                        },
+                        {
+                            metric: "Credit Score",
+                            threshold: "±20 points",
+                            deviationType: 'minor' as const,
+                            action: "Auto-reprice in POS"
+                        },
+                        {
+                            metric: "Appraised Value",
+                            threshold: "±5%",
+                            deviationType: 'minor' as const,
+                            action: "Auto-reprice in POS"
+                        },
+                        {
+                            metric: "Leverage Tier Change",
+                            threshold: "Any tier change",
+                            deviationType: 'major' as const,
+                            action: "Manual Underwriter Review"
+                        }
+                    ],
+                    logs: [
+                        {
+                            id: "dscr-log-1",
+                            timestamp: "2024-01-14T16:30:00Z",
+                            user: "AI Underwriting System",
+                            action: "Appraisal PDF Extraction",
+                            tag: "EXTRACTION",
+                            status: "completed" as const,
+                            details: "Successfully extracted occupancy, lease rent, market rent, and appraised value from appraisal PDF",
+                            jsonData: {
+                                occupancy: "Occupied",
+                                actualLeaseRent: 2800,
+                                marketRent: 3000,
+                                appraisedValue: 485000
+                            }
+                        },
+                        {
+                            id: "dscr-log-2",
+                            timestamp: "2024-01-14T16:32:00Z",
+                            user: "AI Underwriting System",
+                            action: "Rent Selection Logic Applied",
+                            tag: "RENT_DECISION",
+                            status: "completed" as const,
+                            details: "Applied occupied property rule: selected lesser of actual lease rent and market rent",
+                            jsonData: {
+                                ruleApplied: "occupied_lesser",
+                                actualLeaseRent: 2800,
+                                marketRent: 3000,
+                                selectedRent: 2800
+                            }
+                        },
+                        {
+                            id: "dscr-log-3",
+                            timestamp: "2024-01-14T16:35:00Z",
+                            user: "AI Underwriting System",
+                            action: "POS Debt Service Retrieved",
+                            tag: "POS_INTEGRATION",
+                            status: "completed" as const,
+                            details: "Retrieved debt service amount from POS system",
+                            jsonData: {
+                                posDebtService: 2100,
+                                source: "POS API"
+                            }
+                        },
+                        {
+                            id: "dscr-log-4",
+                            timestamp: "2024-01-14T16:37:00Z",
+                            user: "AI Underwriting System",
+                            action: "DSCR Calculated",
+                            tag: "CALCULATION",
+                            status: "completed" as const,
+                            details: "Calculated DSCR using selected rent and POS debt service",
+                            jsonData: {
+                                selectedRent: 2800,
+                                posDebtService: 2100,
+                                calculatedDSCR: 1.33,
+                                formula: "DSCR = Selected Rent / POS Debt Service"
+                            }
+                        },
+                        {
+                            id: "dscr-log-5",
+                            timestamp: "2024-01-14T16:40:00Z",
+                            user: "AI Underwriting System",
+                            action: "POS Comparison Completed",
+                            tag: "COMPARISON",
+                            status: "completed" as const,
+                            details: "Compared AI-calculated values against POS values and applied tolerance rules",
+                            jsonData: {
+                                dscrComparison: { pos: 1.35, ai: 1.33, difference: -0.02, flag: "none" },
+                                creditScoreComparison: { pos: 720, ai: 718, difference: -2, flag: "none" },
+                                appraisedValueComparison: { pos: 500000, ai: 485000, difference: -15000, flag: "none" }
+                            }
+                        },
+                        {
+                            id: "dscr-log-6",
+                            timestamp: "2024-01-14T16:42:00Z",
+                            user: "AI Underwriting System",
+                            action: "Tier Change Check",
+                            tag: "TIER_VALIDATION",
+                            status: "completed" as const,
+                            details: "Verified leverage tier unchanged from POS",
+                            jsonData: {
+                                posTier: "Gold",
+                                aiCalculatedTier: "Gold",
+                                tierChanged: false
+                            }
+                        },
+                        {
+                            id: "dscr-log-7",
+                            timestamp: "2024-01-14T16:45:00Z",
+                            user: "AI Underwriting System",
+                            action: "Final Decision: PASS",
+                            tag: "DECISION",
+                            status: "completed" as const,
+                            details: "All values within tolerance. DSCR exceeds minimum. Proceeding to Phase 7.",
+                            jsonData: {
+                                outcome: "pass",
+                                action: "proceed_phase_7",
+                                dscr: 1.33,
+                                minimumDSCR: 1.25,
+                                deviationsDetected: 0
+                            }
+                        }
+                    ]
+                }
+            },
             titleInsurance: { name: "Title Insurance Verification", status: "pending" },
             closingProtection: { name: "Closing Protection Letter", status: "pending" },
             insurancePolicy: { name: "Insurance Policy Review", status: "pending" },
