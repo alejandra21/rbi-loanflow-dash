@@ -170,11 +170,21 @@ export const DSCRCashFlowTab = ({
               <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Appraisal PDF (AI Extracted Inputs)
-                <Badge variant={data.appraisalInput.occupancy === 'Occupied' ? 'default' : 'secondary'}>
-                  {data.appraisalInput.occupancy}
-                </Badge>
               </h4>
               <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">Occupancy Status</p>
+                  <Badge variant={data.appraisalInput.occupancy === 'Occupied' ? 'default' : 'secondary'}>
+                    {data.appraisalInput.occupancy}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">PDF Source</p>
+                  <Button size="sm" variant="outline" onClick={() => window.open(data.appraisalInput.pdfSource, '_blank')}>
+                    <FileText className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
+                </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">Actual Lease Rent</p>
                   <p className="text-sm font-medium">
@@ -200,13 +210,6 @@ export const DSCRCashFlowTab = ({
                 <div>
                   <p className="text-xs text-muted-foreground mb-2">LTC</p>
                   <p className="text-sm font-medium">{data.appraisalInput.appraisalLTC}%</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">PDF Source</p>
-                  <Button size="sm" variant="outline" onClick={() => window.open(data.appraisalInput.pdfSource, '_blank')}>
-                    <FileText className="h-4 w-4 mr-1" />
-                    View
-                  </Button>
                 </div>
               </div>
             </div>
