@@ -85,6 +85,7 @@ export interface PhaseStep {
     experienceTieringData?: any;
     nonOwnerOccupancyData?: any;
     dscrCashFlowData?: any;
+    closingProtectionData?: any;
     auditLog?: AuditLogEntry[];
 }
 
@@ -797,7 +798,143 @@ export const mockLoans: LoanApplication[] = [
                 }
             },
             titleInsurance: { name: "Title Insurance Verification", status: "pending" },
-            closingProtection: { name: "Closing Protection Letter", status: "pending" },
+            closingProtection: { 
+                name: "Closing Protection Letter", 
+                status: "manual",
+                closingProtectionData: {
+                    cplDocument: {
+                        lenderName: "RBI Private Lending, LLC ISAOA/ATIMA",
+                        propertyAddress: "456 Investment Ave, Miami, FL 33101",
+                        loanAmount: 500000,
+                        graterAgentName: "Florida Title Services LLC",
+                        underwriter: "First American Title",
+                        effectiveDate: "2024-01-20",
+                        cplType: "ALTA",
+                        lossPayee: "RBI Private Lending, LLC ISAOA/ATIMA",
+                        purpose: "Purchase",
+                        borrowerName: "Tech Corp Ltd",
+                        ocrStatus: "readable",
+                        sourceFile: "/documents/cpl-LOA-2024-001.pdf"
+                    },
+                    titleCommitment: {
+                        propertyAddress: "456 Investment Ave, Miami, FL 33101",
+                        loanAmount: 485000,
+                        underwriter: "First American Title",
+                        agentName: "Florida Title Services LLC",
+                        vestedOwner: "Tech Corp Ltd",
+                        borrowerName: "Tech Corp Ltd"
+                    },
+                    posData: {
+                        propertyAddress: "456 Investment Avenue, Miami, FL 33101",
+                        scheduledClosingDate: "2024-02-15",
+                        loanPurpose: "Purchase",
+                        borrowerName: "Tech Corp Ltd",
+                        propertyState: "FL"
+                    },
+                    uspsAddress: {
+                        standardizedAddress: "456 INVESTMENT AVE, MIAMI FL 33101",
+                        matchScore: 98
+                    },
+                    appraisalAddress: "456 Investment Ave, Miami, FL 33101",
+                    validationChecks: [
+                        {
+                            stepNumber: "8.1",
+                            name: "Load CPL Document",
+                            status: "pass",
+                            logicCriteria: "OCR must return readable lender name, property address, loan amount",
+                            posValue: "N/A",
+                            cplValue: "Document readable",
+                            systemBehavior: "stop_workflow"
+                        },
+                        {
+                            stepNumber: "8.2",
+                            name: "Verify Lender Name",
+                            status: "pass",
+                            logicCriteria: "Must equal 'RBI Private Lending, LLC ISAOA/ATIMA'",
+                            posValue: "RBI Private Lending, LLC ISAOA/ATIMA",
+                            cplValue: "RBI Private Lending, LLC ISAOA/ATIMA",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.3",
+                            name: "Property Address Match",
+                            status: "pass",
+                            logicCriteria: "CPL address must match ALL: Appraisal, USPS normalized, Title Commitment",
+                            posValue: "456 Investment Ave, Miami, FL 33101",
+                            cplValue: "456 Investment Ave, Miami, FL 33101",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.4",
+                            name: "CPL Loan Amount Validation",
+                            status: "warn",
+                            logicCriteria: "CPL loan amount must be ≥ Title Commitment loan amount",
+                            posValue: "$485,000 (Title)",
+                            cplValue: "$500,000",
+                            errorMessage: "CPL loan amount is greater than Title Commitment amount",
+                            systemBehavior: "manual_review",
+                            details: "CPL amount exceeds Title Commitment by $15,000"
+                        },
+                        {
+                            stepNumber: "8.6",
+                            name: "Effective Date Validation",
+                            status: "pass",
+                            logicCriteria: "CPL Effective Date must be ≤ scheduled closing date (60 days or less)",
+                            posValue: "2024-02-15 (Closing)",
+                            cplValue: "2024-01-20",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.8",
+                            name: "State-Specific CPL Form",
+                            status: "pass",
+                            logicCriteria: "Texas: T-50 form; All other states: ALTA",
+                            posValue: "FL (requires ALTA)",
+                            cplValue: "ALTA",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.9",
+                            name: "Loss Payee Validation",
+                            status: "pass",
+                            logicCriteria: "Must include 'RBI Private Lending, LLC ISAOA/ATIMA'",
+                            posValue: "RBI Private Lending, LLC ISAOA/ATIMA",
+                            cplValue: "RBI Private Lending, LLC ISAOA/ATIMA",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.10",
+                            name: "CPL → Title Commitment Crossmatch",
+                            status: "pass",
+                            logicCriteria: "Underwriter, agent, property address, loan amount must align",
+                            posValue: "First American / FL Title Services",
+                            cplValue: "First American / FL Title Services",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.11B",
+                            name: "Verify CPL Purpose = Purchase",
+                            status: "pass",
+                            logicCriteria: "CPL must specify 'Purchase' or Purchase-related language",
+                            posValue: "Purchase",
+                            cplValue: "Purchase",
+                            systemBehavior: "manual_review"
+                        },
+                        {
+                            stepNumber: "8.11C",
+                            name: "Cross-Document Validation",
+                            status: "pass",
+                            logicCriteria: "CPL → Title → Property Address, underwriter",
+                            posValue: "All documents aligned",
+                            cplValue: "All documents aligned",
+                            systemBehavior: "manual_review"
+                        }
+                    ],
+                    overallStatus: "warn",
+                    processedAt: "2024-01-15T10:30:00Z",
+                    processedBy: "AI Validation Engine"
+                }
+            },
             insurancePolicy: { name: "Insurance Policy Review", status: "pending" },
             assetVerification: { name: "Asset Verification", status: "pending" },
             finalApproval: { name: "Final Approval", status: "pending" }
