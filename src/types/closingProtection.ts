@@ -5,7 +5,7 @@ export interface CPLDocument {
   lenderName: string;
   propertyAddress: string;
   loanAmount: number;
-  graterAgentName: string;
+  agentName: string;
   underwriter: string;
   effectiveDate: string;
   cplType: 'ALTA' | 'T-50' | string;
@@ -31,6 +31,7 @@ export interface POSData {
   loanPurpose: 'Purchase' | 'Refinance';
   borrowerName: string;
   propertyState: string;
+  loanAmount: number;
 }
 
 export interface USPSNormalizedAddress {
@@ -48,6 +49,20 @@ export interface ValidationCheck {
   errorMessage?: string;
   systemBehavior: SystemBehavior;
   details?: string;
+}
+
+export interface CPLFieldValidation {
+  field: string;
+  value: string | number;
+  isValid: boolean;
+  errorMessage?: string;
+  requiresManualReview?: boolean;
+}
+
+export interface AddressValidation {
+  source: string;
+  address: string;
+  matches: boolean;
 }
 
 export interface ClosingProtectionData {
