@@ -13,6 +13,7 @@ import { CreditReviewTab } from "@/components/CreditReviewTab";
 import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
 import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
+import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import {
@@ -1966,7 +1967,15 @@ export const LoanDetail = () => {
               </TabsContent>
 
               <TabsContent value="closingProtection" className="mt-0">
-                <PhaseTab phase={loan.phases.closingProtection} phaseName="Closing Protection Letter" />
+                {loan.phases.closingProtection.closingProtectionData ? (
+                  <ClosingProtectionTab 
+                    data={loan.phases.closingProtection.closingProtectionData}
+                    phaseStatus={loan.phases.closingProtection.status}
+                    lastUpdated={loan.phases.closingProtection.completedDate || loan.lastUpdated}
+                  />
+                ) : (
+                  <PhaseTab phase={loan.phases.closingProtection} phaseName="Closing Protection Letter" />
+                )}
               </TabsContent>
 
               <TabsContent value="insurancePolicy" className="mt-0">
