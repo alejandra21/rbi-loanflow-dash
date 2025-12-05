@@ -867,13 +867,12 @@ export const mockLoans: LoanApplication[] = [
                         {
                             stepNumber: "8.4",
                             name: "CPL Loan Amount Validation",
-                            status: "warn",
+                            status: "pass",
                             logicCriteria: "CPL loan amount must be ≥ Title Commitment loan amount",
                             posValue: "$485,000 (Title)",
                             cplValue: "$500,000",
-                            errorMessage: "CPL loan amount is greater than Title Commitment amount",
-                            systemBehavior: "manual_review",
-                            details: "CPL amount exceeds Title Commitment by $15,000"
+                            systemBehavior: "auto_pass",
+                            details: "CPL amount ($500,000) ≥ Title Commitment ($485,000)"
                         },
                         {
                             stepNumber: "8.6",
