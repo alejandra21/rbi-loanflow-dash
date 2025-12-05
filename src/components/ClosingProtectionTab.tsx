@@ -614,7 +614,7 @@ export const ClosingProtectionTab = ({
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">8a. CPL Purpose = Purchase</span>
+                    <span className="text-sm">CPL Purpose = Purchase</span>
                     {purchaseFlow.purposeValid.isValid ? (
                       <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
@@ -634,7 +634,7 @@ export const ClosingProtectionTab = ({
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">8b. Cross-Document Validation (CPL → Title)</span>
+                    <span className="text-sm">Cross-Document Validation (CPL → Title)</span>
                     {purchaseFlow.crossDocValid.isValid ? (
                       <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
@@ -673,7 +673,7 @@ export const ClosingProtectionTab = ({
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">9a. Borrower/Owner Match</span>
+                    <span className="text-sm">Borrower/Owner Match</span>
                     {refinanceFlow.borrowerValid.isValid ? (
                       <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
@@ -693,7 +693,7 @@ export const ClosingProtectionTab = ({
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">9b. Cross-Document Validation (CPL → Title → Loan Docs)</span>
+                    <span className="text-sm">Cross-Document Validation (CPL → Title → Loan Docs)</span>
                     {refinanceFlow.crossDocValid.isValid ? (
                       <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
