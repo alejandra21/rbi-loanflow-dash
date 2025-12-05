@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { ClosingProtectionData, ValidationCheck } from "@/types/closingProtection";
 import { ManualReviewModal } from "./ManualReviewModal";
@@ -13,6 +14,12 @@ interface ClosingProtectionTabProps {
   data: ClosingProtectionData;
   phaseStatus: string;
   lastUpdated: string;
+}
+
+interface FieldValidation {
+  isValid: boolean;
+  errorMessage?: string;
+  requiresManualReview?: boolean;
 }
 
 export const ClosingProtectionTab = ({
@@ -26,6 +33,9 @@ export const ClosingProtectionTab = ({
     validationChecks: true,
     auditLog: false
   });
+
+  const [addressDrilldownOpen, setAddressDrilldownOpen] = useState(false);
+  const [crossmatchDrilldownOpen, setCrossmatchDrilldownOpen] = useState(false);
 
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
@@ -42,12 +52,12 @@ export const ClosingProtectionTab = ({
     }));
   };
 
-  const openManualReview = (check: ValidationCheck) => {
+  const openManualReview = (metric: string, posValue: string, cplValue: string, errorMessage: string) => {
     setSelectedCheck({
-      metric: check.name,
-      posValue: check.posValue,
-      aiValue: check.cplValue,
-      difference: check.errorMessage || 'N/A'
+      metric,
+      posValue,
+      aiValue: cplValue,
+      difference: errorMessage
     });
     setManualReviewOpen(true);
   };
@@ -86,7 +96,7 @@ export const ClosingProtectionTab = ({
         <Badge 
           variant="warning" 
           className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => openManualReview(check)}
+          onClick={() => openManualReview(check.name, check.posValue, check.cplValue, check.errorMessage || 'N/A')}
         >
           <AlertTriangle className="h-3 w-3" /> Manual Review
         </Badge>
@@ -113,6 +123,215 @@ export const ClosingProtectionTab = ({
     });
   };
 
+  // Validation functions
+  const isTexas = data.posData.propertyState === 'TX';
+  const expectedLenderName = isTexas ? "RBI Private Lending, LLC" : "RBI Private Lending, LLC ISAOA/ATIMA";
+  const expectedLossPayee = isTexas ? "RBI Private Lending, LLC" : "RBI Private Lending, LLC ISAOA/ATIMA";
+  const expectedCPLType = isTexas ? "T-50" : "ALTA";
+
+  const validateLenderName = (): FieldValidation => {
+    const isValid = data.cplDocument.lenderName === expectedLenderName;
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : `Expected: ${expectedLenderName}`,
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validatePropertyAddress = (): FieldValidation => {
+    const cplAddr = data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
+    const appraisalAddr = data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
+    const uspsAddr = data.uspsAddress.standardizedAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
+    const titleAddr = data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
+    
+    const matchesAppraisal = cplAddr === appraisalAddr;
+    const matchesUSPS = uspsAddr.includes(cplAddr.split(' ')[0]) || cplAddr.includes(uspsAddr.split(' ')[0]);
+    const matchesTitle = cplAddr === titleAddr;
+    
+    const isValid = matchesAppraisal && matchesTitle && data.uspsAddress.matchScore >= 90;
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : "Address mismatch detected across documents",
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validateLoanAmount = (): FieldValidation => {
+    const isValid = data.cplDocument.loanAmount >= data.titleCommitment.loanAmount;
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : `CPL amount (${formatCurrency(data.cplDocument.loanAmount)}) < Title (${formatCurrency(data.titleCommitment.loanAmount)})`,
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validateEffectiveDate = (): FieldValidation => {
+    const effectiveDate = new Date(data.cplDocument.effectiveDate);
+    const closingDate = new Date(data.posData.scheduledClosingDate);
+    const daysDiff = Math.floor((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
+    const isValid = effectiveDate <= closingDate && daysDiff <= 60;
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : daysDiff > 60 ? `Effective date is ${daysDiff} days before closing (max 60)` : "Effective date is after closing date",
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validateCPLType = (): FieldValidation => {
+    const isValid = data.cplDocument.cplType === expectedCPLType;
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : `Expected ${expectedCPLType} for ${isTexas ? 'Texas' : 'non-Texas'} property`,
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validateLossPayee = (): FieldValidation => {
+    const isValid = data.cplDocument.lossPayee.includes(expectedLossPayee);
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : `Must include: ${expectedLossPayee}`,
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validateTitleCrossmatch = (): FieldValidation => {
+    const underwriterMatch = data.cplDocument.underwriter === data.titleCommitment.underwriter;
+    const agentMatch = data.cplDocument.agentName === data.titleCommitment.agentName;
+    const addressMatch = validatePropertyAddress().isValid;
+    const amountValid = validateLoanAmount().isValid;
+    const isValid = underwriterMatch && agentMatch && addressMatch && amountValid;
+    return {
+      isValid,
+      errorMessage: isValid ? undefined : "Mismatch in underwriter, agent, address, or loan amount",
+      requiresManualReview: !isValid
+    };
+  };
+
+  const validatePurchaseFlow = (): { purposeValid: FieldValidation; crossDocValid: FieldValidation } | null => {
+    if (data.posData.loanPurpose !== 'Purchase') return null;
+    
+    const purposeValid: FieldValidation = {
+      isValid: data.cplDocument.purpose === 'Purchase' || data.cplDocument.purpose.toLowerCase().includes('purchase'),
+      errorMessage: data.cplDocument.purpose === 'Purchase' ? undefined : "CPL must specify 'Purchase'",
+      requiresManualReview: data.cplDocument.purpose !== 'Purchase'
+    };
+
+    const crossDocValid: FieldValidation = {
+      isValid: validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter,
+      errorMessage: validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter ? undefined : "Cross-document validation failed",
+      requiresManualReview: !(validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter)
+    };
+
+    return { purposeValid, crossDocValid };
+  };
+
+  const validateRefinanceFlow = (): { borrowerValid: FieldValidation; crossDocValid: FieldValidation } | null => {
+    if (data.posData.loanPurpose !== 'Refinance') return null;
+
+    const borrowerMatches = data.cplDocument.borrowerName === data.posData.borrowerName && 
+                           data.cplDocument.borrowerName === data.titleCommitment.vestedOwner;
+    
+    const borrowerValid: FieldValidation = {
+      isValid: borrowerMatches,
+      errorMessage: borrowerMatches ? undefined : "Borrower/Owner mismatch across CPL, POS, and Title",
+      requiresManualReview: !borrowerMatches
+    };
+
+    const crossDocValid: FieldValidation = {
+      isValid: validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter,
+      errorMessage: validatePropertyAddress().isValid ? undefined : "Cross-document validation failed",
+      requiresManualReview: !(validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter)
+    };
+
+    return { borrowerValid, crossDocValid };
+  };
+
+  // Get all validations
+  const lenderValidation = validateLenderName();
+  const addressValidation = validatePropertyAddress();
+  const loanAmountValidation = validateLoanAmount();
+  const effectiveDateValidation = validateEffectiveDate();
+  const cplTypeValidation = validateCPLType();
+  const lossPayeeValidation = validateLossPayee();
+  const titleCrossmatchValidation = validateTitleCrossmatch();
+  const purchaseFlow = validatePurchaseFlow();
+  const refinanceFlow = validateRefinanceFlow();
+
+  const ValidationIndicator = ({ validation, label, onManualReview }: { 
+    validation: FieldValidation; 
+    label: string;
+    onManualReview?: () => void;
+  }) => (
+    <div className="flex items-center gap-1.5">
+      {validation.isValid ? (
+        <CheckCircle2 className="h-4 w-4 text-green-600" />
+      ) : validation.requiresManualReview ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <AlertTriangle 
+                className="h-4 w-4 text-amber-500 cursor-pointer" 
+                onClick={onManualReview}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs">{validation.errorMessage}</p>
+              <p className="text-xs text-muted-foreground mt-1">Click for manual review</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        <XCircle className="h-4 w-4 text-destructive" />
+      )}
+      <span className="text-xs text-muted-foreground">{label}</span>
+    </div>
+  );
+
+  const FieldWithValidation = ({ 
+    label, 
+    value, 
+    validation,
+    icon: Icon,
+    onManualReview
+  }: { 
+    label: string; 
+    value: string | React.ReactNode;
+    validation: FieldValidation;
+    icon?: React.ElementType;
+    onManualReview?: () => void;
+  }) => (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          {Icon && <Icon className="h-3 w-3" />} {label}
+        </p>
+        {validation.isValid ? (
+          <span className="text-xs text-green-600 flex items-center gap-1">
+            Valid <CheckCircle2 className="h-3.5 w-3.5" />
+          </span>
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span 
+                  className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600"
+                  onClick={onManualReview}
+                >
+                  Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">{validation.errorMessage}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
+      <div className="text-sm font-medium">{value}</div>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
       {/* Phase Header */}
@@ -127,7 +346,7 @@ export const ClosingProtectionTab = ({
         </Button>
       </div>
 
-      {/* CPL Document Details */}
+      {/* CPL Document Details with Inline Validations */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('cplDocument')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -153,61 +372,356 @@ export const ClosingProtectionTab = ({
               )}
             </div>
 
-            {/* CPL Details Grid */}
+            {/* CPL Details Grid with Validations */}
             <div className="grid grid-cols-2 gap-6">
+              {/* 1. Lender Name */}
+              <FieldWithValidation
+                label="Lender Name"
+                value={data.cplDocument.lenderName}
+                validation={lenderValidation}
+                icon={Building}
+                onManualReview={() => openManualReview(
+                  "Lender Name Verification",
+                  expectedLenderName,
+                  data.cplDocument.lenderName,
+                  lenderValidation.errorMessage || "Mismatch"
+                )}
+              />
+
+              {/* 2. Property Address with Drilldown */}
               <div>
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <Building className="h-3 w-3" /> Lender Name
-                </p>
-                <p className="text-sm font-medium">{data.cplDocument.lenderName}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <MapPin className="h-3 w-3" /> Property Address
-                </p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <MapPin className="h-3 w-3" /> Property Address
+                  </p>
+                  {addressValidation.isValid ? (
+                    <span className="text-xs text-green-600 flex items-center gap-1">
+                      Valid <CheckCircle2 className="h-3.5 w-3.5" />
+                    </span>
+                  ) : (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span 
+                            className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600"
+                            onClick={() => openManualReview(
+                              "Property Address Match",
+                              "See address comparison below",
+                              data.cplDocument.propertyAddress,
+                              addressValidation.errorMessage || "Address mismatch"
+                            )}
+                          >
+                            Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">{addressValidation.errorMessage}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
                 <p className="text-sm font-medium">{data.cplDocument.propertyAddress}</p>
+                <Collapsible open={addressDrilldownOpen} onOpenChange={setAddressDrilldownOpen}>
+                  <CollapsibleTrigger className="text-xs text-primary hover:underline mt-1 flex items-center gap-1">
+                    <ChevronDown className={`h-3 w-3 transition-transform ${addressDrilldownOpen ? '' : '-rotate-90'}`} />
+                    View address comparison
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2 p-3 bg-muted/30 rounded-lg space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Appraisal:</span>
+                      <span>{data.appraisalAddress}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">USPS Normalized:</span>
+                      <span>{data.uspsAddress.standardizedAddress}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Title Commitment:</span>
+                      <span>{data.titleCommitment.propertyAddress}</span>
+                    </div>
+                    <div className="flex justify-between pt-1 border-t">
+                      <span className="text-muted-foreground">USPS Match Score:</span>
+                      <Badge variant={data.uspsAddress.matchScore >= 90 ? 'success' : 'warning'} className="text-xs">
+                        {data.uspsAddress.matchScore}%
+                      </Badge>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
               </div>
+
+              {/* 3. Loan Amount */}
+              <FieldWithValidation
+                label="Loan Amount"
+                value={formatCurrency(data.cplDocument.loanAmount)}
+                validation={loanAmountValidation}
+                icon={DollarSign}
+                onManualReview={() => openManualReview(
+                  "CPL Loan Amount Validation",
+                  `Title Commitment: ${formatCurrency(data.titleCommitment.loanAmount)}`,
+                  formatCurrency(data.cplDocument.loanAmount),
+                  loanAmountValidation.errorMessage || "Amount mismatch"
+                )}
+              />
+
+              {/* Agent Name (display only) */}
               <div>
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <DollarSign className="h-3 w-3" /> Loan Amount
+                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                  <User className="h-3 w-3" /> Agent Name
                 </p>
-                <p className="text-sm font-medium">{formatCurrency(data.cplDocument.loanAmount)}</p>
+                <p className="text-sm font-medium">{data.cplDocument.agentName}</p>
               </div>
+
+              {/* Underwriter (display only) */}
               <div>
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <User className="h-3 w-3" /> Closing Agent
-                </p>
-                <p className="text-sm font-medium">{data.cplDocument.graterAgentName}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">Underwriter</p>
+                <p className="text-xs text-muted-foreground mb-1">Underwriter</p>
                 <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
               </div>
+
+              {/* 4. Effective Date */}
+              <FieldWithValidation
+                label="Effective Date"
+                value={formatDate(data.cplDocument.effectiveDate)}
+                validation={effectiveDateValidation}
+                icon={Calendar}
+                onManualReview={() => openManualReview(
+                  "Effective Date Verification",
+                  `Scheduled Closing: ${formatDate(data.posData.scheduledClosingDate)}`,
+                  formatDate(data.cplDocument.effectiveDate),
+                  effectiveDateValidation.errorMessage || "Date issue"
+                )}
+              />
+
+              {/* 5. CPL Type */}
+              <FieldWithValidation
+                label="CPL Type"
+                value={<Badge variant={data.cplDocument.cplType === 'ALTA' || data.cplDocument.cplType === 'T-50' ? 'default' : 'secondary'}>{data.cplDocument.cplType}</Badge>}
+                validation={cplTypeValidation}
+                onManualReview={() => openManualReview(
+                  "State-Specific CPL Form Check",
+                  `Expected: ${expectedCPLType} (${data.posData.propertyState})`,
+                  data.cplDocument.cplType,
+                  cplTypeValidation.errorMessage || "Wrong form type"
+                )}
+              />
+
+              {/* Transaction Type (display only) */}
               <div>
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <Calendar className="h-3 w-3" /> Effective Date
-                </p>
-                <p className="text-sm font-medium">{formatDate(data.cplDocument.effectiveDate)}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">CPL Type</p>
-                <Badge variant={data.cplDocument.cplType === 'ALTA' || data.cplDocument.cplType === 'T-50' ? 'default' : 'secondary'}>
-                  {data.cplDocument.cplType}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">Loss Payee</p>
-                <p className="text-sm font-medium">{data.cplDocument.lossPayee}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">Transaction Purpose</p>
+                <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
                 <Badge variant="outline">{data.cplDocument.purpose}</Badge>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">Borrower Name</p>
-                <p className="text-sm font-medium">{data.cplDocument.borrowerName}</p>
-              </div>
+
+              {/* 6. Loss Payee */}
+              <FieldWithValidation
+                label="Loss Payee"
+                value={data.cplDocument.lossPayee}
+                validation={lossPayeeValidation}
+                onManualReview={() => openManualReview(
+                  "Loss Payee Validation",
+                  `Expected: ${expectedLossPayee}`,
+                  data.cplDocument.lossPayee,
+                  lossPayeeValidation.errorMessage || "Loss payee mismatch"
+                )}
+              />
             </div>
+
+            <Separator />
+
+            {/* 7. CPL → Title Commitment Crossmatch */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-semibold flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  CPL → Title Commitment Crossmatch
+                </h4>
+                {titleCrossmatchValidation.isValid ? (
+                  <span className="text-xs text-green-600 flex items-center gap-1">
+                    All Aligned <CheckCircle2 className="h-3.5 w-3.5" />
+                  </span>
+                ) : (
+                  <span 
+                    className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600"
+                    onClick={() => openManualReview(
+                      "CPL → Title Crossmatch",
+                      "Title Commitment data",
+                      "CPL Document data",
+                      titleCrossmatchValidation.errorMessage || "Crossmatch failed"
+                    )}
+                  >
+                    Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                  </span>
+                )}
+              </div>
+              <Collapsible open={crossmatchDrilldownOpen} onOpenChange={setCrossmatchDrilldownOpen}>
+                <CollapsibleTrigger className="text-xs text-primary hover:underline flex items-center gap-1">
+                  <ChevronDown className={`h-3 w-3 transition-transform ${crossmatchDrilldownOpen ? '' : '-rotate-90'}`} />
+                  View crossmatch details
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-2 p-3 bg-muted/30 rounded-lg space-y-2 text-xs">
+                  <div className="grid grid-cols-3 gap-2">
+                    <span className="text-muted-foreground font-medium">Field</span>
+                    <span className="text-muted-foreground font-medium">CPL</span>
+                    <span className="text-muted-foreground font-medium">Title</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <span className="text-muted-foreground">Underwriter</span>
+                    <span>{data.cplDocument.underwriter}</span>
+                    <span className="flex items-center gap-1">
+                      {data.titleCommitment.underwriter}
+                      {data.cplDocument.underwriter === data.titleCommitment.underwriter ? (
+                        <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <XCircle className="h-3 w-3 text-destructive" />
+                      )}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <span className="text-muted-foreground">Agent</span>
+                    <span>{data.cplDocument.agentName}</span>
+                    <span className="flex items-center gap-1">
+                      {data.titleCommitment.agentName}
+                      {data.cplDocument.agentName === data.titleCommitment.agentName ? (
+                        <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <XCircle className="h-3 w-3 text-destructive" />
+                      )}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <span className="text-muted-foreground">Loan Amount</span>
+                    <span>{formatCurrency(data.cplDocument.loanAmount)}</span>
+                    <span className="flex items-center gap-1">
+                      {formatCurrency(data.titleCommitment.loanAmount)}
+                      {data.cplDocument.loanAmount >= data.titleCommitment.loanAmount ? (
+                        <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <XCircle className="h-3 w-3 text-destructive" />
+                      )}
+                    </span>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+
+            <Separator />
+
+            {/* 8. Purchase Flow Validations */}
+            {purchaseFlow && (
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Purchase Transaction Validation
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">8a. CPL Purpose = Purchase</span>
+                    {purchaseFlow.purposeValid.isValid ? (
+                      <span className="text-xs text-green-600 flex items-center gap-1">
+                        Valid <CheckCircle2 className="h-3.5 w-3.5" />
+                      </span>
+                    ) : (
+                      <span 
+                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
+                        onClick={() => openManualReview(
+                          "CPL Purpose Verification",
+                          "Purchase",
+                          data.cplDocument.purpose,
+                          purchaseFlow.purposeValid.errorMessage || "Purpose mismatch"
+                        )}
+                      >
+                        Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">8b. Cross-Document Validation (CPL → Title)</span>
+                    {purchaseFlow.crossDocValid.isValid ? (
+                      <span className="text-xs text-green-600 flex items-center gap-1">
+                        Valid <CheckCircle2 className="h-3.5 w-3.5" />
+                      </span>
+                    ) : (
+                      <span 
+                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
+                        onClick={() => openManualReview(
+                          "Cross-Document Validation",
+                          "Property Address + Underwriter alignment",
+                          "See details",
+                          purchaseFlow.crossDocValid.errorMessage || "Cross-doc validation failed"
+                        )}
+                      >
+                        Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </div>
+                  {purchaseFlow.purposeValid.isValid && purchaseFlow.crossDocValid.isValid && (
+                    <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Ready for Phase 9
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 9. Refinance Flow Validations */}
+            {refinanceFlow && (
+              <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
+                <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Refinance Transaction Validation
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">9a. Borrower/Owner Match</span>
+                    {refinanceFlow.borrowerValid.isValid ? (
+                      <span className="text-xs text-green-600 flex items-center gap-1">
+                        Valid <CheckCircle2 className="h-3.5 w-3.5" />
+                      </span>
+                    ) : (
+                      <span 
+                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
+                        onClick={() => openManualReview(
+                          "Borrower Match Verification",
+                          `POS: ${data.posData.borrowerName}, Title Vested: ${data.titleCommitment.vestedOwner}`,
+                          data.cplDocument.borrowerName,
+                          refinanceFlow.borrowerValid.errorMessage || "Borrower mismatch"
+                        )}
+                      >
+                        Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">9b. Cross-Document Validation (CPL → Title → Loan Docs)</span>
+                    {refinanceFlow.crossDocValid.isValid ? (
+                      <span className="text-xs text-green-600 flex items-center gap-1">
+                        Valid <CheckCircle2 className="h-3.5 w-3.5" />
+                      </span>
+                    ) : (
+                      <span 
+                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
+                        onClick={() => openManualReview(
+                          "Cross-Document Validation",
+                          "Borrower, Address, Underwriter alignment",
+                          "See details",
+                          refinanceFlow.crossDocValid.errorMessage || "Cross-doc validation failed"
+                        )}
+                      >
+                        Review Required <AlertTriangle className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </div>
+                  {refinanceFlow.borrowerValid.isValid && refinanceFlow.crossDocValid.isValid && (
+                    <div className="pt-2 border-t border-purple-200 dark:border-purple-800">
+                      <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Ready for Phase 9
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <Separator />
 
@@ -299,6 +813,10 @@ export const ClosingProtectionTab = ({
                   <p className="text-xs text-muted-foreground mb-1">Property State</p>
                   <p className="text-sm">{data.posData.propertyState}</p>
                 </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Loan Amount</p>
+                  <p className="text-sm">{formatCurrency(data.posData.loanAmount)}</p>
+                </div>
               </div>
             </div>
 
@@ -336,7 +854,7 @@ export const ClosingProtectionTab = ({
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />
-              Validation Checks
+              Validation Checks Summary
             </div>
             <div className="flex items-center gap-2">
               {(() => {
@@ -422,32 +940,22 @@ export const ClosingProtectionTab = ({
           <CardContent>
             <div className="space-y-4 text-sm">
               <div className="p-3 bg-muted/30 rounded-lg">
-                <p className="font-medium mb-2">Lender Name Requirements</p>
-                <p className="text-muted-foreground text-xs">
-                  Must equal "RBI Private Lending, LLC ISAOA/ATIMA" — Exception: Texas (TX) uses "RBI Private Lending, LLC"
-                </p>
+                <h4 className="font-semibold mb-2">Lender Name Requirements</h4>
+                <p className="text-muted-foreground">Standard: "RBI Private Lending, LLC ISAOA/ATIMA"</p>
+                <p className="text-muted-foreground">Texas Exception: "RBI Private Lending, LLC"</p>
               </div>
               <div className="p-3 bg-muted/30 rounded-lg">
-                <p className="font-medium mb-2">State-Specific CPL Form</p>
-                <p className="text-muted-foreground text-xs">
-                  Texas: T-50 form required | All other states: ALTA form required
-                </p>
+                <h4 className="font-semibold mb-2">CPL Form Types</h4>
+                <p className="text-muted-foreground">Texas: T-50 form required</p>
+                <p className="text-muted-foreground">All other states: ALTA form required</p>
               </div>
               <div className="p-3 bg-muted/30 rounded-lg">
-                <p className="font-medium mb-2">Effective Date</p>
-                <p className="text-muted-foreground text-xs">
-                  CPL Effective Date must be ≤ scheduled closing date (within 60 days)
-                </p>
+                <h4 className="font-semibold mb-2">Effective Date Rule</h4>
+                <p className="text-muted-foreground">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
               </div>
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                <p className="font-medium mb-2 flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  Pending Integrations
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  • 8.5 Authorized Agent Match — Requires Funding Shield API integration<br />
-                  • 8.7 Underwriter Name Validation — Requires approved underwriter contact list
-                </p>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">Loan Amount Rule</h4>
+                <p className="text-muted-foreground">CPL loan amount must be ≥ Title Commitment loan amount</p>
               </div>
             </div>
           </CardContent>
@@ -459,9 +967,9 @@ export const ClosingProtectionTab = ({
         open={manualReviewOpen}
         onOpenChange={setManualReviewOpen}
         metricName={selectedCheck?.metric || ''}
-        posValue={selectedCheck?.posValue || ''}
-        aiValue={selectedCheck?.aiValue || ''}
-        deviation={selectedCheck?.difference || ''}
+        posValue={String(selectedCheck?.posValue || '')}
+        aiValue={String(selectedCheck?.aiValue || '')}
+        deviation={String(selectedCheck?.difference || '')}
       />
     </div>
   );

@@ -806,7 +806,7 @@ export const mockLoans: LoanApplication[] = [
                         lenderName: "RBI Private Lending, LLC ISAOA/ATIMA",
                         propertyAddress: "456 Investment Ave, Miami, FL 33101",
                         loanAmount: 500000,
-                        graterAgentName: "Florida Title Services LLC",
+                        agentName: "Florida Title Services LLC",
                         underwriter: "First American Title",
                         effectiveDate: "2024-01-20",
                         cplType: "ALTA",
@@ -829,7 +829,8 @@ export const mockLoans: LoanApplication[] = [
                         scheduledClosingDate: "2024-02-15",
                         loanPurpose: "Purchase",
                         borrowerName: "Tech Corp Ltd",
-                        propertyState: "FL"
+                        propertyState: "FL",
+                        loanAmount: 500000
                     },
                     uspsAddress: {
                         standardizedAddress: "456 INVESTMENT AVE, MIAMI FL 33101",
