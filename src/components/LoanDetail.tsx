@@ -15,6 +15,7 @@ import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
 import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
 import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
 import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
+import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import {
@@ -219,6 +220,25 @@ export const LoanDetail = () => {
   const StatusTimeline = () => {
     const currentPhaseData = getCurrentPhase();
 
+    // Map loan phases to stepper format
+    const stepperPhases: StepperPhase[] = [
+      { id: "borrowerEligibility", name: "Borrower Eligibility", shortName: "Eligibility", status: loan.phases.borrowerEligibility.status, date: loan.timeline[0]?.date, user: loan.timeline[0]?.user },
+      { id: "experienceTieringCopy", name: "Experience Tiering", shortName: "Tiering", status: loan.phases.experienceTiering.status, date: loan.timeline[1]?.date, user: loan.timeline[1]?.user },
+      { id: "creditReportV2", name: "Credit Review", shortName: "Credit", status: loan.phases.creditReview.status, date: loan.timeline[2]?.date, user: loan.timeline[2]?.user },
+      { id: "nonOwnerOccupancy", name: "Non-Owner Occupancy", shortName: "Occupancy", status: loan.phases.nonOwnerOccupancy.status, date: loan.timeline[3]?.date, user: loan.timeline[3]?.user },
+      { id: "collateralReview", name: "Collateral Review", shortName: "Collateral", status: loan.phases.collateralReview.status, date: loan.timeline[4]?.date, user: loan.timeline[4]?.user },
+      { id: "dscrCashFlow", name: "DSCR Cash Flow", shortName: "DSCR", status: loan.phases.dscrCashFlow.status, date: loan.timeline[5]?.date, user: loan.timeline[5]?.user },
+      { id: "titleInsurance", name: "Title Insurance", shortName: "Title", status: loan.phases.titleInsurance.status, date: loan.timeline[6]?.date, user: loan.timeline[6]?.user },
+      { id: "closingProtection", name: "Closing Protection", shortName: "CPL", status: loan.phases.closingProtection.status, date: loan.timeline[7]?.date, user: loan.timeline[7]?.user },
+      { id: "insurancePolicy", name: "Insurance Policy", shortName: "Insurance", status: loan.phases.insurancePolicy.status, date: loan.timeline[8]?.date, user: loan.timeline[8]?.user },
+      { id: "assetVerification", name: "Asset Verification", shortName: "Assets", status: loan.phases.assetVerification.status, date: loan.timeline[9]?.date, user: loan.timeline[9]?.user },
+      { id: "finalApproval", name: "Final Approval", shortName: "Approval", status: loan.phases.finalApproval.status, date: loan.timeline[10]?.date, user: loan.timeline[10]?.user },
+    ];
+
+    const handlePhaseClick = (phaseId: string) => {
+      setActiveTab(phaseId);
+    };
+
     return (
       <div className="mb-6 grid grid-cols-3 gap-6">
         <div className="col-span-2">
@@ -227,7 +247,7 @@ export const LoanDetail = () => {
               <CardTitle className="flex items-center justify-between">
                 <span>Processing Timeline</span>
                 <div className="flex items-center space-x-2">
-                  <div className="w-64 bg-muted rounded-full h-2">
+                  <div className="w-48 bg-muted rounded-full h-2">
                     <div
                       className="bg-primary h-2 rounded-full transition-all"
                       style={{ width: `${getProgressPercentage()}%` }}
@@ -238,19 +258,11 @@ export const LoanDetail = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {loan.timeline.map((event, index) => (
-                  <div key={index} className="flex items-center space-x-3 text-sm">
-                    <div className="w-2 h-2 bg-primary rounded-full" />
-                    <span className="font-medium">{event.phase}</span>
-                    <Badge variant="outline" className="text-xs">
-                      {event.status}
-                    </Badge>
-                    <span className="text-muted-foreground">{event.date}</span>
-                    {event.status !== "pending" && <span className="text-muted-foreground">by {event.user}</span>}
-                  </div>
-                ))}
-              </div>
+              <CompactStepper
+                phases={stepperPhases}
+                onPhaseClick={handlePhaseClick}
+                activePhaseId={activeTab}
+              />
             </CardContent>
           </Card>
         </div>
