@@ -37,6 +37,7 @@ import {
   TrendingUp,
   Check,
   Square,
+  Loader2,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,6 +73,7 @@ export const LoanDetail = () => {
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const [backgroundTasks, setBackgroundTasks] = useState<BackgroundTask[]>([]);
+  const [loadingAction, setLoadingAction] = useState<"workflow" | "phase" | null>(null);
 
   const toggleCard = (cardId: string) => {
     setExpandedCards((prev) => ({ ...prev, [cardId]: !prev[cardId] }));
@@ -124,6 +126,14 @@ export const LoanDetail = () => {
   };
 
   const handlePollingAction = async (actionType: "workflow" | "phase") => {
+    // Show loading spinner on button
+    setLoadingAction(actionType);
+
+    // Wait 1.5 seconds before showing toast and starting task
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setLoadingAction(null);
+
     // Create a new background task
     const taskId = `task-${Date.now()}`;
     const taskName = actionType === "workflow" 
@@ -262,18 +272,28 @@ export const LoanDetail = () => {
                 className="w-full justify-start"
                 size="sm"
                 onClick={() => handlePollingAction("workflow")}
+                disabled={loadingAction !== null}
               >
-                <Play className="h-4 w-4 mr-2" />
-                Re-execute Workflow
+                {loadingAction === "workflow" ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                {loadingAction === "workflow" ? "Starting..." : "Re-execute Workflow"}
               </Button>
               <Button
                 variant="outline"
                 className="w-full justify-start"
                 size="sm"
                 onClick={() => handlePollingAction("phase")}
+                disabled={loadingAction !== null}
               >
-                <Play className="h-4 w-4 mr-2" />
-                Re-execute Current Phase
+                {loadingAction === "phase" ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                {loadingAction === "phase" ? "Starting..." : "Re-execute Current Phase"}
               </Button>
             </CardContent>
           </Card>
