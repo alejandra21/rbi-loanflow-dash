@@ -50,8 +50,6 @@ export const LoanDetail = () => {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [currentPhase, setCurrentPhase] = useState("");
   const [activeTab, setActiveTab] = useState("eligibility");
-  const [isPolling, setIsPolling] = useState(false);
-  const [pollingProgress, setPollingProgress] = useState(0);
   const [showReviewSection, setShowReviewSection] = useState(false);
   const [reviewDecision, setReviewDecision] = useState<string>("");
   const [reviewComment, setReviewComment] = useState<string>("");
@@ -124,9 +122,6 @@ export const LoanDetail = () => {
   };
 
   const handlePollingAction = async (actionType: "workflow" | "phase") => {
-    setIsPolling(true);
-    setPollingProgress(0);
-
     // Create a new background task
     const taskId = `task-${Date.now()}`;
     const taskName = actionType === "workflow" 
@@ -152,7 +147,6 @@ export const LoanDetail = () => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min((elapsed / duration) * 100, 100);
-      setPollingProgress(progress);
 
       // Update task progress
       setBackgroundTasks(prev => prev.map(t => 
@@ -161,8 +155,6 @@ export const LoanDetail = () => {
 
       if (progress >= 100) {
         clearInterval(interval);
-        setIsPolling(false);
-        setPollingProgress(0);
 
         // Mark task as completed (randomly succeed or fail for demo)
         const success = Math.random() > 0.2; // 80% success rate
@@ -248,46 +240,18 @@ export const LoanDetail = () => {
                 className="w-full justify-start"
                 size="sm"
                 onClick={() => handlePollingAction("workflow")}
-                disabled={isPolling}
               >
-                {isPolling ? (
-                  <>
-                    <Clock className="h-4 w-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4 mr-2" />
-                    Re-execute Workflow
-                  </>
-                )}
+                <Play className="h-4 w-4 mr-2" />
+                Re-execute Workflow
               </Button>
-              {isPolling && (
-                <div className="w-full bg-muted rounded-full h-1.5">
-                  <div
-                    className="bg-primary h-1.5 rounded-full transition-all"
-                    style={{ width: `${pollingProgress}%` }}
-                  />
-                </div>
-              )}
               <Button
                 variant="outline"
                 className="w-full justify-start"
                 size="sm"
                 onClick={() => handlePollingAction("phase")}
-                disabled={isPolling}
               >
-                {isPolling ? (
-                  <>
-                    <Clock className="h-4 w-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4 mr-2" />
-                    Re-execute Current Phase
-                  </>
-                )}
+                <Play className="h-4 w-4 mr-2" />
+                Re-execute Current Phase
               </Button>
             </CardContent>
           </Card>
