@@ -43,10 +43,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const LoanDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [currentPhase, setCurrentPhase] = useState("");
   const [activeTab, setActiveTab] = useState("eligibility");
@@ -140,6 +142,12 @@ export const LoanDetail = () => {
 
     setBackgroundTasks(prev => [newTask, ...prev]);
 
+    // Show toast when task starts
+    toast({
+      title: actionType === "workflow" ? "Workflow Started" : "Phase Execution Started",
+      description: `${taskName} is now running. Track progress in Background Tasks.`,
+    });
+
     // Random duration between 40-60 seconds
     const duration = Math.floor(Math.random() * (60000 - 40000) + 40000);
     const startTime = Date.now();
@@ -169,6 +177,20 @@ export const LoanDetail = () => {
               } 
             : t
         ));
+
+        // Show toast when task completes
+        if (success) {
+          toast({
+            title: "Execution Completed",
+            description: `${taskName} completed successfully.`,
+          });
+        } else {
+          toast({
+            title: "Execution Failed",
+            description: `${taskName} failed. Check Background Tasks for details.`,
+            variant: "destructive",
+          });
+        }
       }
     }, 100);
   };
