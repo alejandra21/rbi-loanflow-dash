@@ -14,6 +14,7 @@ import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
 import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
 import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
+import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
 import {
@@ -70,6 +71,7 @@ export const LoanDetail = () => {
     phaseLog: false,
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+  const [backgroundTasks, setBackgroundTasks] = useState<BackgroundTask[]>([]);
 
   const toggleCard = (cardId: string) => {
     setExpandedCards((prev) => ({ ...prev, [cardId]: !prev[cardId] }));
@@ -125,6 +127,24 @@ export const LoanDetail = () => {
     setIsPolling(true);
     setPollingProgress(0);
 
+    // Create a new background task
+    const taskId = `task-${Date.now()}`;
+    const taskName = actionType === "workflow" 
+      ? `Re-execute Workflow - ${loan.id}` 
+      : `Re-execute Phase - ${getCurrentPhase().name}`;
+    
+    const newTask: BackgroundTask = {
+      id: taskId,
+      name: taskName,
+      type: actionType,
+      status: "running",
+      progress: 0,
+      startedAt: new Date(),
+      phaseDetails: actionType === "phase" ? getCurrentPhase().name : undefined,
+    };
+
+    setBackgroundTasks(prev => [newTask, ...prev]);
+
     // Random duration between 40-60 seconds
     const duration = Math.floor(Math.random() * (60000 - 40000) + 40000);
     const startTime = Date.now();
@@ -134,12 +154,42 @@ export const LoanDetail = () => {
       const progress = Math.min((elapsed / duration) * 100, 100);
       setPollingProgress(progress);
 
+      // Update task progress
+      setBackgroundTasks(prev => prev.map(t => 
+        t.id === taskId ? { ...t, progress: Math.round(progress) } : t
+      ));
+
       if (progress >= 100) {
         clearInterval(interval);
         setIsPolling(false);
         setPollingProgress(0);
+
+        // Mark task as completed (randomly succeed or fail for demo)
+        const success = Math.random() > 0.2; // 80% success rate
+        setBackgroundTasks(prev => prev.map(t => 
+          t.id === taskId 
+            ? { 
+                ...t, 
+                status: success ? "completed" : "failed",
+                progress: 100,
+                completedAt: new Date(),
+                error: success ? undefined : "Execution failed: Unable to validate required documents"
+              } 
+            : t
+        ));
       }
     }, 100);
+  };
+
+  const handleRetryTask = (taskId: string) => {
+    const task = backgroundTasks.find(t => t.id === taskId);
+    if (task) {
+      handlePollingAction(task.type);
+    }
+  };
+
+  const handleClearCompleted = () => {
+    setBackgroundTasks(prev => prev.filter(t => t.status === "running" || t.status === "queued"));
   };
 
   const StatusTimeline = () => {
@@ -1675,6 +1725,11 @@ export const LoanDetail = () => {
         </div>
 
         <div className="flex items-center space-x-4">
+          <BackgroundTasksDrawer 
+            tasks={backgroundTasks} 
+            onRetryTask={handleRetryTask}
+            onClearCompleted={handleClearCompleted}
+          />
           <StatusBadge status={loan.overallStatus} />
         </div>
       </div>
