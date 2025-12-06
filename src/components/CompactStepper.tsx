@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -6,20 +5,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
   Clock,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 
 export interface StepperPhase {
@@ -37,54 +28,47 @@ interface CompactStepperProps {
   activePhaseId?: string;
 }
 
-const getStatusIcon = (status: StepperPhase["status"], size: "sm" | "md" = "sm") => {
-  const sizeClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+const getStatusIcon = (status: StepperPhase["status"]) => {
+  switch (status) {
+    case "passed":
+      return <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />;
+    case "failed":
+      return <XCircle className="h-3.5 w-3.5 text-destructive" />;
+    case "manual":
+      return <AlertTriangle className="h-3.5 w-3.5 text-yellow-600" />;
+    case "in_progress":
+      return <Clock className="h-3.5 w-3.5 text-primary animate-pulse" />;
+    case "pending":
+    default:
+      return <Clock className="h-3.5 w-3.5 text-muted-foreground" />;
+  }
+};
+
+const getStepStyles = (status: StepperPhase["status"], isActive: boolean) => {
+  const baseStyles = "relative flex items-center justify-center w-7 h-7 rounded-full transition-all duration-200 text-[11px] font-semibold border-2";
   
-  switch (status) {
-    case "passed":
-      return <CheckCircle2 className={cn(sizeClass, "text-green-600")} />;
-    case "failed":
-      return <XCircle className={cn(sizeClass, "text-destructive")} />;
-    case "manual":
-      return <AlertTriangle className={cn(sizeClass, "text-yellow-600")} />;
-    case "in_progress":
-      return <Clock className={cn(sizeClass, "text-primary animate-pulse")} />;
-    case "pending":
-    default:
-      return <Clock className={cn(sizeClass, "text-muted-foreground")} />;
-  }
+  const statusStyles = {
+    passed: "bg-green-500/10 border-green-500 text-green-700 dark:text-green-400",
+    failed: "bg-destructive/10 border-destructive text-destructive",
+    manual: "bg-yellow-500/10 border-yellow-500 text-yellow-700 dark:text-yellow-400",
+    in_progress: "bg-primary/10 border-primary text-primary",
+    pending: "bg-muted/50 border-muted-foreground/20 text-muted-foreground",
+  };
+
+  const activeStyles = isActive ? "ring-2 ring-offset-2 ring-primary/50" : "";
+  const hoverStyles = "hover:scale-105 hover:shadow-sm";
+
+  return cn(baseStyles, statusStyles[status], activeStyles, hoverStyles);
 };
 
-const getStatusColor = (status: StepperPhase["status"]) => {
-  switch (status) {
-    case "passed":
-      return "bg-green-600";
-    case "failed":
-      return "bg-destructive";
-    case "manual":
-      return "bg-yellow-500";
-    case "in_progress":
-      return "bg-primary";
-    case "pending":
-    default:
-      return "bg-muted-foreground/30";
+const getConnectorColor = (currentStatus: StepperPhase["status"], nextStatus: StepperPhase["status"]) => {
+  if (currentStatus === "passed" && nextStatus !== "pending") {
+    return "bg-green-400";
   }
-};
-
-const getStatusBadgeVariant = (status: StepperPhase["status"]) => {
-  switch (status) {
-    case "passed":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-    case "failed":
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
-    case "manual":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
-    case "in_progress":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-    case "pending":
-    default:
-      return "bg-muted text-muted-foreground";
+  if (currentStatus === "passed") {
+    return "bg-gradient-to-r from-green-400 to-muted-foreground/20";
   }
+  return "bg-muted-foreground/20";
 };
 
 export const CompactStepper = ({
@@ -92,37 +76,28 @@ export const CompactStepper = ({
   onPhaseClick,
   activePhaseId,
 }: CompactStepperProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const completedCount = phases.filter(p => p.status === "passed").length;
   const failedCount = phases.filter(p => p.status === "failed").length;
   const manualCount = phases.filter(p => p.status === "manual").length;
 
   return (
-    <div className="space-y-4">
+    <div className="flex items-center justify-between">
       {/* Compact Horizontal Stepper */}
-      <div className="flex items-center gap-1">
-        <TooltipProvider delayDuration={200}>
+      <div className="flex items-center">
+        <TooltipProvider delayDuration={150}>
           {phases.map((phase, index) => (
             <div key={phase.id} className="flex items-center">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onPhaseClick?.(phase.id)}
-                    className={cn(
-                      "relative flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200",
-                      "hover:scale-110 hover:ring-2 hover:ring-primary/20",
-                      activePhaseId === phase.id && "ring-2 ring-primary",
-                      getStatusColor(phase.status)
-                    )}
+                    className={getStepStyles(phase.status, activePhaseId === phase.id)}
                   >
-                    <span className="text-white text-xs font-medium">
-                      {index + 1}
-                    </span>
+                    {index + 1}
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-[200px]">
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <p className="font-medium text-sm">{phase.name}</p>
                     <div className="flex items-center gap-1.5">
                       {getStatusIcon(phase.status)}
@@ -142,88 +117,34 @@ export const CompactStepper = ({
               {index < phases.length - 1 && (
                 <div
                   className={cn(
-                    "h-0.5 w-3 transition-colors",
-                    phases[index + 1].status !== "pending"
-                      ? getStatusColor(phase.status)
-                      : "bg-muted-foreground/30"
+                    "h-[2px] w-4 mx-0.5 rounded-full transition-colors",
+                    getConnectorColor(phase.status, phases[index + 1].status)
                   )}
                 />
               )}
             </div>
           ))}
         </TooltipProvider>
-
-        {/* Summary badges */}
-        <div className="ml-4 flex items-center gap-2">
-          {completedCount > 0 && (
-            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400">
-              {completedCount} passed
-            </Badge>
-          )}
-          {manualCount > 0 && (
-            <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400">
-              {manualCount} manual
-            </Badge>
-          )}
-          {failedCount > 0 && (
-            <Badge variant="outline" className="text-xs bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400">
-              {failedCount} failed
-            </Badge>
-          )}
-        </div>
       </div>
 
-      {/* Expandable Details */}
-      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-        <CollapsibleTrigger asChild>
-          <Button variant="ghost" size="sm" className="w-full justify-center gap-2 text-muted-foreground hover:text-foreground">
-            {isExpanded ? (
-              <>
-                <ChevronUp className="h-4 w-4" />
-                Hide Details
-              </>
-            ) : (
-              <>
-                <ChevronDown className="h-4 w-4" />
-                Show Details
-              </>
-            )}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="animate-accordion-down">
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {phases.map((phase, index) => (
-              <button
-                key={phase.id}
-                onClick={() => onPhaseClick?.(phase.id)}
-                className={cn(
-                  "flex items-center gap-2 p-2 rounded-lg text-left transition-colors",
-                  "hover:bg-muted/50",
-                  activePhaseId === phase.id && "bg-muted"
-                )}
-              >
-                <div
-                  className={cn(
-                    "flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-medium",
-                    getStatusColor(phase.status)
-                  )}
-                >
-                  {index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{phase.shortName}</p>
-                  <div className="flex items-center gap-1">
-                    {getStatusIcon(phase.status, "sm")}
-                    <Badge className={cn("text-[10px] px-1.5 py-0", getStatusBadgeVariant(phase.status))}>
-                      {phase.status.replace("_", " ")}
-                    </Badge>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+      {/* Summary badges - aligned */}
+      <div className="flex items-center gap-1.5 ml-4">
+        {completedCount > 0 && (
+          <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-6 bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+            {completedCount} passed
+          </Badge>
+        )}
+        {manualCount > 0 && (
+          <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-6 bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800">
+            {manualCount} manual
+          </Badge>
+        )}
+        {failedCount > 0 && (
+          <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-6 bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800">
+            {failedCount} failed
+          </Badge>
+        )}
+      </div>
     </div>
   );
 };
