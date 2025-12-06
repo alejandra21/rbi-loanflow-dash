@@ -150,7 +150,7 @@ export const BackgroundTasksDrawer = ({
           </DrawerDescription>
         </DrawerHeader>
 
-        <ScrollArea className="px-4 max-h-[50vh]">
+        <ScrollArea className="px-4 h-[50vh] overflow-y-auto">
           {tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Activity className="h-12 w-12 mb-4 opacity-30" />
