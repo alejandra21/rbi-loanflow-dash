@@ -243,9 +243,16 @@ export const LoanDetail = () => {
       <div className="mb-6 grid grid-cols-3 gap-6">
         <div className="col-span-2">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between">
-                <span>Processing Timeline</span>
+                <div className="flex items-center gap-4">
+                  <span>Processing Timeline</span>
+                  <BackgroundTasksDrawer 
+                    tasks={backgroundTasks} 
+                    onRetryTask={handleRetryTask}
+                    onClearCompleted={handleClearCompleted}
+                  />
+                </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-48 bg-muted rounded-full h-2">
                     <div
@@ -1743,11 +1750,6 @@ export const LoanDetail = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <BackgroundTasksDrawer 
-            tasks={backgroundTasks} 
-            onRetryTask={handleRetryTask}
-            onClearCompleted={handleClearCompleted}
-          />
           <StatusBadge status={loan.overallStatus} />
         </div>
       </div>

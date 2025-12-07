@@ -76,75 +76,49 @@ export const CompactStepper = ({
   onPhaseClick,
   activePhaseId,
 }: CompactStepperProps) => {
-  const completedCount = phases.filter(p => p.status === "passed").length;
-  const failedCount = phases.filter(p => p.status === "failed").length;
-  const manualCount = phases.filter(p => p.status === "manual").length;
-
   return (
-    <div className="flex items-center justify-between">
-      {/* Compact Horizontal Stepper */}
-      <div className="flex items-center">
-        <TooltipProvider delayDuration={150}>
-          {phases.map((phase, index) => (
-            <div key={phase.id} className="flex items-center">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => onPhaseClick?.(phase.id)}
-                    className={getStepStyles(phase.status, activePhaseId === phase.id)}
-                  >
-                    {index + 1}
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-[200px]">
-                  <div className="space-y-1.5">
-                    <p className="font-medium text-sm">{phase.name}</p>
-                    <div className="flex items-center gap-1.5">
-                      {getStatusIcon(phase.status)}
-                      <span className="text-xs capitalize">{phase.status.replace("_", " ")}</span>
-                    </div>
-                    {phase.date && (
-                      <p className="text-xs text-muted-foreground">{phase.date}</p>
-                    )}
-                    {phase.user && (
-                      <p className="text-xs text-muted-foreground">by {phase.user}</p>
-                    )}
+    <div className="flex items-center">
+      <TooltipProvider delayDuration={150}>
+        {phases.map((phase, index) => (
+          <div key={phase.id} className="flex items-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => onPhaseClick?.(phase.id)}
+                  className={getStepStyles(phase.status, activePhaseId === phase.id)}
+                >
+                  {index + 1}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-[200px]">
+                <div className="space-y-1.5">
+                  <p className="font-medium text-sm">{phase.name}</p>
+                  <div className="flex items-center gap-1.5">
+                    {getStatusIcon(phase.status)}
+                    <span className="text-xs capitalize">{phase.status.replace("_", " ")}</span>
                   </div>
-                </TooltipContent>
-              </Tooltip>
-              
-              {/* Connector Line */}
-              {index < phases.length - 1 && (
-                <div
-                  className={cn(
-                    "h-[2px] w-4 mx-0.5 rounded-full transition-colors",
-                    getConnectorColor(phase.status, phases[index + 1].status)
+                  {phase.date && (
+                    <p className="text-xs text-muted-foreground">{phase.date}</p>
                   )}
-                />
-              )}
-            </div>
-          ))}
-        </TooltipProvider>
-      </div>
-
-      {/* Summary badges - aligned */}
-      <div className="flex items-center gap-1.5 ml-4">
-        {completedCount > 0 && (
-          <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-6 bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
-            {completedCount} passed
-          </Badge>
-        )}
-        {manualCount > 0 && (
-          <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-6 bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800">
-            {manualCount} manual
-          </Badge>
-        )}
-        {failedCount > 0 && (
-          <Badge variant="outline" className="text-[11px] px-2 py-0.5 h-6 bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800">
-            {failedCount} failed
-          </Badge>
-        )}
-      </div>
+                  {phase.user && (
+                    <p className="text-xs text-muted-foreground">by {phase.user}</p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+            
+            {/* Connector Line */}
+            {index < phases.length - 1 && (
+              <div
+                className={cn(
+                  "h-[2px] w-4 mx-0.5 rounded-full transition-colors",
+                  getConnectorColor(phase.status, phases[index + 1].status)
+                )}
+              />
+            )}
+          </div>
+        ))}
+      </TooltipProvider>
     </div>
   );
 };
