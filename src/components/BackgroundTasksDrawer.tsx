@@ -1,13 +1,13 @@
 import { useState } from "react";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -119,7 +119,7 @@ export const BackgroundTasksDrawer = ({
   const hasActiveTasks = runningTasks.length > 0 || queuedTasks.length > 0;
 
   return (
-    <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
+    <Sheet open={open} onOpenChange={setOpen}>
       <Button
         variant="outline"
         size="sm"
@@ -137,18 +137,18 @@ export const BackgroundTasksDrawer = ({
           </span>
         )}
       </Button>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader>
-          <DrawerTitle className="flex items-center gap-2">
+      <SheetContent side="bottom" className="max-h-[85vh] rounded-t-[10px]">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
             Workflow Executions
-          </DrawerTitle>
-          <DrawerDescription>
+          </SheetTitle>
+          <SheetDescription>
             Monitor background workflow and phase executions
-          </DrawerDescription>
-        </DrawerHeader>
+          </SheetDescription>
+        </SheetHeader>
 
-        <ScrollArea className="px-4 h-[50vh] overflow-y-auto">
+        <ScrollArea className="px-4 h-[50vh] overflow-y-auto mt-4">
           {tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Activity className="h-12 w-12 mb-4 opacity-30" />
@@ -287,12 +287,12 @@ export const BackgroundTasksDrawer = ({
           )}
         </ScrollArea>
 
-        <DrawerFooter>
-          <DrawerClose asChild>
+        <SheetFooter className="mt-4">
+          <SheetClose asChild>
             <Button variant="outline">Close</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 };
