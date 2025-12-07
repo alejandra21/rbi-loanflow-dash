@@ -39,6 +39,7 @@ import {
   Check,
   Square,
   Loader2,
+  Activity,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,6 +75,7 @@ export const LoanDetail = () => {
   });
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
   const [backgroundTasks, setBackgroundTasks] = useState<BackgroundTask[]>([]);
+  const [backgroundTasksOpen, setBackgroundTasksOpen] = useState(false);
   const [loadingAction, setLoadingAction] = useState<"workflow" | "phase" | null>(null);
 
   const toggleCard = (cardId: string) => {
@@ -264,11 +266,23 @@ export const LoanDetail = () => {
                 activePhaseId={activeTab}
               />
               <div className="pt-3 border-t">
-                <BackgroundTasksDrawer 
-                  tasks={backgroundTasks} 
-                  onRetryTask={handleRetryTask}
-                  onClearCompleted={handleClearCompleted}
-                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="relative gap-2"
+                  onClick={() => setBackgroundTasksOpen(true)}
+                >
+                  <Activity className="h-4 w-4" />
+                  Background Tasks
+                  {(backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length) > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 pointer-events-none" />
+                      <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center pointer-events-none">
+                        {backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length}
+                      </span>
+                    </span>
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -1962,6 +1976,14 @@ export const LoanDetail = () => {
         onClose={() => setSidePanelOpen(false)}
         phaseName={currentPhase}
         loanId={loan.id}
+      />
+
+      <BackgroundTasksDrawer 
+        tasks={backgroundTasks}
+        open={backgroundTasksOpen}
+        onOpenChange={setBackgroundTasksOpen}
+        onRetryTask={handleRetryTask}
+        onClearCompleted={handleClearCompleted}
       />
     </div>
   );
