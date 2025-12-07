@@ -120,17 +120,18 @@ export const BackgroundTasksDrawer = ({
   const hasActiveTasks = runningTasks.length > 0 || queuedTasks.length > 0;
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
       <DrawerTrigger asChild>
         <Button
           variant="outline"
           size="sm"
           className="relative gap-2"
+          onClick={(e) => e.stopPropagation()}
         >
           <Activity className="h-4 w-4" />
           Background Tasks
           {hasActiveTasks && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center">
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
                 {runningTasks.length + queuedTasks.length}
