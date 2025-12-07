@@ -260,12 +260,14 @@ export const LoanDetail = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <CompactStepper
-                phases={stepperPhases}
-                onPhaseClick={handlePhaseClick}
-                activePhaseId={activeTab}
-              />
-              <div className="pt-3 border-t">
+              <div className="flex justify-center">
+                <CompactStepper
+                  phases={stepperPhases}
+                  onPhaseClick={handlePhaseClick}
+                  activePhaseId={activeTab}
+                />
+              </div>
+              <div className="pt-3 border-t flex justify-center">
                 <Button
                   variant="outline"
                   size="sm"
@@ -276,8 +278,7 @@ export const LoanDetail = () => {
                   Background Tasks
                   {(backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length) > 0 && (
                     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 pointer-events-none" />
-                      <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center pointer-events-none">
+                      <span className="inline-flex h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
                         {backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length}
                       </span>
                     </span>
