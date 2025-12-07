@@ -257,11 +257,16 @@ export const LoanDetail = () => {
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <CompactStepper
                 phases={stepperPhases}
                 onPhaseClick={handlePhaseClick}
                 activePhaseId={activeTab}
+              />
+              <BackgroundTasksSidebar
+                tasks={backgroundTasks}
+                onRetryTask={handleRetryTask}
+                onClearCompleted={handleClearCompleted}
               />
             </CardContent>
           </Card>
@@ -1957,11 +1962,6 @@ export const LoanDetail = () => {
         loanId={loan.id}
       />
 
-      <BackgroundTasksSidebar
-        tasks={backgroundTasks}
-        onRetryTask={handleRetryTask}
-        onClearCompleted={handleClearCompleted}
-      />
     </div>
   );
 };
