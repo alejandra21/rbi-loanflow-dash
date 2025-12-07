@@ -7,6 +7,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -120,23 +121,24 @@ export const BackgroundTasksDrawer = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <Button
-        variant="outline"
-        size="sm"
-        className="relative gap-2"
-        onClick={() => setOpen(true)}
-      >
-        <Activity className="h-4 w-4" />
-        Background Tasks
-        {hasActiveTasks && (
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 pointer-events-none" />
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center pointer-events-none">
-              {runningTasks.length + queuedTasks.length}
+      <SheetTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="relative gap-2"
+        >
+          <Activity className="h-4 w-4" />
+          Background Tasks
+          {hasActiveTasks && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 pointer-events-none" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center pointer-events-none">
+                {runningTasks.length + queuedTasks.length}
+              </span>
             </span>
-          </span>
-        )}
-      </Button>
+          )}
+        </Button>
+      </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85vh] rounded-t-[10px]">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
