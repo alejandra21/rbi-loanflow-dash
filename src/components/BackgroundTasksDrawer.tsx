@@ -7,7 +7,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -121,25 +120,23 @@ export const BackgroundTasksDrawer = ({
 
   return (
     <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
-      <DrawerTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="relative gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Activity className="h-4 w-4" />
-          Background Tasks
-          {hasActiveTasks && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
-                {runningTasks.length + queuedTasks.length}
-              </span>
+      <Button
+        variant="outline"
+        size="sm"
+        className="relative gap-2"
+        onClick={() => setOpen(true)}
+      >
+        <Activity className="h-4 w-4" />
+        Background Tasks
+        {hasActiveTasks && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 pointer-events-none" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center pointer-events-none">
+              {runningTasks.length + queuedTasks.length}
             </span>
-          )}
-        </Button>
-      </DrawerTrigger>
+          </span>
+        )}
+      </Button>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader>
           <DrawerTitle className="flex items-center gap-2">
