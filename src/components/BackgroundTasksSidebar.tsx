@@ -123,34 +123,22 @@ export const BackgroundTasksSidebar = ({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        {/* Right edge tab trigger */}
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           className={cn(
-            "fixed right-0 top-1/2 -translate-y-1/2 z-40",
-            "flex items-center gap-1 px-1.5 py-3",
-            "bg-card border border-r-0 rounded-l-lg shadow-lg",
-            "hover:bg-accent transition-colors",
-            "writing-mode-vertical"
+            "gap-2 text-muted-foreground hover:text-foreground",
+            hasActiveTasks && "text-primary"
           )}
-          style={{ writingMode: "vertical-rl" }}
         >
-          <div className="flex items-center gap-2 rotate-180">
-            <Activity className="h-4 w-4" />
-            <span className="text-xs font-medium">Tasks</span>
-            {hasActiveTasks && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-medium">
-                {activeCount}
-              </span>
-            )}
-            {hasActiveTasks && (
-              <span className="absolute -top-1 -left-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
-              </span>
-            )}
-          </div>
-          <ChevronLeft className="h-3 w-3 rotate-180 text-muted-foreground" />
-        </button>
+          <Activity className={cn("h-4 w-4", hasActiveTasks && "animate-pulse")} />
+          <span className="text-sm">Background Tasks</span>
+          {hasActiveTasks && (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-medium">
+              {activeCount}
+            </span>
+          )}
+        </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[400px] sm:w-[450px]">
         <SheetHeader>
