@@ -245,14 +245,7 @@ export const LoanDetail = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <span>Processing Timeline</span>
-                  <BackgroundTasksDrawer 
-                    tasks={backgroundTasks} 
-                    onRetryTask={handleRetryTask}
-                    onClearCompleted={handleClearCompleted}
-                  />
-                </div>
+                <span>Processing Timeline</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-48 bg-muted rounded-full h-2">
                     <div
@@ -264,12 +257,19 @@ export const LoanDetail = () => {
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <CompactStepper
                 phases={stepperPhases}
                 onPhaseClick={handlePhaseClick}
                 activePhaseId={activeTab}
               />
+              <div className="pt-3 border-t">
+                <BackgroundTasksDrawer 
+                  tasks={backgroundTasks} 
+                  onRetryTask={handleRetryTask}
+                  onClearCompleted={handleClearCompleted}
+                />
+              </div>
             </CardContent>
           </Card>
         </div>
