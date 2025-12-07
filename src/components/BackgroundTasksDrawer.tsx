@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -7,7 +6,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +39,8 @@ export interface BackgroundTask {
 
 interface BackgroundTasksDrawerProps {
   tasks: BackgroundTask[];
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onRetryTask?: (taskId: string) => void;
   onClearCompleted?: () => void;
 }
@@ -106,39 +106,19 @@ const formatDuration = (start: Date, end?: Date) => {
 
 export const BackgroundTasksDrawer = ({
   tasks,
+  open,
+  onOpenChange,
   onRetryTask,
   onClearCompleted,
 }: BackgroundTasksDrawerProps) => {
-  const [open, setOpen] = useState(false);
-
   const runningTasks = tasks.filter((t) => t.status === "running");
   const queuedTasks = tasks.filter((t) => t.status === "queued");
   const completedTasks = tasks.filter(
     (t) => t.status === "completed" || t.status === "failed"
   );
 
-  const hasActiveTasks = runningTasks.length > 0 || queuedTasks.length > 0;
-
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="relative gap-2"
-        >
-          <Activity className="h-4 w-4" />
-          Background Tasks
-          {hasActiveTasks && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 pointer-events-none" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center pointer-events-none">
-                {runningTasks.length + queuedTasks.length}
-              </span>
-            </span>
-          )}
-        </Button>
-      </SheetTrigger>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[85vh] rounded-t-[10px]">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
