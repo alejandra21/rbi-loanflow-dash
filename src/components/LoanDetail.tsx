@@ -14,7 +14,7 @@ import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
 import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
 import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
-import { BackgroundTasksSidebar, BackgroundTask } from "@/components/BackgroundTasksSidebar";
+import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
 import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
@@ -263,7 +263,7 @@ export const LoanDetail = () => {
                 onPhaseClick={handlePhaseClick}
                 activePhaseId={activeTab}
               />
-              <BackgroundTasksSidebar
+              <BackgroundTasksDrawer
                 tasks={backgroundTasks}
                 onRetryTask={handleRetryTask}
                 onClearCompleted={handleClearCompleted}
