@@ -1,0 +1,299 @@
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Activity,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Play,
+  RefreshCw,
+  Loader2,
+  ChevronRight,
+  Trash2,
+  ChevronLeft,
+} from "lucide-react";
+
+export type TaskStatus = "queued" | "running" | "completed" | "failed";
+
+export interface BackgroundTask {
+  id: string;
+  name: string;
+  type: "workflow" | "phase";
+  status: TaskStatus;
+  progress: number;
+  startedAt: Date;
+  completedAt?: Date;
+  error?: string;
+  phaseDetails?: string;
+}
+
+interface BackgroundTasksSidebarProps {
+  tasks: BackgroundTask[];
+  onRetryTask?: (taskId: string) => void;
+  onClearCompleted?: () => void;
+}
+
+const getStatusIcon = (status: TaskStatus) => {
+  switch (status) {
+    case "queued":
+      return <Clock className="h-4 w-4 text-muted-foreground" />;
+    case "running":
+      return <Loader2 className="h-4 w-4 text-primary animate-spin" />;
+    case "completed":
+      return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+    case "failed":
+      return <XCircle className="h-4 w-4 text-destructive" />;
+  }
+};
+
+const getStatusBadge = (status: TaskStatus) => {
+  switch (status) {
+    case "queued":
+      return (
+        <Badge variant="outline" className="text-xs">
+          Queued
+        </Badge>
+      );
+    case "running":
+      return (
+        <Badge className="text-xs bg-primary/20 text-primary border-primary/30">
+          Running
+        </Badge>
+      );
+    case "completed":
+      return (
+        <Badge className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+          Completed
+        </Badge>
+      );
+    case "failed":
+      return (
+        <Badge variant="destructive" className="text-xs">
+          Failed
+        </Badge>
+      );
+  }
+};
+
+const formatTime = (date: Date) => {
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+};
+
+const formatDuration = (start: Date, end?: Date) => {
+  const endTime = end || new Date();
+  const diff = Math.floor((endTime.getTime() - start.getTime()) / 1000);
+  if (diff < 60) return `${diff}s`;
+  const minutes = Math.floor(diff / 60);
+  const seconds = diff % 60;
+  return `${minutes}m ${seconds}s`;
+};
+
+export const BackgroundTasksSidebar = ({
+  tasks,
+  onRetryTask,
+  onClearCompleted,
+}: BackgroundTasksSidebarProps) => {
+  const [open, setOpen] = useState(false);
+
+  const runningTasks = tasks.filter((t) => t.status === "running");
+  const queuedTasks = tasks.filter((t) => t.status === "queued");
+  const completedTasks = tasks.filter(
+    (t) => t.status === "completed" || t.status === "failed"
+  );
+
+  const hasActiveTasks = runningTasks.length > 0 || queuedTasks.length > 0;
+  const activeCount = runningTasks.length + queuedTasks.length;
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        {/* Right edge tab trigger */}
+        <button
+          className={cn(
+            "fixed right-0 top-1/2 -translate-y-1/2 z-40",
+            "flex items-center gap-1 px-1.5 py-3",
+            "bg-card border border-r-0 rounded-l-lg shadow-lg",
+            "hover:bg-accent transition-colors",
+            "writing-mode-vertical"
+          )}
+          style={{ writingMode: "vertical-rl" }}
+        >
+          <div className="flex items-center gap-2 rotate-180">
+            <Activity className="h-4 w-4" />
+            <span className="text-xs font-medium">Tasks</span>
+            {hasActiveTasks && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-medium">
+                {activeCount}
+              </span>
+            )}
+            {hasActiveTasks && (
+              <span className="absolute -top-1 -left-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
+              </span>
+            )}
+          </div>
+          <ChevronLeft className="h-3 w-3 rotate-180 text-muted-foreground" />
+        </button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[400px] sm:w-[450px]">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <Activity className="h-5 w-5" />
+            Workflow Executions
+          </SheetTitle>
+          <SheetDescription>
+            Monitor background workflow and phase executions
+          </SheetDescription>
+        </SheetHeader>
+
+        <ScrollArea className="h-[calc(100vh-120px)] mt-4 pr-4">
+          {tasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Activity className="h-12 w-12 mb-4 opacity-30" />
+              <p className="text-sm">No workflow executions yet</p>
+              <p className="text-xs mt-1">
+                Tasks will appear here when you execute workflows
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Active Tasks */}
+              {(runningTasks.length > 0 || queuedTasks.length > 0) && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Play className="h-3.5 w-3.5" />
+                    Active ({runningTasks.length + queuedTasks.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {[...runningTasks, ...queuedTasks].map((task) => (
+                      <div
+                        key={task.id}
+                        className="border rounded-lg p-3 bg-card space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(task.status)}
+                            <span className="font-medium text-sm">
+                              {task.name}
+                            </span>
+                          </div>
+                          {getStatusBadge(task.status)}
+                        </div>
+                        {task.phaseDetails && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <ChevronRight className="h-3 w-3" />
+                            {task.phaseDetails}
+                          </p>
+                        )}
+                        {task.status === "running" && (
+                          <div className="space-y-1">
+                            <Progress value={task.progress} className="h-1.5" />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>{task.progress}%</span>
+                              <span>{formatDuration(task.startedAt)}</span>
+                            </div>
+                          </div>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Started at {formatTime(task.startedAt)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Completed Tasks */}
+              {completedTasks.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      Completed ({completedTasks.length})
+                    </h4>
+                    {onClearCompleted && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={onClearCompleted}
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Clear
+                      </Button>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    {completedTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className={cn(
+                          "border rounded-lg p-3 bg-card space-y-2",
+                          task.status === "failed" && "border-destructive/30"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(task.status)}
+                            <span className="font-medium text-sm">
+                              {task.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {task.status === "failed" && onRetryTask && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xs"
+                                onClick={() => onRetryTask(task.id)}
+                              >
+                                <RefreshCw className="h-3 w-3 mr-1" />
+                                Retry
+                              </Button>
+                            )}
+                            {getStatusBadge(task.status)}
+                          </div>
+                        </div>
+                        {task.error && (
+                          <p className="text-xs text-destructive bg-destructive/10 p-2 rounded">
+                            {task.error}
+                          </p>
+                        )}
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>
+                            Duration:{" "}
+                            {formatDuration(task.startedAt, task.completedAt)}
+                          </span>
+                          <span>
+                            {task.completedAt && formatTime(task.completedAt)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
+  );
+};

@@ -14,7 +14,7 @@ import { CreditReportV2Tab } from "@/components/CreditReportV2Tab";
 import { NonOwnerOccupancyTab } from "@/components/NonOwnerOccupancyTab";
 import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
 import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
-import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
+import { BackgroundTasksSidebar, BackgroundTask } from "@/components/BackgroundTasksSidebar";
 import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
@@ -245,14 +245,7 @@ export const LoanDetail = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <span>Processing Timeline</span>
-                  <BackgroundTasksDrawer 
-                    tasks={backgroundTasks} 
-                    onRetryTask={handleRetryTask}
-                    onClearCompleted={handleClearCompleted}
-                  />
-                </div>
+                <span>Processing Timeline</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-48 bg-muted rounded-full h-2">
                     <div
@@ -1962,6 +1955,12 @@ export const LoanDetail = () => {
         onClose={() => setSidePanelOpen(false)}
         phaseName={currentPhase}
         loanId={loan.id}
+      />
+
+      <BackgroundTasksSidebar
+        tasks={backgroundTasks}
+        onRetryTask={handleRetryTask}
+        onClearCompleted={handleClearCompleted}
       />
     </div>
   );
