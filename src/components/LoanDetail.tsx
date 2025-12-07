@@ -245,7 +245,14 @@ export const LoanDetail = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between">
-                <span>Processing Timeline</span>
+                <div className="flex items-center gap-4">
+                  <span>Processing Timeline</span>
+                  <BackgroundTasksDrawer 
+                    tasks={backgroundTasks} 
+                    onRetryTask={handleRetryTask}
+                    onClearCompleted={handleClearCompleted}
+                  />
+                </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-48 bg-muted rounded-full h-2">
                     <div
@@ -257,16 +264,11 @@ export const LoanDetail = () => {
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <CompactStepper
                 phases={stepperPhases}
                 onPhaseClick={handlePhaseClick}
                 activePhaseId={activeTab}
-              />
-              <BackgroundTasksDrawer
-                tasks={backgroundTasks}
-                onRetryTask={handleRetryTask}
-                onClearCompleted={handleClearCompleted}
               />
             </CardContent>
           </Card>
@@ -1737,15 +1739,13 @@ export const LoanDetail = () => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
-            <div className="text-muted-foreground flex items-center gap-1">
-              <span>
-                {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} -{" "}
-                {formatCurrency(loan.loanAmount)}
-              </span>
-              <Badge variant="outline" className="ml-2">
+            <p className="text-muted-foreground">
+              {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} -{" "}
+              {formatCurrency(loan.loanAmount)}
+              <Badge variant="outline" className="ml-3">
                 {loan.loanType}
               </Badge>
-            </div>
+            </p>
           </div>
         </div>
 
@@ -1963,7 +1963,6 @@ export const LoanDetail = () => {
         phaseName={currentPhase}
         loanId={loan.id}
       />
-
     </div>
   );
 };

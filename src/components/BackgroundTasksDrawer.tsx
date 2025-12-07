@@ -1,14 +1,14 @@
 import { useState } from "react";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -120,34 +120,37 @@ export const BackgroundTasksDrawer = ({
   const hasActiveTasks = runningTasks.length > 0 || queuedTasks.length > 0;
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
         <Button
           variant="outline"
           size="sm"
-          className="gap-2"
+          className="relative gap-2"
         >
-          <Activity className={hasActiveTasks ? "h-4 w-4 animate-pulse" : "h-4 w-4"} />
+          <Activity className="h-4 w-4" />
           Background Tasks
           {hasActiveTasks && (
-            <Badge variant="default" className="ml-1 h-5 px-1.5 text-[10px]">
-              {runningTasks.length + queuedTasks.length}
-            </Badge>
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
+                {runningTasks.length + queuedTasks.length}
+              </span>
+            </span>
           )}
         </Button>
-      </SheetTrigger>
-      <SheetContent side="right" className="w-[400px] sm:w-[450px]">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+      </DrawerTrigger>
+      <DrawerContent className="max-h-[85vh]">
+        <DrawerHeader>
+          <DrawerTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
             Workflow Executions
-          </SheetTitle>
-          <SheetDescription>
+          </DrawerTitle>
+          <DrawerDescription>
             Monitor background workflow and phase executions
-          </SheetDescription>
-        </SheetHeader>
+          </DrawerDescription>
+        </DrawerHeader>
 
-        <ScrollArea className="h-[calc(100vh-200px)] mt-4 pr-4">
+        <ScrollArea className="px-4 h-[50vh] overflow-y-auto">
           {tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Activity className="h-12 w-12 mb-4 opacity-30" />
@@ -286,12 +289,12 @@ export const BackgroundTasksDrawer = ({
           )}
         </ScrollArea>
 
-        <SheetFooter className="mt-4">
-          <SheetClose asChild>
+        <DrawerFooter>
+          <DrawerClose asChild>
             <Button variant="outline">Close</Button>
-          </SheetClose>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };
