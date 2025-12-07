@@ -1737,13 +1737,15 @@ export const LoanDetail = () => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
-            <p className="text-muted-foreground">
-              {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} -{" "}
-              {formatCurrency(loan.loanAmount)}
-              <Badge variant="outline" className="ml-3">
+            <div className="text-muted-foreground flex items-center gap-1">
+              <span>
+                {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} -{" "}
+                {formatCurrency(loan.loanAmount)}
+              </span>
+              <Badge variant="outline" className="ml-2">
                 {loan.loanType}
               </Badge>
-            </p>
+            </div>
           </div>
         </div>
 
