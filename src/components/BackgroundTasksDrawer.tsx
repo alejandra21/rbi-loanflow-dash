@@ -127,15 +127,12 @@ export const BackgroundTasksDrawer = ({
           size="sm"
           className="relative gap-2"
         >
-          <Activity className="h-4 w-4" />
+          <Activity className={hasActiveTasks ? "h-4 w-4 animate-pulse" : "h-4 w-4"} />
           Background Tasks
           {hasActiveTasks && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
-                {runningTasks.length + queuedTasks.length}
-              </span>
-            </span>
+            <Badge variant="default" className="ml-1 h-5 px-1.5 text-[10px]">
+              {runningTasks.length + queuedTasks.length}
+            </Badge>
           )}
         </Button>
       </DrawerTrigger>
