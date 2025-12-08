@@ -9,19 +9,16 @@ import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, S
 import { useState } from "react";
 import { ClosingProtectionData, ValidationCheck } from "@/types/closingProtection";
 import { ManualReviewModal } from "./ManualReviewModal";
-
 interface ClosingProtectionTabProps {
   data: ClosingProtectionData;
   phaseStatus: string;
   lastUpdated: string;
 }
-
 interface FieldValidation {
   isValid: boolean;
   errorMessage?: string;
   requiresManualReview?: boolean;
 }
-
 export const ClosingProtectionTab = ({
   data,
   phaseStatus,
@@ -33,10 +30,8 @@ export const ClosingProtectionTab = ({
     validationChecks: true,
     auditLog: false
   });
-
   const [addressDrilldownOpen, setAddressDrilldownOpen] = useState(false);
   const [crossmatchDrilldownOpen, setCrossmatchDrilldownOpen] = useState(false);
-
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
     metric: string;
@@ -44,14 +39,12 @@ export const ClosingProtectionTab = ({
     aiValue: string | number;
     difference: string | number;
   } | null>(null);
-
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
   };
-
   const openManualReview = (metric: string, posValue: string, cplValue: string, errorMessage: string) => {
     setSelectedCheck({
       metric,
@@ -61,7 +54,6 @@ export const ClosingProtectionTab = ({
     });
     setManualReviewOpen(true);
   };
-
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pass":
@@ -79,33 +71,24 @@ export const ClosingProtectionTab = ({
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
   const getValidationStatusBadge = (check: ValidationCheck) => {
-    const { status, systemBehavior } = check;
-    
+    const {
+      status,
+      systemBehavior
+    } = check;
     if (status === 'pass') {
       return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> OK</Badge>;
     }
-    
     if (systemBehavior === 'stop_workflow') {
       return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Stop Workflow</Badge>;
     }
-    
     if (systemBehavior === 'manual_review') {
-      return (
-        <Badge 
-          variant="warning" 
-          className="gap-1 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => openManualReview(check.name, check.posValue, check.cplValue, check.errorMessage || 'N/A')}
-        >
+      return <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => openManualReview(check.name, check.posValue, check.cplValue, check.errorMessage || 'N/A')}>
           <AlertTriangle className="h-3 w-3" /> Manual Review
-        </Badge>
-      );
+        </Badge>;
     }
-    
     return <Badge variant="outline">{status}</Badge>;
   };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -114,7 +97,6 @@ export const ClosingProtectionTab = ({
       maximumFractionDigits: 0
     }).format(value);
   };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -128,7 +110,6 @@ export const ClosingProtectionTab = ({
   const expectedLenderName = isTexas ? "RBI Private Lending, LLC" : "RBI Private Lending, LLC ISAOA/ATIMA";
   const expectedLossPayee = isTexas ? "RBI Private Lending, LLC" : "RBI Private Lending, LLC ISAOA/ATIMA";
   const expectedCPLType = isTexas ? "T-50" : "ALTA";
-
   const validateLenderName = (): FieldValidation => {
     const isValid = data.cplDocument.lenderName === expectedLenderName;
     return {
@@ -137,17 +118,14 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
   const validatePropertyAddress = (): FieldValidation => {
     const cplAddr = data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
     const appraisalAddr = data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
     const uspsAddr = data.uspsAddress.standardizedAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
     const titleAddr = data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
-    
     const matchesAppraisal = cplAddr === appraisalAddr;
     const matchesUSPS = uspsAddr.includes(cplAddr.split(' ')[0]) || cplAddr.includes(uspsAddr.split(' ')[0]);
     const matchesTitle = cplAddr === titleAddr;
-    
     const isValid = matchesAppraisal && matchesTitle && data.uspsAddress.matchScore >= 90;
     return {
       isValid,
@@ -155,7 +133,6 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
   const validateLoanAmount = (): FieldValidation => {
     const isValid = data.cplDocument.loanAmount >= data.titleCommitment.loanAmount;
     return {
@@ -164,7 +141,6 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
   const validateEffectiveDate = (): FieldValidation => {
     const effectiveDate = new Date(data.cplDocument.effectiveDate);
     const closingDate = new Date(data.posData.scheduledClosingDate);
@@ -176,7 +152,6 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
   const validateCPLType = (): FieldValidation => {
     const isValid = data.cplDocument.cplType === expectedCPLType;
     return {
@@ -185,7 +160,6 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
   const validateLossPayee = (): FieldValidation => {
     const isValid = data.cplDocument.lossPayee.includes(expectedLossPayee);
     return {
@@ -194,7 +168,6 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
   const validateTitleCrossmatch = (): FieldValidation => {
     const underwriterMatch = data.cplDocument.underwriter === data.titleCommitment.underwriter;
     const agentMatch = data.cplDocument.agentName === data.titleCommitment.agentName;
@@ -207,44 +180,46 @@ export const ClosingProtectionTab = ({
       requiresManualReview: !isValid
     };
   };
-
-  const validatePurchaseFlow = (): { purposeValid: FieldValidation; crossDocValid: FieldValidation } | null => {
+  const validatePurchaseFlow = (): {
+    purposeValid: FieldValidation;
+    crossDocValid: FieldValidation;
+  } | null => {
     if (data.posData.loanPurpose !== 'Purchase') return null;
-    
     const purposeValid: FieldValidation = {
       isValid: data.cplDocument.purpose === 'Purchase' || data.cplDocument.purpose.toLowerCase().includes('purchase'),
       errorMessage: data.cplDocument.purpose === 'Purchase' ? undefined : "CPL must specify 'Purchase'",
       requiresManualReview: data.cplDocument.purpose !== 'Purchase'
     };
-
     const crossDocValid: FieldValidation = {
       isValid: validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter,
       errorMessage: validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter ? undefined : "Cross-document validation failed",
       requiresManualReview: !(validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter)
     };
-
-    return { purposeValid, crossDocValid };
+    return {
+      purposeValid,
+      crossDocValid
+    };
   };
-
-  const validateRefinanceFlow = (): { borrowerValid: FieldValidation; crossDocValid: FieldValidation } | null => {
+  const validateRefinanceFlow = (): {
+    borrowerValid: FieldValidation;
+    crossDocValid: FieldValidation;
+  } | null => {
     if (data.posData.loanPurpose !== 'Refinance') return null;
-
-    const borrowerMatches = data.cplDocument.borrowerName === data.posData.borrowerName && 
-                           data.cplDocument.borrowerName === data.titleCommitment.vestedOwner;
-    
+    const borrowerMatches = data.cplDocument.borrowerName === data.posData.borrowerName && data.cplDocument.borrowerName === data.titleCommitment.vestedOwner;
     const borrowerValid: FieldValidation = {
       isValid: borrowerMatches,
       errorMessage: borrowerMatches ? undefined : "Borrower/Owner mismatch across CPL, POS, and Title",
       requiresManualReview: !borrowerMatches
     };
-
     const crossDocValid: FieldValidation = {
       isValid: validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter,
       errorMessage: validatePropertyAddress().isValid ? undefined : "Cross-document validation failed",
       requiresManualReview: !(validatePropertyAddress().isValid && data.cplDocument.underwriter === data.titleCommitment.underwriter)
     };
-
-    return { borrowerValid, crossDocValid };
+    return {
+      borrowerValid,
+      crossDocValid
+    };
   };
 
   // Get all validations
@@ -257,67 +232,51 @@ export const ClosingProtectionTab = ({
   const titleCrossmatchValidation = validateTitleCrossmatch();
   const purchaseFlow = validatePurchaseFlow();
   const refinanceFlow = validateRefinanceFlow();
-
-  const ValidationIndicator = ({ validation, label, onManualReview }: { 
-    validation: FieldValidation; 
+  const ValidationIndicator = ({
+    validation,
+    label,
+    onManualReview
+  }: {
+    validation: FieldValidation;
     label: string;
     onManualReview?: () => void;
-  }) => (
-    <div className="flex items-center gap-1.5">
-      {validation.isValid ? (
-        <CheckCircle2 className="h-4 w-4 text-green-600" />
-      ) : validation.requiresManualReview ? (
-        <TooltipProvider>
+  }) => <div className="flex items-center gap-1.5">
+      {validation.isValid ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : validation.requiresManualReview ? <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <AlertTriangle 
-                className="h-4 w-4 text-amber-500 cursor-pointer" 
-                onClick={onManualReview}
-              />
+              <AlertTriangle className="h-4 w-4 text-amber-500 cursor-pointer" onClick={onManualReview} />
             </TooltipTrigger>
             <TooltipContent>
               <p className="text-xs">{validation.errorMessage}</p>
               <p className="text-xs text-muted-foreground mt-1">Click for manual review</p>
             </TooltipContent>
           </Tooltip>
-        </TooltipProvider>
-      ) : (
-        <XCircle className="h-4 w-4 text-destructive" />
-      )}
+        </TooltipProvider> : <XCircle className="h-4 w-4 text-destructive" />}
       <span className="text-xs text-muted-foreground">{label}</span>
-    </div>
-  );
-
-  const FieldWithValidation = ({ 
-    label, 
-    value, 
+    </div>;
+  const FieldWithValidation = ({
+    label,
+    value,
     validation,
     icon: Icon,
     onManualReview
-  }: { 
-    label: string; 
+  }: {
+    label: string;
     value: string | React.ReactNode;
     validation: FieldValidation;
     icon?: React.ElementType;
     onManualReview?: () => void;
-  }) => (
-    <div>
+  }) => <div>
       <div className="flex items-center justify-between mb-1">
         <p className="text-xs text-muted-foreground flex items-center gap-1">
           {Icon && <Icon className="h-3 w-3" />} {label}
         </p>
-        {validation.isValid ? (
-          <span className="text-xs text-green-600 flex items-center gap-1">
+        {validation.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
             Valid <CheckCircle2 className="h-3.5 w-3.5" />
-          </span>
-        ) : (
-          <TooltipProvider>
+          </span> : <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span 
-                  className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600"
-                  onClick={onManualReview}
-                >
+                <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600" onClick={onManualReview}>
                   Review Required <AlertTriangle className="h-3.5 w-3.5" />
                 </span>
               </TooltipTrigger>
@@ -325,15 +284,11 @@ export const ClosingProtectionTab = ({
                 <p className="text-xs">{validation.errorMessage}</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
-        )}
+          </TooltipProvider>}
       </div>
       <div className="text-sm font-medium">{value}</div>
-    </div>
-  );
-
-  return (
-    <div className="space-y-4">
+    </div>;
+  return <div className="space-y-4">
       {/* Phase Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -357,19 +312,14 @@ export const ClosingProtectionTab = ({
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.cplDocument ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.cplDocument && (
-          <CardContent className="space-y-6">
+        {expandedCards.cplDocument && <CardContent className="space-y-6">
             {/* OCR Status */}
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">OCR Extraction Status</span>
               </div>
-              {data.cplDocument.ocrStatus === 'readable' ? (
-                <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Readable</Badge>
-              ) : (
-                <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> {data.cplDocument.ocrStatus}</Badge>
-              )}
+              {data.cplDocument.ocrStatus === 'readable' ? <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Readable</Badge> : <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> {data.cplDocument.ocrStatus}</Badge>}
             </div>
 
             {/* CPL Basic Details */}
@@ -404,24 +354,11 @@ export const ClosingProtectionTab = ({
                 <span className="text-sm font-medium flex items-center gap-2">
                   <MapPin className="h-4 w-4" /> Property Address
                 </span>
-                {addressValidation.isValid ? (
-                  <Badge variant="success" className="gap-1">
+                {addressValidation.isValid ? <Badge variant="success" className="gap-1">
                     <CheckCircle className="h-3 w-3" /> Passed
-                  </Badge>
-                ) : (
-                  <Badge 
-                    variant="warning" 
-                    className="gap-1 cursor-pointer hover:opacity-80"
-                    onClick={() => openManualReview(
-                      "Property Address Verification",
-                      data.cplDocument.propertyAddress,
-                      "Multiple Sources",
-                      addressValidation.errorMessage || "Mismatch"
-                    )}
-                  >
+                  </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Property Address Verification", data.cplDocument.propertyAddress, "Multiple Sources", addressValidation.errorMessage || "Mismatch")}>
                     <AlertTriangle className="h-3 w-3" /> Review
-                  </Badge>
-                )}
+                  </Badge>}
               </div>
               <Table>
                 <TableHeader>
@@ -441,22 +378,17 @@ export const ClosingProtectionTab = ({
                     <TableCell className="text-muted-foreground">→</TableCell>
                     <TableCell>
                       <div>
-                        <span className="font-medium">TITLE RECORD</span>
+                        <span className="font-medium">TITLE COMMITMENT
+                    </span>
                         <p className="text-xs text-primary">{data.titleCommitment.vestedOwner}</p>
                       </div>
                     </TableCell>
                     <TableCell>{data.titleCommitment.propertyAddress}</TableCell>
                     <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
-                       data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '85%'}
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '85%'}
                     </TableCell>
                     <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
-                       data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? (
-                        <Badge variant="success">Good</Badge>
-                      ) : (
-                        <Badge variant="warning">Review</Badge>
-                      )}
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Good</Badge> : <Badge variant="warning">Review</Badge>}
                     </TableCell>
                   </TableRow>
                   {/* USPS Normalized */}
@@ -472,11 +404,7 @@ export const ClosingProtectionTab = ({
                     <TableCell>{data.uspsAddress.standardizedAddress}</TableCell>
                     <TableCell className="text-center">{data.uspsAddress.matchScore}%</TableCell>
                     <TableCell className="text-center">
-                      {data.uspsAddress.matchScore >= 90 ? (
-                        <Badge variant="success">Good</Badge>
-                      ) : (
-                        <Badge variant="warning">Review</Badge>
-                      )}
+                      {data.uspsAddress.matchScore >= 90 ? <Badge variant="success">Good</Badge> : <Badge variant="warning">Review</Badge>}
                     </TableCell>
                   </TableRow>
                   {/* Appraisal */}
@@ -491,16 +419,10 @@ export const ClosingProtectionTab = ({
                     </TableCell>
                     <TableCell>{data.appraisalAddress}</TableCell>
                     <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
-                       data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '92%'}
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '92%'}
                     </TableCell>
                     <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
-                       data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? (
-                        <Badge variant="success">Good</Badge>
-                      ) : (
-                        <Badge variant="success">Good</Badge>
-                      )}
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Good</Badge> : <Badge variant="success">Good</Badge>}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -515,24 +437,11 @@ export const ClosingProtectionTab = ({
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Lender Name</span>
-                  {lenderValidation.isValid ? (
-                    <Badge variant="success" className="gap-1">
+                  {lenderValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge 
-                      variant="warning" 
-                      className="gap-1 cursor-pointer hover:opacity-80"
-                      onClick={() => openManualReview(
-                        "Lender Name Verification",
-                        expectedLenderName,
-                        data.cplDocument.lenderName,
-                        lenderValidation.errorMessage || "Mismatch"
-                      )}
-                    >
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Lender Name Verification", expectedLenderName, data.cplDocument.lenderName, lenderValidation.errorMessage || "Mismatch")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
@@ -550,24 +459,11 @@ export const ClosingProtectionTab = ({
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Loan Amount</span>
-                  {loanAmountValidation.isValid ? (
-                    <Badge variant="success" className="gap-1">
+                  {loanAmountValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge 
-                      variant="warning" 
-                      className="gap-1 cursor-pointer hover:opacity-80"
-                      onClick={() => openManualReview(
-                        "CPL Loan Amount Validation",
-                        formatCurrency(data.posData.loanAmount),
-                        formatCurrency(data.cplDocument.loanAmount),
-                        loanAmountValidation.errorMessage || "Amount mismatch"
-                      )}
-                    >
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("CPL Loan Amount Validation", formatCurrency(data.posData.loanAmount), formatCurrency(data.cplDocument.loanAmount), loanAmountValidation.errorMessage || "Amount mismatch")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
@@ -585,24 +481,11 @@ export const ClosingProtectionTab = ({
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Loss Payee</span>
-                  {lossPayeeValidation.isValid ? (
-                    <Badge variant="success" className="gap-1">
+                  {lossPayeeValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge 
-                      variant="warning" 
-                      className="gap-1 cursor-pointer hover:opacity-80"
-                      onClick={() => openManualReview(
-                        "Loss Payee Validation",
-                        expectedLossPayee,
-                        data.cplDocument.lossPayee,
-                        lossPayeeValidation.errorMessage || "Loss payee mismatch"
-                      )}
-                    >
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Loss Payee Validation", expectedLossPayee, data.cplDocument.lossPayee, lossPayeeValidation.errorMessage || "Loss payee mismatch")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
@@ -620,24 +503,11 @@ export const ClosingProtectionTab = ({
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Underwriter</span>
-                  {data.cplDocument.underwriter === data.titleCommitment.underwriter ? (
-                    <Badge variant="success" className="gap-1">
+                  {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge 
-                      variant="warning" 
-                      className="gap-1 cursor-pointer hover:opacity-80"
-                      onClick={() => openManualReview(
-                        "Underwriter Verification",
-                        data.titleCommitment.underwriter,
-                        data.cplDocument.underwriter,
-                        "Underwriter mismatch between CPL and Title Commitment"
-                      )}
-                    >
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Verification", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
@@ -655,24 +525,11 @@ export const ClosingProtectionTab = ({
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Agent</span>
-                  {data.cplDocument.agentName === data.titleCommitment.agentName ? (
-                    <Badge variant="success" className="gap-1">
+                  {data.cplDocument.agentName === data.titleCommitment.agentName ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge 
-                      variant="warning" 
-                      className="gap-1 cursor-pointer hover:opacity-80"
-                      onClick={() => openManualReview(
-                        "Agent Verification",
-                        data.titleCommitment.agentName,
-                        data.cplDocument.agentName,
-                        "Agent mismatch between CPL and Title Commitment"
-                      )}
-                    >
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Agent Verification", data.titleCommitment.agentName, data.cplDocument.agentName, "Agent mismatch between CPL and Title Commitment")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
@@ -690,24 +547,11 @@ export const ClosingProtectionTab = ({
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">CPL Type</span>
-                  {cplTypeValidation.isValid ? (
-                    <Badge variant="success" className="gap-1">
+                  {cplTypeValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge 
-                      variant="warning" 
-                      className="gap-1 cursor-pointer hover:opacity-80"
-                      onClick={() => openManualReview(
-                        "CPL Type Verification",
-                        expectedCPLType,
-                        data.cplDocument.cplType,
-                        cplTypeValidation.errorMessage || "CPL Type mismatch"
-                      )}
-                    >
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("CPL Type Verification", expectedCPLType, data.cplDocument.cplType, cplTypeValidation.errorMessage || "CPL Type mismatch")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
@@ -731,23 +575,11 @@ export const ClosingProtectionTab = ({
                   <Shield className="h-4 w-4" />
                   CPL → Title Commitment Crossmatch
                 </h4>
-                {titleCrossmatchValidation.isValid ? (
-                  <span className="text-xs text-green-600 flex items-center gap-1">
+                {titleCrossmatchValidation.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
                     All Aligned <CheckCircle2 className="h-3.5 w-3.5" />
-                  </span>
-                ) : (
-                  <span 
-                    className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600"
-                    onClick={() => openManualReview(
-                      "CPL → Title Crossmatch",
-                      "Title Commitment data",
-                      "CPL Document data",
-                      titleCrossmatchValidation.errorMessage || "Crossmatch failed"
-                    )}
-                  >
+                  </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600" onClick={() => openManualReview("CPL → Title Crossmatch", "Title Commitment data", "CPL Document data", titleCrossmatchValidation.errorMessage || "Crossmatch failed")}>
                     Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                  </span>
-                )}
+                  </span>}
               </div>
               <Collapsible open={crossmatchDrilldownOpen} onOpenChange={setCrossmatchDrilldownOpen}>
                 <CollapsibleTrigger className="text-xs text-primary hover:underline flex items-center gap-1">
@@ -765,11 +597,7 @@ export const ClosingProtectionTab = ({
                     <span>{data.cplDocument.underwriter}</span>
                     <span className="flex items-center gap-1">
                       {data.titleCommitment.underwriter}
-                      {data.cplDocument.underwriter === data.titleCommitment.underwriter ? (
-                        <CheckCircle2 className="h-3 w-3 text-green-600" />
-                      ) : (
-                        <XCircle className="h-3 w-3 text-destructive" />
-                      )}
+                      {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <CheckCircle2 className="h-3 w-3 text-green-600" /> : <XCircle className="h-3 w-3 text-destructive" />}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
@@ -777,11 +605,7 @@ export const ClosingProtectionTab = ({
                     <span>{data.cplDocument.agentName}</span>
                     <span className="flex items-center gap-1">
                       {data.titleCommitment.agentName}
-                      {data.cplDocument.agentName === data.titleCommitment.agentName ? (
-                        <CheckCircle2 className="h-3 w-3 text-green-600" />
-                      ) : (
-                        <XCircle className="h-3 w-3 text-destructive" />
-                      )}
+                      {data.cplDocument.agentName === data.titleCommitment.agentName ? <CheckCircle2 className="h-3 w-3 text-green-600" /> : <XCircle className="h-3 w-3 text-destructive" />}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
@@ -789,11 +613,7 @@ export const ClosingProtectionTab = ({
                     <span>{formatCurrency(data.cplDocument.loanAmount)}</span>
                     <span className="flex items-center gap-1">
                       {formatCurrency(data.titleCommitment.loanAmount)}
-                      {data.cplDocument.loanAmount >= data.titleCommitment.loanAmount ? (
-                        <CheckCircle2 className="h-3 w-3 text-green-600" />
-                      ) : (
-                        <XCircle className="h-3 w-3 text-destructive" />
-                      )}
+                      {data.cplDocument.loanAmount >= data.titleCommitment.loanAmount ? <CheckCircle2 className="h-3 w-3 text-green-600" /> : <XCircle className="h-3 w-3 text-destructive" />}
                     </span>
                   </div>
                 </CollapsibleContent>
@@ -803,8 +623,7 @@ export const ClosingProtectionTab = ({
             <Separator />
 
             {/* 8. Purchase Flow Validations */}
-            {purchaseFlow && (
-              <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+            {purchaseFlow && <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
                 <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   Purchase Transaction Validation
@@ -812,58 +631,30 @@ export const ClosingProtectionTab = ({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">CPL Purpose = Purchase</span>
-                    {purchaseFlow.purposeValid.isValid ? (
-                      <span className="text-xs text-green-600 flex items-center gap-1">
+                    {purchaseFlow.purposeValid.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                      </span>
-                    ) : (
-                      <span 
-                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
-                        onClick={() => openManualReview(
-                          "CPL Purpose Verification",
-                          "Purchase",
-                          data.cplDocument.purpose,
-                          purchaseFlow.purposeValid.errorMessage || "Purpose mismatch"
-                        )}
-                      >
+                      </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer" onClick={() => openManualReview("CPL Purpose Verification", "Purchase", data.cplDocument.purpose, purchaseFlow.purposeValid.errorMessage || "Purpose mismatch")}>
                         Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                      </span>
-                    )}
+                      </span>}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Cross-Document Validation (CPL → Title)</span>
-                    {purchaseFlow.crossDocValid.isValid ? (
-                      <span className="text-xs text-green-600 flex items-center gap-1">
+                    {purchaseFlow.crossDocValid.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                      </span>
-                    ) : (
-                      <span 
-                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
-                        onClick={() => openManualReview(
-                          "Cross-Document Validation",
-                          "Property Address + Underwriter alignment",
-                          "See details",
-                          purchaseFlow.crossDocValid.errorMessage || "Cross-doc validation failed"
-                        )}
-                      >
+                      </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer" onClick={() => openManualReview("Cross-Document Validation", "Property Address + Underwriter alignment", "See details", purchaseFlow.crossDocValid.errorMessage || "Cross-doc validation failed")}>
                         Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                      </span>
-                    )}
+                      </span>}
                   </div>
-                  {purchaseFlow.purposeValid.isValid && purchaseFlow.crossDocValid.isValid && (
-                    <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
+                  {purchaseFlow.purposeValid.isValid && purchaseFlow.crossDocValid.isValid && <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
                       <Badge variant="success" className="gap-1">
                         <CheckCircle className="h-3 w-3" /> Ready for Phase 9
                       </Badge>
-                    </div>
-                  )}
+                    </div>}
                 </div>
-              </div>
-            )}
+              </div>}
 
             {/* 9. Refinance Flow Validations */}
-            {refinanceFlow && (
-              <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
+            {refinanceFlow && <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
                 <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   Refinance Transaction Validation
@@ -871,54 +662,27 @@ export const ClosingProtectionTab = ({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Borrower/Owner Match</span>
-                    {refinanceFlow.borrowerValid.isValid ? (
-                      <span className="text-xs text-green-600 flex items-center gap-1">
+                    {refinanceFlow.borrowerValid.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                      </span>
-                    ) : (
-                      <span 
-                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
-                        onClick={() => openManualReview(
-                          "Borrower Match Verification",
-                          `POS: ${data.posData.borrowerName}, Title Vested: ${data.titleCommitment.vestedOwner}`,
-                          data.cplDocument.borrowerName,
-                          refinanceFlow.borrowerValid.errorMessage || "Borrower mismatch"
-                        )}
-                      >
+                      </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer" onClick={() => openManualReview("Borrower Match Verification", `POS: ${data.posData.borrowerName}, Title Vested: ${data.titleCommitment.vestedOwner}`, data.cplDocument.borrowerName, refinanceFlow.borrowerValid.errorMessage || "Borrower mismatch")}>
                         Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                      </span>
-                    )}
+                      </span>}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Cross-Document Validation (CPL → Title → Loan Docs)</span>
-                    {refinanceFlow.crossDocValid.isValid ? (
-                      <span className="text-xs text-green-600 flex items-center gap-1">
+                    {refinanceFlow.crossDocValid.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
                         Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                      </span>
-                    ) : (
-                      <span 
-                        className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer"
-                        onClick={() => openManualReview(
-                          "Cross-Document Validation",
-                          "Borrower, Address, Underwriter alignment",
-                          "See details",
-                          refinanceFlow.crossDocValid.errorMessage || "Cross-doc validation failed"
-                        )}
-                      >
+                      </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer" onClick={() => openManualReview("Cross-Document Validation", "Borrower, Address, Underwriter alignment", "See details", refinanceFlow.crossDocValid.errorMessage || "Cross-doc validation failed")}>
                         Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                      </span>
-                    )}
+                      </span>}
                   </div>
-                  {refinanceFlow.borrowerValid.isValid && refinanceFlow.crossDocValid.isValid && (
-                    <div className="pt-2 border-t border-purple-200 dark:border-purple-800">
+                  {refinanceFlow.borrowerValid.isValid && refinanceFlow.crossDocValid.isValid && <div className="pt-2 border-t border-purple-200 dark:border-purple-800">
                       <Badge variant="success" className="gap-1">
                         <CheckCircle className="h-3 w-3" /> Ready for Phase 9
                       </Badge>
-                    </div>
-                  )}
+                    </div>}
                 </div>
-              </div>
-            )}
+              </div>}
 
             <Separator />
 
@@ -930,8 +694,7 @@ export const ClosingProtectionTab = ({
                 View CPL
               </Button>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Business Rules Reference */}
@@ -945,8 +708,7 @@ export const ClosingProtectionTab = ({
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.auditLog && (
-          <CardContent>
+        {expandedCards.auditLog && <CardContent>
             <div className="space-y-4 text-sm">
               <div className="p-3 bg-muted/30 rounded-lg">
                 <h4 className="font-semibold mb-2">Lender Name Requirements</h4>
@@ -967,19 +729,10 @@ export const ClosingProtectionTab = ({
                 <p className="text-muted-foreground">CPL loan amount must be ≥ Title Commitment loan amount</p>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Manual Review Modal */}
-      <ManualReviewModal
-        open={manualReviewOpen}
-        onOpenChange={setManualReviewOpen}
-        metricName={selectedCheck?.metric || ''}
-        posValue={String(selectedCheck?.posValue || '')}
-        aiValue={String(selectedCheck?.aiValue || '')}
-        deviation={String(selectedCheck?.difference || '')}
-      />
-    </div>
-  );
+      <ManualReviewModal open={manualReviewOpen} onOpenChange={setManualReviewOpen} metricName={selectedCheck?.metric || ''} posValue={String(selectedCheck?.posValue || '')} aiValue={String(selectedCheck?.aiValue || '')} deviation={String(selectedCheck?.difference || '')} />
+    </div>;
 };
