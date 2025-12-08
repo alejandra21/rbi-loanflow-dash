@@ -320,21 +320,12 @@ export const ClosingProtectionTab = ({
             </Button>
 
             {/* OCR Status */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">OCR Extraction Status</span>
-              </div>
-              {data.cplDocument.ocrStatus === 'readable' ? <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Readable</Badge> : <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> {data.cplDocument.ocrStatus}</Badge>}
-            </div>
+            
 
             {/* CPL Basic Details */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Underwriter */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Underwriter</p>
-                <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
-              </div>
+              
 
               {/* Transaction Type */}
               <div>
@@ -360,17 +351,15 @@ export const ClosingProtectionTab = ({
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Date Age</p>
                     {(() => {
-                      const effectiveDate = new Date(data.cplDocument.effectiveDate);
-                      const closingDate = new Date(data.posData.scheduledClosingDate);
-                      const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
-                      const isOverThreshold = daysDiff > 60;
-                      return (
-                        <p className={`text-sm font-medium flex items-center gap-1 ${isOverThreshold ? 'text-destructive' : 'text-emerald-600'}`}>
+                  const effectiveDate = new Date(data.cplDocument.effectiveDate);
+                  const closingDate = new Date(data.posData.scheduledClosingDate);
+                  const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
+                  const isOverThreshold = daysDiff > 60;
+                  return <p className={`text-sm font-medium flex items-center gap-1 ${isOverThreshold ? 'text-destructive' : 'text-emerald-600'}`}>
                           {daysDiff} days
                           {isOverThreshold ? <AlertTriangle className="h-3 w-3 text-destructive" /> : <CheckCircle className="h-3 w-3 text-emerald-600" />}
-                        </p>
-                      );
-                    })()}
+                        </p>;
+                })()}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Days Threshold</p>
