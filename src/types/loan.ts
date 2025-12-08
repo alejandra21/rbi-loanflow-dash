@@ -814,7 +814,9 @@ export const mockLoans: LoanApplication[] = [
                         purpose: "Purchase",
                         borrowerName: "Tech Corp Ltd",
                         ocrStatus: "readable",
-                        sourceFile: "/documents/cpl-LOA-2024-001.pdf"
+                        sourceFile: "/documents/cpl-LOA-2024-001.pdf",
+                        buyerName: "Tech Corp Ltd",
+                        sellerName: "Miami Properties LLC"
                     },
                     titleCommitment: {
                         propertyAddress: "456 Investment Ave, Miami, FL 33101",

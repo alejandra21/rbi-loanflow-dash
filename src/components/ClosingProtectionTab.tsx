@@ -712,6 +712,53 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.purchaseValidations && <CardContent className="space-y-4">
+            {/* Buyer & Seller Names from CPL */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Buyer & Seller Names
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">Buyer and Seller names from CPL for Purchase transactions</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                {data.posData.loanPurpose === 'Purchase' ? (
+                  data.cplDocument.buyerName && data.cplDocument.sellerName ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Available
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" className="gap-1">
+                      <AlertTriangle className="h-3 w-3" /> Missing
+                    </Badge>
+                  )
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="border-r pr-6">
+                    <p className="text-xs text-muted-foreground mb-1">Buyer Name (CPL)</p>
+                    <p className="text-sm font-medium text-foreground">{data.cplDocument.buyerName || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Seller Name (CPL)</p>
+                    <p className="text-sm font-medium text-foreground">{data.cplDocument.sellerName || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Property Address Match with Title Commitment */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
@@ -755,92 +802,6 @@ export const ClosingProtectionTab = ({
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Title Commitment Address</p>
                     <p className="text-sm font-medium text-foreground">{data.titleCommitment.propertyAddress}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Seller Name */}
-            <div className="border rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Seller Name
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">Seller name from POS for Purchase transactions</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </span>
-                {data.posData.loanPurpose === 'Purchase' ? (
-                  data.posData.sellerName ? (
-                    <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Available
-                    </Badge>
-                  ) : (
-                    <Badge variant="warning" className="gap-1">
-                      <AlertTriangle className="h-3 w-3" /> Missing
-                    </Badge>
-                  )
-                ) : (
-                  <Badge variant="outline" className="gap-1 text-muted-foreground">
-                    <span className="h-3 w-3">—</span> Not Applicable
-                  </Badge>
-                )}
-              </div>
-              <div className="p-4">
-                <div className="grid grid-cols-1 gap-6">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Seller Name (POS)</p>
-                    <p className="text-sm font-medium text-foreground">{data.posData.sellerName || "N/A"}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Buyer Name */}
-            <div className="border rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Buyer Name
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">Buyer name from POS for Purchase transactions</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </span>
-                {data.posData.loanPurpose === 'Purchase' ? (
-                  data.posData.buyerName ? (
-                    <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Available
-                    </Badge>
-                  ) : (
-                    <Badge variant="warning" className="gap-1">
-                      <AlertTriangle className="h-3 w-3" /> Missing
-                    </Badge>
-                  )
-                ) : (
-                  <Badge variant="outline" className="gap-1 text-muted-foreground">
-                    <span className="h-3 w-3">—</span> Not Applicable
-                  </Badge>
-                )}
-              </div>
-              <div className="p-4">
-                <div className="grid grid-cols-1 gap-6">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Buyer Name (POS)</p>
-                    <p className="text-sm font-medium text-foreground">{data.posData.buyerName || "N/A"}</p>
                   </div>
                 </div>
               </div>
