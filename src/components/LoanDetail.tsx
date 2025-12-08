@@ -35,7 +35,7 @@ export const LoanDetail = () => {
   } = useToast();
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [currentPhase, setCurrentPhase] = useState("");
-  const [activeTab, setActiveTab] = useState("eligibility");
+  const [activeTab, setActiveTab] = useState("borrowerEligibility");
   const [showReviewSection, setShowReviewSection] = useState(false);
   const [reviewDecision, setReviewDecision] = useState<string>("");
   const [reviewComment, setReviewComment] = useState<string>("");
@@ -1527,7 +1527,7 @@ export const LoanDetail = () => {
 
       <Card>
         <CardContent className="pt-6">
-          <Tabs defaultValue="borrowerEligibility" className="h-full" onValueChange={setActiveTab}>
+          <Tabs value={activeTab} className="h-full" onValueChange={setActiveTab}>
             <TabsList className="flex w-full overflow-x-auto gap-2 p-2 h-auto flex-wrap">
               <TabsTrigger value="borrowerEligibility" className="relative text-sm px-4 py-2 flex-shrink-0">
                 Borrower Eligibility
