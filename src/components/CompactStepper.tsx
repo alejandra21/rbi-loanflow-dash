@@ -45,7 +45,7 @@ const getStatusIcon = (status: StepperPhase["status"]) => {
 };
 
 const getStepStyles = (status: StepperPhase["status"], isActive: boolean) => {
-  const baseStyles = "relative flex items-center justify-center w-7 h-7 rounded-full transition-all duration-200 text-[11px] font-semibold border-2";
+  const baseStyles = "relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 text-xs font-semibold border-2";
   
   const statusStyles = {
     passed: "bg-green-500/10 border-green-500 text-green-700 dark:text-green-400",
