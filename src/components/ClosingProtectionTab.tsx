@@ -474,7 +474,22 @@ export const ClosingProtectionTab = ({
               {/* Lender Name Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Lender Name</span>
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    Lender Name
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Standard:</p>
+                          <p className="text-xs mb-2">"RBI Private Lending, LLC ISAOA/ATIMA"</p>
+                          <p className="font-medium mb-1">Texas Exception:</p>
+                          <p className="text-xs">"RBI Private Lending, LLC"</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
                   {lenderValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
                     </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Lender Name Verification", expectedLenderName, data.cplDocument.lenderName, lenderValidation.errorMessage || "Mismatch")}>
@@ -496,7 +511,20 @@ export const ClosingProtectionTab = ({
               {/* Loan Amount Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Loan Amount</span>
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    Loan Amount
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Validation Rule:</p>
+                          <p className="text-xs">CPL loan amount must be ≥ Title Commitment loan amount</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
                   {loanAmountValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
                     </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("CPL Loan Amount Validation", formatCurrency(data.posData.loanAmount), formatCurrency(data.cplDocument.loanAmount), loanAmountValidation.errorMessage || "Amount mismatch")}>
@@ -584,7 +612,22 @@ export const ClosingProtectionTab = ({
               {/* CPL Type Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">CPL Type</span>
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    CPL Type
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Texas:</p>
+                          <p className="text-xs mb-2">T-50 form required</p>
+                          <p className="font-medium mb-1">All other states:</p>
+                          <p className="text-xs">ALTA form required</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
                   {cplTypeValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
                     </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("CPL Type Verification", expectedCPLType, data.cplDocument.cplType, cplTypeValidation.errorMessage || "CPL Type mismatch")}>
