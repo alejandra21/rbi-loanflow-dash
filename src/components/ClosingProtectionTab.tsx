@@ -827,14 +827,9 @@ export const ClosingProtectionTab = ({
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('purchaseValidations')}>
           <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2" />
-                Purchase Validations
-              </div>
-              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-medium">
-                Transaction Type: Purchase
-              </Badge>
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Purchase Validations
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.purchaseValidations ? '' : '-rotate-90'}`} />
           </CardTitle>
