@@ -581,6 +581,41 @@ export const ClosingProtectionTab = ({
                   </div>
                 </div>
               </div>
+
+              {/* CPL Type Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">CPL Type</span>
+                  {cplTypeValidation.isValid ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="warning" 
+                      className="gap-1 cursor-pointer hover:opacity-80"
+                      onClick={() => openManualReview(
+                        "CPL Type Verification",
+                        expectedCPLType,
+                        data.cplDocument.cplType,
+                        cplTypeValidation.errorMessage || "CPL Type mismatch"
+                      )}
+                    >
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.cplType}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Business Rule ({isTexas ? 'Texas' : 'Non-Texas'})</p>
+                    <p className="text-sm font-medium">{expectedCPLType}</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <Separator />
