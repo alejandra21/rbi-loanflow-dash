@@ -347,37 +347,56 @@ export const ClosingProtectionTab = ({
               <div className="col-span-full border rounded-lg p-4 mt-2">
                 <p className="text-sm font-medium mb-3 flex items-center gap-2">
                   <Calendar className="h-4 w-4" /> Effective Date Validation
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="max-w-xs">
+                        <p className="font-medium mb-1">Effective Date Rule:</p>
+                        <p className="text-xs">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </p>
                 <div className="grid grid-cols-4 gap-6">
+                  {/* Effective Date */}
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                      Effective Date <Info className="h-3 w-3" />
-                    </p>
+                    <p className="text-xs text-muted-foreground mb-1">Effective Date</p>
                     <p className={`text-sm font-medium flex items-center gap-1 ${!effectiveDateValidation.isValid ? 'text-destructive' : 'text-emerald-600'}`}>
                       {formatDate(data.cplDocument.effectiveDate)}
                       {effectiveDateValidation.isValid ? <CheckCircle className="h-3 w-3 text-emerald-600" /> : <AlertTriangle className="h-3 w-3 text-destructive" />}
                     </p>
                   </div>
+                  {/* Closing Date */}
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Closing Date</p>
+                    <p className="text-sm font-medium flex items-center gap-1">
+                      {formatDate(data.posData.scheduledClosingDate)}
+                      <CheckCircle className="h-3 w-3 text-emerald-600" />
+                    </p>
+                  </div>
+                  {/* Date Age */}
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Date Age</p>
                     {(() => {
-                  const effectiveDate = new Date(data.cplDocument.effectiveDate);
-                  const closingDate = new Date(data.posData.scheduledClosingDate);
-                  const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
-                  const isOverThreshold = daysDiff > 60;
-                  return <p className={`text-sm font-medium flex items-center gap-1 ${isOverThreshold ? 'text-destructive' : 'text-emerald-600'}`}>
-                          {daysDiff} days
-                          {isOverThreshold ? <AlertTriangle className="h-3 w-3 text-destructive" /> : <CheckCircle className="h-3 w-3 text-emerald-600" />}
-                        </p>;
-                })()}
+                      const effectiveDate = new Date(data.cplDocument.effectiveDate);
+                      const closingDate = new Date(data.posData.scheduledClosingDate);
+                      const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
+                      const isOverThreshold = daysDiff > 60;
+                      return <p className={`text-sm font-medium flex items-center gap-1 ${isOverThreshold ? 'text-destructive' : 'text-emerald-600'}`}>
+                              {daysDiff} days
+                              {isOverThreshold ? <AlertTriangle className="h-3 w-3 text-destructive" /> : <CheckCircle className="h-3 w-3 text-emerald-600" />}
+                            </p>;
+                    })()}
                   </div>
+                  {/* Days Threshold */}
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Days Threshold</p>
-                    <p className="text-sm font-medium">60</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Closing Date</p>
-                    <p className="text-sm font-medium">{formatDate(data.posData.scheduledClosingDate)}</p>
+                    <p className="text-sm font-medium flex items-center gap-1">
+                      60
+                      <CheckCircle className="h-3 w-3 text-emerald-600" />
+                    </p>
                   </div>
                 </div>
               </div>
