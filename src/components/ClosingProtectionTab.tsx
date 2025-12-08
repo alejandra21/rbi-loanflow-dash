@@ -314,7 +314,7 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.cplDocument && <CardContent className="space-y-6">
-            {/* Download CPL Button and Transaction Type */}
+            {/* Download CPL Button, Transaction Type and State */}
             <div className="flex items-center gap-4">
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
@@ -322,7 +322,15 @@ export const ClosingProtectionTab = ({
               </Button>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Transaction Type:</span>
-                <Badge variant="secondary" className="text-sm font-medium">Purchase</Badge>
+                <Badge className={`text-sm font-medium ${data.posData.loanPurpose === 'Purchase' ? 'bg-blue-600 hover:bg-blue-600 text-white' : 'bg-purple-600 hover:bg-purple-600 text-white'}`}>
+                  {data.posData.loanPurpose}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">State:</span>
+                <Badge className={`text-sm font-medium ${isTexas ? 'bg-amber-500 hover:bg-amber-500 text-white' : 'bg-slate-600 hover:bg-slate-600 text-white'}`}>
+                  {data.posData.propertyState}{isTexas ? ' (TX)' : ''}
+                </Badge>
               </div>
             </div>
 
