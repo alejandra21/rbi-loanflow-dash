@@ -697,13 +697,16 @@ export const ClosingProtectionTab = ({
           </CardContent>}
       </Card>
 
-      {/* Purchase Validations - Only show for Purchase transactions */}
-      {data.posData.loanPurpose === 'Purchase' && <Card>
+      {/* Purchase Validations - Always show, validate only for Purchase */}
+      <Card className={data.posData.loanPurpose !== 'Purchase' ? 'opacity-60' : ''}>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('purchaseValidations')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <FileText className="h-4 w-4 mr-2" />
               Purchase Validations
+              {data.posData.loanPurpose !== 'Purchase' && (
+                <Badge variant="outline" className="ml-2 text-xs">N/A</Badge>
+              )}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.purchaseValidations ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -726,16 +729,22 @@ export const ClosingProtectionTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </span>
-                {(() => {
-                  const cplAddr = data.cplDocument.propertyAddress?.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
-                  const titleAddr = data.titleCommitment.propertyAddress?.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
-                  const isMatch = cplAddr === titleAddr;
-                  return isMatch ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Property Address Match", data.titleCommitment.propertyAddress, data.cplDocument.propertyAddress, "Address mismatch between CPL and Title Commitment")}>
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>;
-                })()}
+                {data.posData.loanPurpose === 'Purchase' ? (
+                  (() => {
+                    const cplAddr = data.cplDocument.propertyAddress?.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
+                    const titleAddr = data.titleCommitment.propertyAddress?.toLowerCase().replace(/[,.\s]+/g, ' ').trim();
+                    const isMatch = cplAddr === titleAddr;
+                    return isMatch ? <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Passed
+                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Property Address Match", data.titleCommitment.propertyAddress, data.cplDocument.propertyAddress, "Address mismatch between CPL and Title Commitment")}>
+                        <AlertTriangle className="h-3 w-3" /> Review
+                      </Badge>;
+                  })()
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
@@ -768,11 +777,17 @@ export const ClosingProtectionTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </span>
-                {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <Badge variant="success" className="gap-1">
-                    <CheckCircle className="h-3 w-3" /> Passed
-                  </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Match", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
-                    <AlertTriangle className="h-3 w-3" /> Review
-                  </Badge>}
+                {data.posData.loanPurpose === 'Purchase' ? (
+                  data.cplDocument.underwriter === data.titleCommitment.underwriter ? <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Match", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
@@ -788,15 +803,18 @@ export const ClosingProtectionTab = ({
               </div>
             </div>
           </CardContent>}
-      </Card>}
+      </Card>
 
-      {/* Refinance Validations - Only show for Refinance transactions */}
-      {data.posData.loanPurpose === 'Refinance' && <Card>
+      {/* Refinance Validations - Always show, validate only for Refinance */}
+      <Card className={data.posData.loanPurpose !== 'Refinance' ? 'opacity-60' : ''}>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('refinanceValidations')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
               <FileText className="h-4 w-4 mr-2" />
               Refinance Validations
+              {data.posData.loanPurpose !== 'Refinance' && (
+                <Badge variant="outline" className="ml-2 text-xs">N/A</Badge>
+              )}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.refinanceValidations ? '' : '-rotate-90'}`} />
           </CardTitle>
@@ -819,16 +837,22 @@ export const ClosingProtectionTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </span>
-                {(() => {
-                  const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
-                  const posBorrower = data.posData.borrowerName?.toLowerCase().trim();
-                  const isMatch = cplBorrower === posBorrower;
-                  return isMatch ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower Match (CPL vs POS)", data.posData.borrowerName, data.cplDocument.borrowerName, "Borrower mismatch between CPL and POS")}>
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>;
-                })()}
+                {data.posData.loanPurpose === 'Refinance' ? (
+                  (() => {
+                    const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
+                    const posBorrower = data.posData.borrowerName?.toLowerCase().trim();
+                    const isMatch = cplBorrower === posBorrower;
+                    return isMatch ? <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Passed
+                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower Match (CPL vs POS)", data.posData.borrowerName, data.cplDocument.borrowerName, "Borrower mismatch between CPL and POS")}>
+                        <AlertTriangle className="h-3 w-3" /> Review
+                      </Badge>;
+                  })()
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
@@ -861,16 +885,22 @@ export const ClosingProtectionTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </span>
-                {(() => {
-                  const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
-                  const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
-                  const isMatch = cplBorrower === titleOwner;
-                  return isMatch ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower vs Vested Owner", data.titleCommitment.vestedOwner, data.cplDocument.borrowerName, "Borrower mismatch between CPL and Vested Owner")}>
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>;
-                })()}
+                {data.posData.loanPurpose === 'Refinance' ? (
+                  (() => {
+                    const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
+                    const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
+                    const isMatch = cplBorrower === titleOwner;
+                    return isMatch ? <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Passed
+                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower vs Vested Owner", data.titleCommitment.vestedOwner, data.cplDocument.borrowerName, "Borrower mismatch between CPL and Vested Owner")}>
+                        <AlertTriangle className="h-3 w-3" /> Review
+                      </Badge>;
+                  })()
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
@@ -886,7 +916,7 @@ export const ClosingProtectionTab = ({
               </div>
             </div>
           </CardContent>}
-      </Card>}
+      </Card>
 
       {/* Logs */}
       <Card>
