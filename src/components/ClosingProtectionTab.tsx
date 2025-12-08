@@ -328,7 +328,7 @@ export const ClosingProtectionTab = ({
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">State:</span>
-                <Badge className={`text-sm font-medium ${isTexas ? 'bg-amber-500 hover:bg-amber-500 text-white' : 'bg-slate-600 hover:bg-slate-600 text-white'}`}>
+                <Badge className={`text-sm font-medium ${isTexas ? 'bg-amber-500 hover:bg-amber-500 text-white' : 'bg-gray-600 hover:bg-gray-600 text-white'}`}>
                   {data.posData.propertyState}{isTexas ? ' (TX)' : ''}
                 </Badge>
               </div>
