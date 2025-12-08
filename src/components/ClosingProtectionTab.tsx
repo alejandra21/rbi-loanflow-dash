@@ -344,22 +344,34 @@ export const ClosingProtectionTab = ({
 
 
               {/* Effective Date - 4 Column Layout */}
-              <div className="col-span-full border rounded-lg p-4 mt-2">
-                <p className="text-sm font-medium mb-3 flex items-center gap-2">
-                  <Calendar className="h-4 w-4" /> Effective Date Validation
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent side="right" className="max-w-xs">
-                        <p className="font-medium mb-1">Effective Date Rule:</p>
-                        <p className="text-xs">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </p>
-                <div className="grid grid-cols-4 gap-6">
+              <div className="col-span-full border rounded-lg overflow-hidden mt-2">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <Calendar className="h-4 w-4" /> Effective Date Validation
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Effective Date Rule:</p>
+                          <p className="text-xs">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                  {effectiveDateValidation.isValid ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" className="gap-1">
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-4 gap-6">
                   {/* Effective Date */}
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Effective Date</p>
@@ -400,6 +412,7 @@ export const ClosingProtectionTab = ({
                   </div>
                 </div>
               </div>
+            </div>
 
             </div>
 
