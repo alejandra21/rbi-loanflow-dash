@@ -572,6 +572,65 @@ export const ClosingProtectionTab = ({
                 </div>
               </div>
 
+              {/* Underwriter Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Underwriter</span>
+                  {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Verification", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
+                    <p className="text-sm font-medium">{data.titleCommitment.underwriter}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CPL Form Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    CPL Form
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Texas:</p>
+                          <p className="text-xs mb-2">T-50 form required</p>
+                          <p className="font-medium mb-1">All other states:</p>
+                          <p className="text-xs">ALTA form required</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                  {cplTypeValidation.isValid ? <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("CPL Form Verification", expectedCPLType, data.cplDocument.cplType, cplTypeValidation.errorMessage || "CPL Form mismatch")}>
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.cplType}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Business Rule ({isTexas ? 'Texas' : 'Non-Texas'})</p>
+                    <p className="text-sm font-medium">{expectedCPLType}</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Loss Payee Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
@@ -605,87 +664,6 @@ export const ClosingProtectionTab = ({
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Business Rule</p>
                     <p className="text-sm font-medium">{expectedLossPayee}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Underwriter Validation Card */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Underwriter</span>
-                  {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Verification", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>}
-                </div>
-                <div className="grid grid-cols-2 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
-                    <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
-                    <p className="text-sm font-medium">{data.titleCommitment.underwriter}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Agent Validation Card */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Agent</span>
-                  {data.cplDocument.agentName === data.titleCommitment.agentName ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Agent Verification", data.titleCommitment.agentName, data.cplDocument.agentName, "Agent mismatch between CPL and Title Commitment")}>
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>}
-                </div>
-                <div className="grid grid-cols-2 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
-                    <p className="text-sm font-medium">{data.cplDocument.agentName}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
-                    <p className="text-sm font-medium">{data.titleCommitment.agentName}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* CPL Type Validation Card */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium flex items-center gap-1">
-                    CPL Type
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="max-w-xs">
-                          <p className="font-medium mb-1">Texas:</p>
-                          <p className="text-xs mb-2">T-50 form required</p>
-                          <p className="font-medium mb-1">All other states:</p>
-                          <p className="text-xs">ALTA form required</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </span>
-                  {cplTypeValidation.isValid ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("CPL Type Verification", expectedCPLType, data.cplDocument.cplType, cplTypeValidation.errorMessage || "CPL Type mismatch")}>
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>}
-                </div>
-                <div className="grid grid-cols-2 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
-                    <p className="text-sm font-medium">{data.cplDocument.cplType}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Business Rule ({isTexas ? 'Texas' : 'Non-Texas'})</p>
-                    <p className="text-sm font-medium">{expectedCPLType}</p>
                   </div>
                 </div>
               </div>
