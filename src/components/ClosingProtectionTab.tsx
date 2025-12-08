@@ -537,7 +537,7 @@ export const ClosingProtectionTab = ({
                     <p className="text-sm font-medium">{formatCurrency(data.cplDocument.loanAmount)}</p>
                   </div>
                   <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">POS Data</p>
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
                     <p className="text-sm font-medium">{formatCurrency(data.posData.loanAmount)}</p>
                   </div>
                 </div>
