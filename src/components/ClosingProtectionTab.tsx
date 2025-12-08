@@ -33,7 +33,6 @@ export const ClosingProtectionTab = ({
     auditLog: false
   });
   const [addressDrilldownOpen, setAddressDrilldownOpen] = useState(false);
-  
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
     metric: string;
@@ -729,13 +728,7 @@ export const ClosingProtectionTab = ({
             <Separator />
 
             {/* Source Document */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Source Document</span>
-              <Button size="sm" variant="outline" onClick={() => window.open(data.cplDocument.sourceFile, '_blank')}>
-                <FileText className="h-4 w-4 mr-1" />
-                View CPL
-              </Button>
-            </div>
+            
           </CardContent>}
       </Card>
 
@@ -767,15 +760,11 @@ export const ClosingProtectionTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </span>
-                {data.cplDocument.purpose === data.posData.loanPurpose ? (
-                  <Badge variant="success" className="gap-1">
+                {data.cplDocument.purpose === data.posData.loanPurpose ? <Badge variant="success" className="gap-1">
                     <CheckCircle className="h-3 w-3" /> Passed
-                  </Badge>
-                ) : (
-                  <Badge variant="warning" className="gap-1">
+                  </Badge> : <Badge variant="warning" className="gap-1">
                     <AlertTriangle className="h-3 w-3" /> Review
-                  </Badge>
-                )}
+                  </Badge>}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
@@ -822,20 +811,16 @@ export const ClosingProtectionTab = ({
                   </TooltipProvider>
                 </span>
                 {(() => {
-                  const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
-                  const posBorrower = data.posData.borrowerName?.toLowerCase().trim();
-                  const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
-                  const isMatch = cplBorrower === posBorrower && cplBorrower === titleOwner;
-                  return isMatch ? (
-                    <Badge variant="success" className="gap-1">
+              const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
+              const posBorrower = data.posData.borrowerName?.toLowerCase().trim();
+              const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
+              const isMatch = cplBorrower === posBorrower && cplBorrower === titleOwner;
+              return isMatch ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge>
-                  ) : (
-                    <Badge variant="warning" className="gap-1">
+                    </Badge> : <Badge variant="warning" className="gap-1">
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>
-                  );
-                })()}
+                    </Badge>;
+            })()}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-3 gap-6">
