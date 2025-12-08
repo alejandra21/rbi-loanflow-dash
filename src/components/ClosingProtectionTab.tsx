@@ -835,22 +835,10 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.purchaseValidations && <CardContent>
-            <div className="space-y-4 text-sm">
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">CPL Purpose Validation</h4>
-                <p className="text-muted-foreground">Verify CPL Purpose = "Purchase"</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">CPL → Title Alignment</h4>
-                <p className="text-muted-foreground">Cross-validate CPL data against Title Commitment</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Property Address Match</h4>
-                <p className="text-muted-foreground">Verify property address matches across CPL, Appraisal, and Title Commitment</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Loan Amount Verification</h4>
-                <p className="text-muted-foreground">CPL loan amount must be ≥ Title Commitment amount</p>
+            <div className="p-4">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
+                <p className="text-sm font-medium text-foreground">{data.posData.loanPurpose || 'Purchase'}</p>
               </div>
             </div>
           </CardContent>}
@@ -868,22 +856,10 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.refinanceValidations && <CardContent>
-            <div className="space-y-4 text-sm">
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Borrower/Owner Match</h4>
-                <p className="text-muted-foreground">Verify Borrower/Owner matches across CPL, POS, and Title</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">CPL → Title → Loan Docs Alignment</h4>
-                <p className="text-muted-foreground">Cross-validate CPL data against Title Commitment and Loan Documents</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Title Owner Verification</h4>
-                <p className="text-muted-foreground">Confirm title owner matches borrower entity on loan application</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Homestead Exemption Check</h4>
-                <p className="text-muted-foreground">Any homestead exemption requires manual review (RBI does not lend on owner-occupied)</p>
+            <div className="p-4">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
+                <p className="text-sm font-medium text-foreground">{data.posData.loanPurpose || 'Refinance'}</p>
               </div>
             </div>
           </CardContent>}
