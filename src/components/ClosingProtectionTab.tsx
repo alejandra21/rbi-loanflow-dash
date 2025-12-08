@@ -372,157 +372,145 @@ export const ClosingProtectionTab = ({
               )}
             </div>
 
-            {/* CPL Details Grid with Validations */}
-            <div className="grid grid-cols-2 gap-6">
-              {/* 1. Lender Name */}
-              <FieldWithValidation
-                label="Lender Name"
-                value={data.cplDocument.lenderName}
-                validation={lenderValidation}
-                icon={Building}
-                onManualReview={() => openManualReview(
-                  "Lender Name Verification",
-                  expectedLenderName,
-                  data.cplDocument.lenderName,
-                  lenderValidation.errorMessage || "Mismatch"
-                )}
-              />
-
-              {/* 2. Property Address with Drilldown */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> Property Address
-                  </p>
-                  {addressValidation.isValid ? (
-                    <span className="text-xs text-green-600 flex items-center gap-1">
-                      Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                    </span>
-                  ) : (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span 
-                            className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600"
-                            onClick={() => openManualReview(
-                              "Property Address Match",
-                              "See address comparison below",
-                              data.cplDocument.propertyAddress,
-                              addressValidation.errorMessage || "Address mismatch"
-                            )}
-                          >
-                            Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">{addressValidation.errorMessage}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
-                <p className="text-sm font-medium">{data.cplDocument.propertyAddress}</p>
-                <Collapsible open={addressDrilldownOpen} onOpenChange={setAddressDrilldownOpen}>
-                  <CollapsibleTrigger className="text-xs text-primary hover:underline mt-1 flex items-center gap-1">
-                    <ChevronDown className={`h-3 w-3 transition-transform ${addressDrilldownOpen ? '' : '-rotate-90'}`} />
-                    View address comparison
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-2 p-3 bg-muted/30 rounded-lg space-y-2 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Appraisal:</span>
-                      <span>{data.appraisalAddress}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">USPS Normalized:</span>
-                      <span>{data.uspsAddress.standardizedAddress}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Title Commitment:</span>
-                      <span>{data.titleCommitment.propertyAddress}</span>
-                    </div>
-                    <div className="flex justify-between pt-1 border-t">
-                      <span className="text-muted-foreground">USPS Match Score:</span>
-                      <Badge variant={data.uspsAddress.matchScore >= 90 ? 'success' : 'warning'} className="text-xs">
-                        {data.uspsAddress.matchScore}%
-                      </Badge>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-
-              {/* 3. Loan Amount */}
-              <FieldWithValidation
-                label="Loan Amount"
-                value={formatCurrency(data.cplDocument.loanAmount)}
-                validation={loanAmountValidation}
-                icon={DollarSign}
-                onManualReview={() => openManualReview(
-                  "CPL Loan Amount Validation",
-                  `Title Commitment: ${formatCurrency(data.titleCommitment.loanAmount)}`,
-                  formatCurrency(data.cplDocument.loanAmount),
-                  loanAmountValidation.errorMessage || "Amount mismatch"
-                )}
-              />
-
-              {/* Agent Name (display only) */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                  <User className="h-3 w-3" /> Agent Name
-                </p>
-                <p className="text-sm font-medium">{data.cplDocument.agentName}</p>
-              </div>
-
-              {/* Underwriter (display only) */}
+            {/* CPL Basic Details */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Underwriter */}
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Underwriter</p>
                 <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
               </div>
 
-              {/* 4. Effective Date */}
-              <FieldWithValidation
-                label="Effective Date"
-                value={formatDate(data.cplDocument.effectiveDate)}
-                validation={effectiveDateValidation}
-                icon={Calendar}
-                onManualReview={() => openManualReview(
-                  "Effective Date Verification",
-                  `Scheduled Closing: ${formatDate(data.posData.scheduledClosingDate)}`,
-                  formatDate(data.cplDocument.effectiveDate),
-                  effectiveDateValidation.errorMessage || "Date issue"
-                )}
-              />
-
-              {/* 5. CPL Type */}
-              <FieldWithValidation
-                label="CPL Type"
-                value={<Badge variant={data.cplDocument.cplType === 'ALTA' || data.cplDocument.cplType === 'T-50' ? 'default' : 'secondary'}>{data.cplDocument.cplType}</Badge>}
-                validation={cplTypeValidation}
-                onManualReview={() => openManualReview(
-                  "State-Specific CPL Form Check",
-                  `Expected: ${expectedCPLType} (${data.posData.propertyState})`,
-                  data.cplDocument.cplType,
-                  cplTypeValidation.errorMessage || "Wrong form type"
-                )}
-              />
-
-              {/* Transaction Type (display only) */}
+              {/* Transaction Type */}
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
                 <Badge variant="outline">{data.cplDocument.purpose}</Badge>
               </div>
 
-              {/* 6. Loss Payee */}
-              <FieldWithValidation
-                label="Loss Payee"
-                value={data.cplDocument.lossPayee}
-                validation={lossPayeeValidation}
-                onManualReview={() => openManualReview(
-                  "Loss Payee Validation",
-                  `Expected: ${expectedLossPayee}`,
-                  data.cplDocument.lossPayee,
-                  lossPayeeValidation.errorMessage || "Loss payee mismatch"
-                )}
-              />
+              {/* Effective Date */}
+              <div>
+                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                  <Calendar className="h-3 w-3" /> Effective Date
+                </p>
+                <p className="text-sm font-medium">{formatDate(data.cplDocument.effectiveDate)}</p>
+              </div>
+
+              {/* Property Address */}
+              <div>
+                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                  <MapPin className="h-3 w-3" /> Property Address
+                </p>
+                <p className="text-sm font-medium">{data.cplDocument.propertyAddress}</p>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Validation Cards */}
+            <div className="space-y-4">
+              {/* Lender Name Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Lender Name</span>
+                  {lenderValidation.isValid ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="warning" 
+                      className="gap-1 cursor-pointer hover:opacity-80"
+                      onClick={() => openManualReview(
+                        "Lender Name Verification",
+                        expectedLenderName,
+                        data.cplDocument.lenderName,
+                        lenderValidation.errorMessage || "Mismatch"
+                      )}
+                    >
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.lenderName}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Business Rule</p>
+                    <p className="text-sm font-medium">{expectedLenderName}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Loan Amount Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Loan Amount</span>
+                  {loanAmountValidation.isValid ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="warning" 
+                      className="gap-1 cursor-pointer hover:opacity-80"
+                      onClick={() => openManualReview(
+                        "CPL Loan Amount Validation",
+                        formatCurrency(data.posData.loanAmount),
+                        formatCurrency(data.cplDocument.loanAmount),
+                        loanAmountValidation.errorMessage || "Amount mismatch"
+                      )}
+                    >
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{formatCurrency(data.cplDocument.loanAmount)}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">POS Data</p>
+                    <p className="text-sm font-medium">{formatCurrency(data.posData.loanAmount)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Loss Payee Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Loss Payee</span>
+                  {lossPayeeValidation.isValid ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="warning" 
+                      className="gap-1 cursor-pointer hover:opacity-80"
+                      onClick={() => openManualReview(
+                        "Loss Payee Validation",
+                        expectedLossPayee,
+                        data.cplDocument.lossPayee,
+                        lossPayeeValidation.errorMessage || "Loss payee mismatch"
+                      )}
+                    >
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.lossPayee}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Business Rule</p>
+                    <p className="text-sm font-medium">{expectedLossPayee}</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <Separator />
