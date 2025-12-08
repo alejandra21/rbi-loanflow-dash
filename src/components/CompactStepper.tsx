@@ -45,7 +45,7 @@ const getStatusIcon = (status: StepperPhase["status"]) => {
 };
 
 const getStepStyles = (status: StepperPhase["status"], isActive: boolean) => {
-  const baseStyles = "relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 text-xs font-semibold border-2";
+  const baseStyles = "relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 text-xs font-semibold border-2 cursor-pointer";
   
   const statusStyles = {
     passed: "bg-green-500/10 border-green-500 text-green-700 dark:text-green-400",
@@ -56,7 +56,7 @@ const getStepStyles = (status: StepperPhase["status"], isActive: boolean) => {
   };
 
   const activeStyles = isActive ? "ring-2 ring-offset-2 ring-primary/50" : "";
-  const hoverStyles = "hover:scale-105 hover:shadow-sm";
+  const hoverStyles = "hover:scale-110 hover:shadow-md";
 
   return cn(baseStyles, statusStyles[status], activeStyles, hoverStyles);
 };
