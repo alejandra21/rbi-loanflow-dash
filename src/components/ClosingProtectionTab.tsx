@@ -371,7 +371,7 @@ export const ClosingProtectionTab = ({
                   {/* Effective Date */}
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Effective Date</p>
-                    <p className={`text-sm font-medium flex items-center gap-1 ${!effectiveDateValidation.isValid ? 'text-destructive' : 'text-emerald-600'}`}>
+                    <p className="text-sm font-medium flex items-center gap-1 text-foreground">
                       {formatDate(data.cplDocument.effectiveDate)}
                       {effectiveDateValidation.isValid ? <CheckCircle className="h-3 w-3 text-emerald-600" /> : <AlertTriangle className="h-3 w-3 text-destructive" />}
                     </p>
@@ -392,7 +392,7 @@ export const ClosingProtectionTab = ({
                     const closingDate = new Date(data.posData.scheduledClosingDate);
                     const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
                     const isOverThreshold = daysDiff > 60;
-                    return <p className={`text-sm font-medium flex items-center gap-1 ${isOverThreshold ? 'text-destructive' : 'text-emerald-600'}`}>
+                    return <p className="text-sm font-medium flex items-center gap-1 text-foreground">
                               {daysDiff} days
                               {isOverThreshold ? <AlertTriangle className="h-3 w-3 text-destructive" /> : <CheckCircle className="h-3 w-3 text-emerald-600" />}
                             </p>;
