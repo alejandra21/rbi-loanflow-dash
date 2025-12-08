@@ -336,12 +336,45 @@ export const ClosingProtectionTab = ({
                 <Badge variant="outline">{data.cplDocument.purpose}</Badge>
               </div>
 
-              {/* Effective Date */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                  <Calendar className="h-3 w-3" /> Effective Date
+              {/* Effective Date - 4 Column Layout */}
+              <div className="col-span-full border rounded-lg p-4 mt-2">
+                <p className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <Calendar className="h-4 w-4" /> Effective Date Validation
                 </p>
-                <p className="text-sm font-medium">{formatDate(data.cplDocument.effectiveDate)}</p>
+                <div className="grid grid-cols-4 gap-6">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      Effective Date <Info className="h-3 w-3" />
+                    </p>
+                    <p className={`text-sm font-medium flex items-center gap-1 ${!effectiveDateValidation.isValid ? 'text-destructive' : ''}`}>
+                      {formatDate(data.cplDocument.effectiveDate)}
+                      {!effectiveDateValidation.isValid && <AlertTriangle className="h-3 w-3 text-destructive" />}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Date Age</p>
+                    {(() => {
+                      const effectiveDate = new Date(data.cplDocument.effectiveDate);
+                      const closingDate = new Date(data.posData.scheduledClosingDate);
+                      const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
+                      const isOverThreshold = daysDiff > 60;
+                      return (
+                        <p className={`text-sm font-medium flex items-center gap-1 ${isOverThreshold ? 'text-destructive' : ''}`}>
+                          {daysDiff} days
+                          {isOverThreshold && <AlertTriangle className="h-3 w-3 text-destructive" />}
+                        </p>
+                      );
+                    })()}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Days Threshold</p>
+                    <p className="text-sm font-medium">60</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Closing Date</p>
+                    <p className="text-sm font-medium">{formatDate(data.posData.scheduledClosingDate)}</p>
+                  </div>
+                </div>
               </div>
 
             </div>
