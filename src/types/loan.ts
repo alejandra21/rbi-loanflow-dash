@@ -830,7 +830,9 @@ export const mockLoans: LoanApplication[] = [
                         loanPurpose: "Purchase",
                         borrowerName: "Tech Corp Ltd",
                         propertyState: "FL",
-                        loanAmount: 500000
+                        loanAmount: 500000,
+                        buyerName: "Tech Corp Ltd",
+                        sellerName: "Miami Properties LLC"
                     },
                     uspsAddress: {
                         standardizedAddress: "456 INVESTMENT AVE, MIAMI FL 33101",
