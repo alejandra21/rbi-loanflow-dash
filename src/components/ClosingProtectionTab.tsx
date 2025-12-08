@@ -889,10 +889,53 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.refinanceValidations && <CardContent>
-            <div className="p-4">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
-                <p className="text-sm font-medium text-foreground">{data.posData.loanPurpose || 'Refinance'}</p>
+            {/* Borrower/Owner Validation */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  Borrower/Owner Match
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">Borrower/Owner in CPL must match POS Borrower & Title Vested Owner</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                {(() => {
+                  const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
+                  const posBorrower = data.posData.borrowerName?.toLowerCase().trim();
+                  const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
+                  const isMatch = cplBorrower === posBorrower && cplBorrower === titleOwner;
+                  return isMatch ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" className="gap-1">
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  );
+                })()}
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-3 gap-6">
+                  <div className="border-r pr-6">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Borrower</p>
+                    <p className="text-sm font-medium text-foreground">{data.cplDocument.borrowerName}</p>
+                  </div>
+                  <div className="border-r pr-6">
+                    <p className="text-xs text-muted-foreground mb-1">POS Borrower</p>
+                    <p className="text-sm font-medium text-foreground">{data.posData.borrowerName}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Title Vested Owner</p>
+                    <p className="text-sm font-medium text-foreground">{data.titleCommitment.vestedOwner}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>}
