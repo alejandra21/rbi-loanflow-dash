@@ -306,9 +306,11 @@ export const LoanDetail = () => {
     const handlePhaseClick = (phaseId: string) => {
       setActiveTab(phaseId);
     };
+    const activeTaskCount = backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length;
+    
     return <div className="mb-6 grid grid-cols-3 gap-6">
-        <div className="col-span-2">
-          <Card>
+        <div className="col-span-2 flex">
+          <Card className="flex-1 flex flex-col">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between">
                 <span>Processing Timeline</span>
@@ -322,45 +324,43 @@ export const LoanDetail = () => {
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="justify-center flex flex-row my-[10px]">
-                <CompactStepper phases={stepperPhases} onPhaseClick={handlePhaseClick} activePhaseId={activeTab} />
-              </div>
-              <div className="pt-3 border-t flex justify-center">
-                <Button variant="outline" size="sm" className="relative gap-2" onClick={() => setBackgroundTasksOpen(true)}>
-                  <Activity className="h-4 w-4" />
-                  Background Tasks
-                  {backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
-                      <span className="inline-flex h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
-                        {backgroundTasks.filter(t => t.status === "running").length + backgroundTasks.filter(t => t.status === "queued").length}
-                      </span>
-                    </span>}
-                </Button>
-              </div>
+            <CardContent className="flex-1 flex items-center justify-center">
+              <CompactStepper phases={stepperPhases} onPhaseClick={handlePhaseClick} activePhaseId={activeTab} />
             </CardContent>
           </Card>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex">
           {/* Actions Card */}
-          <Card>
+          <Card className="flex-1 flex flex-col">
             <CardHeader>
               <CardTitle className="text-base flex items-center">
                 <Settings className="h-4 w-4 mr-2" />
                 Actions
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-
-              {/* Action Buttons */}
-              <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => handlePollingAction("workflow")} disabled={loadingAction !== null}>
-                {loadingAction === "workflow" ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
-                {loadingAction === "workflow" ? "Starting..." : "Re-execute Workflow"}
-              </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => handlePollingAction("phase")} disabled={loadingAction !== null}>
-                {loadingAction === "phase" ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
-                {loadingAction === "phase" ? "Starting..." : "Re-execute Current Phase"}
-              </Button>
+            <CardContent className="flex-1 flex flex-col justify-between space-y-3">
+              <div className="space-y-3">
+                <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => handlePollingAction("workflow")} disabled={loadingAction !== null}>
+                  {loadingAction === "workflow" ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
+                  {loadingAction === "workflow" ? "Starting..." : "Re-execute Workflow"}
+                </Button>
+                <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => handlePollingAction("phase")} disabled={loadingAction !== null}>
+                  {loadingAction === "phase" ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
+                  {loadingAction === "phase" ? "Starting..." : "Re-execute Current Phase"}
+                </Button>
+              </div>
+              <div className="pt-3 border-t">
+                <Button variant="outline" className="w-full justify-start relative" size="sm" onClick={() => setBackgroundTasksOpen(true)}>
+                  <Activity className="h-4 w-4 mr-2" />
+                  Background Tasks
+                  {activeTaskCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
+                      <span className="inline-flex h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
+                        {activeTaskCount}
+                      </span>
+                    </span>}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
