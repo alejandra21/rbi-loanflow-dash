@@ -32,6 +32,8 @@ export interface POSData {
   borrowerName: string;
   propertyState: string;
   loanAmount: number;
+  buyerName?: string;
+  sellerName?: string;
 }
 
 export interface USPSNormalizedAddress {
