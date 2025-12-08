@@ -888,37 +888,112 @@ export const ClosingProtectionTab = ({
           </CardContent>}
       </Card>}
 
-      {/* Business Rules Reference */}
+      {/* Logs */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('auditLog')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center">
-              <Info className="h-4 w-4 mr-2" />
-              Business Rules Reference
+              <FileText className="h-4 w-4 mr-2" />
+              Logs
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.auditLog ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
         {expandedCards.auditLog && <CardContent>
-            <div className="space-y-4 text-sm">
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Lender Name Requirements</h4>
-                <p className="text-muted-foreground">Standard: "RBI Private Lending, LLC ISAOA/ATIMA"</p>
-                <p className="text-muted-foreground">Texas Exception: "RBI Private Lending, LLC"</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">CPL Form Types</h4>
-                <p className="text-muted-foreground">Texas: T-50 form required</p>
-                <p className="text-muted-foreground">All other states: ALTA form required</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Effective Date Rule</h4>
-                <p className="text-muted-foreground">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <h4 className="font-semibold mb-2">Loan Amount Rule</h4>
-                <p className="text-muted-foreground">CPL loan amount must be ≥ Title Commitment loan amount</p>
-              </div>
+            <div className="space-y-3">
+              {/* Log Entry */}
+              <Collapsible>
+                <CollapsibleTrigger className="w-full">
+                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="outline" className="text-xs">cpl_validation</Badge>
+                      <span className="text-sm font-medium">CPL Document Validation</span>
+                      <span className="text-xs text-muted-foreground">2025-11-10 14:30:45</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="px-4 py-3 border border-t-0 rounded-b-lg space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Action:</p>
+                        <p className="text-sm font-medium">CPL Document Validated</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">User:</p>
+                        <p className="text-sm font-medium">System</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Status:</p>
+                        <p className="text-sm font-medium">completed</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Exception Tag:</p>
+                        <p className="text-sm font-medium">closing_protection</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">JSON Data:</p>
+                      <pre className="text-xs bg-muted/50 p-3 rounded-md overflow-x-auto">
+{`{
+  "document_type": "CPL",
+  "underwriter": "${data.cplDocument.underwriter}",
+  "cpl_type": "${data.cplDocument.cplType}",
+  "validation_result": "pass"
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Log Entry 2 */}
+              <Collapsible>
+                <CollapsibleTrigger className="w-full">
+                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="outline" className="text-xs">cross_reference</Badge>
+                      <span className="text-sm font-medium">Cross Reference Check</span>
+                      <span className="text-xs text-muted-foreground">2025-11-10 14:30:42</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="px-4 py-3 border border-t-0 rounded-b-lg space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Action:</p>
+                        <p className="text-sm font-medium">Cross Reference Completed</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">User:</p>
+                        <p className="text-sm font-medium">System</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Status:</p>
+                        <p className="text-sm font-medium">completed</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Exception Tag:</p>
+                        <p className="text-sm font-medium">closing_protection</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">JSON Data:</p>
+                      <pre className="text-xs bg-muted/50 p-3 rounded-md overflow-x-auto">
+{`{
+  "checks_performed": 6,
+  "passed": 5,
+  "warnings": 1,
+  "failed": 0
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </div>
           </CardContent>}
       </Card>
