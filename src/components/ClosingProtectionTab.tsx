@@ -313,25 +313,24 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.cplDocument && <CardContent className="space-y-6">
-            {/* Download CPL Button */}
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Download CPL
-            </Button>
+            {/* Download CPL Button and Transaction Type */}
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Download CPL
+              </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Transaction Type:</span>
+                <Badge variant="secondary" className="text-sm font-medium">Purchase</Badge>
+              </div>
+            </div>
 
-            {/* OCR Status */}
-            
 
             {/* CPL Basic Details */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Underwriter */}
               
 
-              {/* Transaction Type */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
-                <Badge variant="outline">{data.cplDocument.purpose}</Badge>
-              </div>
 
               {/* Effective Date - 4 Column Layout */}
               <div className="col-span-full border rounded-lg p-4 mt-2">
