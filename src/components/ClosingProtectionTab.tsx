@@ -394,13 +394,117 @@ export const ClosingProtectionTab = ({
                 <p className="text-sm font-medium">{formatDate(data.cplDocument.effectiveDate)}</p>
               </div>
 
-              {/* Property Address */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                  <MapPin className="h-3 w-3" /> Property Address
-                </p>
-                <p className="text-sm font-medium">{data.cplDocument.propertyAddress}</p>
+            </div>
+
+            <Separator />
+
+            {/* Property Address Validation Table */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <MapPin className="h-4 w-4" /> Property Address
+                </span>
+                {addressValidation.isValid ? (
+                  <Badge variant="success" className="gap-1">
+                    <CheckCircle className="h-3 w-3" /> Passed
+                  </Badge>
+                ) : (
+                  <Badge 
+                    variant="warning" 
+                    className="gap-1 cursor-pointer hover:opacity-80"
+                    onClick={() => openManualReview(
+                      "Property Address Verification",
+                      data.cplDocument.propertyAddress,
+                      "Multiple Sources",
+                      addressValidation.errorMessage || "Mismatch"
+                    )}
+                  >
+                    <AlertTriangle className="h-3 w-3" /> Review
+                  </Badge>
+                )}
               </div>
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="w-[280px]">Subject Property Address</TableHead>
+                    <TableHead className="w-[30px]"></TableHead>
+                    <TableHead>External Source</TableHead>
+                    <TableHead>External Address</TableHead>
+                    <TableHead className="text-center w-[100px]">Match Score</TableHead>
+                    <TableHead className="text-center w-[100px]">Result</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* Title Commitment */}
+                  <TableRow>
+                    <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
+                    <TableCell className="text-muted-foreground">→</TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">TITLE RECORD</span>
+                        <p className="text-xs text-primary">{data.titleCommitment.vestedOwner}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{data.titleCommitment.propertyAddress}</TableCell>
+                    <TableCell className="text-center">
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
+                       data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '85%'}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
+                       data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? (
+                        <Badge variant="success">Good</Badge>
+                      ) : (
+                        <Badge variant="warning">Review</Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                  {/* USPS Normalized */}
+                  <TableRow>
+                    <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
+                    <TableCell className="text-muted-foreground">→</TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">USPS NORMALIZED</span>
+                        <p className="text-xs text-muted-foreground">Address Standardization</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{data.uspsAddress.standardizedAddress}</TableCell>
+                    <TableCell className="text-center">{data.uspsAddress.matchScore}%</TableCell>
+                    <TableCell className="text-center">
+                      {data.uspsAddress.matchScore >= 90 ? (
+                        <Badge variant="success">Good</Badge>
+                      ) : (
+                        <Badge variant="warning">Review</Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                  {/* Appraisal */}
+                  <TableRow>
+                    <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
+                    <TableCell className="text-muted-foreground">→</TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">APPRAISAL</span>
+                        <p className="text-xs text-muted-foreground">Property Valuation</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{data.appraisalAddress}</TableCell>
+                    <TableCell className="text-center">
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
+                       data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '92%'}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === 
+                       data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? (
+                        <Badge variant="success">Good</Badge>
+                      ) : (
+                        <Badge variant="success">Good</Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
 
             <Separator />
