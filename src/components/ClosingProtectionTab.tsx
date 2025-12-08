@@ -388,7 +388,7 @@ export const ClosingProtectionTab = ({
                       {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '85%'}
                     </TableCell>
                     <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Good</Badge> : <Badge variant="warning">Review</Badge>}
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Passed</Badge> : <Badge variant="warning">Review</Badge>}
                     </TableCell>
                   </TableRow>
                   {/* USPS Normalized */}
@@ -404,7 +404,7 @@ export const ClosingProtectionTab = ({
                     <TableCell>{data.uspsAddress.standardizedAddress}</TableCell>
                     <TableCell className="text-center">{data.uspsAddress.matchScore}%</TableCell>
                     <TableCell className="text-center">
-                      {data.uspsAddress.matchScore >= 90 ? <Badge variant="success">Good</Badge> : <Badge variant="warning">Review</Badge>}
+                      {data.uspsAddress.matchScore >= 90 ? <Badge variant="success">Passed</Badge> : <Badge variant="warning">Review</Badge>}
                     </TableCell>
                   </TableRow>
                   {/* Appraisal */}
@@ -422,7 +422,7 @@ export const ClosingProtectionTab = ({
                       {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '92%'}
                     </TableCell>
                     <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Good</Badge> : <Badge variant="success">Good</Badge>}
+                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Passed</Badge> : <Badge variant="success">Passed</Badge>}
                     </TableCell>
                   </TableRow>
                 </TableBody>
