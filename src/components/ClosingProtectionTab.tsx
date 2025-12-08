@@ -325,6 +325,17 @@ export const ClosingProtectionTab = ({
               </div>
             </div>
 
+            {/* OCR Extraction Status */}
+            <div className="flex items-center justify-between border rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">OCR Extraction Status</span>
+              </div>
+              <Badge className="bg-emerald-600 hover:bg-emerald-600 text-white">
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Readable
+              </Badge>
+            </div>
 
             {/* CPL Basic Details */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
