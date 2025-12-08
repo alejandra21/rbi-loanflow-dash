@@ -353,7 +353,7 @@ export const LoanDetail = () => {
               <div className="pt-3 border-t">
                 <Button variant="outline" className="w-full justify-start relative" size="sm" onClick={() => setBackgroundTasksOpen(true)}>
                   <Activity className="h-4 w-4 mr-2" />
-                  Background Tasks
+                  Workflow Execution
                   {activeTaskCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center pointer-events-none">
                       <span className="inline-flex h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground items-center justify-center">
                         {activeTaskCount}
