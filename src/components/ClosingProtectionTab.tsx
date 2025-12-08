@@ -313,6 +313,12 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.cplDocument && <CardContent className="space-y-6">
+            {/* Download CPL Button */}
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Download CPL
+            </Button>
+
             {/* OCR Status */}
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
               <div className="flex items-center gap-2">
