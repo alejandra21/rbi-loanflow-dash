@@ -714,7 +714,7 @@ export const ClosingProtectionTab = ({
         {expandedCards.purchaseValidations && <CardContent className="space-y-4">
             {/* Buyer & Seller Names from CPL */}
             <div className="border rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+              <div className="flex items-center px-4 py-3 bg-muted/30">
                 <span className="text-sm font-medium flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Buyer & Seller Names
@@ -729,21 +729,6 @@ export const ClosingProtectionTab = ({
                     </Tooltip>
                   </TooltipProvider>
                 </span>
-                {data.posData.loanPurpose === 'Purchase' ? (
-                  data.cplDocument.buyerName && data.cplDocument.sellerName ? (
-                    <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Available
-                    </Badge>
-                  ) : (
-                    <Badge variant="warning" className="gap-1">
-                      <AlertTriangle className="h-3 w-3" /> Missing
-                    </Badge>
-                  )
-                ) : (
-                  <Badge variant="outline" className="gap-1 text-muted-foreground">
-                    <span className="h-3 w-3">—</span> Not Applicable
-                  </Badge>
-                )}
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
