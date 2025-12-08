@@ -338,169 +338,9 @@ export const ClosingProtectionTab = ({
               </Badge>
             </div>
 
-            {/* CPL Basic Details */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {/* Underwriter */}
-              
-
-
-              {/* Effective Date - 4 Column Layout */}
-              <div className="col-span-full border rounded-lg overflow-hidden mt-2">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium flex items-center gap-2">
-                    <Calendar className="h-4 w-4" /> Effective Date Validation
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="max-w-xs">
-                          <p className="font-medium mb-1">Effective Date Rule:</p>
-                          <p className="text-xs">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </span>
-                  {effectiveDateValidation.isValid ? <Badge variant="success" className="gap-1">
-                      <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1">
-                      <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>}
-                </div>
-                <div className="p-4">
-                  <div className="grid grid-cols-4 gap-6">
-                  {/* Effective Date */}
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Effective Date</p>
-                    <p className="text-sm font-medium flex items-center gap-1 text-foreground">
-                      {formatDate(data.cplDocument.effectiveDate)}
-                      {effectiveDateValidation.isValid ? <CheckCircle className="h-3 w-3 text-emerald-600" /> : <AlertTriangle className="h-3 w-3 text-destructive" />}
-                    </p>
-                  </div>
-                  {/* Closing Date */}
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Closing Date</p>
-                    <p className="text-sm font-medium flex items-center gap-1">
-                      {formatDate(data.posData.scheduledClosingDate)}
-                      
-                    </p>
-                  </div>
-                  {/* Date Age */}
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Date Age</p>
-                    {(() => {
-                    const effectiveDate = new Date(data.cplDocument.effectiveDate);
-                    const closingDate = new Date(data.posData.scheduledClosingDate);
-                    const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
-                    const isOverThreshold = daysDiff > 60;
-                    return <p className="text-sm font-medium flex items-center gap-1 text-foreground">
-                              {daysDiff} days
-                              {isOverThreshold ? <AlertTriangle className="h-3 w-3 text-destructive" /> : <CheckCircle className="h-3 w-3 text-emerald-600" />}
-                            </p>;
-                  })()}
-                  </div>
-                  {/* Days Threshold */}
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Days Threshold</p>
-                    <p className="text-sm font-medium flex items-center gap-1">
-                      60
-                      
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            </div>
-
-            <Separator />
-
-            {/* Property Address Validation Table */}
-            <div className="border rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <MapPin className="h-4 w-4" /> Property Address
-                </span>
-                {addressValidation.isValid ? <Badge variant="success" className="gap-1">
-                    <CheckCircle className="h-3 w-3" /> Passed
-                  </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Property Address Verification", data.cplDocument.propertyAddress, "Multiple Sources", addressValidation.errorMessage || "Mismatch")}>
-                    <AlertTriangle className="h-3 w-3" /> Review
-                  </Badge>}
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/20">
-                    <TableHead className="w-[280px]">Subject Property Address</TableHead>
-                    <TableHead className="w-[30px]"></TableHead>
-                    <TableHead>External Source</TableHead>
-                    <TableHead>External Address</TableHead>
-                    <TableHead className="text-center w-[100px]">Match Score</TableHead>
-                    <TableHead className="text-center w-[100px]">Result</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* Title Commitment */}
-                  <TableRow>
-                    <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
-                    <TableCell className="text-muted-foreground">→</TableCell>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">TITLE COMMITMENT
-                    </span>
-                        <p className="text-xs text-primary">{data.titleCommitment.vestedOwner}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{data.titleCommitment.propertyAddress}</TableCell>
-                    <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '85%'}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Passed</Badge> : <Badge variant="warning">Review</Badge>}
-                    </TableCell>
-                  </TableRow>
-                  {/* USPS Normalized */}
-                  <TableRow>
-                    <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
-                    <TableCell className="text-muted-foreground">→</TableCell>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">USPS NORMALIZED</span>
-                        <p className="text-xs text-muted-foreground">Address Standardization</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{data.uspsAddress.standardizedAddress}</TableCell>
-                    <TableCell className="text-center">{data.uspsAddress.matchScore}%</TableCell>
-                    <TableCell className="text-center">
-                      {data.uspsAddress.matchScore >= 90 ? <Badge variant="success">Passed</Badge> : <Badge variant="warning">Review</Badge>}
-                    </TableCell>
-                  </TableRow>
-                  {/* Appraisal */}
-                  <TableRow>
-                    <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
-                    <TableCell className="text-muted-foreground">→</TableCell>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">APPRAISAL</span>
-                        <p className="text-xs text-muted-foreground">Property Valuation</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{data.appraisalAddress}</TableCell>
-                    <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '92%'}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Passed</Badge> : <Badge variant="success">Passed</Badge>}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-
-            <Separator />
-
-            {/* Validation Cards */}
+            {/* Validation Cards - Ordered: Lender, Property Address, Loan Amount, Effective Date, Underwriter, CPL Form, Loss Payee */}
             <div className="space-y-4">
-              {/* Lender Name Validation Card */}
+              {/* 1. Lender Name Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium flex items-center gap-1">
@@ -537,7 +377,87 @@ export const ClosingProtectionTab = ({
                 </div>
               </div>
 
-              {/* Loan Amount Validation Card */}
+              {/* 2. Property Address Validation Table */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> Property Address
+                  </span>
+                  {addressValidation.isValid ? <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Property Address Verification", data.cplDocument.propertyAddress, "Multiple Sources", addressValidation.errorMessage || "Mismatch")}>
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>}
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/20">
+                      <TableHead className="w-[280px]">Subject Property Address</TableHead>
+                      <TableHead className="w-[30px]"></TableHead>
+                      <TableHead>External Source</TableHead>
+                      <TableHead>External Address</TableHead>
+                      <TableHead className="text-center w-[100px]">Match Score</TableHead>
+                      <TableHead className="text-center w-[100px]">Result</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {/* Title Commitment */}
+                    <TableRow>
+                      <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
+                      <TableCell className="text-muted-foreground">→</TableCell>
+                      <TableCell>
+                        <div>
+                          <span className="font-medium">TITLE COMMITMENT</span>
+                          <p className="text-xs text-primary">{data.titleCommitment.vestedOwner}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{data.titleCommitment.propertyAddress}</TableCell>
+                      <TableCell className="text-center">
+                        {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '85%'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.titleCommitment.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Passed</Badge> : <Badge variant="warning">Review</Badge>}
+                      </TableCell>
+                    </TableRow>
+                    {/* USPS Normalized */}
+                    <TableRow>
+                      <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
+                      <TableCell className="text-muted-foreground">→</TableCell>
+                      <TableCell>
+                        <div>
+                          <span className="font-medium">USPS NORMALIZED</span>
+                          <p className="text-xs text-muted-foreground">Address Standardization</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{data.uspsAddress.standardizedAddress}</TableCell>
+                      <TableCell className="text-center">{data.uspsAddress.matchScore}%</TableCell>
+                      <TableCell className="text-center">
+                        {data.uspsAddress.matchScore >= 90 ? <Badge variant="success">Passed</Badge> : <Badge variant="warning">Review</Badge>}
+                      </TableCell>
+                    </TableRow>
+                    {/* Appraisal */}
+                    <TableRow>
+                      <TableCell className="font-medium text-primary">{data.cplDocument.propertyAddress}</TableCell>
+                      <TableCell className="text-muted-foreground">→</TableCell>
+                      <TableCell>
+                        <div>
+                          <span className="font-medium">APPRAISAL</span>
+                          <p className="text-xs text-muted-foreground">Property Valuation</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{data.appraisalAddress}</TableCell>
+                      <TableCell className="text-center">
+                        {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? '100%' : '92%'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {data.cplDocument.propertyAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() === data.appraisalAddress.toLowerCase().replace(/[,.\s]+/g, ' ').trim() ? <Badge variant="success">Passed</Badge> : <Badge variant="success">Passed</Badge>}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* 3. Loan Amount Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium flex items-center gap-1">
@@ -572,7 +492,66 @@ export const ClosingProtectionTab = ({
                 </div>
               </div>
 
-              {/* Underwriter Validation Card */}
+              {/* 4. Effective Date Validation */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <Calendar className="h-4 w-4" /> Effective Date Validation
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Effective Date Rule:</p>
+                          <p className="text-xs">CPL Effective Date must be ≤ scheduled closing date and within 60 days</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                  {effectiveDateValidation.isValid ? <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge> : <Badge variant="warning" className="gap-1">
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>}
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-4 gap-6">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Effective Date</p>
+                      <p className="text-sm font-medium flex items-center gap-1 text-foreground">
+                        {formatDate(data.cplDocument.effectiveDate)}
+                        {effectiveDateValidation.isValid ? <CheckCircle className="h-3 w-3 text-emerald-600" /> : <AlertTriangle className="h-3 w-3 text-destructive" />}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Closing Date</p>
+                      <p className="text-sm font-medium flex items-center gap-1">
+                        {formatDate(data.posData.scheduledClosingDate)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Date Age</p>
+                      {(() => {
+                        const effectiveDate = new Date(data.cplDocument.effectiveDate);
+                        const closingDate = new Date(data.posData.scheduledClosingDate);
+                        const daysDiff = Math.ceil((closingDate.getTime() - effectiveDate.getTime()) / (1000 * 60 * 60 * 24));
+                        const isOverThreshold = daysDiff > 60;
+                        return <p className="text-sm font-medium flex items-center gap-1 text-foreground">
+                          {daysDiff} days
+                          {isOverThreshold ? <AlertTriangle className="h-3 w-3 text-destructive" /> : <CheckCircle className="h-3 w-3 text-emerald-600" />}
+                        </p>;
+                      })()}
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Days Threshold</p>
+                      <p className="text-sm font-medium flex items-center gap-1">60</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Underwriter Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Underwriter</span>
@@ -594,7 +573,7 @@ export const ClosingProtectionTab = ({
                 </div>
               </div>
 
-              {/* CPL Form Validation Card */}
+              {/* 6. CPL Form Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium flex items-center gap-1">
@@ -631,7 +610,7 @@ export const ClosingProtectionTab = ({
                 </div>
               </div>
 
-              {/* Loss Payee Validation Card */}
+              {/* 7. Loss Payee Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium flex items-center gap-1">
