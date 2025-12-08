@@ -14,6 +14,8 @@ export interface CPLDocument {
   borrowerName: string;
   ocrStatus: 'readable' | 'unreadable' | 'incomplete';
   sourceFile: string;
+  buyerName?: string;
+  sellerName?: string;
 }
 
 export interface TitleCommitment {
