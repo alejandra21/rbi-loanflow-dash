@@ -511,6 +511,76 @@ export const ClosingProtectionTab = ({
                   </div>
                 </div>
               </div>
+
+              {/* Underwriter Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Underwriter</span>
+                  {data.cplDocument.underwriter === data.titleCommitment.underwriter ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="warning" 
+                      className="gap-1 cursor-pointer hover:opacity-80"
+                      onClick={() => openManualReview(
+                        "Underwriter Verification",
+                        data.titleCommitment.underwriter,
+                        data.cplDocument.underwriter,
+                        "Underwriter mismatch between CPL and Title Commitment"
+                      )}
+                    >
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
+                    <p className="text-sm font-medium">{data.titleCommitment.underwriter}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Agent Validation Card */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Agent</span>
+                  {data.cplDocument.agentName === data.titleCommitment.agentName ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="warning" 
+                      className="gap-1 cursor-pointer hover:opacity-80"
+                      onClick={() => openManualReview(
+                        "Agent Verification",
+                        data.titleCommitment.agentName,
+                        data.cplDocument.agentName,
+                        "Agent mismatch between CPL and Title Commitment"
+                      )}
+                    >
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium">{data.cplDocument.agentName}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
+                    <p className="text-sm font-medium">{data.titleCommitment.agentName}</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <Separator />
