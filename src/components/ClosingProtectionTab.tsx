@@ -33,7 +33,7 @@ export const ClosingProtectionTab = ({
     auditLog: false
   });
   const [addressDrilldownOpen, setAddressDrilldownOpen] = useState(false);
-  const [crossmatchDrilldownOpen, setCrossmatchDrilldownOpen] = useState(false);
+  
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
     metric: string;
@@ -690,60 +690,6 @@ export const ClosingProtectionTab = ({
                   </div>
                 </div>
               </div>
-            </div>
-
-            <Separator />
-
-            {/* 7. CPL → Title Commitment Crossmatch */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-semibold flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  CPL → Title Commitment Crossmatch
-                </h4>
-                {titleCrossmatchValidation.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
-                    All Aligned <CheckCircle2 className="h-3.5 w-3.5" />
-                  </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer hover:text-amber-600" onClick={() => openManualReview("CPL → Title Crossmatch", "Title Commitment data", "CPL Document data", titleCrossmatchValidation.errorMessage || "Crossmatch failed")}>
-                    Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                  </span>}
-              </div>
-              <Collapsible open={crossmatchDrilldownOpen} onOpenChange={setCrossmatchDrilldownOpen}>
-                <CollapsibleTrigger className="text-xs text-primary hover:underline flex items-center gap-1">
-                  <ChevronDown className={`h-3 w-3 transition-transform ${crossmatchDrilldownOpen ? '' : '-rotate-90'}`} />
-                  View crossmatch details
-                </CollapsibleTrigger>
-                <CollapsibleContent className="mt-2 p-3 bg-muted/30 rounded-lg space-y-2 text-xs">
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-muted-foreground font-medium">Field</span>
-                    <span className="text-muted-foreground font-medium">CPL</span>
-                    <span className="text-muted-foreground font-medium">Title</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-muted-foreground">Underwriter</span>
-                    <span>{data.cplDocument.underwriter}</span>
-                    <span className="flex items-center gap-1">
-                      {data.titleCommitment.underwriter}
-                      {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <CheckCircle2 className="h-3 w-3 text-green-600" /> : <XCircle className="h-3 w-3 text-destructive" />}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-muted-foreground">Agent</span>
-                    <span>{data.cplDocument.agentName}</span>
-                    <span className="flex items-center gap-1">
-                      {data.titleCommitment.agentName}
-                      {data.cplDocument.agentName === data.titleCommitment.agentName ? <CheckCircle2 className="h-3 w-3 text-green-600" /> : <XCircle className="h-3 w-3 text-destructive" />}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-muted-foreground">Loan Amount</span>
-                    <span>{formatCurrency(data.cplDocument.loanAmount)}</span>
-                    <span className="flex items-center gap-1">
-                      {formatCurrency(data.titleCommitment.loanAmount)}
-                      {data.cplDocument.loanAmount >= data.titleCommitment.loanAmount ? <CheckCircle2 className="h-3 w-3 text-green-600" /> : <XCircle className="h-3 w-3 text-destructive" />}
-                    </span>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
             </div>
 
             <Separator />
