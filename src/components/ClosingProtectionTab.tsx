@@ -694,36 +694,6 @@ export const ClosingProtectionTab = ({
 
             <Separator />
 
-            {/* 8. Purchase Flow Validations */}
-            {purchaseFlow && <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Purchase Transaction Validation
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">CPL Purpose = Purchase</span>
-                    {purchaseFlow.purposeValid.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
-                        Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                      </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer" onClick={() => openManualReview("CPL Purpose Verification", "Purchase", data.cplDocument.purpose, purchaseFlow.purposeValid.errorMessage || "Purpose mismatch")}>
-                        Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                      </span>}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Cross-Document Validation (CPL → Title)</span>
-                    {purchaseFlow.crossDocValid.isValid ? <span className="text-xs text-green-600 flex items-center gap-1">
-                        Valid <CheckCircle2 className="h-3.5 w-3.5" />
-                      </span> : <span className="text-xs text-amber-500 flex items-center gap-1 cursor-pointer" onClick={() => openManualReview("Cross-Document Validation", "Property Address + Underwriter alignment", "See details", purchaseFlow.crossDocValid.errorMessage || "Cross-doc validation failed")}>
-                        Review Required <AlertTriangle className="h-3.5 w-3.5" />
-                      </span>}
-                  </div>
-                  {purchaseFlow.purposeValid.isValid && purchaseFlow.crossDocValid.isValid && <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
-                      <Badge variant="success" className="gap-1">
-                        <CheckCircle className="h-3 w-3" /> Ready for Phase 9
-                      </Badge>
-                    </div>}
-                </div>
-              </div>}
 
             {/* 9. Refinance Flow Validations */}
             {refinanceFlow && <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
