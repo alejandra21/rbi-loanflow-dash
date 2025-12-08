@@ -835,10 +835,43 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.purchaseValidations && <CardContent>
-            <div className="p-4">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Transaction Type</p>
-                <p className="text-sm font-medium text-foreground">{data.posData.loanPurpose || 'Purchase'}</p>
+            {/* Transaction Type Validation */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  Transaction Type
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">CPL Purpose must match POS Loan Purpose for Purchase transactions</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                {data.cplDocument.purpose === data.posData.loanPurpose ? (
+                  <Badge variant="success" className="gap-1">
+                    <CheckCircle className="h-3 w-3" /> Passed
+                  </Badge>
+                ) : (
+                  <Badge variant="warning" className="gap-1">
+                    <AlertTriangle className="h-3 w-3" /> Review
+                  </Badge>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="border-r pr-6">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-sm font-medium text-foreground">{data.cplDocument.purpose}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">POS Value</p>
+                    <p className="text-sm font-medium text-foreground">{data.posData.loanPurpose}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>}
