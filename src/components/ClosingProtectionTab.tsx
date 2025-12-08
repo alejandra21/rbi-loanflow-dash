@@ -28,6 +28,8 @@ export const ClosingProtectionTab = ({
     cplDocument: true,
     crossReference: true,
     validationChecks: true,
+    purchaseValidations: false,
+    refinanceValidations: false,
     auditLog: false
   });
   const [addressDrilldownOpen, setAddressDrilldownOpen] = useState(false);
@@ -817,6 +819,72 @@ export const ClosingProtectionTab = ({
                 <FileText className="h-4 w-4 mr-1" />
                 View CPL
               </Button>
+            </div>
+          </CardContent>}
+      </Card>
+
+      {/* Purchase Validations */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('purchaseValidations')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Purchase Validations
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.purchaseValidations ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.purchaseValidations && <CardContent>
+            <div className="space-y-4 text-sm">
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">CPL Purpose Validation</h4>
+                <p className="text-muted-foreground">Verify CPL Purpose = "Purchase"</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">CPL → Title Alignment</h4>
+                <p className="text-muted-foreground">Cross-validate CPL data against Title Commitment</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">Property Address Match</h4>
+                <p className="text-muted-foreground">Verify property address matches across CPL, Appraisal, and Title Commitment</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">Loan Amount Verification</h4>
+                <p className="text-muted-foreground">CPL loan amount must be ≥ Title Commitment amount</p>
+              </div>
+            </div>
+          </CardContent>}
+      </Card>
+
+      {/* Refinance Validations */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('refinanceValidations')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Refinance Validations
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.refinanceValidations ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.refinanceValidations && <CardContent>
+            <div className="space-y-4 text-sm">
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">Borrower/Owner Match</h4>
+                <p className="text-muted-foreground">Verify Borrower/Owner matches across CPL, POS, and Title</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">CPL → Title → Loan Docs Alignment</h4>
+                <p className="text-muted-foreground">Cross-validate CPL data against Title Commitment and Loan Documents</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">Title Owner Verification</h4>
+                <p className="text-muted-foreground">Confirm title owner matches borrower entity on loan application</p>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-2">Homestead Exemption Check</h4>
+                <p className="text-muted-foreground">Any homestead exemption requires manual review (RBI does not lend on owner-occupied)</p>
+              </div>
             </div>
           </CardContent>}
       </Card>
