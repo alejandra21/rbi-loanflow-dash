@@ -565,7 +565,22 @@ export const ClosingProtectionTab = ({
               {/* Loss Payee Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Loss Payee</span>
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    Loss Payee
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Standard:</p>
+                          <p className="text-xs mb-2">"RBI Private Lending, LLC ISAOA/ATIMA"</p>
+                          <p className="font-medium mb-1">Texas Exception:</p>
+                          <p className="text-xs">"RBI Private Lending, LLC"</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
                   {lossPayeeValidation.isValid ? <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
                     </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Loss Payee Validation", expectedLossPayee, data.cplDocument.lossPayee, lossPayeeValidation.errorMessage || "Loss payee mismatch")}>
