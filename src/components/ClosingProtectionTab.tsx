@@ -503,7 +503,7 @@ export const ClosingProtectionTab = ({
                       <AlertTriangle className="h-3 w-3" /> Review
                     </Badge>}
                 </div>
-                <div className="grid grid-cols-3 divide-x">
+                <div className="grid grid-cols-4 divide-x">
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
                     <p className="text-sm font-medium">{formatCurrency(data.cplDocument.loanAmount)}</p>
@@ -515,6 +515,12 @@ export const ClosingProtectionTab = ({
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">POS Loan Amount</p>
                     <p className="text-sm font-medium">{formatCurrency(data.posData.loanAmount)}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Difference (CPL - Title)</p>
+                    <p className={`text-sm font-medium ${data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? '+' : ''}{formatCurrency(data.cplDocument.loanAmount - data.titleCommitment.loanAmount)}
+                    </p>
                   </div>
                 </div>
               </div>
