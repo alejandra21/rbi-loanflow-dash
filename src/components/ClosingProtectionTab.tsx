@@ -135,10 +135,24 @@ export const ClosingProtectionTab = ({
     };
   };
   const validateLoanAmount = (): FieldValidation => {
-    const isValid = data.cplDocument.loanAmount >= data.titleCommitment.loanAmount;
+    const cplAmount = data.cplDocument.loanAmount;
+    const titleAmount = data.titleCommitment.loanAmount;
+    const posAmount = data.posData.loanAmount;
+    
+    const cplGeTitle = cplAmount >= titleAmount;
+    const posLeCpl = posAmount <= cplAmount;
+    const isValid = cplGeTitle && posLeCpl;
+    
+    let errorMessage: string | undefined;
+    if (!cplGeTitle) {
+      errorMessage = `CPL amount (${formatCurrency(cplAmount)}) < Title (${formatCurrency(titleAmount)})`;
+    } else if (!posLeCpl) {
+      errorMessage = `POS amount (${formatCurrency(posAmount)}) > CPL (${formatCurrency(cplAmount)})`;
+    }
+    
     return {
       isValid,
-      errorMessage: isValid ? undefined : `CPL amount (${formatCurrency(data.cplDocument.loanAmount)}) < Title (${formatCurrency(data.titleCommitment.loanAmount)})`,
+      errorMessage,
       requiresManualReview: !isValid
     };
   };
@@ -476,8 +490,9 @@ export const ClosingProtectionTab = ({
                           <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent side="right" className="max-w-xs">
-                          <p className="font-medium mb-1">Validation Rule:</p>
-                          <p className="text-xs">CPL loan amount must be ≥ Title Commitment loan amount</p>
+                          <p className="font-medium mb-1">Validation Rules:</p>
+                          <p className="text-xs">1. CPL loan amount must be ≥ Title Commitment loan amount</p>
+                          <p className="text-xs">2. POS loan amount must be ≤ CPL loan amount</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -488,13 +503,17 @@ export const ClosingProtectionTab = ({
                       <AlertTriangle className="h-3 w-3" /> Review
                     </Badge>}
                 </div>
-                <div className="grid grid-cols-2 divide-x">
+                <div className="grid grid-cols-3 divide-x">
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
                     <p className="text-sm font-medium">{formatCurrency(data.cplDocument.loanAmount)}</p>
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
+                    <p className="text-sm font-medium">{formatCurrency(data.titleCommitment.loanAmount)}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">POS Loan Amount</p>
                     <p className="text-sm font-medium">{formatCurrency(data.posData.loanAmount)}</p>
                   </div>
                 </div>
