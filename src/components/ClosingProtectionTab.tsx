@@ -510,7 +510,8 @@ export const ClosingProtectionTab = ({
                       <TableHead className="text-xs font-medium text-primary">CPL</TableHead>
                       <TableHead className="text-xs font-medium text-primary">Title Commitment</TableHead>
                       <TableHead className="text-xs font-medium text-primary">POS</TableHead>
-                      <TableHead className="text-xs font-medium text-primary">Difference</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">CPL vs Title</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">POS vs CPL</TableHead>
                       <TableHead className="text-xs font-medium text-primary">Decision</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -521,12 +522,28 @@ export const ClosingProtectionTab = ({
                       <TableCell>{formatCurrency(data.titleCommitment.loanAmount)}</TableCell>
                       <TableCell>{formatCurrency(data.posData.loanAmount)}</TableCell>
                       <TableCell>
-                        <span className={data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? '+' : ''}
-                          {formatCurrency(data.cplDocument.loanAmount - data.titleCommitment.loanAmount)}
-                          {' '}
-                          ({((data.cplDocument.loanAmount - data.titleCommitment.loanAmount) / data.titleCommitment.loanAmount * 100).toFixed(1)}%)
-                        </span>
+                        {(() => {
+                          const diff = data.cplDocument.loanAmount - data.titleCommitment.loanAmount;
+                          const pct = (diff / data.titleCommitment.loanAmount * 100).toFixed(1);
+                          const isValid = diff >= 0;
+                          return (
+                            <span className={isValid ? 'text-green-600' : 'text-red-600'}>
+                              {diff >= 0 ? '+' : ''}{formatCurrency(diff)} ({pct}%)
+                            </span>
+                          );
+                        })()}
+                      </TableCell>
+                      <TableCell>
+                        {(() => {
+                          const diff = data.posData.loanAmount - data.cplDocument.loanAmount;
+                          const pct = (diff / data.cplDocument.loanAmount * 100).toFixed(1);
+                          const isValid = diff <= 0;
+                          return (
+                            <span className={isValid ? 'text-green-600' : 'text-red-600'}>
+                              {diff >= 0 ? '+' : ''}{formatCurrency(diff)} ({pct}%)
+                            </span>
+                          );
+                        })()}
                       </TableCell>
                       <TableCell>
                         {loanAmountValidation.isValid ? (
