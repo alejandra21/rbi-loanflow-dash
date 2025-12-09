@@ -479,11 +479,11 @@ export const ClosingProtectionTab = ({
                 </Table>
               </div>
 
-              {/* 3. Loan Amount Validation Card */}
+              {/* 3. Loan Amount Validation Table */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium flex items-center gap-1">
-                    Loan Amount
+                    Loan Amount Comparison
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -503,26 +503,45 @@ export const ClosingProtectionTab = ({
                       <AlertTriangle className="h-3 w-3" /> Review
                     </Badge>}
                 </div>
-                <div className="grid grid-cols-4 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
-                    <p className="text-sm font-medium">{formatCurrency(data.cplDocument.loanAmount)}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
-                    <p className="text-sm font-medium">{formatCurrency(data.titleCommitment.loanAmount)}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">POS Loan Amount</p>
-                    <p className="text-sm font-medium">{formatCurrency(data.posData.loanAmount)}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Difference (CPL - Title)</p>
-                    <p className={`text-sm font-medium ${data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? '+' : ''}{formatCurrency(data.cplDocument.loanAmount - data.titleCommitment.loanAmount)}
-                    </p>
-                  </div>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/20">
+                      <TableHead className="text-xs font-medium text-primary">Metric</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">CPL</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">Title Commitment</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">POS</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">Difference</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">Decision</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Loan Amount</TableCell>
+                      <TableCell>{formatCurrency(data.cplDocument.loanAmount)}</TableCell>
+                      <TableCell>{formatCurrency(data.titleCommitment.loanAmount)}</TableCell>
+                      <TableCell>{formatCurrency(data.posData.loanAmount)}</TableCell>
+                      <TableCell>
+                        <span className={data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? 'text-green-600' : 'text-red-600'}>
+                          {data.cplDocument.loanAmount - data.titleCommitment.loanAmount >= 0 ? '+' : ''}
+                          {formatCurrency(data.cplDocument.loanAmount - data.titleCommitment.loanAmount)}
+                          {' '}
+                          ({((data.cplDocument.loanAmount - data.titleCommitment.loanAmount) / data.titleCommitment.loanAmount * 100).toFixed(1)}%)
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {loanAmountValidation.isValid ? (
+                          <Badge variant="success" className="gap-1">
+                            <CheckCircle className="h-3 w-3" /> OK
+                          </Badge>
+                        ) : (
+                          <Badge variant="destructive" className="gap-1 cursor-pointer" onClick={() => openManualReview("Loan Amount", formatCurrency(data.posData.loanAmount), formatCurrency(data.cplDocument.loanAmount), loanAmountValidation.errorMessage || "Amount mismatch")}>
+                            <XCircle className="h-3 w-3" /> Manual Review
+                          </Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </div>
 
               {/* 4. Effective Date Validation */}
