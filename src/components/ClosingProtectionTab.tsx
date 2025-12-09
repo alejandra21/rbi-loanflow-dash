@@ -506,19 +506,16 @@ export const ClosingProtectionTab = ({
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/20">
-                      <TableHead className="text-xs font-medium text-primary">Metric</TableHead>
                       <TableHead className="text-xs font-medium text-primary">CPL</TableHead>
                       <TableHead className="text-xs font-medium text-primary">Title Commitment</TableHead>
                       <TableHead className="text-xs font-medium text-primary">POS</TableHead>
                       <TableHead className="text-xs font-medium text-primary">CPL vs Title</TableHead>
-                      <TableHead className="text-xs font-medium text-primary">POS vs CPL</TableHead>
-                      <TableHead className="text-xs font-medium text-primary">Decision</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">CPL vs POS</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
-                      <TableCell className="font-medium">Loan Amount</TableCell>
-                      <TableCell>{formatCurrency(data.cplDocument.loanAmount)}</TableCell>
+                      <TableCell className="font-medium">{formatCurrency(data.cplDocument.loanAmount)}</TableCell>
                       <TableCell>{formatCurrency(data.titleCommitment.loanAmount)}</TableCell>
                       <TableCell>{formatCurrency(data.posData.loanAmount)}</TableCell>
                       <TableCell>
@@ -535,26 +532,15 @@ export const ClosingProtectionTab = ({
                       </TableCell>
                       <TableCell>
                         {(() => {
-                          const diff = data.posData.loanAmount - data.cplDocument.loanAmount;
-                          const pct = (diff / data.cplDocument.loanAmount * 100).toFixed(1);
-                          const isValid = diff <= 0;
+                          const diff = data.cplDocument.loanAmount - data.posData.loanAmount;
+                          const pct = (diff / data.posData.loanAmount * 100).toFixed(1);
+                          const isValid = diff >= 0;
                           return (
                             <span className={isValid ? 'text-green-600' : 'text-red-600'}>
                               {diff >= 0 ? '+' : ''}{formatCurrency(diff)} ({pct}%)
                             </span>
                           );
                         })()}
-                      </TableCell>
-                      <TableCell>
-                        {loanAmountValidation.isValid ? (
-                          <Badge variant="success" className="gap-1">
-                            <CheckCircle className="h-3 w-3" /> OK
-                          </Badge>
-                        ) : (
-                          <Badge variant="destructive" className="gap-1 cursor-pointer" onClick={() => openManualReview("Loan Amount", formatCurrency(data.posData.loanAmount), formatCurrency(data.cplDocument.loanAmount), loanAmountValidation.errorMessage || "Amount mismatch")}>
-                            <XCircle className="h-3 w-3" /> Manual Review
-                          </Badge>
-                        )}
                       </TableCell>
                     </TableRow>
                   </TableBody>
