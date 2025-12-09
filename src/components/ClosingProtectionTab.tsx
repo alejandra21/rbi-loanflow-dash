@@ -871,19 +871,19 @@ export const ClosingProtectionTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.refinanceValidations && <CardContent className="space-y-4">
-            {/* Borrower Match: CPL vs POS */}
+            {/* Borrower Match: CPL vs POS vs Vested Owner */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                 <span className="text-sm font-medium flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  CPL Borrower vs POS Borrower
+                  Borrower Name Match
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
                         <Info className="h-3.5 w-3.5 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p className="text-xs">Borrower in CPL must match Borrower in POS</p>
+                        <p className="text-xs">CPL Borrower must match POS Borrower and Title Vested Owner</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -892,10 +892,11 @@ export const ClosingProtectionTab = ({
                   (() => {
                     const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
                     const posBorrower = data.posData.borrowerName?.toLowerCase().trim();
-                    const isMatch = cplBorrower === posBorrower;
-                    return isMatch ? <Badge variant="success" className="gap-1">
+                    const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
+                    const allMatch = cplBorrower === posBorrower && cplBorrower === titleOwner;
+                    return allMatch ? <Badge variant="success" className="gap-1">
                         <CheckCircle className="h-3 w-3" /> Passed
-                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower Match (CPL vs POS)", data.posData.borrowerName, data.cplDocument.borrowerName, "Borrower mismatch between CPL and POS")}>
+                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower Name Match", `POS: ${data.posData.borrowerName}, Title: ${data.titleCommitment.vestedOwner}`, data.cplDocument.borrowerName, "Borrower name mismatch between CPL, POS, and Title Vested Owner")}>
                         <AlertTriangle className="h-3 w-3" /> Review
                       </Badge>;
                   })()
@@ -906,60 +907,16 @@ export const ClosingProtectionTab = ({
                 )}
               </div>
               <div className="p-4">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="border-r pr-6">
+                <div className="grid grid-cols-3 divide-x">
+                  <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">CPL Borrower</p>
                     <p className="text-sm font-medium text-foreground">{data.cplDocument.borrowerName}</p>
                   </div>
-                  <div>
+                  <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">POS Borrower</p>
                     <p className="text-sm font-medium text-foreground">{data.posData.borrowerName}</p>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Borrower Match: CPL vs Vested Owner */}
-            <div className="border rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  CPL Borrower vs Vested Owner
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-xs">Borrower in CPL must match Vested Owner in Title Commitment</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </span>
-                {data.posData.loanPurpose === 'Refinance' ? (
-                  (() => {
-                    const cplBorrower = data.cplDocument.borrowerName?.toLowerCase().trim();
-                    const titleOwner = data.titleCommitment.vestedOwner?.toLowerCase().trim();
-                    const isMatch = cplBorrower === titleOwner;
-                    return isMatch ? <Badge variant="success" className="gap-1">
-                        <CheckCircle className="h-3 w-3" /> Passed
-                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Borrower vs Vested Owner", data.titleCommitment.vestedOwner, data.cplDocument.borrowerName, "Borrower mismatch between CPL and Vested Owner")}>
-                        <AlertTriangle className="h-3 w-3" /> Review
-                      </Badge>;
-                  })()
-                ) : (
-                  <Badge variant="outline" className="gap-1 text-muted-foreground">
-                    <span className="h-3 w-3">—</span> Not Applicable
-                  </Badge>
-                )}
-              </div>
-              <div className="p-4">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="border-r pr-6">
-                    <p className="text-xs text-muted-foreground mb-1">CPL Borrower</p>
-                    <p className="text-sm font-medium text-foreground">{data.cplDocument.borrowerName}</p>
-                  </div>
-                  <div>
+                  <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Title Vested Owner</p>
                     <p className="text-sm font-medium text-foreground">{data.titleCommitment.vestedOwner}</p>
                   </div>
