@@ -966,6 +966,102 @@ export const ClosingProtectionTab = ({
                 </div>
               </div>
             </div>
+
+            {/* Address Match: CPL vs Title Commitment */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  CPL Address vs Title Commitment
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">Property address in CPL must match Title Commitment address</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                {data.posData.loanPurpose === 'Refinance' ? (
+                  (() => {
+                    const cplAddress = data.cplDocument.propertyAddress?.toLowerCase().trim();
+                    const titleAddress = data.titleCommitment.propertyAddress?.toLowerCase().trim();
+                    const isMatch = cplAddress === titleAddress;
+                    return isMatch ? <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Passed
+                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Address Match (CPL vs Title)", data.titleCommitment.propertyAddress, data.cplDocument.propertyAddress, "Address mismatch between CPL and Title Commitment")}>
+                        <AlertTriangle className="h-3 w-3" /> Review
+                      </Badge>;
+                  })()
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="border-r pr-6">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Property Address</p>
+                    <p className="text-sm font-medium text-foreground">{data.cplDocument.propertyAddress}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment Address</p>
+                    <p className="text-sm font-medium text-foreground">{data.titleCommitment.propertyAddress}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Underwriter Match: CPL vs Title Commitment */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <Building className="h-4 w-4" />
+                  CPL Underwriter vs Title Commitment
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-xs">Underwriter in CPL must match Title Commitment underwriter</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                {data.posData.loanPurpose === 'Refinance' ? (
+                  (() => {
+                    const cplUnderwriter = data.cplDocument.underwriter?.toLowerCase().trim();
+                    const titleUnderwriter = data.titleCommitment.underwriter?.toLowerCase().trim();
+                    const isMatch = cplUnderwriter === titleUnderwriter;
+                    return isMatch ? <Badge variant="success" className="gap-1">
+                        <CheckCircle className="h-3 w-3" /> Passed
+                      </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Match (CPL vs Title)", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
+                        <AlertTriangle className="h-3 w-3" /> Review
+                      </Badge>;
+                  })()
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <span className="h-3 w-3">—</span> Not Applicable
+                  </Badge>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="border-r pr-6">
+                    <p className="text-xs text-muted-foreground mb-1">CPL Underwriter</p>
+                    <p className="text-sm font-medium text-foreground">{data.cplDocument.underwriter}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment Underwriter</p>
+                    <p className="text-sm font-medium text-foreground">{data.titleCommitment.underwriter}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </CardContent>}
       </Card>
 
