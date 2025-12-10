@@ -547,7 +547,62 @@ export const ClosingProtectionTab = ({
                 </Table>
               </div>
 
-              {/* 4. Effective Date Validation */}
+              {/* 4. Transaction Type Validation */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    Transaction Type Validation
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Validation Rule:</p>
+                          <p className="text-xs">CPL Purpose must match POS Loan Purpose (Purchase/Refinance)</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                  {data.cplDocument.purpose === data.posData.loanPurpose ? (
+                    <Badge variant="success" className="gap-1">
+                      <CheckCircle className="h-3 w-3" /> Passed
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Transaction Type", data.posData.loanPurpose, data.cplDocument.purpose, "Transaction type mismatch between POS and CPL")}>
+                      <AlertTriangle className="h-3 w-3" /> Review
+                    </Badge>
+                  )}
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/20">
+                      <TableHead className="text-xs font-medium text-primary">POS</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">CPL</TableHead>
+                      <TableHead className="text-xs font-medium text-primary">Match Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">{data.posData.loanPurpose}</TableCell>
+                      <TableCell>{data.cplDocument.purpose}</TableCell>
+                      <TableCell>
+                        {data.cplDocument.purpose === data.posData.loanPurpose ? (
+                          <span className="text-green-600 flex items-center gap-1">
+                            <CheckCircle className="h-3.5 w-3.5" /> Match
+                          </span>
+                        ) : (
+                          <span className="text-red-600 flex items-center gap-1">
+                            <XCircle className="h-3.5 w-3.5" /> Mismatch
+                          </span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* 5. Effective Date Validation */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium flex items-center gap-2">
