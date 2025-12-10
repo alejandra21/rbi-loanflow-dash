@@ -111,6 +111,20 @@ export const ClosingProtectionTab = ({
   const expectedLenderName = isTexas ? "RBI Private Lending, LLC" : "RBI Private Lending, LLC ISAOA/ATIMA";
   const expectedLossPayee = isTexas ? "RBI Private Lending, LLC" : "RBI Private Lending, LLC ISAOA/ATIMA";
   const expectedCPLType = isTexas ? "T-50" : "ALTA";
+  
+  // RBI Approved Underwriter List
+  const approvedUnderwriters = [
+    "First American Title",
+    "Fidelity National Title",
+    "Old Republic Title",
+    "Chicago Title",
+    "Stewart Title",
+    "WFG National Title",
+    "Westcor Land Title",
+    "North American Title",
+    "Commonwealth Land Title",
+    "Attorneys Title"
+  ];
   const validateLenderName = (): FieldValidation => {
     const isValid = data.cplDocument.lenderName === expectedLenderName;
     return {
@@ -664,21 +678,48 @@ export const ClosingProtectionTab = ({
               {/* 5. Underwriter Validation Card */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Underwriter</span>
-                  {data.cplDocument.underwriter === data.titleCommitment.underwriter ? <Badge variant="success" className="gap-1">
+                  <span className="text-sm font-medium flex items-center gap-1">
+                    Underwriter
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="font-medium mb-1">Validation Rule:</p>
+                          <p className="text-xs">CPL Underwriter must be on RBI approved underwriter list</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                  {approvedUnderwriters.includes(data.cplDocument.underwriter) ? (
+                    <Badge variant="success" className="gap-1">
                       <CheckCircle className="h-3 w-3" /> Passed
-                    </Badge> : <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Verification", data.titleCommitment.underwriter, data.cplDocument.underwriter, "Underwriter mismatch between CPL and Title Commitment")}>
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" className="gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview("Underwriter Verification", "RBI Approved List", data.cplDocument.underwriter, "CPL underwriter not on RBI approved underwriter list")}>
                       <AlertTriangle className="h-3 w-3" /> Review
-                    </Badge>}
+                    </Badge>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 divide-x">
                   <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">CPL Extracted</p>
+                    <p className="text-xs text-muted-foreground mb-1">CPL Underwriter</p>
                     <p className="text-sm font-medium">{data.cplDocument.underwriter}</p>
                   </div>
                   <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title Commitment</p>
-                    <p className="text-sm font-medium">{data.titleCommitment.underwriter}</p>
+                    <p className="text-xs text-muted-foreground mb-1">Approved List Status</p>
+                    <p className={`text-sm font-medium flex items-center gap-1.5 ${approvedUnderwriters.includes(data.cplDocument.underwriter) ? 'text-green-600' : 'text-amber-600'}`}>
+                      {approvedUnderwriters.includes(data.cplDocument.underwriter) ? (
+                        <>
+                          <CheckCircle className="h-3.5 w-3.5" /> On Approved List
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-3.5 w-3.5" /> Not on Approved List
+                        </>
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
