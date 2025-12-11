@@ -737,16 +737,35 @@ export const TitleInsuranceTab = ({
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.affiliatedEntities ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.affiliatedEntities && <CardContent className="space-y-4">
-            {/* Entity Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {renderEntityCard(data.affiliatedEntities.vestedOwner, 'Vested Owner (Title)')}
-              {data.affiliatedEntities.assignor && renderEntityCard(data.affiliatedEntities.assignor, 'Assignor (Title)')}
-              {data.affiliatedEntities.seller && renderEntityCard(data.affiliatedEntities.seller, 'Seller (Contract)')}
-              {renderEntityCard(data.affiliatedEntities.borrower, 'Borrower (POS)')}
-              {data.affiliatedEntities.guarantors.map((g, i) => renderEntityCard(g, `Guarantor ${i + 1}`))}
-              {data.affiliatedEntities.lienholderParties.map((l, i) => renderEntityCard(l, `Lienholder ${i + 1} (Title)`))}
+        {expandedCards.affiliatedEntities && <CardContent className="space-y-6">
+            {/* Title Commitment Subsection */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium text-primary border border-dashed border-primary/40 rounded px-2 py-1 w-fit">Title Commitment</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {renderEntityCard(data.affiliatedEntities.vestedOwner, 'Vested Owner')}
+                {data.affiliatedEntities.assignor && renderEntityCard(data.affiliatedEntities.assignor, 'Assignor')}
+                {data.affiliatedEntities.lienholderParties.map((l, i) => renderEntityCard(l, `Lienholder ${i + 1}`))}
+              </div>
             </div>
+
+            {/* POS Subsection */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium text-primary border border-dashed border-primary/40 rounded px-2 py-1 w-fit">POS</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {renderEntityCard(data.affiliatedEntities.borrower, 'Borrower')}
+                {data.affiliatedEntities.guarantors.map((g, i) => renderEntityCard(g, `Guarantor ${i + 1}`))}
+              </div>
+            </div>
+
+            {/* Contract Subsection */}
+            {data.affiliatedEntities.seller && (
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium text-primary border border-dashed border-primary/40 rounded px-2 py-1 w-fit">Contract</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {renderEntityCard(data.affiliatedEntities.seller, 'Seller')}
+                </div>
+              </div>
+            )}
 
             <Separator />
 
