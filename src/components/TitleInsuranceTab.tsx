@@ -29,14 +29,15 @@ export const TitleInsuranceTab = ({
   });
   const [expandedLiens, setExpandedLiens] = useState<Record<string, boolean>>({});
   const [expandedLienCategories, setExpandedLienCategories] = useState<Record<string, boolean>>({
-    'Mortgage / Deed of Trust': true,
-    'Judgment': true,
-    'Tax Lien (IRS, State, County)': true,
-    'Tax Certificate': true,
-    'HOA Lien': true,
-    'UCC Filing': true,
-    'Easement': true,
-    'Restriction / CC&Rs': true
+    'Mortgage / Deed of Trust': false,
+    'Judgment': false,
+    'Tax Lien (IRS, State, County)': false,
+    'Tax Certificate': false,
+    'HOA Lien': false,
+    'UCC Filing': false,
+    'Easement': false,
+    'Restrictions / CCRs / Code Enforcement': false,
+    'Claim of Lien': false
   });
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
@@ -96,7 +97,7 @@ export const TitleInsuranceTab = ({
         expectedParty: 'John Doe',
         actualParty: 'John Doe',
         partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'Verify payoff at closing',
+        underwritingActionRequired: 'Verify payoff amount',
         result: 'Manual Review',
         confidenceScore: 94
       },
@@ -111,73 +112,137 @@ export const TitleInsuranceTab = ({
         expectedParty: 'John Doe',
         actualParty: 'John Doe',
         partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'Investigate borrower authority',
+        underwritingActionRequired: 'Verify payoff amount',
         result: 'Manual Review',
         confidenceScore: 92
       },
-      // Easement
-      {
-        id: 'lien-3',
-        scheduleBTitle: 'Utility easement recorded May 22, 2018',
-        scheduleBText: 'Utility easement recorded May 22, 2018, Book 4331, Page 310, granting access rights to Utility Co.',
-        detectedLienType: 'Easement',
-        lienCategory: 'Easement',
-        rbiClassification: 'Non-Financial Restriction',
-        autoTagApplied: 'Passed',
-        expectedParty: 'N/A',
-        actualParty: 'Utility Co.',
-        partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'Standard utility easement',
-        result: 'Passed',
-        confidenceScore: 98
-      },
       // Judgment
       {
-        id: 'lien-4',
-        scheduleBTitle: 'Mechanics Lien filed by XYZ Construction',
-        scheduleBText: 'Claim of Lien filed by XYZ Construction LLC on March 1, 2025 for unpaid improvements, recorded Book 5781, Page 922.',
-        detectedLienType: 'Construction Lien',
+        id: 'lien-3',
+        scheduleBTitle: 'Judgment Lien - Case #2024-CV-1234',
+        scheduleBText: 'Judgment Lien recorded February 10, 2024, Book 5501, Page 312, creditor ABC Collections vs John Doe.',
+        detectedLienType: 'Judgment',
         lienCategory: 'Judgment',
-        rbiClassification: 'Involuntary Lien',
+        rbiClassification: 'Involuntary Financial Lien',
         autoTagApplied: 'Review',
         expectedParty: 'John Doe',
-        actualParty: 'XYZ Construction LLC',
-        partyMatchResult: 'Unexpected Party',
-        underwritingActionRequired: 'Manual review required',
+        actualParty: 'ABC Collections',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Obtain proof of non-attachment OR payoff/release',
         result: 'Manual Review',
-        confidenceScore: 87
+        confidenceScore: 91
       },
-      // Tax Lien
+      // Tax Lien (IRS, State, County)
       {
-        id: 'lien-5',
+        id: 'lien-4',
         scheduleBTitle: 'IRS Tax Lien recorded December 5, 2023',
         scheduleBText: 'Federal Tax Lien recorded December 5, 2023, Book 5601, Page 245, for unpaid taxes in the amount of $15,432.',
         detectedLienType: 'Tax Lien',
         lienCategory: 'Tax Lien (IRS, State, County)',
-        rbiClassification: 'Government Lien',
+        rbiClassification: 'Super-Priority Lien',
         autoTagApplied: 'Review',
         expectedParty: 'John Doe',
         actualParty: 'Internal Revenue Service',
         partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'Require payoff statement',
+        underwritingActionRequired: 'Require full resolution/payoff before closing',
         result: 'Manual Review',
         confidenceScore: 95
       },
-      // Restriction / CC&Rs
+      // Tax Certificate
+      {
+        id: 'lien-5',
+        scheduleBTitle: 'Tax Certificate #TC-2023-5678',
+        scheduleBText: 'Tax Certificate recorded July 15, 2023, Book 5320, Page 89, for delinquent property taxes.',
+        detectedLienType: 'Tax Certificate',
+        lienCategory: 'Tax Certificate',
+        rbiClassification: 'Priority Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'Property Owner',
+        actualParty: 'County Tax Collector',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Require full resolution/payoff before or at closing',
+        result: 'Manual Review',
+        confidenceScore: 93
+      },
+      // HOA Lien
       {
         id: 'lien-6',
+        scheduleBTitle: 'HOA Assessment Lien recorded March 2024',
+        scheduleBText: 'HOA Assessment Lien recorded March 18, 2024, Book 5580, Page 201, for past due assessments totaling $2,450.',
+        detectedLienType: 'HOA Lien',
+        lienCategory: 'HOA Lien',
+        rbiClassification: 'Statutory Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'Sunset Hills HOA',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Obtain dues letter + confirm no super-priority exposure',
+        result: 'Manual Review',
+        confidenceScore: 94
+      },
+      // UCC Filing
+      {
+        id: 'lien-7',
+        scheduleBTitle: 'UCC-1 Financing Statement',
+        scheduleBText: 'UCC-1 Financing Statement filed April 5, 2022, File #2022-1234567, secured party Equipment Finance Co.',
+        detectedLienType: 'UCC',
+        lienCategory: 'UCC Filing',
+        rbiClassification: 'Fixture or Personal Property Encumbrance',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'Equipment Finance Co.',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Determine if fixture; obtain termination if fixture',
+        result: 'Manual Review',
+        confidenceScore: 88
+      },
+      // Easement
+      {
+        id: 'lien-8',
+        scheduleBTitle: 'Utility easement recorded May 22, 2018',
+        scheduleBText: 'Utility easement recorded May 22, 2018, Book 4331, Page 310, granting access rights to Utility Co.',
+        detectedLienType: 'Easement',
+        lienCategory: 'Easement',
+        rbiClassification: 'Non-Financial Property Right',
+        autoTagApplied: 'Passed',
+        expectedParty: 'N/A',
+        actualParty: 'Utility Co.',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Confirm no impact on rehab, access, or construction',
+        result: 'Passed',
+        confidenceScore: 98
+      },
+      // Restrictions / CCRs / Code Enforcement
+      {
+        id: 'lien-9',
         scheduleBTitle: 'CC&Rs recorded September 12, 2010',
         scheduleBText: 'Declaration of Covenants, Conditions, and Restrictions recorded September 12, 2010, Book 3892, Page 501.',
         detectedLienType: 'Restriction',
-        lienCategory: 'Restriction / CC&Rs',
-        rbiClassification: 'Non-Financial Restriction',
+        lienCategory: 'Restrictions / CCRs / Code Enforcement',
+        rbiClassification: 'Use Restrictions / Non-Financial',
         autoTagApplied: 'Passed',
         expectedParty: 'N/A',
         actualParty: 'Homeowners Association',
         partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'Standard CC&Rs review',
+        underwritingActionRequired: 'Verify no conflict with zoning, STR rules, or planned use',
         result: 'Passed',
         confidenceScore: 99
+      },
+      // Claim of Lien
+      {
+        id: 'lien-10',
+        scheduleBTitle: 'Mechanics Lien filed by XYZ Construction',
+        scheduleBText: 'Claim of Lien filed by XYZ Construction LLC on March 1, 2025 for unpaid improvements, recorded Book 5781, Page 922.',
+        detectedLienType: 'Claim of Lien',
+        lienCategory: 'Claim of Lien',
+        rbiClassification: 'Financial or Statutory Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'XYZ Construction LLC',
+        partyMatchResult: 'Unexpected Party',
+        underwritingActionRequired: 'Must be satisfied; obtain payoff/release',
+        result: 'Manual Review',
+        confidenceScore: 87
       }
     ],
     affiliatedEntities: {
@@ -495,7 +560,8 @@ export const TitleInsuranceTab = ({
             { category: 'HOA Lien' as LienCategory, icon: Home },
             { category: 'UCC Filing' as LienCategory, icon: ScrollText },
             { category: 'Easement' as LienCategory, icon: MapPin },
-            { category: 'Restriction / CC&Rs' as LienCategory, icon: BookOpen },
+            { category: 'Restrictions / CCRs / Code Enforcement' as LienCategory, icon: BookOpen },
+            { category: 'Claim of Lien' as LienCategory, icon: Ban },
           ]).map(({ category, icon: CategoryIcon }) => {
             const categoryLiens = data.lienItems.filter(l => l.lienCategory === category);
             const hasReviewItems = categoryLiens.some(l => l.result === 'Manual Review');
