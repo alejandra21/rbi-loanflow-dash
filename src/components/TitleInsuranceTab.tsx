@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, Link2, Users, Scale, FileCheck, History, Square, Check, FileWarning, Landmark, Home, ScrollText, Ban, BookOpen } from "lucide-react";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, ChevronRight, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, Link2, Users, Scale, FileCheck, History, Square, Check, FileWarning, Landmark, Home, ScrollText, Ban, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { TitleInsuranceData, LienItem, ChainOfTitleItem, EntityInfo, AffiliationMatch, LienCategory } from "@/types/titleInsurance";
 import { ManualReviewModal } from "./ManualReviewModal";
@@ -623,55 +623,83 @@ export const TitleInsuranceTab = ({
                         </TableHeader>
                         <TableBody>
                           {categoryLiens.map(lien => (
-                            <TableRow key={lien.id} className="hover:bg-muted/20">
-                              <TableCell className="py-3">
-                                <span className="text-sm">{lien.scheduleBTitle || lien.scheduleBText.substring(0, 50)}</span>
-                              </TableCell>
-                              <TableCell className="py-3">
-                                <Badge variant="outline" className="text-xs font-medium bg-slate-50 text-slate-600 border-slate-200 rounded-full px-3">
-                                  {lien.rbiClassification}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="py-3">
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <span className="text-xs text-muted-foreground truncate block max-w-[180px]">
-                                        {lien.underwritingActionRequired.length > 30 
-                                          ? lien.underwritingActionRequired.substring(0, 30) + '…' 
-                                          : lien.underwritingActionRequired}
-                                      </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p className="text-xs">{lien.underwritingActionRequired}</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              </TableCell>
-                              <TableCell className="py-3 text-right">
-                                {lien.result === 'Passed' && (
-                                  <Badge className="text-xs font-medium gap-1 bg-green-500 hover:bg-green-500 text-white rounded-full px-3">
-                                    <CheckCircle className="h-3 w-3" /> Passed
+                            <>
+                              <TableRow 
+                                key={lien.id} 
+                                className="hover:bg-muted/20 cursor-pointer"
+                                onClick={() => toggleLien(lien.id)}
+                              >
+                                <TableCell className="py-3">
+                                  <div className="flex items-center gap-2">
+                                    {expandedLiens[lien.id] ? (
+                                      <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                    ) : (
+                                      <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                    )}
+                                    <span className="text-sm">{lien.scheduleBTitle || lien.scheduleBText.substring(0, 50)}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-3">
+                                  <Badge variant="outline" className="text-xs font-medium bg-slate-50 text-slate-600 border-slate-200 rounded-full px-3">
+                                    {lien.rbiClassification}
                                   </Badge>
-                                )}
-                                {lien.result === 'Requires Payoff' && (
-                                  <Badge className="text-xs font-medium gap-1 bg-blue-500 hover:bg-blue-500 text-white rounded-full px-3">
-                                    <DollarSign className="h-3 w-3" /> Payoff
-                                  </Badge>
-                                )}
-                                {lien.result === 'Manual Review' && (
-                                  <Badge 
-                                    className="text-xs font-medium gap-1 bg-amber-500 hover:bg-amber-400 text-white rounded-full px-3 cursor-pointer"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired);
-                                    }}
-                                  >
-                                    <AlertTriangle className="h-3 w-3" /> Review
-                                  </Badge>
-                                )}
-                              </TableCell>
-                            </TableRow>
+                                </TableCell>
+                                <TableCell className="py-3">
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span className="text-xs text-muted-foreground truncate block max-w-[180px]">
+                                          {lien.underwritingActionRequired.length > 30 
+                                            ? lien.underwritingActionRequired.substring(0, 30) + '…' 
+                                            : lien.underwritingActionRequired}
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p className="text-xs">{lien.underwritingActionRequired}</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </TableCell>
+                                <TableCell className="py-3 text-right">
+                                  {lien.result === 'Passed' && (
+                                    <Badge className="text-xs font-medium gap-1 bg-green-500 hover:bg-green-500 text-white rounded-full px-3">
+                                      <CheckCircle className="h-3 w-3" /> Passed
+                                    </Badge>
+                                  )}
+                                  {lien.result === 'Requires Payoff' && (
+                                    <Badge className="text-xs font-medium gap-1 bg-blue-500 hover:bg-blue-500 text-white rounded-full px-3">
+                                      <DollarSign className="h-3 w-3" /> Payoff
+                                    </Badge>
+                                  )}
+                                  {lien.result === 'Manual Review' && (
+                                    <Badge 
+                                      className="text-xs font-medium gap-1 bg-amber-500 hover:bg-amber-400 text-white rounded-full px-3 cursor-pointer"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired);
+                                      }}
+                                    >
+                                      <AlertTriangle className="h-3 w-3" /> Review
+                                    </Badge>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                              {expandedLiens[lien.id] && (
+                                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                                  <TableCell colSpan={4} className="py-3 px-4">
+                                    <div className="flex items-start gap-2 ml-6">
+                                      <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                                      <div className="space-y-1">
+                                        <span className="text-xs font-medium text-muted-foreground">Extracted OCR Text:</span>
+                                        <div className="bg-background border rounded-md p-3">
+                                          <p className="text-sm text-foreground leading-relaxed">{lien.scheduleBText}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </>
                           ))}
                         </TableBody>
                       </Table>
