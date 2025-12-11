@@ -1100,7 +1100,13 @@ export const TitleInsuranceTab = ({
               24-Month Chain of Title Review
               {data.chainOfTitle.some(c => c.result === 'Manual Review') ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge> : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
             </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.chainOfTitle ? '' : '-rotate-90'}`} />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                <Download className="h-4 w-4" />
+                Download Chain of Title
+              </Button>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.chainOfTitle ? '' : '-rotate-90'}`} />
+            </div>
           </CardTitle>
         </CardHeader>
         {expandedCards.chainOfTitle && <CardContent>
