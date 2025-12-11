@@ -831,7 +831,7 @@ export const TitleInsuranceTab = ({
                 { category: 'Name' as AffiliationCategory, label: 'Name Detection Results', description: 'Name matches and variations' },
                 { category: 'Entity' as AffiliationCategory, label: 'Entity Detection Results (how can we do this?)', description: 'LLC/Corp/Entity variations' },
                 { category: 'Mail Address' as AffiliationCategory, label: 'Mail Address Detection Results', description: 'Shared address matches' },
-                { category: 'Registered Agent' as AffiliationCategory, label: 'Registered Agent Detection Results', description: 'Shared agent matches' },
+                { category: 'Registered Agent' as AffiliationCategory, label: 'Registered Agent Detection Results (how can we do this?)', description: 'Shared agent matches' },
                 { category: 'Known Affiliates' as AffiliationCategory, label: 'Known Affiliates', description: 'Pre-identified relationships' },
               ]).map(({ category, label, description }) => {
                 const categoryMatches = data.affiliatedEntities.affiliationDetections.filter(m => m.category === category);
