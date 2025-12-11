@@ -745,7 +745,7 @@ export const TitleInsuranceTab = ({
               {data.affiliatedEntities.seller && renderEntityCard(data.affiliatedEntities.seller, 'Seller (Contract)')}
               {renderEntityCard(data.affiliatedEntities.borrower, 'Borrower (POS)')}
               {data.affiliatedEntities.guarantors.map((g, i) => renderEntityCard(g, `Guarantor ${i + 1}`))}
-              {data.affiliatedEntities.lienholderParties.map((l, i) => renderEntityCard(l, `Lienholder ${i + 1}`))}
+              {data.affiliatedEntities.lienholderParties.map((l, i) => renderEntityCard(l, `Lienholder ${i + 1} (Title)`))}
             </div>
 
             <Separator />
