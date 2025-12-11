@@ -727,7 +727,96 @@ export const TitleInsuranceTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 2: Lien & Encumbrance Verification */}
+      {/* Section 2: Purchase Contract Reconciliation (Conditional) */}
+      {data.transactionType === 'Purchase' && data.purchaseContractReconciliation && <Card>
+          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('purchaseContract')}>
+            <CardTitle className="text-base flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Purchase Contract Reconciliation
+                {getStatusBadge('pass')}
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.purchaseContract ? '' : '-rotate-90'}`} />
+            </CardTitle>
+          </CardHeader>
+          {expandedCards.purchaseContract && <CardContent className="space-y-3">
+              {/* Download Button */}
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Download Purchase Contract
+                </Button>
+              </div>
+
+              {/* Seller Name Match */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Seller Name Match</span>
+                  {getStatusBadge(data.purchaseContractReconciliation.sellerNameMatch.result)}
+                </div>
+                <div className="grid grid-cols-3 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Contract</p>
+                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.sellerNameMatch.contractValue}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title</p>
+                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.sellerNameMatch.titleValue}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
+                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.sellerNameMatch.matchScore}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Property Address Match */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Property Address Match</span>
+                  {getStatusBadge(data.purchaseContractReconciliation.propertyAddressMatch.result)}
+                </div>
+                <div className="grid grid-cols-3 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Contract Address</p>
+                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.propertyAddressMatch.contractValue}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Address</p>
+                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.propertyAddressMatch.titleValue}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
+                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.propertyAddressMatch.matchScore}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Purchase Price Confirmation */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Purchase Price Confirmation</span>
+                  {getStatusBadge(data.purchaseContractReconciliation.purchasePriceConfirmation.result)}
+                </div>
+                <div className="grid grid-cols-3 divide-x">
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Contract Price</p>
+                    <p className="text-lg font-bold">{formatCurrency(data.purchaseContractReconciliation.purchasePriceConfirmation.contractValue)}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment Price</p>
+                    <p className="text-lg font-bold">{formatCurrency(data.purchaseContractReconciliation.purchasePriceConfirmation.titleValue)}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
+                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.purchasePriceConfirmation.matchScore}%</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>}
+        </Card>}
+
+      {/* Section 3: Lien & Encumbrance Verification */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('lienEncumbrance')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -901,7 +990,7 @@ export const TitleInsuranceTab = ({
         </CardContent>}
       </Card>
 
-      {/* Section 3: Affiliated Entities Check */}
+      {/* Section 4: Affiliated Entities Check */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('affiliatedEntities')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -1015,8 +1104,64 @@ export const TitleInsuranceTab = ({
           </CardContent>}
       </Card>
 
+      {/* Section 5: 24-Month Chain of Title Review */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('chainOfTitle')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              24-Month Chain of Title Review
+              {data.chainOfTitle.some(c => c.result === 'Manual Review') ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge> : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.chainOfTitle ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.chainOfTitle && <CardContent>
+            {/* Download Button */}
+            <div className="flex gap-2 mb-3">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download Chain of Title
+              </Button>
+            </div>
 
-      {/* Section 5: ALTA Policy Review */}
+            <div className="space-y-3">
+              {data.chainOfTitle.map((item, index) => <div key={item.id} className="border rounded-lg overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{item.date && formatDate(item.date)}</span>
+                      </div>
+                      <Badge variant="outline" className={`text-xs ${getChainOfTitleItemColor(item.result)}`}>
+                        {item.itemType}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">({item.rbiClassification})</span>
+                    </div>
+                    {item.result === 'Pass' ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Pass</Badge> : <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Chain of Title', item.itemType, item.ocrExtractedData, item.underwritingActionRequired)}>
+                          <AlertTriangle className="h-3 w-3" /> Manual Review
+                        </Badge>}
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Auto-Tag (AI)</p>
+                      <Badge variant="outline" className="text-xs">{item.autoTag}</Badge>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">OCR Extracted Data</p>
+                      <p className="text-sm">{item.ocrExtractedData}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Underwriting Action</p>
+                      <p className="text-xs text-amber-700 font-medium">{item.underwritingActionRequired}</p>
+                    </div>
+                  </div>
+                </div>)}
+            </div>
+          </CardContent>}
+      </Card>
+
+      {/* Section 6: ALTA Policy Review */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('altaPolicy')}>
           <CardTitle className="text-base flex items-center justify-between">
@@ -1083,70 +1228,13 @@ export const TitleInsuranceTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 6: 24-Month Chain of Title Review */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('chainOfTitle')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <History className="h-4 w-4" />
-              24-Month Chain of Title Review
-              {data.chainOfTitle.some(c => c.result === 'Manual Review') ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge> : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.chainOfTitle ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.chainOfTitle && <CardContent>
-            {/* Download Button */}
-            <div className="flex gap-2 mb-3">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Download Chain of Title
-              </Button>
-            </div>
-
-            <div className="space-y-3">
-              {data.chainOfTitle.map((item, index) => <div key={item.id} className="border rounded-lg overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{item.date && formatDate(item.date)}</span>
-                      </div>
-                      <Badge variant="outline" className={`text-xs ${getChainOfTitleItemColor(item.result)}`}>
-                        {item.itemType}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">({item.rbiClassification})</span>
-                    </div>
-                    {item.result === 'Pass' ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Pass</Badge> : <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Chain of Title', item.itemType, item.ocrExtractedData, item.underwritingActionRequired)}>
-                          <AlertTriangle className="h-3 w-3" /> Manual Review
-                        </Badge>}
-                  </div>
-                  <div className="p-4 space-y-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Auto-Tag (AI)</p>
-                      <Badge variant="outline" className="text-xs">{item.autoTag}</Badge>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">OCR Extracted Data</p>
-                      <p className="text-sm">{item.ocrExtractedData}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Underwriting Action</p>
-                      <p className="text-xs text-amber-700 font-medium">{item.underwritingActionRequired}</p>
-                    </div>
-                  </div>
-                </div>)}
-            </div>
-          </CardContent>}
-      </Card>
-
-      {/* Section 7: Loss Payee Reconciliation */}
+      {/* Section 7: Loss Payee (ISAOA/ATIMA) Reconciliation */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('isaoaReconciliation')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Link2 className="h-4 w-4" />
-              Loss Payee Reconciliation
+              Loss Payee (ISAOA/ATIMA) Reconciliation
               {getStatusBadge(data.isaoaReconciliation.result)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.isaoaReconciliation ? '' : '-rotate-90'}`} />
@@ -1192,95 +1280,6 @@ export const TitleInsuranceTab = ({
             </div>
           </CardContent>}
       </Card>
-
-      {/* Section 8: Purchase Contract Reconciliation (Conditional) */}
-      {data.transactionType === 'Purchase' && data.purchaseContractReconciliation && <Card>
-          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('purchaseContract')}>
-            <CardTitle className="text-base flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Purchase Contract Reconciliation
-                {getStatusBadge('pass')}
-              </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.purchaseContract ? '' : '-rotate-90'}`} />
-            </CardTitle>
-          </CardHeader>
-          {expandedCards.purchaseContract && <CardContent className="space-y-3">
-              {/* Download Button */}
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex items-center gap-2">
-                  <Download className="h-4 w-4" />
-                  Download Purchase Contract
-                </Button>
-              </div>
-
-              {/* Seller Name Match */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Seller Name Match</span>
-                  {getStatusBadge(data.purchaseContractReconciliation.sellerNameMatch.result)}
-                </div>
-                <div className="grid grid-cols-3 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Contract</p>
-                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.sellerNameMatch.contractValue}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title</p>
-                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.sellerNameMatch.titleValue}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
-                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.sellerNameMatch.matchScore}%</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Property Address Match */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Property Address Match</span>
-                  {getStatusBadge(data.purchaseContractReconciliation.propertyAddressMatch.result)}
-                </div>
-                <div className="grid grid-cols-3 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Contract Address</p>
-                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.propertyAddressMatch.contractValue}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title Address</p>
-                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.propertyAddressMatch.titleValue}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
-                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.propertyAddressMatch.matchScore}%</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Purchase Price Confirmation */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Purchase Price Confirmation</span>
-                  {getStatusBadge(data.purchaseContractReconciliation.purchasePriceConfirmation.result)}
-                </div>
-                <div className="grid grid-cols-3 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Contract Price</p>
-                    <p className="text-lg font-bold">{formatCurrency(data.purchaseContractReconciliation.purchasePriceConfirmation.contractValue)}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Title Commitment Price</p>
-                    <p className="text-lg font-bold">{formatCurrency(data.purchaseContractReconciliation.purchasePriceConfirmation.titleValue)}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
-                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.purchasePriceConfirmation.matchScore}%</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>}
-        </Card>}
 
       {/* Manual Review Modal */}
       {selectedCheck && <ManualReviewModal open={manualReviewOpen} onOpenChange={setManualReviewOpen} metricName={String(selectedCheck.metric)} posValue={selectedCheck.posValue} aiValue={selectedCheck.aiValue} deviation={selectedCheck.difference} />}
