@@ -11,7 +11,7 @@ export interface OwnershipMatch {
   vestedOwner: string;
   // For Refinance
   borrowerName?: string;
-  guarantorNames?: string[];
+  guarantorName?: string;
   matchScore: number;
   status: ValidationStatus;
 }

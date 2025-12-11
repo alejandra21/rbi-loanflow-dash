@@ -53,16 +53,14 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
     setManualReviewOpen(true);
   };
 
-  // Mock data - Refinance scenario
+  // Mock data
   const data: TitleInsuranceData = {
-    transactionType: 'Refinance',
+    transactionType: 'Purchase',
     ownershipMatch: {
-      transactionType: 'Refinance',
-      sellerName: 'ABC Holdings LLC', // Not used in Refinance
-      borrowerName: 'Smith Family Trust',
-      guarantorNames: ['John Smith', 'Jane Smith'],
-      vestedOwner: 'Smith Family Trust',
-      matchScore: 98,
+      transactionType: 'Purchase',
+      sellerName: 'ABC Holdings LLC',
+      vestedOwner: 'ABC Holdings, LLC',
+      matchScore: 96,
       status: 'pass'
     },
     lienItems: [
@@ -381,24 +379,9 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                   <p className="text-xs text-muted-foreground mb-1">
                     {data.transactionType === 'Purchase' ? 'Seller Name (Contract)' : 'Borrower/Guarantor (POS)'}
                   </p>
-                  {data.transactionType === 'Purchase' ? (
-                    <p className="text-sm font-medium">{data.ownershipMatch.sellerName}</p>
-                  ) : (
-                    <div className="space-y-2">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Borrower</p>
-                        <p className="text-sm font-medium">{data.ownershipMatch.borrowerName}</p>
-                      </div>
-                      {data.ownershipMatch.guarantorNames && data.ownershipMatch.guarantorNames.length > 0 && (
-                        <div>
-                          <p className="text-xs text-muted-foreground">Guarantor(s)</p>
-                          {data.ownershipMatch.guarantorNames.map((name, idx) => (
-                            <p key={idx} className="text-sm font-medium">{name}</p>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <p className="text-sm font-medium">
+                    {data.transactionType === 'Purchase' ? data.ownershipMatch.sellerName : data.ownershipMatch.borrowerName}
+                  </p>
                 </div>
                 <div className="p-4">
                   <p className="text-xs text-muted-foreground mb-1">Vested Owner (Schedule A)</p>
