@@ -365,7 +365,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                         <p className="font-medium mb-1">Validation Rule:</p>
                         <p className="text-xs">
                           {data.transactionType === 'Purchase' 
-                            ? 'For Purchase: Seller Name (Contract) must match Vested Owner (Schedule A)'
+                            ? 'For Purchase: Seller Name (Purchase Contract) must match Vested Owner (Schedule A)'
                             : 'For Refinance: Borrower/Guarantor must match Vested Owner'}
                         </p>
                       </TooltipContent>
@@ -377,7 +377,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
               <div className="grid grid-cols-2 divide-x">
                 <div className="p-4">
                   <p className="text-xs text-muted-foreground mb-1">
-                    {data.transactionType === 'Purchase' ? 'Seller Name (Contract)' : 'Borrower/Guarantor (POS)'}
+                    {data.transactionType === 'Purchase' ? 'Seller Name (Purchase Contract)' : 'Borrower/Guarantor (POS)'}
                   </p>
                   <p className="text-sm font-medium">
                     {data.transactionType === 'Purchase' ? data.ownershipMatch.sellerName : data.ownershipMatch.borrowerName}
