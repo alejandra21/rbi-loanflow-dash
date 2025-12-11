@@ -135,24 +135,15 @@ export interface PurchaseContractReconciliation {
     matchScore: number;
     result: ValidationStatus;
   };
-  buyerNameMatch: {
-    contractValue: string;
-    posValue: string;
-    matchScore: number;
-    result: ValidationStatus;
-  };
   propertyAddressMatch: {
     contractValue: string;
+    titleValue: string;
     matchScore: number;
     result: ValidationStatus;
   };
   purchasePriceConfirmation: {
     contractValue: number;
-    matchScore: number;
-    result: ValidationStatus;
-  };
-  closingDate?: {
-    contractValue: string;
+    titleValue: number;
     matchScore: number;
     result: ValidationStatus;
   };
