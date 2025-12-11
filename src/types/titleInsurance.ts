@@ -40,10 +40,13 @@ export interface EntityInfo {
   entityType: EntityType;
 }
 
+export type AffiliationCategory = 'Name' | 'Entity' | 'Mail Address' | 'Registered Agent' | 'Known Affiliates';
+
 export interface AffiliationMatch {
   entityA: string;
   entityB: string;
-  matchTypeDetected: 'Name similarity' | 'Shared address' | 'Shared agent';
+  category: AffiliationCategory;
+  matchTypeDetected: string;
   similarityScore: number;
   result: 'Passed' | 'Flagged';
 }
