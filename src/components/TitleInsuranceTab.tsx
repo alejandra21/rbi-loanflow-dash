@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, ChevronRight, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, Link2, Users, Scale, FileCheck, History, Square, Check, FileWarning, Landmark, Home, ScrollText, Ban, BookOpen } from "lucide-react";
 import { useState } from "react";
-import { TitleInsuranceData, LienItem, ChainOfTitleItem, EntityInfo, AffiliationMatch, LienCategory } from "@/types/titleInsurance";
+import { TitleInsuranceData, LienItem, ChainOfTitleItem, EntityInfo, AffiliationMatch, LienCategory, AffiliationCategory } from "@/types/titleInsurance";
 import { ManualReviewModal } from "./ManualReviewModal";
 interface TitleInsuranceTabProps {
   phaseStatus: string;
@@ -286,13 +286,69 @@ export const TitleInsuranceTab = ({
         address: '789 Financial Blvd, Houston, TX 77001',
         entityType: 'Corporation'
       }],
-      affiliationDetections: [{
-        entityA: 'ABC Holdings, LLC',
-        entityB: 'ABC Holdings LLC',
-        matchTypeDetected: 'Name similarity',
-        similarityScore: 96,
-        result: 'Passed'
-      }],
+      affiliationDetections: [
+        // Name Detection
+        {
+          entityA: 'ABC Holdings, LLC',
+          entityB: 'ABC Holdings LLC',
+          category: 'Name',
+          matchTypeDetected: 'Name similarity (punctuation variance)',
+          similarityScore: 96,
+          result: 'Passed'
+        },
+        {
+          entityA: 'John Smith',
+          entityB: 'John Smith',
+          category: 'Name',
+          matchTypeDetected: 'Exact match',
+          similarityScore: 100,
+          result: 'Passed'
+        },
+        // Entity Detection
+        {
+          entityA: 'ABC Holdings, LLC',
+          entityB: 'ABC Holdings LLC',
+          category: 'Entity',
+          matchTypeDetected: 'LLC variation detected',
+          similarityScore: 98,
+          result: 'Passed'
+        },
+        // Mail Address Detection
+        {
+          entityA: 'ABC Holdings, LLC',
+          entityB: 'ABC Holdings LLC',
+          category: 'Mail Address',
+          matchTypeDetected: 'Same address: 123 Main St, Suite 100, Austin, TX 78701',
+          similarityScore: 100,
+          result: 'Passed'
+        },
+        {
+          entityA: 'John Smith',
+          entityB: 'Jane Smith',
+          category: 'Mail Address',
+          matchTypeDetected: 'Same address: 456 Oak Ave, Dallas, TX 75201',
+          similarityScore: 100,
+          result: 'Flagged'
+        },
+        // Registered Agent Detection
+        {
+          entityA: 'ABC Holdings, LLC',
+          entityB: 'ABC Holdings LLC',
+          category: 'Registered Agent',
+          matchTypeDetected: 'Same agent: Corporate Agents Inc.',
+          similarityScore: 100,
+          result: 'Passed'
+        },
+        // Known Affiliates
+        {
+          entityA: 'John Smith',
+          entityB: 'Jane Smith',
+          category: 'Known Affiliates',
+          matchTypeDetected: 'Guarantors on same loan',
+          similarityScore: 100,
+          result: 'Passed'
+        }
+      ],
       overallStatus: 'pass'
     },
     commitmentAmount: {
@@ -769,37 +825,72 @@ export const TitleInsuranceTab = ({
 
             <Separator />
 
-            {/* Affiliation Detection Table */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Affiliation Detection Results</h4>
-              <div className="rounded-lg border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/30">
-                      <TableHead className="text-xs">Entity A</TableHead>
-                      <TableHead className="text-xs">Entity B</TableHead>
-                      <TableHead className="text-xs">Match Type Detected</TableHead>
-                      <TableHead className="text-xs">Similarity Score</TableHead>
-                      <TableHead className="text-xs">Result</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.affiliatedEntities.affiliationDetections.length > 0 ? data.affiliatedEntities.affiliationDetections.map((match, idx) => <TableRow key={idx}>
-                          <TableCell className="text-xs font-medium">{match.entityA}</TableCell>
-                          <TableCell className="text-xs font-medium">{match.entityB}</TableCell>
-                          <TableCell className="text-xs">{match.matchTypeDetected}</TableCell>
-                          <TableCell className="text-xs font-semibold">{match.similarityScore}%</TableCell>
-                          <TableCell>
-                            {match.result === 'Passed' ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge> : <Badge variant="warning" className="text-xs gap-1"><AlertTriangle className="h-3 w-3" /> Flagged</Badge>}
-                          </TableCell>
-                        </TableRow>) : <TableRow>
-                        <TableCell colSpan={5} className="text-center text-xs text-muted-foreground py-4">
-                          No affiliations detected
-                        </TableCell>
-                      </TableRow>}
-                  </TableBody>
-                </Table>
-              </div>
+            {/* Affiliation Detection Tables by Category */}
+            <div className="space-y-4">
+              {([
+                { category: 'Name' as AffiliationCategory, label: 'Name Detection Results', description: 'Name matches and variations' },
+                { category: 'Entity' as AffiliationCategory, label: 'Entity Detection Results', description: 'LLC/Corp/Entity variations' },
+                { category: 'Mail Address' as AffiliationCategory, label: 'Mail Address Detection Results', description: 'Shared address matches' },
+                { category: 'Registered Agent' as AffiliationCategory, label: 'Registered Agent Detection Results', description: 'Shared agent matches' },
+                { category: 'Known Affiliates' as AffiliationCategory, label: 'Known Affiliates', description: 'Pre-identified relationships' },
+              ]).map(({ category, label, description }) => {
+                const categoryMatches = data.affiliatedEntities.affiliationDetections.filter(m => m.category === category);
+                const hasFlagged = categoryMatches.some(m => m.result === 'Flagged');
+                
+                return (
+                  <div key={category} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-semibold text-muted-foreground">{label}</h4>
+                        {categoryMatches.length > 0 && (
+                          hasFlagged ? (
+                            <Badge variant="warning" className="text-xs gap-1"><AlertTriangle className="h-3 w-3" /> Flagged</Badge>
+                          ) : (
+                            <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
+                          )
+                        )}
+                      </div>
+                      <span className="text-xs text-muted-foreground">{description}</span>
+                    </div>
+                    <div className="rounded-lg border overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/30">
+                            <TableHead className="text-xs">Entity A</TableHead>
+                            <TableHead className="text-xs">Entity B</TableHead>
+                            <TableHead className="text-xs">Match Type Detected</TableHead>
+                            <TableHead className="text-xs w-[100px]">Similarity</TableHead>
+                            <TableHead className="text-xs w-[100px] text-right">Result</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {categoryMatches.length > 0 ? categoryMatches.map((match, idx) => (
+                            <TableRow key={idx}>
+                              <TableCell className="text-xs font-medium">{match.entityA}</TableCell>
+                              <TableCell className="text-xs font-medium">{match.entityB}</TableCell>
+                              <TableCell className="text-xs">{match.matchTypeDetected}</TableCell>
+                              <TableCell className="text-xs font-semibold">{match.similarityScore}%</TableCell>
+                              <TableCell className="text-right">
+                                {match.result === 'Passed' ? (
+                                  <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
+                                ) : (
+                                  <Badge variant="warning" className="text-xs gap-1"><AlertTriangle className="h-3 w-3" /> Flagged</Badge>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          )) : (
+                            <TableRow>
+                              <TableCell colSpan={5} className="text-center text-xs text-muted-foreground py-3">
+                                No matches detected
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>}
       </Card>
