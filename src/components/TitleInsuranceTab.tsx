@@ -380,7 +380,7 @@ export const TitleInsuranceTab = ({
         ocrExtractedData: 'Property owned by Smith Family Trust from 2015-2020',
         autoTag: 'Owner History – Review Completed',
         underwritingActionRequired: 'Verify chain of title for completeness and anomalies',
-        result: 'Pass',
+        result: 'Manual Review',
         date: '2015-03-15'
       },
       {
@@ -390,7 +390,7 @@ export const TitleInsuranceTab = ({
         ocrExtractedData: 'Transfer from Smith Family Trust to ABC Holdings LLC recorded March 2020',
         autoTag: 'Ownership Change – Review Required',
         underwritingActionRequired: 'Confirm validity of transfer; check for prior liens or encumbrances',
-        result: 'Pass',
+        result: 'Manual Review',
         date: '2020-03-22'
       },
       {
@@ -400,7 +400,7 @@ export const TitleInsuranceTab = ({
         ocrExtractedData: 'Warranty Deed from ABC Holdings LLC to XYZ Investments LLC recorded June 2022',
         autoTag: 'Warranty Deed – Confirm Full Title Guarantee',
         underwritingActionRequired: 'Ensure grantor had full title and no encumbrance conflicts',
-        result: 'Pass',
+        result: 'Manual Review',
         date: '2022-06-15'
       },
       {
