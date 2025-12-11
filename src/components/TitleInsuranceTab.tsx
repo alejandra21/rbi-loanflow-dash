@@ -952,6 +952,14 @@ export const TitleInsuranceTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.altaPolicy && <CardContent className="space-y-4">
+            {/* Download Button */}
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download ALTA Policy
+              </Button>
+            </div>
+
             {/* Policy Type Validation */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
@@ -966,7 +974,7 @@ export const TitleInsuranceTab = ({
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Business Rule</p>
-                    <p className="text-sm font-medium">{data.altaPolicyReview.policyType.businessRule}</p>
+                    <p className="text-sm font-medium">ALTA 8.1-2019 – {data.altaPolicyReview.policyType.businessRule}</p>
                   </div>
                 </div>
               </div>
