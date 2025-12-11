@@ -19,13 +19,13 @@ export const TitleInsuranceTab = ({
 }: TitleInsuranceTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     ownershipVerification: true,
-    lienEncumbrance: true,
-    affiliatedEntities: true,
-    commitmentAmount: true,
-    altaPolicy: true,
-    chainOfTitle: true,
-    isaoaReconciliation: true,
-    purchaseContract: true
+    lienEncumbrance: false,
+    affiliatedEntities: false,
+    commitmentAmount: false,
+    altaPolicy: false,
+    chainOfTitle: false,
+    isaoaReconciliation: false,
+    purchaseContract: false
   });
   const [expandedLiens, setExpandedLiens] = useState<Record<string, boolean>>({});
   const [expandedLienCategories, setExpandedLienCategories] = useState<Record<string, boolean>>({
