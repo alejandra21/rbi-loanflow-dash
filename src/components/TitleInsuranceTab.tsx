@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, Link2, Users, Scale, FileCheck, History } from "lucide-react";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, Link2, Users, Scale, FileCheck, History, Square, Check, FileWarning, Landmark, Home, ScrollText, Ban, BookOpen } from "lucide-react";
 import { useState } from "react";
-import { TitleInsuranceData, LienItem, ChainOfTitleItem, EntityInfo, AffiliationMatch } from "@/types/titleInsurance";
+import { TitleInsuranceData, LienItem, ChainOfTitleItem, EntityInfo, AffiliationMatch, LienCategory } from "@/types/titleInsurance";
 import { ManualReviewModal } from "./ManualReviewModal";
 interface TitleInsuranceTabProps {
   phaseStatus: string;
@@ -28,6 +28,16 @@ export const TitleInsuranceTab = ({
     purchaseContract: true
   });
   const [expandedLiens, setExpandedLiens] = useState<Record<string, boolean>>({});
+  const [expandedLienCategories, setExpandedLienCategories] = useState<Record<string, boolean>>({
+    'Mortgage / Deed of Trust': true,
+    'Judgment': true,
+    'Tax Lien (IRS, State, County)': true,
+    'Tax Certificate': true,
+    'HOA Lien': true,
+    'UCC Filing': true,
+    'Easement': true,
+    'Restriction / CC&Rs': true
+  });
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
     metric: string;
@@ -45,6 +55,12 @@ export const TitleInsuranceTab = ({
     setExpandedLiens(prev => ({
       ...prev,
       [lienId]: !prev[lienId]
+    }));
+  };
+  const toggleLienCategory = (category: string) => {
+    setExpandedLienCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
     }));
   };
   const openManualReview = (metric: string, posValue: string, aiValue: string, difference: string) => {
@@ -67,46 +83,103 @@ export const TitleInsuranceTab = ({
       matchScore: 96,
       status: 'pass'
     },
-    lienItems: [{
-      id: 'lien-1',
-      scheduleBTitle: 'Deed of Trust recorded January 15, 2023',
-      scheduleBText: 'Deed of Trust recorded January 15, 2023, Book 5093, Page 472, executed by John Doe to First Finance Bank.',
-      detectedLienType: 'Mortgage',
-      rbiClassification: 'Voluntary Financial Lien',
-      autoTagApplied: 'Payoff',
-      expectedParty: 'John Doe',
-      actualParty: 'John Doe',
-      partyMatchResult: 'Expected Party',
-      underwritingActionRequired: 'Verify payoff at closing',
-      result: 'Requires Payoff',
-      confidenceScore: 94
-    }, {
-      id: 'lien-2',
-      scheduleBTitle: 'Easement for utilities recorded May 22, 2018',
-      scheduleBText: 'Utility easement recorded May 22, 2018, Book 4331, Page 310, granting access rights to Utility Co.',
-      detectedLienType: 'Easement',
-      rbiClassification: 'Non-Financial Restriction',
-      autoTagApplied: 'Passed',
-      expectedParty: 'N/A',
-      actualParty: 'Utility Co.',
-      partyMatchResult: 'Expected Party',
-      underwritingActionRequired: 'Standard utility easement',
-      result: 'Passed',
-      confidenceScore: 98
-    }, {
-      id: 'lien-3',
-      scheduleBTitle: 'Mechanics Lien filed by XYZ Construction',
-      scheduleBText: 'Claim of Lien filed by XYZ Construction LLC on March 1, 2025 for unpaid improvements, recorded Book 5781, Page 922.',
-      detectedLienType: 'Construction Lien',
-      rbiClassification: 'Involuntary Lien',
-      autoTagApplied: 'Review',
-      expectedParty: 'John Doe',
-      actualParty: 'XYZ Construction LLC',
-      partyMatchResult: 'Unexpected Party',
-      underwritingActionRequired: 'Manual review required',
-      result: 'Manual Review',
-      confidenceScore: 87
-    }],
+    lienItems: [
+      // Mortgage / Deed of Trust
+      {
+        id: 'lien-1',
+        scheduleBTitle: 'Deed of Trust recorded January 15, 2023',
+        scheduleBText: 'Deed of Trust recorded January 15, 2023, Book 5093, Page 472, executed by John Doe to First Finance Bank.',
+        detectedLienType: 'Mortgage',
+        lienCategory: 'Mortgage / Deed of Trust',
+        rbiClassification: 'Voluntary Financial Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'John Doe',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Verify payoff at closing',
+        result: 'Manual Review',
+        confidenceScore: 94
+      },
+      {
+        id: 'lien-2',
+        scheduleBTitle: 'Mortgage recorded August 3, 2024',
+        scheduleBText: 'Mortgage recorded August 3, 2024, Book 5412, Page 118, executed by John Doe to Second Bank Corp.',
+        detectedLienType: 'Mortgage',
+        lienCategory: 'Mortgage / Deed of Trust',
+        rbiClassification: 'Voluntary Financial Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'John Doe',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Investigate borrower authority',
+        result: 'Manual Review',
+        confidenceScore: 92
+      },
+      // Easement
+      {
+        id: 'lien-3',
+        scheduleBTitle: 'Utility easement recorded May 22, 2018',
+        scheduleBText: 'Utility easement recorded May 22, 2018, Book 4331, Page 310, granting access rights to Utility Co.',
+        detectedLienType: 'Easement',
+        lienCategory: 'Easement',
+        rbiClassification: 'Non-Financial Restriction',
+        autoTagApplied: 'Passed',
+        expectedParty: 'N/A',
+        actualParty: 'Utility Co.',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Standard utility easement',
+        result: 'Passed',
+        confidenceScore: 98
+      },
+      // Judgment
+      {
+        id: 'lien-4',
+        scheduleBTitle: 'Mechanics Lien filed by XYZ Construction',
+        scheduleBText: 'Claim of Lien filed by XYZ Construction LLC on March 1, 2025 for unpaid improvements, recorded Book 5781, Page 922.',
+        detectedLienType: 'Construction Lien',
+        lienCategory: 'Judgment',
+        rbiClassification: 'Involuntary Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'XYZ Construction LLC',
+        partyMatchResult: 'Unexpected Party',
+        underwritingActionRequired: 'Manual review required',
+        result: 'Manual Review',
+        confidenceScore: 87
+      },
+      // Tax Lien
+      {
+        id: 'lien-5',
+        scheduleBTitle: 'IRS Tax Lien recorded December 5, 2023',
+        scheduleBText: 'Federal Tax Lien recorded December 5, 2023, Book 5601, Page 245, for unpaid taxes in the amount of $15,432.',
+        detectedLienType: 'Tax Lien',
+        lienCategory: 'Tax Lien (IRS, State, County)',
+        rbiClassification: 'Government Lien',
+        autoTagApplied: 'Review',
+        expectedParty: 'John Doe',
+        actualParty: 'Internal Revenue Service',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Require payoff statement',
+        result: 'Manual Review',
+        confidenceScore: 95
+      },
+      // Restriction / CC&Rs
+      {
+        id: 'lien-6',
+        scheduleBTitle: 'CC&Rs recorded September 12, 2010',
+        scheduleBText: 'Declaration of Covenants, Conditions, and Restrictions recorded September 12, 2010, Book 3892, Page 501.',
+        detectedLienType: 'Restriction',
+        lienCategory: 'Restriction / CC&Rs',
+        rbiClassification: 'Non-Financial Restriction',
+        autoTagApplied: 'Passed',
+        expectedParty: 'N/A',
+        actualParty: 'Homeowners Association',
+        partyMatchResult: 'Expected Party',
+        underwritingActionRequired: 'Standard CC&Rs review',
+        result: 'Passed',
+        confidenceScore: 99
+      }
+    ],
     affiliatedEntities: {
       vestedOwner: {
         entityName: 'ABC Holdings, LLC',
@@ -413,111 +486,129 @@ export const TitleInsuranceTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.lienEncumbrance && <CardContent className="space-y-3">
-            <div className="rounded-lg border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead className="text-xs font-semibold w-[280px]">Schedule B Item</TableHead>
-                    <TableHead className="text-xs font-semibold w-[100px]">Lien Type</TableHead>
-                    <TableHead className="text-xs font-semibold w-[140px]">RBI Classification</TableHead>
-                    <TableHead className="text-xs font-semibold w-[120px]">Party Match</TableHead>
-                    <TableHead className="text-xs font-semibold w-[160px]">Underwriting Action</TableHead>
-                    <TableHead className="text-xs font-semibold w-[100px] text-right">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.lienItems.map(lien => <Collapsible key={lien.id} open={expandedLiens[lien.id]} onOpenChange={() => toggleLien(lien.id)}>
-                      <TableRow className="cursor-pointer hover:bg-muted/20">
-                        <TableCell className="py-4">
-                          <CollapsibleTrigger className="flex items-center gap-2 text-left w-full">
-                            <ChevronDown className={`h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform ${expandedLiens[lien.id] ? '' : '-rotate-90'}`} />
-                            <span className="text-sm font-medium truncate">
-                              {lien.scheduleBTitle || lien.scheduleBText.substring(0, 45) + '...'}
-                            </span>
-                          </CollapsibleTrigger>
-                        </TableCell>
-                        <TableCell className="py-4">
-                          <Badge variant="outline" className="text-xs font-medium bg-emerald-50 text-emerald-700 border-emerald-200 rounded-full px-3">
-                            {lien.detectedLienType}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="py-4">
-                          <Badge variant="outline" className="text-xs font-medium bg-slate-50 text-slate-600 border-slate-200 rounded-full px-3">
-                            {lien.rbiClassification}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="py-4">
-                          <Badge 
-                            variant="outline" 
-                            className={`text-xs font-medium rounded-full px-3 ${
-                              lien.partyMatchResult === 'Expected Party' 
-                                ? 'bg-green-50 text-green-700 border-green-300' 
-                                : 'bg-red-100 text-red-700 border-red-300'
-                            }`}
-                          >
-                            {lien.partyMatchResult}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="py-4">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="text-xs text-muted-foreground truncate block max-w-[150px]">
-                                  {lien.underwritingActionRequired.length > 25 
-                                    ? lien.underwritingActionRequired.substring(0, 25) + '…' 
-                                    : lien.underwritingActionRequired}
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">{lien.underwritingActionRequired}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </TableCell>
-                        <TableCell className="py-4 text-right">
-                          {lien.result === 'Passed' && (
-                            <Badge className="text-xs font-medium gap-1 bg-green-500 hover:bg-green-500 text-white rounded-full px-3">
-                              <CheckCircle className="h-3 w-3" /> Passed
-                            </Badge>
-                          )}
-                          {lien.result === 'Requires Payoff' && (
-                            <Badge className="text-xs font-medium gap-1 bg-blue-500 hover:bg-blue-500 text-white rounded-full px-3">
-                              <DollarSign className="h-3 w-3" /> Payoff
-                            </Badge>
-                          )}
-                          {lien.result === 'Manual Review' && (
-                            <Badge 
-                              className="text-xs font-medium gap-1 bg-amber-500 hover:bg-amber-400 text-white rounded-full px-3 cursor-pointer"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired);
-                              }}
-                            >
-                              <AlertTriangle className="h-3 w-3" /> Review
-                            </Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                      <CollapsibleContent asChild>
-                        <TableRow className="bg-muted/5 hover:bg-muted/5">
-                          <TableCell colSpan={6} className="py-4 px-6">
-                            <div className="bg-slate-50 border border-slate-100 rounded-lg p-4">
-                              <p className="text-xs font-semibold text-muted-foreground mb-2">Full OCR Text</p>
-                              <p className="text-sm text-slate-700 leading-relaxed">{lien.scheduleBText}</p>
-                              <div className="mt-3 pt-3 border-t border-slate-200">
-                                <span className="text-xs text-muted-foreground">
-                                  Confidence Score: <span className="font-semibold text-slate-700">{lien.confidenceScore}%</span>
-                                </span>
-                              </div>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      </CollapsibleContent>
-                    </Collapsible>)}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>}
+          {/* Category Subsections */}
+          {([
+            { category: 'Mortgage / Deed of Trust' as LienCategory, icon: Landmark },
+            { category: 'Judgment' as LienCategory, icon: Scale },
+            { category: 'Tax Lien (IRS, State, County)' as LienCategory, icon: FileWarning },
+            { category: 'Tax Certificate' as LienCategory, icon: FileText },
+            { category: 'HOA Lien' as LienCategory, icon: Home },
+            { category: 'UCC Filing' as LienCategory, icon: ScrollText },
+            { category: 'Easement' as LienCategory, icon: MapPin },
+            { category: 'Restriction / CC&Rs' as LienCategory, icon: BookOpen },
+          ]).map(({ category, icon: CategoryIcon }) => {
+            const categoryLiens = data.lienItems.filter(l => l.lienCategory === category);
+            const hasReviewItems = categoryLiens.some(l => l.result === 'Manual Review');
+            const categoryStatus = categoryLiens.length === 0 ? 'empty' : hasReviewItems ? 'review' : 'passed';
+            
+            return (
+              <div key={category} className="border rounded-lg overflow-hidden">
+                {/* Category Header */}
+                <div 
+                  className="flex items-center justify-between px-4 py-3 bg-muted/30 cursor-pointer hover:bg-muted/40 transition-colors"
+                  onClick={() => toggleLienCategory(category)}
+                >
+                  <div className="flex items-center gap-2">
+                    <CategoryIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">{category}</span>
+                    {categoryLiens.length > 0 && (
+                      <span className="text-xs text-muted-foreground">({categoryLiens.length})</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {categoryStatus === 'empty' ? (
+                      <Badge variant="outline" className="text-xs">No items</Badge>
+                    ) : categoryStatus === 'review' ? (
+                      <Badge variant="warning" className="gap-1 text-xs">
+                        <AlertTriangle className="h-3 w-3" /> Review
+                      </Badge>
+                    ) : (
+                      <Badge variant="success" className="gap-1 text-xs">
+                        <CheckCircle className="h-3 w-3" /> Passed
+                      </Badge>
+                    )}
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedLienCategories[category] ? '' : '-rotate-90'}`} />
+                  </div>
+                </div>
+
+                {/* Category Content */}
+                {expandedLienCategories[category] && (
+                  <div className="border-t">
+                    {categoryLiens.length === 0 ? (
+                      <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                        No items found in this category
+                      </div>
+                    ) : (
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/10">
+                            <TableHead className="text-xs font-semibold">Schedule B Item</TableHead>
+                            <TableHead className="text-xs font-semibold w-[180px]">RBI Classification</TableHead>
+                            <TableHead className="text-xs font-semibold w-[200px]">Underwriting Action</TableHead>
+                            <TableHead className="text-xs font-semibold w-[100px] text-right">Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {categoryLiens.map(lien => (
+                            <TableRow key={lien.id} className="hover:bg-muted/20">
+                              <TableCell className="py-3">
+                                <span className="text-sm">{lien.scheduleBTitle || lien.scheduleBText.substring(0, 50)}</span>
+                              </TableCell>
+                              <TableCell className="py-3">
+                                <Badge variant="outline" className="text-xs font-medium bg-slate-50 text-slate-600 border-slate-200 rounded-full px-3">
+                                  {lien.rbiClassification}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="py-3">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="text-xs text-muted-foreground truncate block max-w-[180px]">
+                                        {lien.underwritingActionRequired.length > 30 
+                                          ? lien.underwritingActionRequired.substring(0, 30) + '…' 
+                                          : lien.underwritingActionRequired}
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-xs">{lien.underwritingActionRequired}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </TableCell>
+                              <TableCell className="py-3 text-right">
+                                {lien.result === 'Passed' && (
+                                  <Badge className="text-xs font-medium gap-1 bg-green-500 hover:bg-green-500 text-white rounded-full px-3">
+                                    <CheckCircle className="h-3 w-3" /> Passed
+                                  </Badge>
+                                )}
+                                {lien.result === 'Requires Payoff' && (
+                                  <Badge className="text-xs font-medium gap-1 bg-blue-500 hover:bg-blue-500 text-white rounded-full px-3">
+                                    <DollarSign className="h-3 w-3" /> Payoff
+                                  </Badge>
+                                )}
+                                {lien.result === 'Manual Review' && (
+                                  <Badge 
+                                    className="text-xs font-medium gap-1 bg-amber-500 hover:bg-amber-400 text-white rounded-full px-3 cursor-pointer"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired);
+                                    }}
+                                  >
+                                    <AlertTriangle className="h-3 w-3" /> Review
+                                  </Badge>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </CardContent>}
       </Card>
 
       {/* Section 3: Affiliated Entities Check */}
