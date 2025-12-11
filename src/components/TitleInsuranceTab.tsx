@@ -352,10 +352,10 @@ export const TitleInsuranceTab = ({
       overallStatus: 'pass'
     },
     commitmentAmount: {
-      titleCommitmentAmount: 525000,
+      titleCommitmentAmount: 500000,
       posLoanAmount: 500000,
-      difference: -25000,
-      differencePercent: -4.76,
+      difference: 0,
+      differencePercent: 0,
       matchScore: 100,
       result: 'pass'
     },
@@ -603,6 +603,49 @@ export const TitleInsuranceTab = ({
                   <span className="text-sm font-semibold text-green-600">{data.ownershipMatch.matchScore}%</span>
                 </div>
               </div>
+            </div>
+
+            {/* Amount Validation Subsection */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <span className="text-sm font-medium flex items-center gap-1">
+                  Amount Validation
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="max-w-xs">
+                        <p className="font-medium mb-1">Validation Rule:</p>
+                        <p className="text-xs">Title Commitment Amount must match POS Loan Amount exactly</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+                {data.commitmentAmount.difference === 0 ? (
+                  <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
+                ) : (
+                  <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" /> Failed</Badge>
+                )}
+              </div>
+              <div className="grid grid-cols-2 divide-x">
+                <div className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Title Commitment Amount</p>
+                  <p className="text-lg font-bold">{formatCurrency(data.commitmentAmount.titleCommitmentAmount)}</p>
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">POS Loan Amount</p>
+                  <p className="text-lg font-bold">{formatCurrency(data.commitmentAmount.posLoanAmount)}</p>
+                </div>
+              </div>
+              {data.commitmentAmount.difference !== 0 && (
+                <div className="px-4 py-3 bg-red-50 border-t flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Difference</span>
+                  <span className="text-sm font-semibold text-red-600">
+                    {formatCurrency(data.commitmentAmount.difference)} ({data.commitmentAmount.differencePercent.toFixed(2)}%)
+                  </span>
+                </div>
+              )}
             </div>
           </CardContent>}
       </Card>
@@ -895,46 +938,6 @@ export const TitleInsuranceTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 4: Commitment Amount Validation */}
-      <Card>
-        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('commitmentAmount')}>
-          <CardTitle className="text-base flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Commitment Amount Validation
-              {getStatusBadge(data.commitmentAmount.result)}
-            </div>
-            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.commitmentAmount ? '' : '-rotate-90'}`} />
-          </CardTitle>
-        </CardHeader>
-        {expandedCards.commitmentAmount && <CardContent>
-            <div className="border rounded-lg overflow-hidden">
-              <div className="grid grid-cols-3 divide-x">
-                <div className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Title Commitment Amount</p>
-                  <p className="text-lg font-bold">{formatCurrency(data.commitmentAmount.titleCommitmentAmount)}</p>
-                </div>
-                <div className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">POS Loan Amount</p>
-                  <p className="text-lg font-bold">{formatCurrency(data.commitmentAmount.posLoanAmount)}</p>
-                </div>
-                <div className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Difference</p>
-                  <p className={`text-lg font-bold ${data.commitmentAmount.difference < 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {formatCurrency(data.commitmentAmount.difference)} ({data.commitmentAmount.differencePercent.toFixed(2)}%)
-                  </p>
-                </div>
-              </div>
-              <div className="px-4 py-3 bg-muted/10 border-t flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Match Score</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-green-600">{data.commitmentAmount.matchScore}%</span>
-                  {getStatusBadge(data.commitmentAmount.result)}
-                </div>
-              </div>
-            </div>
-          </CardContent>}
-      </Card>
 
       {/* Section 5: ALTA Policy Review */}
       <Card>
