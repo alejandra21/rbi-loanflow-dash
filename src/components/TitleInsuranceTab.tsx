@@ -1148,13 +1148,13 @@ export const TitleInsuranceTab = ({
           </CardContent>}
       </Card>
 
-      {/* Section 7: ISAOA/ATIMA Reconciliation */}
+      {/* Section 7: Loss Payee Reconciliation */}
       <Card>
         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('isaoaReconciliation')}>
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Link2 className="h-4 w-4" />
-              ISAOA/ATIMA Reconciliation
+              Loss Payee Reconciliation
               {getStatusBadge(data.isaoaReconciliation.result)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.isaoaReconciliation ? '' : '-rotate-90'}`} />
@@ -1167,6 +1167,7 @@ export const TitleInsuranceTab = ({
                   <TableHeader>
                     <TableRow className="bg-muted/30">
                       <TableHead className="text-xs">Source Document</TableHead>
+                      <TableHead className="text-xs">Expected Lender Name</TableHead>
                       <TableHead className="text-xs">Extracted Insured Lender Name</TableHead>
                       <TableHead className="text-xs">Match</TableHead>
                     </TableRow>
@@ -1174,6 +1175,7 @@ export const TitleInsuranceTab = ({
                   <TableBody>
                     {data.isaoaReconciliation.sources.map((source, idx) => <TableRow key={idx}>
                         <TableCell className="text-xs font-medium">{source.source}</TableCell>
+                        <TableCell className="text-xs">{data.isaoaReconciliation.businessRule}</TableCell>
                         <TableCell className="text-xs">{source.extractedName}</TableCell>
                         <TableCell>
                           {source.matches ? <CheckCircle className="h-4 w-4 text-green-600" /> : <XCircle className="h-4 w-4 text-red-600" />}
