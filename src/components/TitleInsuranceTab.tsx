@@ -1205,6 +1205,14 @@ export const TitleInsuranceTab = ({
             </CardTitle>
           </CardHeader>
           {expandedCards.purchaseContract && <CardContent className="space-y-3">
+              {/* Download Button */}
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Download Purchase Contract
+                </Button>
+              </div>
+
               {/* Seller Name Match */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
