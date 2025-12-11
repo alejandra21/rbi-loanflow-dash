@@ -5,21 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { 
-  Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, 
-  MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, 
-  Link2, Users, Scale, FileCheck, History
-} from "lucide-react";
+import { Download, CheckCircle, AlertTriangle, XCircle, ChevronDown, FileText, Shield, MapPin, DollarSign, Calendar, User, Building, Info, AlertCircle, Clock, Link2, Users, Scale, FileCheck, History } from "lucide-react";
 import { useState } from "react";
 import { TitleInsuranceData, LienItem, ChainOfTitleItem, EntityInfo, AffiliationMatch } from "@/types/titleInsurance";
 import { ManualReviewModal } from "./ManualReviewModal";
-
 interface TitleInsuranceTabProps {
   phaseStatus: string;
   lastUpdated: string;
 }
-
-export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTabProps) => {
+export const TitleInsuranceTab = ({
+  phaseStatus,
+  lastUpdated
+}: TitleInsuranceTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     ownershipVerification: true,
     lienEncumbrance: true,
@@ -28,9 +25,8 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
     altaPolicy: true,
     chainOfTitle: true,
     isaoaReconciliation: true,
-    purchaseContract: true,
+    purchaseContract: true
   });
-
   const [expandedLiens, setExpandedLiens] = useState<Record<string, boolean>>({});
   const [manualReviewOpen, setManualReviewOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState<{
@@ -39,17 +35,25 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
     aiValue: string | number;
     difference: string | number;
   } | null>(null);
-
   const toggleCard = (cardId: string) => {
-    setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
+    setExpandedCards(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
   };
-
   const toggleLien = (lienId: string) => {
-    setExpandedLiens(prev => ({ ...prev, [lienId]: !prev[lienId] }));
+    setExpandedLiens(prev => ({
+      ...prev,
+      [lienId]: !prev[lienId]
+    }));
   };
-
   const openManualReview = (metric: string, posValue: string, aiValue: string, difference: string) => {
-    setSelectedCheck({ metric, posValue, aiValue, difference });
+    setSelectedCheck({
+      metric,
+      posValue,
+      aiValue,
+      difference
+    });
     setManualReviewOpen(true);
   };
 
@@ -63,47 +67,43 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
       matchScore: 96,
       status: 'pass'
     },
-    lienItems: [
-      {
-        id: 'lien-1',
-        scheduleBText: 'Deed of Trust recorded January 15, 2023, Document No. 2023-001234, in favor of First National Bank in the original amount of $450,000.00',
-        detectedLienType: 'Mortgage',
-        rbiClassification: 'Voluntary Financial Lien',
-        autoTagApplied: 'Standard Mortgage',
-        expectedParty: 'ABC Holdings LLC',
-        actualParty: 'ABC Holdings LLC',
-        partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'Verify payoff at closing',
-        result: 'Requires Payoff',
-        confidenceScore: 94
-      },
-      {
-        id: 'lien-2',
-        scheduleBText: 'Easement for utilities recorded May 2, 2018, Book 1234, Page 567',
-        detectedLienType: 'Easement',
-        rbiClassification: 'Non-Financial Restriction',
-        autoTagApplied: 'Utility Easement',
-        expectedParty: 'N/A',
-        actualParty: 'City Water Authority',
-        partyMatchResult: 'Expected Party',
-        underwritingActionRequired: 'None - standard utility easement',
-        result: 'Passed',
-        confidenceScore: 98
-      },
-      {
-        id: 'lien-3',
-        scheduleBText: 'Mechanics Lien filed by XYZ Construction, recorded August 10, 2024, in the amount of $25,000',
-        detectedLienType: 'Claim of Lien',
-        rbiClassification: 'Involuntary Lien',
-        autoTagApplied: 'Construction Lien',
-        expectedParty: 'ABC Holdings LLC',
-        actualParty: 'Unknown Third Party',
-        partyMatchResult: 'Unexpected Party',
-        underwritingActionRequired: 'Manual review required - unexpected lienholder',
-        result: 'Manual Review',
-        confidenceScore: 87
-      }
-    ],
+    lienItems: [{
+      id: 'lien-1',
+      scheduleBText: 'Deed of Trust recorded January 15, 2023, Document No. 2023-001234, in favor of First National Bank in the original amount of $450,000.00',
+      detectedLienType: 'Mortgage',
+      rbiClassification: 'Voluntary Financial Lien',
+      autoTagApplied: 'Standard Mortgage',
+      expectedParty: 'ABC Holdings LLC',
+      actualParty: 'ABC Holdings LLC',
+      partyMatchResult: 'Expected Party',
+      underwritingActionRequired: 'Verify payoff at closing',
+      result: 'Requires Payoff',
+      confidenceScore: 94
+    }, {
+      id: 'lien-2',
+      scheduleBText: 'Easement for utilities recorded May 2, 2018, Book 1234, Page 567',
+      detectedLienType: 'Easement',
+      rbiClassification: 'Non-Financial Restriction',
+      autoTagApplied: 'Utility Easement',
+      expectedParty: 'N/A',
+      actualParty: 'City Water Authority',
+      partyMatchResult: 'Expected Party',
+      underwritingActionRequired: 'None - standard utility easement',
+      result: 'Passed',
+      confidenceScore: 98
+    }, {
+      id: 'lien-3',
+      scheduleBText: 'Mechanics Lien filed by XYZ Construction, recorded August 10, 2024, in the amount of $25,000',
+      detectedLienType: 'Claim of Lien',
+      rbiClassification: 'Involuntary Lien',
+      autoTagApplied: 'Construction Lien',
+      expectedParty: 'ABC Holdings LLC',
+      actualParty: 'Unknown Third Party',
+      partyMatchResult: 'Unexpected Party',
+      underwritingActionRequired: 'Manual review required - unexpected lienholder',
+      result: 'Manual Review',
+      confidenceScore: 87
+    }],
     affiliatedEntities: {
       vestedOwner: {
         entityName: 'ABC Holdings, LLC',
@@ -122,29 +122,23 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
         address: '456 Oak Ave, Dallas, TX 75201',
         entityType: 'Individual'
       },
-      guarantors: [
-        {
-          entityName: 'John Smith',
-          address: '456 Oak Ave, Dallas, TX 75201',
-          entityType: 'Individual'
-        }
-      ],
-      lienholderParties: [
-        {
-          entityName: 'First National Bank',
-          address: '789 Financial Blvd, Houston, TX 77001',
-          entityType: 'Corporation'
-        }
-      ],
-      affiliationDetections: [
-        {
-          entityA: 'ABC Holdings, LLC',
-          entityB: 'ABC Holdings LLC',
-          matchTypeDetected: 'Name similarity',
-          similarityScore: 96,
-          result: 'Passed'
-        }
-      ],
+      guarantors: [{
+        entityName: 'John Smith',
+        address: '456 Oak Ave, Dallas, TX 75201',
+        entityType: 'Individual'
+      }],
+      lienholderParties: [{
+        entityName: 'First National Bank',
+        address: '789 Financial Blvd, Houston, TX 77001',
+        entityType: 'Corporation'
+      }],
+      affiliationDetections: [{
+        entityA: 'ABC Holdings, LLC',
+        entityB: 'ABC Holdings LLC',
+        matchTypeDetected: 'Name similarity',
+        similarityScore: 96,
+        result: 'Passed'
+      }],
       overallStatus: 'pass'
     },
     commitmentAmount: {
@@ -168,41 +162,45 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
         result: 'pass'
       }
     },
-    chainOfTitle: [
-      {
-        id: 'cot-1',
-        itemType: 'Owner History',
-        ocrExtractedData: 'Property owned by Smith Family Trust from 2015-2020',
-        autoTag: 'green',
-        underwritingActionRequired: 'None',
-        result: 'Pass',
-        date: '2015-03-15'
-      },
-      {
-        id: 'cot-2',
-        itemType: 'Warranty Deed',
-        ocrExtractedData: 'Warranty Deed from Smith Family Trust to ABC Holdings LLC recorded March 2020',
-        autoTag: 'green',
-        underwritingActionRequired: 'None',
-        result: 'Pass',
-        date: '2020-03-22'
-      },
-      {
-        id: 'cot-3',
-        itemType: 'Recent Transfer 3–12 Months',
-        ocrExtractedData: 'Transfer from ABC Holdings LLC to current vested owner recorded 8 months ago',
-        autoTag: 'yellow',
-        underwritingActionRequired: 'Review transfer documentation',
-        result: 'Manual Review',
-        date: '2024-04-10'
-      }
-    ],
+    chainOfTitle: [{
+      id: 'cot-1',
+      itemType: 'Owner History',
+      ocrExtractedData: 'Property owned by Smith Family Trust from 2015-2020',
+      autoTag: 'green',
+      underwritingActionRequired: 'None',
+      result: 'Pass',
+      date: '2015-03-15'
+    }, {
+      id: 'cot-2',
+      itemType: 'Warranty Deed',
+      ocrExtractedData: 'Warranty Deed from Smith Family Trust to ABC Holdings LLC recorded March 2020',
+      autoTag: 'green',
+      underwritingActionRequired: 'None',
+      result: 'Pass',
+      date: '2020-03-22'
+    }, {
+      id: 'cot-3',
+      itemType: 'Recent Transfer 3–12 Months',
+      ocrExtractedData: 'Transfer from ABC Holdings LLC to current vested owner recorded 8 months ago',
+      autoTag: 'yellow',
+      underwritingActionRequired: 'Review transfer documentation',
+      result: 'Manual Review',
+      date: '2024-04-10'
+    }],
     isaoaReconciliation: {
-      sources: [
-        { source: 'Title Commitment', extractedName: 'RBI Private Lending, LLC ISAOA/ATIMA', matches: true },
-        { source: 'ALTA Policy', extractedName: 'RBI Private Lending, LLC ISAOA/ATIMA', matches: true },
-        { source: 'CPL', extractedName: 'RBI Private Lending, LLC ISAOA/ATIMA', matches: true }
-      ],
+      sources: [{
+        source: 'Title Commitment',
+        extractedName: 'RBI Private Lending, LLC ISAOA/ATIMA',
+        matches: true
+      }, {
+        source: 'ALTA Policy',
+        extractedName: 'RBI Private Lending, LLC ISAOA/ATIMA',
+        matches: true
+      }, {
+        source: 'CPL',
+        extractedName: 'RBI Private Lending, LLC ISAOA/ATIMA',
+        matches: true
+      }],
       businessRule: 'RBI Private Lending, LLC ISAOA/ATIMA',
       matchScore: 100,
       result: 'pass'
@@ -240,7 +238,6 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
     processedAt: '2024-12-10T14:30:00Z',
     processedBy: 'System'
   };
-
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case "pass":
@@ -257,15 +254,16 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
   const getAutoTagColor = (tag: 'green' | 'yellow' | 'red') => {
     switch (tag) {
-      case 'green': return 'bg-green-100 text-green-800 border-green-200';
-      case 'yellow': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'red': return 'bg-red-100 text-red-800 border-red-200';
+      case 'green':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'yellow':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'red':
+        return 'bg-red-100 text-red-800 border-red-200';
     }
   };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -274,7 +272,6 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
       maximumFractionDigits: 0
     }).format(value);
   };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -282,23 +279,16 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
       day: 'numeric'
     });
   };
-
-  const renderEntityCard = (entity: EntityInfo, title: string) => (
-    <div className="p-4 bg-muted/20 rounded-lg space-y-2">
+  const renderEntityCard = (entity: EntityInfo, title: string) => <div className="p-4 bg-muted/20 rounded-lg space-y-2">
       <p className="text-xs text-muted-foreground font-medium">{title}</p>
       <p className="text-sm font-semibold">{entity.entityName}</p>
       <div className="space-y-1 text-xs text-muted-foreground">
         <p><span className="font-medium">Type:</span> {entity.entityType}</p>
         <p><span className="font-medium">Address:</span> {entity.address}</p>
-        {entity.registeredAgent && (
-          <p><span className="font-medium">Registered Agent:</span> {entity.registeredAgent}</p>
-        )}
+        {entity.registeredAgent && <p><span className="font-medium">Registered Agent:</span> {entity.registeredAgent}</p>}
       </div>
-    </div>
-  );
-
-  return (
-    <div className="space-y-4">
+    </div>;
+  return <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Title Insurance</span>
@@ -322,8 +312,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.ownershipVerification ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.ownershipVerification && (
-          <CardContent className="space-y-4">
+        {expandedCards.ownershipVerification && <CardContent className="space-y-4">
             {/* Transaction Type Subsection */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
@@ -364,9 +353,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                       <TooltipContent side="right" className="max-w-xs">
                         <p className="font-medium mb-1">Validation Rule:</p>
                         <p className="text-xs">
-                          {data.transactionType === 'Purchase' 
-                            ? 'For Purchase: Seller Name (Purchase Contract) must match Vested Owner (Schedule A)'
-                            : 'For Refinance: Borrower/Guarantor must match Vested Owner'}
+                          {data.transactionType === 'Purchase' ? 'For Purchase: Seller Name (Purchase Contract) must match Vested Owner (Schedule A)' : 'For Refinance: Borrower/Guarantor must match Vested Owner'}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -384,7 +371,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                   </p>
                 </div>
                 <div className="p-4">
-                  <p className="text-xs text-muted-foreground mb-1">Vested Owner (Schedule A)</p>
+                  <p className="text-xs text-muted-foreground mb-1">Vested Owner (Title Commitment - Schedule A)</p>
                   <p className="text-sm font-medium">{data.ownershipMatch.vestedOwner}</p>
                 </div>
               </div>
@@ -395,8 +382,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                 </div>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 2: Lien & Encumbrance Verification */}
@@ -406,16 +392,12 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <div className="flex items-center gap-2">
               <Scale className="h-4 w-4" />
               Lien & Encumbrance Verification
-              {data.lienItems.some(l => l.result === 'Manual Review') 
-                ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge>
-                : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
-              }
+              {data.lienItems.some(l => l.result === 'Manual Review') ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge> : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.lienEncumbrance ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.lienEncumbrance && (
-          <CardContent className="space-y-3">
+        {expandedCards.lienEncumbrance && <CardContent className="space-y-3">
             <div className="rounded-lg border overflow-hidden">
               <Table>
                 <TableHeader>
@@ -430,8 +412,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.lienItems.map((lien) => (
-                    <Collapsible key={lien.id} open={expandedLiens[lien.id]} onOpenChange={() => toggleLien(lien.id)}>
+                  {data.lienItems.map(lien => <Collapsible key={lien.id} open={expandedLiens[lien.id]} onOpenChange={() => toggleLien(lien.id)}>
                       <TableRow className="cursor-pointer hover:bg-muted/20">
                         <TableCell className="text-xs max-w-[200px]">
                           <CollapsibleTrigger className="flex items-center gap-1 text-left">
@@ -455,15 +436,9 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                         <TableCell>
                           {lien.result === 'Passed' && <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
                           {lien.result === 'Requires Payoff' && <Badge variant="outline" className="text-xs gap-1 bg-blue-50 text-blue-700 border-blue-200"><DollarSign className="h-3 w-3" /> Payoff</Badge>}
-                          {lien.result === 'Manual Review' && (
-                            <Badge 
-                              variant="warning" 
-                              className="text-xs gap-1 cursor-pointer hover:opacity-80"
-                              onClick={() => openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired)}
-                            >
+                          {lien.result === 'Manual Review' && <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired)}>
                               <AlertTriangle className="h-3 w-3" /> Review
-                            </Badge>
-                          )}
+                            </Badge>}
                         </TableCell>
                       </TableRow>
                       <CollapsibleContent asChild>
@@ -479,13 +454,11 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                           </TableCell>
                         </TableRow>
                       </CollapsibleContent>
-                    </Collapsible>
-                  ))}
+                    </Collapsible>)}
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 3: Affiliated Entities Check */}
@@ -500,8 +473,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.affiliatedEntities ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.affiliatedEntities && (
-          <CardContent className="space-y-4">
+        {expandedCards.affiliatedEntities && <CardContent className="space-y-4">
             {/* Entity Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {renderEntityCard(data.affiliatedEntities.vestedOwner, 'Vested Owner (Title)')}
@@ -528,34 +500,24 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.affiliatedEntities.affiliationDetections.length > 0 ? (
-                      data.affiliatedEntities.affiliationDetections.map((match, idx) => (
-                        <TableRow key={idx}>
+                    {data.affiliatedEntities.affiliationDetections.length > 0 ? data.affiliatedEntities.affiliationDetections.map((match, idx) => <TableRow key={idx}>
                           <TableCell className="text-xs font-medium">{match.entityA}</TableCell>
                           <TableCell className="text-xs font-medium">{match.entityB}</TableCell>
                           <TableCell className="text-xs">{match.matchTypeDetected}</TableCell>
                           <TableCell className="text-xs font-semibold">{match.similarityScore}%</TableCell>
                           <TableCell>
-                            {match.result === 'Passed' 
-                              ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
-                              : <Badge variant="warning" className="text-xs gap-1"><AlertTriangle className="h-3 w-3" /> Flagged</Badge>
-                            }
+                            {match.result === 'Passed' ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge> : <Badge variant="warning" className="text-xs gap-1"><AlertTriangle className="h-3 w-3" /> Flagged</Badge>}
                           </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
+                        </TableRow>) : <TableRow>
                         <TableCell colSpan={5} className="text-center text-xs text-muted-foreground py-4">
                           No affiliations detected
                         </TableCell>
-                      </TableRow>
-                    )}
+                      </TableRow>}
                   </TableBody>
                 </Table>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 4: Commitment Amount Validation */}
@@ -570,8 +532,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.commitmentAmount ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.commitmentAmount && (
-          <CardContent>
+        {expandedCards.commitmentAmount && <CardContent>
             <div className="border rounded-lg overflow-hidden">
               <div className="grid grid-cols-3 divide-x">
                 <div className="p-4 text-center">
@@ -597,8 +558,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                 </div>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 5: ALTA Policy Review */}
@@ -613,8 +573,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.altaPolicy ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.altaPolicy && (
-          <CardContent className="space-y-4">
+        {expandedCards.altaPolicy && <CardContent className="space-y-4">
             {/* Policy Type Validation */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
@@ -658,8 +617,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                 </div>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 6: 24-Month Chain of Title Review */}
@@ -669,19 +627,14 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <div className="flex items-center gap-2">
               <History className="h-4 w-4" />
               24-Month Chain of Title Review
-              {data.chainOfTitle.some(c => c.result === 'Manual Review')
-                ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge>
-                : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
-              }
+              {data.chainOfTitle.some(c => c.result === 'Manual Review') ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge> : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.chainOfTitle ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.chainOfTitle && (
-          <CardContent>
+        {expandedCards.chainOfTitle && <CardContent>
             <div className="space-y-3">
-              {data.chainOfTitle.map((item, index) => (
-                <div key={item.id} className="border rounded-lg overflow-hidden">
+              {data.chainOfTitle.map((item, index) => <div key={item.id} className="border rounded-lg overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
@@ -692,27 +645,20 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                         {item.itemType}
                       </Badge>
                     </div>
-                    {item.result === 'Pass' 
-                      ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Pass</Badge>
-                      : <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Chain of Title', item.itemType, item.ocrExtractedData, item.underwritingActionRequired)}>
+                    {item.result === 'Pass' ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Pass</Badge> : <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Chain of Title', item.itemType, item.ocrExtractedData, item.underwritingActionRequired)}>
                           <AlertTriangle className="h-3 w-3" /> Manual Review
-                        </Badge>
-                    }
+                        </Badge>}
                   </div>
                   <div className="p-4 space-y-2">
                     <p className="text-xs text-muted-foreground">OCR Extracted Data:</p>
                     <p className="text-sm">{item.ocrExtractedData}</p>
-                    {item.underwritingActionRequired !== 'None' && (
-                      <p className="text-xs text-amber-600">
+                    {item.underwritingActionRequired !== 'None' && <p className="text-xs text-amber-600">
                         <span className="font-medium">Action Required:</span> {item.underwritingActionRequired}
-                      </p>
-                    )}
+                      </p>}
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 7: ISAOA/ATIMA Reconciliation */}
@@ -727,8 +673,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.isaoaReconciliation ? '' : '-rotate-90'}`} />
           </CardTitle>
         </CardHeader>
-        {expandedCards.isaoaReconciliation && (
-          <CardContent>
+        {expandedCards.isaoaReconciliation && <CardContent>
             <div className="border rounded-lg overflow-hidden">
               <div className="rounded-lg border-0">
                 <Table>
@@ -740,18 +685,13 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.isaoaReconciliation.sources.map((source, idx) => (
-                      <TableRow key={idx}>
+                    {data.isaoaReconciliation.sources.map((source, idx) => <TableRow key={idx}>
                         <TableCell className="text-xs font-medium">{source.source}</TableCell>
                         <TableCell className="text-xs">{source.extractedName}</TableCell>
                         <TableCell>
-                          {source.matches 
-                            ? <CheckCircle className="h-4 w-4 text-green-600" />
-                            : <XCircle className="h-4 w-4 text-red-600" />
-                          }
+                          {source.matches ? <CheckCircle className="h-4 w-4 text-green-600" /> : <XCircle className="h-4 w-4 text-red-600" />}
                         </TableCell>
-                      </TableRow>
-                    ))}
+                      </TableRow>)}
                   </TableBody>
                 </Table>
               </div>
@@ -769,13 +709,11 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                 </div>
               </div>
             </div>
-          </CardContent>
-        )}
+          </CardContent>}
       </Card>
 
       {/* Section 8: Purchase Contract Reconciliation (Conditional) */}
-      {data.transactionType === 'Purchase' && data.purchaseContractReconciliation && (
-        <Card>
+      {data.transactionType === 'Purchase' && data.purchaseContractReconciliation && <Card>
           <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('purchaseContract')}>
             <CardTitle className="text-base flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -786,8 +724,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
               <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.purchaseContract ? '' : '-rotate-90'}`} />
             </CardTitle>
           </CardHeader>
-          {expandedCards.purchaseContract && (
-            <CardContent className="space-y-3">
+          {expandedCards.purchaseContract && <CardContent className="space-y-3">
               {/* Seller Name Match */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
@@ -869,8 +806,7 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
               </div>
 
               {/* Closing Date (Optional) */}
-              {data.purchaseContractReconciliation.closingDate && (
-                <div className="border rounded-lg overflow-hidden">
+              {data.purchaseContractReconciliation.closingDate && <div className="border rounded-lg overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                     <span className="text-sm font-medium">Closing Date</span>
                     {getStatusBadge(data.purchaseContractReconciliation.closingDate.result)}
@@ -885,24 +821,11 @@ export const TitleInsuranceTab = ({ phaseStatus, lastUpdated }: TitleInsuranceTa
                       <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.closingDate.matchScore}%</p>
                     </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          )}
-        </Card>
-      )}
+                </div>}
+            </CardContent>}
+        </Card>}
 
       {/* Manual Review Modal */}
-      {selectedCheck && (
-        <ManualReviewModal
-          open={manualReviewOpen}
-          onOpenChange={setManualReviewOpen}
-          metricName={String(selectedCheck.metric)}
-          posValue={selectedCheck.posValue}
-          aiValue={selectedCheck.aiValue}
-          deviation={selectedCheck.difference}
-        />
-      )}
-    </div>
-  );
+      {selectedCheck && <ManualReviewModal open={manualReviewOpen} onOpenChange={setManualReviewOpen} metricName={String(selectedCheck.metric)} posValue={selectedCheck.posValue} aiValue={selectedCheck.aiValue} deviation={selectedCheck.difference} />}
+    </div>;
 };
