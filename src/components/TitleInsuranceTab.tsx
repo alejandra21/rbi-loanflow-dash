@@ -520,7 +520,44 @@ export const TitleInsuranceTab = ({
         titleValue: 625000,
         matchScore: 100,
         result: 'pass'
-      }
+      },
+      contractTermsValidation: [
+        {
+          term: 'Closing Date',
+          contractValue: '2024-12-15',
+          titleValue: '2024-12-15',
+          matchScore: 100,
+          result: 'pass'
+        },
+        {
+          term: 'Earnest Money Deposit',
+          contractValue: '$25,000',
+          titleValue: '$25,000',
+          matchScore: 100,
+          result: 'pass'
+        },
+        {
+          term: 'Buyer Name',
+          contractValue: 'John Smith',
+          titleValue: 'John Smith',
+          matchScore: 100,
+          result: 'pass'
+        },
+        {
+          term: 'Legal Description',
+          contractValue: 'Lot 5, Block 12, Sunset Hills Subdivision',
+          titleValue: 'Lot 5, Block 12, Sunset Hills Subdivision',
+          matchScore: 100,
+          result: 'pass'
+        },
+        {
+          term: 'Financing Contingency',
+          contractValue: 'Yes - 30 days',
+          titleValue: 'N/A',
+          matchScore: 0,
+          result: 'review'
+        }
+      ]
     },
     overallStatus: 'review',
     processedAt: '2024-12-10T14:30:00Z',
@@ -812,6 +849,45 @@ export const TitleInsuranceTab = ({
                     <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.purchasePriceConfirmation.matchScore}%</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Contract Terms Validation (vs Title Commitment) */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                  <span className="text-sm font-medium">Contract Terms Validation (vs Title Commitment)</span>
+                  {data.purchaseContractReconciliation.contractTermsValidation.some(t => t.result === 'review' || t.result === 'fail') 
+                    ? <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge>
+                    : <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>
+                  }
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/10">
+                      <TableHead className="text-xs font-semibold">Term</TableHead>
+                      <TableHead className="text-xs font-semibold">Contract Value</TableHead>
+                      <TableHead className="text-xs font-semibold">Title Commitment Value</TableHead>
+                      <TableHead className="text-xs font-semibold text-center">Match Score</TableHead>
+                      <TableHead className="text-xs font-semibold text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data.purchaseContractReconciliation.contractTermsValidation.map((term, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="text-sm font-medium">{term.term}</TableCell>
+                        <TableCell className="text-sm">{term.contractValue}</TableCell>
+                        <TableCell className="text-sm">{term.titleValue}</TableCell>
+                        <TableCell className="text-center">
+                          <span className={`text-sm font-semibold ${term.matchScore >= 90 ? 'text-green-600' : term.matchScore >= 70 ? 'text-amber-600' : 'text-red-600'}`}>
+                            {term.matchScore}%
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {getStatusBadge(term.result)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>}
         </Card>}
