@@ -372,31 +372,118 @@ export const TitleInsuranceTab = ({
         result: 'pass'
       }
     },
-    chainOfTitle: [{
-      id: 'cot-1',
-      itemType: 'Owner History',
-      ocrExtractedData: 'Property owned by Smith Family Trust from 2015-2020',
-      autoTag: 'green',
-      underwritingActionRequired: 'None',
-      result: 'Pass',
-      date: '2015-03-15'
-    }, {
-      id: 'cot-2',
-      itemType: 'Warranty Deed',
-      ocrExtractedData: 'Warranty Deed from Smith Family Trust to ABC Holdings LLC recorded March 2020',
-      autoTag: 'green',
-      underwritingActionRequired: 'None',
-      result: 'Pass',
-      date: '2020-03-22'
-    }, {
-      id: 'cot-3',
-      itemType: 'Recent Transfer 3–12 Months',
-      ocrExtractedData: 'Transfer from ABC Holdings LLC to current vested owner recorded 8 months ago',
-      autoTag: 'yellow',
-      underwritingActionRequired: 'Review transfer documentation',
-      result: 'Manual Review',
-      date: '2024-04-10'
-    }],
+    chainOfTitle: [
+      {
+        id: 'cot-1',
+        itemType: 'Owner History',
+        rbiClassification: 'Historical Ownership Data',
+        ocrExtractedData: 'Property owned by Smith Family Trust from 2015-2020',
+        autoTag: 'Owner History – Review Completed',
+        underwritingActionRequired: 'Verify chain of title for completeness and anomalies',
+        result: 'Pass',
+        date: '2015-03-15'
+      },
+      {
+        id: 'cot-2',
+        itemType: 'Transfer',
+        rbiClassification: 'Property Transfer Event',
+        ocrExtractedData: 'Transfer from Smith Family Trust to ABC Holdings LLC recorded March 2020',
+        autoTag: 'Ownership Change – Review Required',
+        underwritingActionRequired: 'Confirm validity of transfer; check for prior liens or encumbrances',
+        result: 'Pass',
+        date: '2020-03-22'
+      },
+      {
+        id: 'cot-3',
+        itemType: 'Warranty Deed',
+        rbiClassification: 'Transfer Instrument',
+        ocrExtractedData: 'Warranty Deed from ABC Holdings LLC to XYZ Investments LLC recorded June 2022',
+        autoTag: 'Warranty Deed – Confirm Full Title Guarantee',
+        underwritingActionRequired: 'Ensure grantor had full title and no encumbrance conflicts',
+        result: 'Pass',
+        date: '2022-06-15'
+      },
+      {
+        id: 'cot-4',
+        itemType: 'Quitclaim',
+        rbiClassification: 'Transfer Instrument',
+        ocrExtractedData: 'Quitclaim Deed from XYZ Investments LLC to current vested owner recorded January 2024',
+        autoTag: 'Quitclaim – Verify Beneficiary & Liability',
+        underwritingActionRequired: 'Confirm no hidden liens or ownership conflicts',
+        result: 'Manual Review',
+        date: '2024-01-10'
+      },
+      {
+        id: 'cot-5',
+        itemType: 'New Lien Recorded',
+        rbiClassification: 'Financial Encumbrance',
+        ocrExtractedData: 'New mortgage lien recorded February 2024, Book 5412, Page 118',
+        autoTag: 'New Lien Detected – Exception Required',
+        underwritingActionRequired: 'Determine payoff requirement; assess encumbrance risk',
+        result: 'Manual Review',
+        date: '2024-02-05'
+      },
+      {
+        id: 'cot-6',
+        itemType: 'Release Not Filed',
+        rbiClassification: 'Outstanding Encumbrance',
+        ocrExtractedData: 'Prior mortgage from 2019 shows no release of lien on record',
+        autoTag: 'Release Missing – Follow-Up Required',
+        underwritingActionRequired: 'Verify lien satisfaction; ensure title is free from stale liens',
+        result: 'Manual Review',
+        date: '2019-08-20'
+      },
+      {
+        id: 'cot-7',
+        itemType: 'Flip 0-12 Months',
+        rbiClassification: 'Red-Flag / Risk Alert',
+        ocrExtractedData: 'Property was transferred 4 months ago and is now being resold',
+        autoTag: 'Rapid Flip – Risk Review',
+        underwritingActionRequired: 'Evaluate marketability, rehab history, borrower experience',
+        result: 'Manual Review',
+        date: '2024-08-10'
+      },
+      {
+        id: 'cot-8',
+        itemType: 'Related Party Transfer',
+        rbiClassification: 'Related Party Transfer',
+        ocrExtractedData: 'Transfer between ABC Holdings LLC and ABC Investments LLC (common ownership)',
+        autoTag: 'Related Party Transfer – Review Required',
+        underwritingActionRequired: 'Assess non-arm\'s length transaction risk; check hidden liens',
+        result: 'Manual Review',
+        date: '2024-03-15'
+      },
+      {
+        id: 'cot-9',
+        itemType: 'Unexpected New Lien (<90 Days)',
+        rbiClassification: 'Red-Flag / New Risk',
+        ocrExtractedData: 'Mechanics lien filed 45 days ago by XYZ Construction LLC',
+        autoTag: 'Unexpected Lien – Immediate Review',
+        underwritingActionRequired: 'Verify payoff, confirm priority, assess risk exposure',
+        result: 'Manual Review',
+        date: '2024-10-28'
+      },
+      {
+        id: 'cot-10',
+        itemType: 'Ownership Transfer 3-12 Months',
+        rbiClassification: 'Red-Flag / Risk Alert',
+        ocrExtractedData: 'Transfer from previous owner occurred 8 months ago',
+        autoTag: 'Recent Transfer – Review Required',
+        underwritingActionRequired: 'Investigate reason for transfer; evaluate flip or related-party risk',
+        result: 'Manual Review',
+        date: '2024-04-10'
+      },
+      {
+        id: 'cot-11',
+        itemType: 'Sudden Ownership Change',
+        rbiClassification: 'Red-Flag / Risk Alert',
+        ocrExtractedData: 'Rapid succession of 3 ownership changes within 6 months detected',
+        autoTag: 'Sudden Ownership Change – Review Required',
+        underwritingActionRequired: 'Investigate rapid ownership change; assess flip or fraud risk',
+        result: 'Manual Review',
+        date: '2024-05-20'
+      }
+    ],
     isaoaReconciliation: {
       sources: [{
         source: 'Title Commitment',
@@ -464,14 +551,12 @@ export const TitleInsuranceTab = ({
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  const getAutoTagColor = (tag: 'green' | 'yellow' | 'red') => {
-    switch (tag) {
-      case 'green':
+  const getChainOfTitleItemColor = (result: 'Pass' | 'Manual Review') => {
+    switch (result) {
+      case 'Pass':
         return 'bg-green-100 text-green-800 border-green-200';
-      case 'yellow':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'red':
-        return 'bg-red-100 text-red-800 border-red-200';
+      case 'Manual Review':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
     }
   };
   const formatCurrency = (value: number) => {
@@ -1027,20 +1112,28 @@ export const TitleInsuranceTab = ({
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">{item.date && formatDate(item.date)}</span>
                       </div>
-                      <Badge variant="outline" className={`text-xs ${getAutoTagColor(item.autoTag)}`}>
+                      <Badge variant="outline" className={`text-xs ${getChainOfTitleItemColor(item.result)}`}>
                         {item.itemType}
                       </Badge>
+                      <span className="text-xs text-muted-foreground">({item.rbiClassification})</span>
                     </div>
                     {item.result === 'Pass' ? <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Pass</Badge> : <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Chain of Title', item.itemType, item.ocrExtractedData, item.underwritingActionRequired)}>
                           <AlertTriangle className="h-3 w-3" /> Manual Review
                         </Badge>}
                   </div>
-                  <div className="p-4 space-y-2">
-                    <p className="text-xs text-muted-foreground">OCR Extracted Data:</p>
-                    <p className="text-sm">{item.ocrExtractedData}</p>
-                    {item.underwritingActionRequired !== 'None' && <p className="text-xs text-amber-600">
-                        <span className="font-medium">Action Required:</span> {item.underwritingActionRequired}
-                      </p>}
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Auto-Tag (AI)</p>
+                      <Badge variant="outline" className="text-xs">{item.autoTag}</Badge>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">OCR Extracted Data</p>
+                      <p className="text-sm">{item.ocrExtractedData}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Underwriting Action</p>
+                      <p className="text-xs text-amber-700 font-medium">{item.underwritingActionRequired}</p>
+                    </div>
                   </div>
                 </div>)}
             </div>

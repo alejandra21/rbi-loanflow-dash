@@ -3,7 +3,28 @@ export type LienType = 'Mortgage' | 'Judgment' | 'Tax Lien' | 'HOA Lien' | 'UCC'
 export type RBIClassification = 'Voluntary Financial Lien' | 'Involuntary Financial Lien' | 'Super-Priority Lien' | 'Priority Lien' | 'Statutory Lien' | 'Fixture or Personal Property Encumbrance' | 'Non-Financial Property Right' | 'Use Restrictions / Non-Financial' | 'Financial or Statutory Lien';
 export type LienCategory = 'Mortgage / Deed of Trust' | 'Judgment' | 'Tax Lien (IRS, State, County)' | 'Tax Certificate' | 'HOA Lien' | 'UCC Filing' | 'Easement' | 'Restrictions / CCRs / Code Enforcement' | 'Claim of Lien';
 export type EntityType = 'LLC' | 'Individual' | 'Corporation' | 'Trust' | 'Partnership';
-export type ChainOfTitleItemType = 'Owner History' | 'Transfer' | 'Quitclaim' | 'Warranty Deed' | 'New Lien' | 'Release Missing' | 'Sudden Ownership Change' | 'Flip <12 Months' | 'Related Party Transfer' | 'Recent Lien <90 Days' | 'Recent Transfer 3–12 Months';
+export type ChainOfTitleItemType = 
+  | 'Owner History' 
+  | 'Transfer' 
+  | 'Quitclaim' 
+  | 'Warranty Deed' 
+  | 'New Lien Recorded' 
+  | 'Release Not Filed' 
+  | 'Sudden Ownership Change' 
+  | 'Flip 0-12 Months' 
+  | 'Related Party Transfer' 
+  | 'Unexpected New Lien (<90 Days)' 
+  | 'Ownership Transfer 3-12 Months';
+
+export type ChainOfTitleRBIClassification = 
+  | 'Historical Ownership Data' 
+  | 'Property Transfer Event' 
+  | 'Transfer Instrument' 
+  | 'Financial Encumbrance' 
+  | 'Outstanding Encumbrance' 
+  | 'Red-Flag / Risk Alert' 
+  | 'Related Party Transfer' 
+  | 'Red-Flag / New Risk';
 
 export interface OwnershipMatch {
   transactionType: 'Purchase' | 'Refinance';
@@ -88,8 +109,9 @@ export interface ALTAPolicyReview {
 export interface ChainOfTitleItem {
   id: string;
   itemType: ChainOfTitleItemType;
+  rbiClassification: ChainOfTitleRBIClassification;
   ocrExtractedData: string;
-  autoTag: 'green' | 'yellow' | 'red';
+  autoTag: string;
   underwritingActionRequired: string;
   result: 'Pass' | 'Manual Review';
   date?: string;
