@@ -1,7 +1,7 @@
 export type ValidationStatus = 'pass' | 'fail' | 'review' | 'pending';
 export type LienType = 'Mortgage' | 'Judgment' | 'Tax Lien' | 'HOA Lien' | 'UCC' | 'Easement' | 'Restriction' | 'Code Enforcement' | 'Claim of Lien' | 'Construction Lien' | 'Tax Certificate';
-export type RBIClassification = 'Voluntary Financial Lien' | 'Priority Lien' | 'Non-Financial Restriction' | 'Involuntary Lien' | 'Government Lien';
-export type LienCategory = 'Mortgage / Deed of Trust' | 'Judgment' | 'Tax Lien (IRS, State, County)' | 'Tax Certificate' | 'HOA Lien' | 'UCC Filing' | 'Easement' | 'Restriction / CC&Rs';
+export type RBIClassification = 'Voluntary Financial Lien' | 'Involuntary Financial Lien' | 'Super-Priority Lien' | 'Priority Lien' | 'Statutory Lien' | 'Fixture or Personal Property Encumbrance' | 'Non-Financial Property Right' | 'Use Restrictions / Non-Financial' | 'Financial or Statutory Lien';
+export type LienCategory = 'Mortgage / Deed of Trust' | 'Judgment' | 'Tax Lien (IRS, State, County)' | 'Tax Certificate' | 'HOA Lien' | 'UCC Filing' | 'Easement' | 'Restrictions / CCRs / Code Enforcement' | 'Claim of Lien';
 export type EntityType = 'LLC' | 'Individual' | 'Corporation' | 'Trust' | 'Partnership';
 export type ChainOfTitleItemType = 'Owner History' | 'Transfer' | 'Quitclaim' | 'Warranty Deed' | 'New Lien' | 'Release Missing' | 'Sudden Ownership Change' | 'Flip <12 Months' | 'Related Party Transfer' | 'Recent Lien <90 Days' | 'Recent Transfer 3–12 Months';
 
