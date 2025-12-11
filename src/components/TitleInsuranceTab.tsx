@@ -551,6 +551,13 @@ export const TitleInsuranceTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.lienEncumbrance && <CardContent className="space-y-3">
+          {/* Download Button */}
+          <div className="flex gap-2 mb-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              Download Title Commitment
+            </Button>
+          </div>
           {/* Category Subsections */}
           {([
             { category: 'Mortgage / Deed of Trust' as LienCategory, icon: Landmark },
