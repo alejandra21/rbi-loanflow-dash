@@ -50,6 +50,7 @@ export interface AffiliationMatch {
 
 export interface AffiliatedEntitiesData {
   vestedOwner: EntityInfo;
+  assignor?: EntityInfo;
   seller?: EntityInfo;
   borrower: EntityInfo;
   guarantors: EntityInfo[];

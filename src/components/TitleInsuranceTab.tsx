@@ -252,6 +252,12 @@ export const TitleInsuranceTab = ({
         address: '123 Main St, Suite 100, Austin, TX 78701',
         entityType: 'LLC'
       },
+      assignor: {
+        entityName: 'ABC Holdings, LLC',
+        registeredAgent: 'Corporate Agents Inc.',
+        address: '123 Main St, Suite 100, Austin, TX 78701',
+        entityType: 'LLC'
+      },
       seller: {
         entityName: 'ABC Holdings LLC',
         registeredAgent: 'Corporate Agents Inc.',
@@ -263,11 +269,18 @@ export const TitleInsuranceTab = ({
         address: '456 Oak Ave, Dallas, TX 75201',
         entityType: 'Individual'
       },
-      guarantors: [{
-        entityName: 'John Smith',
-        address: '456 Oak Ave, Dallas, TX 75201',
-        entityType: 'Individual'
-      }],
+      guarantors: [
+        {
+          entityName: 'John Smith',
+          address: '456 Oak Ave, Dallas, TX 75201',
+          entityType: 'Individual'
+        },
+        {
+          entityName: 'Jane Smith',
+          address: '456 Oak Ave, Dallas, TX 75201',
+          entityType: 'Individual'
+        }
+      ],
       lienholderParties: [{
         entityName: 'First National Bank',
         address: '789 Financial Blvd, Houston, TX 77001',
@@ -728,6 +741,7 @@ export const TitleInsuranceTab = ({
             {/* Entity Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {renderEntityCard(data.affiliatedEntities.vestedOwner, 'Vested Owner (Title)')}
+              {data.affiliatedEntities.assignor && renderEntityCard(data.affiliatedEntities.assignor, 'Assignor (Title)')}
               {data.affiliatedEntities.seller && renderEntityCard(data.affiliatedEntities.seller, 'Seller (Contract)')}
               {renderEntityCard(data.affiliatedEntities.borrower, 'Borrower (POS)')}
               {data.affiliatedEntities.guarantors.map((g, i) => renderEntityCard(g, `Guarantor ${i + 1}`))}
