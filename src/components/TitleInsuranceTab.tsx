@@ -530,10 +530,11 @@ export const TitleInsuranceTab = ({
     switch (status?.toLowerCase()) {
       case "pass":
       case "passed":
-        return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>;
+        return <Badge variant="success" className="gap-1"><CheckCircle className="h-3 w-3" /><CheckCircle className="h-3 w-3" /></Badge>;
       case "warn":
       case "warning":
       case "review":
+      case "manual":
         return <Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" /> Review</Badge>;
       case "fail":
       case "failed":
