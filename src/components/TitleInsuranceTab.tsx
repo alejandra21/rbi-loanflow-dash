@@ -313,6 +313,18 @@ export const TitleInsuranceTab = ({
           </CardTitle>
         </CardHeader>
         {expandedCards.ownershipVerification && <CardContent className="space-y-4">
+            {/* Download Buttons */}
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download Purchase Contract
+              </Button>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download Title Commitment
+              </Button>
+            </div>
+
             {/* Transaction Type Subsection */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
