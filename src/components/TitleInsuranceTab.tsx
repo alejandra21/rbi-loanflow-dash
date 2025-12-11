@@ -974,7 +974,7 @@ export const TitleInsuranceTab = ({
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Business Rule</p>
-                    <p className="text-sm font-medium">ALTA 8.1-2019 – {data.altaPolicyReview.policyType.businessRule}</p>
+                    <p className="text-sm font-medium">ALTA 8.1-2019</p>
                   </div>
                 </div>
               </div>
