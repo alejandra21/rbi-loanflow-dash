@@ -797,7 +797,7 @@ export const mockLoans: LoanApplication[] = [
                     ]
                 }
             },
-            titleInsurance: { name: "Title Insurance Verification", status: "pending" },
+            titleInsurance: { name: "Title Insurance Verification", status: "manual" },
             closingProtection: { 
                 name: "Closing Protection Letter", 
                 status: "manual",
