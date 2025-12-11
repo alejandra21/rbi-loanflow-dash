@@ -1,5 +1,5 @@
 export type ValidationStatus = 'pass' | 'fail' | 'review' | 'pending';
-export type LienType = 'Mortgage' | 'Judgment' | 'Tax Lien' | 'HOA Lien' | 'UCC' | 'Easement' | 'Restriction' | 'Code Enforcement' | 'Claim of Lien';
+export type LienType = 'Mortgage' | 'Judgment' | 'Tax Lien' | 'HOA Lien' | 'UCC' | 'Easement' | 'Restriction' | 'Code Enforcement' | 'Claim of Lien' | 'Construction Lien';
 export type RBIClassification = 'Voluntary Financial Lien' | 'Priority Lien' | 'Non-Financial Restriction' | 'Involuntary Lien' | 'Government Lien';
 export type EntityType = 'LLC' | 'Individual' | 'Corporation' | 'Trust' | 'Partnership';
 export type ChainOfTitleItemType = 'Owner History' | 'Transfer' | 'Quitclaim' | 'Warranty Deed' | 'New Lien' | 'Release Missing' | 'Sudden Ownership Change' | 'Flip <12 Months' | 'Related Party Transfer' | 'Recent Lien <90 Days' | 'Recent Transfer 3–12 Months';
@@ -18,6 +18,7 @@ export interface OwnershipMatch {
 
 export interface LienItem {
   id: string;
+  scheduleBTitle?: string;
   scheduleBText: string;
   detectedLienType: LienType;
   rbiClassification: RBIClassification;

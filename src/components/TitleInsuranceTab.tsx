@@ -69,38 +69,41 @@ export const TitleInsuranceTab = ({
     },
     lienItems: [{
       id: 'lien-1',
-      scheduleBText: 'Deed of Trust recorded January 15, 2023, Document No. 2023-001234, in favor of First National Bank in the original amount of $450,000.00',
+      scheduleBTitle: 'Deed of Trust recorded January 15, 2023',
+      scheduleBText: 'Deed of Trust recorded January 15, 2023, Book 5093, Page 472, executed by John Doe to First Finance Bank.',
       detectedLienType: 'Mortgage',
       rbiClassification: 'Voluntary Financial Lien',
-      autoTagApplied: 'Standard Mortgage',
-      expectedParty: 'ABC Holdings LLC',
-      actualParty: 'ABC Holdings LLC',
+      autoTagApplied: 'Payoff',
+      expectedParty: 'John Doe',
+      actualParty: 'John Doe',
       partyMatchResult: 'Expected Party',
       underwritingActionRequired: 'Verify payoff at closing',
       result: 'Requires Payoff',
       confidenceScore: 94
     }, {
       id: 'lien-2',
-      scheduleBText: 'Easement for utilities recorded May 2, 2018, Book 1234, Page 567',
+      scheduleBTitle: 'Easement for utilities recorded May 22, 2018',
+      scheduleBText: 'Utility easement recorded May 22, 2018, Book 4331, Page 310, granting access rights to Utility Co.',
       detectedLienType: 'Easement',
       rbiClassification: 'Non-Financial Restriction',
-      autoTagApplied: 'Utility Easement',
+      autoTagApplied: 'Passed',
       expectedParty: 'N/A',
-      actualParty: 'City Water Authority',
+      actualParty: 'Utility Co.',
       partyMatchResult: 'Expected Party',
-      underwritingActionRequired: 'None - standard utility easement',
+      underwritingActionRequired: 'Standard utility easement',
       result: 'Passed',
       confidenceScore: 98
     }, {
       id: 'lien-3',
-      scheduleBText: 'Mechanics Lien filed by XYZ Construction, recorded August 10, 2024, in the amount of $25,000',
-      detectedLienType: 'Claim of Lien',
+      scheduleBTitle: 'Mechanics Lien filed by XYZ Construction',
+      scheduleBText: 'Claim of Lien filed by XYZ Construction LLC on March 1, 2025 for unpaid improvements, recorded Book 5781, Page 922.',
+      detectedLienType: 'Construction Lien',
       rbiClassification: 'Involuntary Lien',
-      autoTagApplied: 'Construction Lien',
-      expectedParty: 'ABC Holdings LLC',
-      actualParty: 'Unknown Third Party',
+      autoTagApplied: 'Review',
+      expectedParty: 'John Doe',
+      actualParty: 'XYZ Construction LLC',
       partyMatchResult: 'Unexpected Party',
-      underwritingActionRequired: 'Manual review required - unexpected lienholder',
+      underwritingActionRequired: 'Manual review required',
       result: 'Manual Review',
       confidenceScore: 87
     }],
@@ -414,53 +417,97 @@ export const TitleInsuranceTab = ({
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/30">
-                    <TableHead className="text-xs">Schedule B Item</TableHead>
-                    <TableHead className="text-xs">Lien Type</TableHead>
-                    <TableHead className="text-xs">RBI Classification</TableHead>
-                    <TableHead className="text-xs">Auto-Tag</TableHead>
-                    <TableHead className="text-xs">Party Match</TableHead>
-                    <TableHead className="text-xs">Action Required</TableHead>
-                    <TableHead className="text-xs">Result</TableHead>
+                    <TableHead className="text-xs font-semibold w-[280px]">Schedule B Item</TableHead>
+                    <TableHead className="text-xs font-semibold w-[100px]">Lien Type</TableHead>
+                    <TableHead className="text-xs font-semibold w-[140px]">RBI Classification</TableHead>
+                    <TableHead className="text-xs font-semibold w-[120px]">Party Match</TableHead>
+                    <TableHead className="text-xs font-semibold w-[160px]">Underwriting Action</TableHead>
+                    <TableHead className="text-xs font-semibold w-[100px] text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data.lienItems.map(lien => <Collapsible key={lien.id} open={expandedLiens[lien.id]} onOpenChange={() => toggleLien(lien.id)}>
                       <TableRow className="cursor-pointer hover:bg-muted/20">
-                        <TableCell className="text-xs max-w-[200px]">
-                          <CollapsibleTrigger className="flex items-center gap-1 text-left">
-                            <ChevronDown className={`h-3 w-3 flex-shrink-0 transition-transform ${expandedLiens[lien.id] ? '' : '-rotate-90'}`} />
-                            <span className="truncate">{lien.scheduleBText.substring(0, 50)}...</span>
+                        <TableCell className="py-4">
+                          <CollapsibleTrigger className="flex items-center gap-2 text-left w-full">
+                            <ChevronDown className={`h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform ${expandedLiens[lien.id] ? '' : '-rotate-90'}`} />
+                            <span className="text-sm font-medium truncate">
+                              {lien.scheduleBTitle || lien.scheduleBText.substring(0, 45) + '...'}
+                            </span>
                           </CollapsibleTrigger>
                         </TableCell>
-                        <TableCell className="text-xs">{lien.detectedLienType}</TableCell>
-                        <TableCell className="text-xs">{lien.rbiClassification}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                            {lien.autoTagApplied}
+                        <TableCell className="py-4">
+                          <Badge variant="outline" className="text-xs font-medium bg-emerald-50 text-emerald-700 border-emerald-200 rounded-full px-3">
+                            {lien.detectedLienType}
                           </Badge>
                         </TableCell>
-                        <TableCell>
-                          <Badge variant={lien.partyMatchResult === 'Expected Party' ? 'outline' : 'destructive'} className="text-xs">
+                        <TableCell className="py-4">
+                          <Badge variant="outline" className="text-xs font-medium bg-slate-50 text-slate-600 border-slate-200 rounded-full px-3">
+                            {lien.rbiClassification}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-4">
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs font-medium rounded-full px-3 ${
+                              lien.partyMatchResult === 'Expected Party' 
+                                ? 'bg-green-50 text-green-700 border-green-300' 
+                                : 'bg-red-100 text-red-700 border-red-300'
+                            }`}
+                          >
                             {lien.partyMatchResult}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs max-w-[150px] truncate">{lien.underwritingActionRequired}</TableCell>
-                        <TableCell>
-                          {lien.result === 'Passed' && <Badge variant="success" className="text-xs gap-1"><CheckCircle className="h-3 w-3" /> Passed</Badge>}
-                          {lien.result === 'Requires Payoff' && <Badge variant="outline" className="text-xs gap-1 bg-blue-50 text-blue-700 border-blue-200"><DollarSign className="h-3 w-3" /> Payoff</Badge>}
-                          {lien.result === 'Manual Review' && <Badge variant="warning" className="text-xs gap-1 cursor-pointer hover:opacity-80" onClick={() => openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired)}>
+                        <TableCell className="py-4">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="text-xs text-muted-foreground truncate block max-w-[150px]">
+                                  {lien.underwritingActionRequired.length > 25 
+                                    ? lien.underwritingActionRequired.substring(0, 25) + '…' 
+                                    : lien.underwritingActionRequired}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="text-xs">{lien.underwritingActionRequired}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
+                        <TableCell className="py-4 text-right">
+                          {lien.result === 'Passed' && (
+                            <Badge className="text-xs font-medium gap-1 bg-green-500 hover:bg-green-500 text-white rounded-full px-3">
+                              <CheckCircle className="h-3 w-3" /> Passed
+                            </Badge>
+                          )}
+                          {lien.result === 'Requires Payoff' && (
+                            <Badge className="text-xs font-medium gap-1 bg-blue-500 hover:bg-blue-500 text-white rounded-full px-3">
+                              <DollarSign className="h-3 w-3" /> Payoff
+                            </Badge>
+                          )}
+                          {lien.result === 'Manual Review' && (
+                            <Badge 
+                              className="text-xs font-medium gap-1 bg-amber-500 hover:bg-amber-400 text-white rounded-full px-3 cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openManualReview('Lien Review', lien.expectedParty, lien.actualParty, lien.underwritingActionRequired);
+                              }}
+                            >
                               <AlertTriangle className="h-3 w-3" /> Review
-                            </Badge>}
+                            </Badge>
+                          )}
                         </TableCell>
                       </TableRow>
                       <CollapsibleContent asChild>
-                        <TableRow className="bg-muted/10">
-                          <TableCell colSpan={7} className="p-4">
-                            <div className="space-y-2">
-                              <p className="text-xs font-medium text-muted-foreground">Full OCR Text:</p>
-                              <p className="text-xs bg-muted/20 p-3 rounded">{lien.scheduleBText}</p>
-                              <div className="flex items-center gap-4 text-xs">
-                                <span className="text-muted-foreground">Confidence Score: <span className="font-semibold text-foreground">{lien.confidenceScore}%</span></span>
+                        <TableRow className="bg-muted/5 hover:bg-muted/5">
+                          <TableCell colSpan={6} className="py-4 px-6">
+                            <div className="bg-slate-50 border border-slate-100 rounded-lg p-4">
+                              <p className="text-xs font-semibold text-muted-foreground mb-2">Full OCR Text</p>
+                              <p className="text-sm text-slate-700 leading-relaxed">{lien.scheduleBText}</p>
+                              <div className="mt-3 pt-3 border-t border-slate-200">
+                                <span className="text-xs text-muted-foreground">
+                                  Confidence Score: <span className="font-semibold text-slate-700">{lien.confidenceScore}%</span>
+                                </span>
                               </div>
                             </div>
                           </TableCell>
