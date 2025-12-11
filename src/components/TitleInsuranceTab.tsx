@@ -509,24 +509,15 @@ export const TitleInsuranceTab = ({
         matchScore: 96,
         result: 'pass'
       },
-      buyerNameMatch: {
-        contractValue: 'John Smith',
-        posValue: 'John Smith',
-        matchScore: 100,
-        result: 'pass'
-      },
       propertyAddressMatch: {
         contractValue: '123 Main St, Austin, TX 78701',
-        matchScore: 100,
+        titleValue: '123 Main Street, Austin, TX 78701',
+        matchScore: 98,
         result: 'pass'
       },
       purchasePriceConfirmation: {
         contractValue: 625000,
-        matchScore: 100,
-        result: 'pass'
-      },
-      closingDate: {
-        contractValue: '2024-12-15',
+        titleValue: 625000,
         matchScore: 100,
         result: 'pass'
       }
@@ -1236,38 +1227,20 @@ export const TitleInsuranceTab = ({
                 </div>
               </div>
 
-              {/* Buyer Name Match */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                  <span className="text-sm font-medium">Buyer Name Match</span>
-                  {getStatusBadge(data.purchaseContractReconciliation.buyerNameMatch.result)}
-                </div>
-                <div className="grid grid-cols-3 divide-x">
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Contract</p>
-                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.buyerNameMatch.contractValue}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">POS</p>
-                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.buyerNameMatch.posValue}</p>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Match Score</p>
-                    <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.buyerNameMatch.matchScore}%</p>
-                  </div>
-                </div>
-              </div>
-
               {/* Property Address Match */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                   <span className="text-sm font-medium">Property Address Match</span>
                   {getStatusBadge(data.purchaseContractReconciliation.propertyAddressMatch.result)}
                 </div>
-                <div className="grid grid-cols-2 divide-x">
+                <div className="grid grid-cols-3 divide-x">
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Contract Address</p>
                     <p className="text-sm font-medium">{data.purchaseContractReconciliation.propertyAddressMatch.contractValue}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Address</p>
+                    <p className="text-sm font-medium">{data.purchaseContractReconciliation.propertyAddressMatch.titleValue}</p>
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Match Score</p>
@@ -1282,10 +1255,14 @@ export const TitleInsuranceTab = ({
                   <span className="text-sm font-medium">Purchase Price Confirmation</span>
                   {getStatusBadge(data.purchaseContractReconciliation.purchasePriceConfirmation.result)}
                 </div>
-                <div className="grid grid-cols-2 divide-x">
+                <div className="grid grid-cols-3 divide-x">
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Contract Price</p>
                     <p className="text-lg font-bold">{formatCurrency(data.purchaseContractReconciliation.purchasePriceConfirmation.contractValue)}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Title Commitment Price</p>
+                    <p className="text-lg font-bold">{formatCurrency(data.purchaseContractReconciliation.purchasePriceConfirmation.titleValue)}</p>
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground mb-1">Match Score</p>
@@ -1293,24 +1270,6 @@ export const TitleInsuranceTab = ({
                   </div>
                 </div>
               </div>
-
-              {/* Closing Date (Optional) */}
-              {data.purchaseContractReconciliation.closingDate && <div className="border rounded-lg overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                    <span className="text-sm font-medium">Closing Date</span>
-                    {getStatusBadge(data.purchaseContractReconciliation.closingDate.result)}
-                  </div>
-                  <div className="grid grid-cols-2 divide-x">
-                    <div className="p-4">
-                      <p className="text-xs text-muted-foreground mb-1">Contract Closing Date</p>
-                      <p className="text-sm font-medium">{formatDate(data.purchaseContractReconciliation.closingDate.contractValue)}</p>
-                    </div>
-                    <div className="p-4">
-                      <p className="text-xs text-muted-foreground mb-1">Match Score</p>
-                      <p className="text-sm font-semibold text-green-600">{data.purchaseContractReconciliation.closingDate.matchScore}%</p>
-                    </div>
-                  </div>
-                </div>}
             </CardContent>}
         </Card>}
 
