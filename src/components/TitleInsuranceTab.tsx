@@ -516,7 +516,7 @@ export const TitleInsuranceTab = ({
           <CardTitle className="text-base flex items-center justify-between">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              Ownership Verification
+              Ownership & Amount Validation
               {getStatusBadge(data.ownershipMatch.status)}
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.ownershipVerification ? '' : '-rotate-90'}`} />
