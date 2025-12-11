@@ -128,6 +128,14 @@ export interface ISAOAReconciliation {
   result: ValidationStatus;
 }
 
+export interface ContractTermValidation {
+  term: string;
+  contractValue: string;
+  titleValue: string;
+  matchScore: number;
+  result: ValidationStatus;
+}
+
 export interface PurchaseContractReconciliation {
   sellerNameMatch: {
     contractValue: string;
@@ -147,6 +155,7 @@ export interface PurchaseContractReconciliation {
     matchScore: number;
     result: ValidationStatus;
   };
+  contractTermsValidation: ContractTermValidation[];
 }
 
 export interface TitleInsuranceData {
