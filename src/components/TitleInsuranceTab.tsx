@@ -77,6 +77,7 @@ export const TitleInsuranceTab = ({
   // Mock data
   const data: TitleInsuranceData = {
     transactionType: 'Purchase',
+    state: 'FL',
     ownershipMatch: {
       transactionType: 'Purchase',
       sellerName: 'ABC Holdings LLC',
@@ -649,18 +650,18 @@ export const TitleInsuranceTab = ({
               </Button>
             </div>
 
-            {/* Transaction Type Subsection */}
+            {/* Transaction Type from POS Subsection */}
             <div className="border rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
                 <span className="text-sm font-medium flex items-center gap-1">
-                  Transaction Type
+                  Transaction Type from POS
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent side="right" className="max-w-xs">
-                        <p className="text-xs">Transaction type from POS determines ownership validation logic</p>
+                        <p className="text-xs">Passed check confirms this information was found in the POS</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -670,8 +671,19 @@ export const TitleInsuranceTab = ({
                 </Badge>
               </div>
               <div className="p-4">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-sm">{data.transactionType}</Badge>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Transaction Type:</span>
+                    <Badge className="bg-blue-600 hover:bg-blue-600 text-white text-sm font-medium">
+                      {data.transactionType}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">State:</span>
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-medium">
+                      {data.state}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
