@@ -160,6 +160,7 @@ export interface PurchaseContractReconciliation {
 
 export interface TitleInsuranceData {
   transactionType: 'Purchase' | 'Refinance';
+  state: string;
   ownershipMatch: OwnershipMatch;
   lienItems: LienItem[];
   affiliatedEntities: AffiliatedEntitiesData;
