@@ -223,64 +223,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         </CardHeader>
       </Card>
 
-      {/* Insurance Policy Validation */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Insurance Policy Validation
-            </CardTitle>
-            {getStatusBadge(data.overallStatus)}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {/* Transaction Type from POS */}
-          <div className="border rounded-lg overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
-              <span className="text-sm font-medium flex items-center gap-1">
-                Transaction Type from POS
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="max-w-xs">
-                      <p className="text-xs">Passed check confirms this information was found in the POS</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </span>
-              <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
-                <CheckCircle2 className="h-3 w-3 mr-1" />Passed
-              </Badge>
-            </div>
-            <div className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Transaction Type:</span>
-                  <Badge className="bg-blue-600 hover:bg-blue-600 text-white text-sm font-medium">
-                    {data.transactionType}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">State:</span>
-                  <Badge className="bg-blue-600 hover:bg-blue-600 text-white text-sm font-medium px-2">
-                    {data.state}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Loan Program:</span>
-                  <Badge className="bg-blue-600 hover:bg-blue-600 text-white text-sm font-medium">
-                    {data.loanProgram}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* 1. Policy Parsing */}
       <Card>
         <CardHeader className="cursor-pointer" onClick={() => toggleCard('policyParsing')}>
