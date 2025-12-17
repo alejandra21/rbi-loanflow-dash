@@ -218,19 +218,8 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
             </CardTitle>
             {getStatusBadge(data.overallStatus)}
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Automated parsing and verification of insurance policies with party alignment and coverage validation
-          </p>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-muted-foreground">Processed:</span>
-            <span>{formatDate(data.processedAt)}</span>
-            <span className="text-muted-foreground">|</span>
-            <span className="text-muted-foreground">By:</span>
-            <span>{data.processedBy}</span>
-          </div>
-
           {/* Transaction Type from POS */}
           <div className="mt-4 border rounded-lg overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
