@@ -939,7 +939,7 @@ export const mockLoans: LoanApplication[] = [
                     processedBy: "AI Validation Engine"
                 }
             },
-            insurancePolicy: { name: "Insurance Policy Review", status: "pending" },
+            insurancePolicy: { name: "Insurance Policy Review", status: "passed", completedDate: "2024-01-15" },
             assetVerification: { name: "Asset Verification", status: "pending" },
             finalApproval: { name: "Final Approval", status: "pending" }
         },
