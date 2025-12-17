@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   CheckCircle2, 
   XCircle, 
@@ -47,6 +48,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
     earthquake: true,
     occupancy: true,
     specialEndorsements: true,
+    logs: false,
   });
 
   const toggleCard = (cardId: string) => {
@@ -281,7 +283,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <FileText className="h-4 w-4 text-muted-foreground" />
-              1. Policy Parsing & OCR
+              Policy Parsing & OCR
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -367,7 +369,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
-              2. Insured Name Match
+              Insured Name Match
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -431,7 +433,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Building2 className="h-4 w-4 text-muted-foreground" />
-              3. Lender Loss Payee
+              Lender Loss Payee
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -494,7 +496,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <FileCheck className="h-4 w-4 text-muted-foreground" />
-              4. Mortgagee Clause Endorsement
+              Mortgagee Clause Endorsement
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -551,7 +553,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
-              5. Property Address Match
+              Property Address Match
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -608,7 +610,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
-              6. Deductible Limits
+              Deductible Limits
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -667,7 +669,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Shield className="h-4 w-4 text-muted-foreground" />
-              7. No Co-Insurance
+              No Co-Insurance
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -714,7 +716,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Shield className="h-4 w-4 text-muted-foreground" />
-              8. Liability Coverage
+              Liability Coverage
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -761,7 +763,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Wind className="h-4 w-4 text-muted-foreground" />
-              9. Wind/Hail Coverage
+              Wind/Hail Coverage
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -813,7 +815,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Droplets className="h-4 w-4 text-muted-foreground" />
-              10. Flood Insurance
+              Flood Insurance
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -869,7 +871,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Mountain className="h-4 w-4 text-muted-foreground" />
-              11. Earthquake Insurance (Hawaii Only)
+              Earthquake Insurance (Hawaii Only)
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -922,7 +924,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <Home className="h-4 w-4 text-muted-foreground" />
-              12. Occupancy Alignment
+              Occupancy Alignment
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -980,7 +982,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               <FileCheck className="h-4 w-4 text-muted-foreground" />
-              13. Special Endorsements (Program-Specific)
+              Special Endorsements (Program-Specific)
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1034,6 +1036,118 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                 ))}
               </TableBody>
             </Table>
+          </CardContent>
+        )}
+      </Card>
+
+      {/* Logs */}
+      <Card>
+        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('logs')}>
+          <CardTitle className="text-base flex items-center justify-between">
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Logs
+            </div>
+            <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.logs ? '' : '-rotate-90'}`} />
+          </CardTitle>
+        </CardHeader>
+        {expandedCards.logs && (
+          <CardContent>
+            <div className="space-y-3">
+              {/* Log Entry 1 */}
+              <Collapsible>
+                <CollapsibleTrigger className="w-full">
+                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="outline" className="text-xs">policy_parsing</Badge>
+                      <span className="text-sm font-medium">Policy OCR Validation</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(data.processedAt)}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="px-4 py-3 border border-t-0 rounded-b-lg space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Action:</p>
+                        <p className="text-sm font-medium">Insurance Policy Parsed</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">User:</p>
+                        <p className="text-sm font-medium">{data.processedBy}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Status:</p>
+                        <p className="text-sm font-medium">completed</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Exception Tag:</p>
+                        <p className="text-sm font-medium">insurance_policy</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">JSON Data:</p>
+                      <pre className="text-xs bg-muted/50 p-3 rounded-md overflow-x-auto">
+{`{
+  "policy_number": "${data.policyParsing.policyNumber}",
+  "policy_type": "${data.policyParsing.policyType}",
+  "ocr_confidence": ${data.policyParsing.ocrConfidence},
+  "validation_result": "${data.policyParsing.status}"
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Log Entry 2 */}
+              <Collapsible>
+                <CollapsibleTrigger className="w-full">
+                  <div className="flex items-center justify-between px-4 py-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="outline" className="text-xs">coverage_validation</Badge>
+                      <span className="text-sm font-medium">Coverage Validation Check</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(data.processedAt)}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="px-4 py-3 border border-t-0 rounded-b-lg space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Action:</p>
+                        <p className="text-sm font-medium">Coverage Limits Verified</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">User:</p>
+                        <p className="text-sm font-medium">System</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Status:</p>
+                        <p className="text-sm font-medium">completed</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Exception Tag:</p>
+                        <p className="text-sm font-medium">insurance_policy</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">JSON Data:</p>
+                      <pre className="text-xs bg-muted/50 p-3 rounded-md overflow-x-auto">
+{`{
+  "checks_performed": 13,
+  "passed": 13,
+  "warnings": 0,
+  "failed": 0
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           </CardContent>
         )}
       </Card>
