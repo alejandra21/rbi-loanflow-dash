@@ -208,12 +208,27 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
 
   return (
     <div className="space-y-6">
-      {/* Header Card */}
+      {/* OCR Extraction Status */}
+      <Card>
+        <CardHeader className="py-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              OCR Extraction Status
+            </CardTitle>
+            <Badge className="bg-emerald-500 hover:bg-emerald-500 text-white">
+              <CheckCircle2 className="h-3 w-3 mr-1" />Readable
+            </Badge>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Insurance Policy Validation */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <Shield className="h-4 w-4" />
               Insurance Policy Validation
             </CardTitle>
             {getStatusBadge(data.overallStatus)}
@@ -221,7 +236,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         </CardHeader>
         <CardContent>
           {/* Transaction Type from POS */}
-          <div className="mt-4 border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 bg-muted/30">
               <span className="text-sm font-medium flex items-center gap-1">
                 Transaction Type from POS
@@ -250,9 +265,9 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">State:</span>
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-medium">
+                  <Badge className="bg-blue-600 hover:bg-blue-600 text-white text-sm font-medium px-2">
                     {data.state}
-                  </span>
+                  </Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Loan Program:</span>
