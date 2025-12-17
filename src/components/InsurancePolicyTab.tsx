@@ -25,7 +25,7 @@ import {
   FileCheck
 } from 'lucide-react';
 import { InsurancePolicyData, ValidationStatus } from '@/types/insurancePolicy';
-import { ManualReviewModal } from './ManualReviewModal';
+
 
 interface InsurancePolicyTabProps {
   phaseStatus: 'pending' | 'in_progress' | 'completed' | 'failed';
@@ -48,16 +48,9 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
     occupancy: true,
     specialEndorsements: true,
   });
-  const [manualReviewOpen, setManualReviewOpen] = useState(false);
-  const [selectedCheck, setSelectedCheck] = useState<{ name: string; data: any } | null>(null);
 
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
-  };
-
-  const openManualReview = (checkName: string, checkData: any) => {
-    setSelectedCheck({ name: checkName, data: checkData });
-    setManualReviewOpen(true);
   };
 
   // Mock data
@@ -1045,13 +1038,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         )}
       </Card>
 
-      {/* Manual Review Modal */}
-      <ManualReviewModal 
-        open={manualReviewOpen} 
-        onOpenChange={setManualReviewOpen}
-        checkName={selectedCheck?.name || ''}
-        checkData={selectedCheck?.data}
-      />
     </div>
   );
 };
