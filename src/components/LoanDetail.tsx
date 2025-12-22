@@ -16,6 +16,7 @@ import { DSCRCashFlowTab } from "@/components/DSCRCashFlowTab";
 import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
 import { TitleInsuranceTab } from "@/components/TitleInsuranceTab";
 import InsurancePolicyTab from "@/components/InsurancePolicyTab";
+import AssetVerificationTab from "@/components/AssetVerificationTab";
 import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
 import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
@@ -1657,7 +1658,10 @@ export const LoanDetail = () => {
               </TabsContent>
 
               <TabsContent value="assetVerification" className="mt-0">
-                <PhaseTab phase={loan.phases.assetVerification} phaseName="Asset Verification" />
+                <AssetVerificationTab 
+                  phaseStatus={loan.phases.assetVerification.status as 'pending' | 'in_progress' | 'completed' | 'failed'} 
+                  lastUpdated={loan.phases.assetVerification.completedDate} 
+                />
               </TabsContent>
 
               <TabsContent value="finalApproval" className="mt-0">
