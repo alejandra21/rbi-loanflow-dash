@@ -1274,8 +1274,8 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         </Card>
       )}
 
-      {/* 14. Flood Insurance Requirements (when applicable) */}
-      {data.floodRequirements && (
+      {/* 14. Flood Insurance Requirements (when flood insurance is required) */}
+      {data.floodInsurance.isRequired && data.floodRequirements && (
         <Card>
           <CardHeader className="cursor-pointer" onClick={() => toggleCard('floodRequirements')}>
             <div className="flex items-center justify-between">
