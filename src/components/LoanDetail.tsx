@@ -20,7 +20,7 @@ import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTa
 import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
 import type { TierLevel } from "@/types/experienceTiering";
-import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp, Check, Square, Loader2, Activity } from "lucide-react";
+import { ArrowLeft, Play, CheckSquare, Clock, User, Settings, AlertTriangle, CheckCircle, Building, Users, CreditCard, FileText, ChevronDown, Download, AlertCircle, XCircle, TrendingUp, Check, Square, Loader2, Activity, UserCheck } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -453,6 +453,23 @@ export const LoanDetail = () => {
       URL.revokeObjectURL(url);
     };
     return <div className="space-y-4">
+        {/* Phase Introduction */}
+        <div className="relative overflow-hidden rounded-lg border border-emerald-200 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 p-5">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-teal-100/50 rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="relative flex items-start gap-4">
+            <div className="flex-shrink-0 p-3 bg-emerald-100 rounded-xl">
+              <UserCheck className="h-6 w-6 text-emerald-600" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-semibold text-emerald-900 text-lg">Borrower Eligibility Verification</h3>
+              <p className="text-emerald-700 text-sm leading-relaxed">
+                This phase validates borrower entity information against state registries, verifies signatory authority and ownership structure, and confirms the Certificate of Good Standing meets loan-type-specific freshness requirements.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <span className="font-medium">Eligibility Check</span>
