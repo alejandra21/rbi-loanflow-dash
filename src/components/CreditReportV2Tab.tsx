@@ -667,6 +667,21 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
   };
   return (
     <div className="space-y-4">
+      {/* Phase Introduction */}
+      <div className="p-5 bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-transparent rounded-xl border-l-4 border-indigo-500">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 bg-indigo-500/15 rounded-lg shrink-0">
+            <CreditCard className="h-6 w-6 text-indigo-500" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This phase performs comprehensive credit analysis per guarantor, validating FICO scores, payment history, public records, and background checks through TLO and LexisNexis to assess creditworthiness and identify potential fraud indicators.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Review</span>

@@ -160,6 +160,21 @@ export const DSCRCashFlowTab = ({
     }).format(value);
   };
   return <div className="space-y-4">
+      {/* Phase Introduction */}
+      <div className="p-5 bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-transparent rounded-xl border-l-4 border-amber-500">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 bg-amber-500/15 rounded-lg shrink-0">
+            <Calculator className="h-6 w-6 text-amber-500" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This phase calculates and validates debt service coverage ratios by extracting rental income from appraisals, comparing POS inputs against AI-derived values, and flagging deviations that require repricing or manual underwriting review.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Phase Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
