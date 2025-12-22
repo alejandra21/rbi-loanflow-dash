@@ -1091,7 +1091,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
             <div className="flex items-center justify-between">
               <CardTitle className="text-base font-medium flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
-                DSCR / Bridge Requirements
+                DSCR / Bridge Additional Requirements
                 <Badge className="bg-blue-600 hover:bg-blue-600 text-white text-xs">{data.loanProgram}</Badge>
                 <TooltipProvider>
                   <Tooltip>
