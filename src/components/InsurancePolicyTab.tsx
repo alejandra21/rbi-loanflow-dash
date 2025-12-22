@@ -336,16 +336,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">OCR Confidence:</span>
-              <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-emerald-500 rounded-full" 
-                  style={{ width: `${data.policyParsing.ocrConfidence}%` }}
-                />
-              </div>
-              <span className="text-sm font-medium">{data.policyParsing.ocrConfidence}%</span>
-            </div>
             <div className="mt-3">
               <span className="text-sm text-muted-foreground">Endorsements Detected:</span>
               <div className="flex flex-wrap gap-2 mt-1">
