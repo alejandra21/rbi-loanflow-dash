@@ -242,6 +242,13 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
 
   return (
     <div className="space-y-6">
+      {/* Phase Introduction */}
+      <div className="p-4 bg-muted/30 rounded-lg border border-border">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          This phase automates parsing and verification of insurance policies, aligns parties and coverages with POS and third-party data, and routes exceptions for manual underwriting review.
+        </p>
+      </div>
+
       {/* OCR Extraction Status */}
       <Card>
         <CardHeader className="py-4">
