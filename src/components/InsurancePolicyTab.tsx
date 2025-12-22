@@ -47,7 +47,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
     flood: true,
     earthquake: true,
     occupancy: true,
-    specialEndorsements: true,
     logs: false,
   });
 
@@ -153,15 +152,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
       posOccupancy: 'Non-Owner Occupied',
       isNonOwnerOccupied: true,
       status: 'pass',
-    },
-    specialEndorsements: {
-      loanProgram: 'DSCR',
-      requiredEndorsements: [
-        { endorsementName: 'Loss of Rents', isRequired: true, isPresent: true, status: 'pass' },
-        { endorsementName: 'Ordinance or Law', isRequired: true, isPresent: true, status: 'pass' },
-        { endorsementName: 'Replacement Cost', isRequired: true, isPresent: true, status: 'pass' },
-      ],
-      overallStatus: 'pass',
     },
     overallStatus: 'pass',
     processedAt: '2024-01-15T10:30:00Z',
@@ -916,70 +906,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                     <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" />
                   </TableCell>
                 </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        )}
-      </Card>
-
-      {/* 13. Special Endorsements */}
-      <Card>
-        <CardHeader className="cursor-pointer" onClick={() => toggleCard('specialEndorsements')}>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
-              <FileCheck className="h-4 w-4 text-muted-foreground" />
-              Special Endorsements (Program-Specific)
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="max-w-xs">
-                    <p className="text-xs">AI checks for required endorsements depending on the loan program</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              {getStatusBadge(data.specialEndorsements.overallStatus)}
-              {expandedCards.specialEndorsements ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </div>
-          </div>
-        </CardHeader>
-        {expandedCards.specialEndorsements && (
-          <CardContent className="pt-0">
-            <div className="mb-3 text-sm">
-              <span className="text-muted-foreground">Loan Program:</span>
-              <Badge className="ml-2 bg-blue-600 hover:bg-blue-600 text-white">{data.specialEndorsements.loanProgram}</Badge>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Endorsement</TableHead>
-                  <TableHead>Required</TableHead>
-                  <TableHead>Present</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.specialEndorsements.requiredEndorsements.map((endorsement, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="font-medium">{endorsement.endorsementName}</TableCell>
-                    <TableCell>
-                      {endorsement.isRequired ? 
-                        <Badge className="bg-amber-500/10 text-amber-500">Yes</Badge> : 
-                        <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
-                      }
-                    </TableCell>
-                    <TableCell>
-                      {endorsement.isPresent ? 
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : 
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      }
-                    </TableCell>
-                    <TableCell className="text-right">{getStatusBadge(endorsement.status)}</TableCell>
-                  </TableRow>
-                ))}
               </TableBody>
             </Table>
           </CardContent>

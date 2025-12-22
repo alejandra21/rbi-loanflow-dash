@@ -106,18 +106,6 @@ export interface OccupancyValidation {
   status: ValidationStatus;
 }
 
-export interface SpecialEndorsement {
-  endorsementName: string;
-  isRequired: boolean;
-  isPresent: boolean;
-  status: ValidationStatus;
-}
-
-export interface SpecialEndorsementsValidation {
-  loanProgram: string;
-  requiredEndorsements: SpecialEndorsement[];
-  overallStatus: ValidationStatus;
-}
 
 export interface InsurancePolicyData {
   transactionType: 'Purchase' | 'Refinance';
@@ -135,7 +123,7 @@ export interface InsurancePolicyData {
   floodInsurance: FloodInsuranceValidation;
   earthquakeInsurance: EarthquakeInsuranceValidation;
   occupancyValidation: OccupancyValidation;
-  specialEndorsements: SpecialEndorsementsValidation;
+  
   overallStatus: ValidationStatus;
   processedAt: string;
   processedBy: string;
