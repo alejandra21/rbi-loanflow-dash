@@ -845,6 +845,134 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         )}
       </Card>
 
+      {/* Flood Insurance Requirements (when flood insurance is required) */}
+      {data.floodInsurance.isRequired && data.floodRequirements && (
+        <Card>
+          <CardHeader className="cursor-pointer" onClick={() => toggleCard('floodRequirements')}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <Umbrella className="h-4 w-4 text-muted-foreground" />
+                Flood Insurance Requirements
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="max-w-xs">
+                      <p className="text-xs">FEMA or acceptable private flood. Min 12 months term. FEMA max $250K, additional coverage if loan exceeds</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {getStatusBadge(data.floodRequirements.status)}
+                {expandedCards.floodRequirements ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </div>
+            </div>
+          </CardHeader>
+          {expandedCards.floodRequirements && (
+            <CardContent className="pt-0 space-y-4">
+              {/* Policy Type */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Policy Type</span>
+                  {data.floodRequirements.policyType.isAcceptable ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Acceptable</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Not Acceptable</Badge>
+                  }
+                </div>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">Detected Type</span>
+                    <span className="font-medium">{data.floodRequirements.policyType.detectedType}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">FEMA/NFIP</span>
+                    {data.floodRequirements.policyType.isFEMA ? 
+                      <Badge className="bg-emerald-500/10 text-emerald-500">Yes</Badge> :
+                      <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
+                    }
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Private Flood</span>
+                    {data.floodRequirements.policyType.isPrivateFlood ? 
+                      <Badge className="bg-emerald-500/10 text-emerald-500">Yes</Badge> :
+                      <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              {/* Coverage Term */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Coverage Term</span>
+                  {data.floodRequirements.coverageTerm.meetsRequirement ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Pass</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Fail</Badge>
+                  }
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">Policy Term</span>
+                    <span className="font-medium">{data.floodRequirements.coverageTerm.termMonths} months</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Minimum Required</span>
+                    <span className="font-medium">{data.floodRequirements.coverageTerm.minimumRequired} months</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Coverage Amount */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Coverage Amount</span>
+                  {data.floodRequirements.coverageAmount.meetsRequirement ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Pass</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Fail</Badge>
+                  }
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">FEMA Coverage</span>
+                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.femaCoverage)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">FEMA Maximum</span>
+                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.femaMaximum)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Loan Amount</span>
+                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.loanAmount)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Site Value (Appraisal)</span>
+                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.siteValue)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Total Coverage</span>
+                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.totalCoverage)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Additional Required</span>
+                    {data.floodRequirements.coverageAmount.additionalCoverageRequired > 0 ? 
+                      <span className="font-medium text-amber-500">{formatCurrency(data.floodRequirements.coverageAmount.additionalCoverageRequired)}</span> :
+                      <span className="font-medium text-emerald-500">None</span>
+                    }
+                  </div>
+                </div>
+                {data.floodRequirements.coverageAmount.additionalCoverageRequired > 0 && (
+                  <p className="text-xs text-muted-foreground mt-2 p-2 bg-amber-500/10 rounded">
+                    Formula: Loan Amount ({formatCurrency(data.floodRequirements.coverageAmount.loanAmount)}) - FEMA ({formatCurrency(data.floodRequirements.coverageAmount.femaCoverage)}) - Site Value ({formatCurrency(data.floodRequirements.coverageAmount.siteValue)}) = {formatCurrency(data.floodRequirements.coverageAmount.additionalCoverageRequired)}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          )}
+        </Card>
+      )}
+
       {/* 11. Earthquake Insurance */}
       <Card>
         <CardHeader className="cursor-pointer" onClick={() => toggleCard('earthquake')}>
@@ -1275,133 +1403,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         </Card>
       )}
 
-      {/* 14. Flood Insurance Requirements (when flood insurance is required) */}
-      {data.floodInsurance.isRequired && data.floodRequirements && (
-        <Card>
-          <CardHeader className="cursor-pointer" onClick={() => toggleCard('floodRequirements')}>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-medium flex items-center gap-2">
-                <Umbrella className="h-4 w-4 text-muted-foreground" />
-                Flood Insurance Requirements
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="max-w-xs">
-                      <p className="text-xs">FEMA or acceptable private flood. Min 12 months term. FEMA max $250K, additional coverage if loan exceeds</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-              <div className="flex items-center gap-2">
-                {getStatusBadge(data.floodRequirements.status)}
-                {expandedCards.floodRequirements ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </div>
-            </div>
-          </CardHeader>
-          {expandedCards.floodRequirements && (
-            <CardContent className="pt-0 space-y-4">
-              {/* Policy Type */}
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium">Policy Type</span>
-                  {data.floodRequirements.policyType.isAcceptable ? 
-                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Acceptable</Badge> :
-                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Not Acceptable</Badge>
-                  }
-                </div>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground block">Detected Type</span>
-                    <span className="font-medium">{data.floodRequirements.policyType.detectedType}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">FEMA/NFIP</span>
-                    {data.floodRequirements.policyType.isFEMA ? 
-                      <Badge className="bg-emerald-500/10 text-emerald-500">Yes</Badge> :
-                      <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
-                    }
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Private Flood</span>
-                    {data.floodRequirements.policyType.isPrivateFlood ? 
-                      <Badge className="bg-emerald-500/10 text-emerald-500">Yes</Badge> :
-                      <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
-                    }
-                  </div>
-                </div>
-              </div>
-
-              {/* Coverage Term */}
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium">Coverage Term</span>
-                  {data.floodRequirements.coverageTerm.meetsRequirement ? 
-                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Pass</Badge> :
-                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Fail</Badge>
-                  }
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground block">Policy Term</span>
-                    <span className="font-medium">{data.floodRequirements.coverageTerm.termMonths} months</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Minimum Required</span>
-                    <span className="font-medium">{data.floodRequirements.coverageTerm.minimumRequired} months</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Coverage Amount */}
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium">Coverage Amount</span>
-                  {data.floodRequirements.coverageAmount.meetsRequirement ? 
-                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Pass</Badge> :
-                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Fail</Badge>
-                  }
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground block">FEMA Coverage</span>
-                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.femaCoverage)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">FEMA Maximum</span>
-                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.femaMaximum)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Loan Amount</span>
-                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.loanAmount)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Site Value (Appraisal)</span>
-                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.siteValue)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Total Coverage</span>
-                    <span className="font-medium">{formatCurrency(data.floodRequirements.coverageAmount.totalCoverage)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Additional Required</span>
-                    {data.floodRequirements.coverageAmount.additionalCoverageRequired > 0 ? 
-                      <span className="font-medium text-amber-500">{formatCurrency(data.floodRequirements.coverageAmount.additionalCoverageRequired)}</span> :
-                      <span className="font-medium text-emerald-500">None</span>
-                    }
-                  </div>
-                </div>
-                {data.floodRequirements.coverageAmount.additionalCoverageRequired > 0 && (
-                  <p className="text-xs text-muted-foreground mt-2 p-2 bg-amber-500/10 rounded">
-                    Formula: Loan Amount ({formatCurrency(data.floodRequirements.coverageAmount.loanAmount)}) - FEMA ({formatCurrency(data.floodRequirements.coverageAmount.femaCoverage)}) - Site Value ({formatCurrency(data.floodRequirements.coverageAmount.siteValue)}) = {formatCurrency(data.floodRequirements.coverageAmount.additionalCoverageRequired)}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          )}
-        </Card>
-      )}
 
       {/* Logs */}
       <Card>
