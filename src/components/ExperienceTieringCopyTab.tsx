@@ -391,6 +391,21 @@ export const ExperienceTieringCopyTab = ({
     }));
   };
   return <div className="space-y-4">
+      {/* Phase Introduction */}
+      <div className="p-5 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-transparent rounded-xl border-l-4 border-yellow-500">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 bg-yellow-500/15 rounded-lg shrink-0">
+            <TrendingUp className="h-6 w-6 text-yellow-600" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This phase evaluates borrower experience tier by analyzing verified exits from Forecasa, internal track records, liquidity ratios, and contractor credentials to determine exposure limits, LTC/ARV caps, and product eligibility.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Experience Tiering Check</span>

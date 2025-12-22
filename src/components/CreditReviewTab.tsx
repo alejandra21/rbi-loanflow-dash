@@ -495,6 +495,21 @@ export const CreditReviewTab = ({
     }
   }];
   return <div className="space-y-4">
+      {/* Phase Introduction */}
+      <div className="p-5 bg-gradient-to-r from-purple-500/10 via-purple-400/5 to-transparent rounded-xl border-l-4 border-purple-500">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 bg-purple-500/15 rounded-lg shrink-0">
+            <CreditCard className="h-6 w-6 text-purple-500" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This phase validates borrower creditworthiness by pulling credit reports, verifying FICO scores against product minimums, analyzing payment history, and cross-referencing identity through TLO and LexisNexis background checks.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className="font-medium">Credit Review</span>
