@@ -502,7 +502,7 @@ export const CreditReviewTab = ({
             <CreditCard className="h-6 w-6 text-purple-500" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Credit Review & Background Check</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This phase validates borrower creditworthiness by pulling credit reports, verifying FICO scores against product minimums, analyzing payment history, and cross-referencing identity through TLO and LexisNexis background checks.
             </p>

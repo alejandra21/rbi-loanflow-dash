@@ -94,7 +94,7 @@ export const NonOwnerOccupancyTab = ({ data }: NonOwnerOccupancyTabProps) => {
             <Home className="h-6 w-6 text-rose-500" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Non-Owner Occupancy Verification</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This phase verifies non-owner occupancy status by comparing property addresses against borrower and guarantor addresses from multiple sources including TLO, credit reports, bank statements, and government IDs to detect potential owner-occupancy fraud.
             </p>
