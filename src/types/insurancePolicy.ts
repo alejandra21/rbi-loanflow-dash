@@ -106,6 +106,85 @@ export interface OccupancyValidation {
   status: ValidationStatus;
 }
 
+// Program-Specific Validations
+
+export interface DSCRBridgeValidation {
+  rcvCoverageLimit: number;
+  loanAmount: number;
+  replacementCostEstimate: number;
+  rcvMeetsRequirement: boolean;
+  rentLossCoverage: {
+    hasRentLoss: boolean;
+    monthsCovered: number;
+    minimumRequired: number;
+    detectedKeywords: string[];
+  };
+  status: ValidationStatus;
+}
+
+export interface GUCValidation {
+  rcvCoverageLimit: number;
+  loanAmount: number;
+  constructionBudget: number;
+  rcvMeetsRequirement: boolean;
+  workersComp: {
+    laborPerformed: boolean;
+    isListed: boolean;
+    policyDetails?: string;
+  };
+  status: ValidationStatus;
+}
+
+export interface FixFlipValidation {
+  policyType: {
+    isBuilderRisk: boolean;
+    hasHO3Conversion: boolean;
+    detectedPolicyType: string;
+  };
+  coverageTerm: {
+    rehabPeriodMonths: number;
+    dispositionPeriodMonths: number;
+    totalRequired: number;
+    policyTermMonths: number;
+    meetsRequirement: boolean;
+  };
+  rcvValidation: {
+    rcvLimit: number;
+    loanAmount: number;
+    replacementCostEstimate: number;
+    meetsRequirement: boolean;
+  };
+  workersComp: {
+    contractorLaborUsed: boolean;
+    isListed: boolean;
+    policyDetails?: string;
+  };
+  status: ValidationStatus;
+}
+
+export interface FloodInsuranceRequirements {
+  policyType: {
+    isFEMA: boolean;
+    isPrivateFlood: boolean;
+    isAcceptable: boolean;
+    detectedType: string;
+  };
+  coverageTerm: {
+    termMonths: number;
+    minimumRequired: number;
+    meetsRequirement: boolean;
+  };
+  coverageAmount: {
+    femaCoverage: number;
+    femaMaximum: number;
+    additionalCoverageRequired: number;
+    loanAmount: number;
+    siteValue: number;
+    totalCoverage: number;
+    meetsRequirement: boolean;
+  };
+  status: ValidationStatus;
+}
 
 export interface InsurancePolicyData {
   transactionType: 'Purchase' | 'Refinance';
@@ -123,7 +202,11 @@ export interface InsurancePolicyData {
   floodInsurance: FloodInsuranceValidation;
   earthquakeInsurance: EarthquakeInsuranceValidation;
   occupancyValidation: OccupancyValidation;
-  
+  // Program-specific validations
+  dscrBridgeValidation?: DSCRBridgeValidation;
+  gucValidation?: GUCValidation;
+  fixFlipValidation?: FixFlipValidation;
+  floodRequirements?: FloodInsuranceRequirements;
   overallStatus: ValidationStatus;
   processedAt: string;
   processedBy: string;
