@@ -141,9 +141,10 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
       status: 'pass',
     },
     floodInsurance: {
-      femaFloodZone: 'X',
-      isRequired: false,
-      hasCoverage: false,
+      femaFloodZone: 'AE',
+      isRequired: true,
+      hasCoverage: true,
+      policyNumber: 'FL-2024-887654',
       status: 'pass',
     },
     earthquakeInsurance: {
