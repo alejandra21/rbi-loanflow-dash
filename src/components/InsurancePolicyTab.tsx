@@ -285,37 +285,37 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Policy Number:</span>
                   <span className="font-medium">{data.policyParsing.policyNumber}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Policy Type:</span>
                   <span className="font-medium">{data.policyParsing.policyType}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Insured Name:</span>
                   <span className="font-medium">{data.policyParsing.insuredName}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Occupancy:</span>
                   <span className="font-medium">{data.policyParsing.occupancy}</span>
                 </div>
               </div>
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Coverage Limit:</span>
                   <span className="font-medium">{formatCurrency(data.policyParsing.coverageLimit)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Deductible:</span>
                   <span className="font-medium">{formatCurrency(data.policyParsing.deductible)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Effective Date:</span>
                   <span className="font-medium">{formatDate(data.policyParsing.effectiveDate)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Expiration Date:</span>
                   <span className="font-medium">{formatDate(data.policyParsing.expirationDate)}</span>
                 </div>
@@ -497,22 +497,22 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         {expandedCards.mortgageeClause && (
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Endorsement Type:</span>
                 <span className="font-medium">{data.mortgageeClause.endorsementType}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Endorsement Number:</span>
                 <Badge variant="outline" className="font-mono">{data.mortgageeClause.endorsementNumber}</Badge>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Present:</span>
                 {data.mortgageeClause.isPresent ? 
                   <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : 
                   <XCircle className="h-4 w-4 text-red-500" />
                 }
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Correct:</span>
                 {data.mortgageeClause.isCorrect ? 
                   <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : 
@@ -611,27 +611,27 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         {expandedCards.deductible && (
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Deductible Amount:</span>
                 <span className="font-medium">{formatCurrency(data.deductibleValidation.deductibleAmount)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Coverage Limit:</span>
                 <span className="font-medium">{formatCurrency(data.deductibleValidation.coverageLimit)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Deductible %:</span>
                 <span className="font-medium">{formatPercent(data.deductibleValidation.deductiblePercent)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Max Allowed %:</span>
                 <span className="font-medium">{formatPercent(data.deductibleValidation.maxAllowedPercent)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Max Allowed Amount:</span>
                 <span className="font-medium">{formatCurrency(data.deductibleValidation.maxAllowedAmount)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Meets Limit:</span>
                 {data.deductibleValidation.meetsLimit ? 
                   <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : 
@@ -717,15 +717,15 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         {expandedCards.liability && (
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Coverage Amount:</span>
                 <span className="font-medium">{formatCurrency(data.liabilityCoverage.coverageAmount)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Minimum Required:</span>
                 <span className="font-medium">{formatCurrency(data.liabilityCoverage.minimumRequired)}</span>
               </div>
-              <div className="flex justify-between col-span-2">
+              <div className="flex items-center gap-2 col-span-2">
                 <span className="text-muted-foreground">Meets Requirement:</span>
                 {data.liabilityCoverage.meetsRequirement ? 
                   <Badge className="bg-emerald-500/10 text-emerald-500">Yes - Exceeds minimum by {formatCurrency(data.liabilityCoverage.coverageAmount - data.liabilityCoverage.minimumRequired)}</Badge> : 
@@ -816,18 +816,18 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         {expandedCards.flood && (
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">FEMA Flood Zone:</span>
                 <Badge variant="outline" className="font-mono">{data.floodInsurance.femaFloodZone}</Badge>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Flood Insurance Required:</span>
                 {data.floodInsurance.isRequired ? 
                   <Badge className="bg-amber-500/10 text-amber-500">Yes</Badge> : 
                   <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
                 }
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Has Coverage:</span>
                 {data.floodInsurance.hasCoverage ? 
                   <Badge className="bg-emerald-500/10 text-emerald-500">Yes</Badge> : 
@@ -835,7 +835,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                 }
               </div>
               {data.floodInsurance.policyNumber && (
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Policy Number:</span>
                   <span className="font-medium">{data.floodInsurance.policyNumber}</span>
                 </div>
@@ -1000,18 +1000,18 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         {expandedCards.earthquake && (
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Property State:</span>
                 <Badge variant="outline">{data.earthquakeInsurance.propertyState}</Badge>
               </div>
-              <div className="flex justify-between">
+              <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Earthquake Insurance Required:</span>
                 {data.earthquakeInsurance.isRequired ? 
                   <Badge className="bg-amber-500/10 text-amber-500">Yes (Hawaii)</Badge> : 
                   <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
                 }
               </div>
-              <div className="flex justify-between col-span-2">
+              <div className="flex items-center gap-2 col-span-2">
                 <span className="text-muted-foreground">Has Endorsement:</span>
                 {data.earthquakeInsurance.isRequired ? (
                   data.earthquakeInsurance.hasEndorsement ? 
