@@ -674,7 +674,7 @@ export const CreditReportV2Tab = ({ phase }: CreditReportV2TabProps) => {
             <CreditCard className="h-6 w-6 text-indigo-500" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Credit Report Analysis</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This phase performs comprehensive credit analysis per guarantor, validating FICO scores, payment history, public records, and background checks through TLO and LexisNexis to assess creditworthiness and identify potential fraud indicators.
             </p>

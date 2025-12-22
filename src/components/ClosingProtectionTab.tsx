@@ -325,7 +325,7 @@ export const ClosingProtectionTab = ({
             <Shield className="h-6 w-6 text-cyan-500" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">Closing Protection Letter Validation</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This phase validates Closing Protection Letters by cross-referencing lender names, property addresses, loan amounts, and effective dates against POS and title commitment data, ensuring CPL type compliance for Texas and non-Texas transactions.
             </p>

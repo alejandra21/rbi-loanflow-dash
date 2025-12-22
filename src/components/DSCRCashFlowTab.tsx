@@ -167,7 +167,7 @@ export const DSCRCashFlowTab = ({
             <Calculator className="h-6 w-6 text-amber-500" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-foreground mb-1.5">Phase Overview</h3>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">DSCR & Cash Flow Analysis</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This phase calculates and validates debt service coverage ratios by extracting rental income from appraisals, comparing POS inputs against AI-derived values, and flagging deviations that require repricing or manual underwriting review.
             </p>
