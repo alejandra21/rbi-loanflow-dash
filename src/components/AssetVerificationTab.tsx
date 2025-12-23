@@ -489,10 +489,10 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       </Collapsible>
 
       {/* Account Ownership Section */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 items-stretch">
         {/* Account Ownership Verification */}
-        <Collapsible open={expandedCards.accountOwnership} onOpenChange={() => toggleCard('accountOwnership')}>
-          <Card>
+        <Collapsible open={expandedCards.accountOwnership} onOpenChange={() => toggleCard('accountOwnership')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -532,8 +532,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
         </Collapsible>
 
         {/* Ownership Confidence */}
-        <Collapsible open={expandedCards.ownershipConfidence} onOpenChange={() => toggleCard('ownershipConfidence')}>
-          <Card>
+        <Collapsible open={expandedCards.ownershipConfidence} onOpenChange={() => toggleCard('ownershipConfidence')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -572,9 +572,9 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       </div>
 
       {/* Multiple Holders & Spouse Detection */}
-      <div className="grid grid-cols-2 gap-4">
-        <Collapsible open={expandedCards.multipleHolders} onOpenChange={() => toggleCard('multipleHolders')}>
-          <Card>
+      <div className="grid grid-cols-2 gap-4 items-stretch">
+        <Collapsible open={expandedCards.multipleHolders} onOpenChange={() => toggleCard('multipleHolders')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -609,8 +609,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           </Card>
         </Collapsible>
 
-        <Collapsible open={expandedCards.spouseDetection} onOpenChange={() => toggleCard('spouseDetection')}>
-          <Card>
+        <Collapsible open={expandedCards.spouseDetection} onOpenChange={() => toggleCard('spouseDetection')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -652,9 +652,9 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       </div>
 
       {/* Statement Completeness & Recency */}
-      <div className="grid grid-cols-2 gap-4">
-        <Collapsible open={expandedCards.completeness} onOpenChange={() => toggleCard('completeness')}>
-          <Card>
+      <div className="grid grid-cols-2 gap-4 items-stretch">
+        <Collapsible open={expandedCards.completeness} onOpenChange={() => toggleCard('completeness')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -687,8 +687,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           </Card>
         </Collapsible>
 
-        <Collapsible open={expandedCards.recency} onOpenChange={() => toggleCard('recency')}>
-          <Card>
+        <Collapsible open={expandedCards.recency} onOpenChange={() => toggleCard('recency')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -725,9 +725,9 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       </div>
 
       {/* Address Validations */}
-      <div className="grid grid-cols-2 gap-4">
-        <Collapsible open={expandedCards.addressValidation} onOpenChange={() => toggleCard('addressValidation')}>
-          <Card>
+      <div className="grid grid-cols-2 gap-4 items-stretch">
+        <Collapsible open={expandedCards.addressValidation} onOpenChange={() => toggleCard('addressValidation')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -763,8 +763,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           </Card>
         </Collapsible>
 
-        <Collapsible open={expandedCards.subjectProperty} onOpenChange={() => toggleCard('subjectProperty')}>
-          <Card>
+        <Collapsible open={expandedCards.subjectProperty} onOpenChange={() => toggleCard('subjectProperty')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -865,9 +865,9 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       </Collapsible>
 
       {/* Deposit Sources & Balance Math */}
-      <div className="grid grid-cols-2 gap-4">
-        <Collapsible open={expandedCards.depositSources} onOpenChange={() => toggleCard('depositSources')}>
-          <Card>
+      <div className="grid grid-cols-2 gap-4 items-stretch">
+        <Collapsible open={expandedCards.depositSources} onOpenChange={() => toggleCard('depositSources')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -907,8 +907,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           </Card>
         </Collapsible>
 
-        <Collapsible open={expandedCards.balanceMath} onOpenChange={() => toggleCard('balanceMath')}>
-          <Card>
+        <Collapsible open={expandedCards.balanceMath} onOpenChange={() => toggleCard('balanceMath')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -1071,9 +1071,9 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       </Card>
 
       {/* Liquidity & Cross-Document */}
-      <div className="grid grid-cols-2 gap-4">
-        <Collapsible open={expandedCards.liquidity} onOpenChange={() => toggleCard('liquidity')}>
-          <Card>
+      <div className="grid grid-cols-2 gap-4 items-stretch">
+        <Collapsible open={expandedCards.liquidity} onOpenChange={() => toggleCard('liquidity')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -1117,8 +1117,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           </Card>
         </Collapsible>
 
-        <Collapsible open={expandedCards.crossDocument} onOpenChange={() => toggleCard('crossDocument')}>
-          <Card>
+        <Collapsible open={expandedCards.crossDocument} onOpenChange={() => toggleCard('crossDocument')} className="h-full">
+          <Card className="h-full">
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                 <CardTitle className="flex items-center justify-between text-base">
@@ -1163,51 +1163,6 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
         </Collapsible>
       </div>
 
-      {/* Final Determination */}
-      <Card className="border-violet-500/30 bg-gradient-to-r from-violet-500/5 to-transparent">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-base">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-violet-500" />
-              <span>Final Asset Determination</span>
-            </div>
-            {getStatusBadge(data.finalDetermination.overallStatus)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="p-4 bg-background rounded-lg border text-center">
-              <p className="text-3xl font-bold text-foreground">{data.finalDetermination.totalChecks}</p>
-              <p className="text-xs text-muted-foreground mt-1">Total Checks</p>
-            </div>
-            <div className="p-4 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-center">
-              <p className="text-3xl font-bold text-emerald-500">{data.finalDetermination.passedChecks}</p>
-              <p className="text-xs text-muted-foreground mt-1">Passed</p>
-            </div>
-            <div className="p-4 bg-red-500/10 rounded-lg border border-red-500/20 text-center">
-              <p className="text-3xl font-bold text-red-500">{data.finalDetermination.failedChecks}</p>
-              <p className="text-xs text-muted-foreground mt-1">Failed</p>
-            </div>
-            <div className="p-4 bg-amber-500/10 rounded-lg border border-amber-500/20 text-center">
-              <p className="text-3xl font-bold text-amber-500">{data.finalDetermination.reviewChecks}</p>
-              <p className="text-xs text-muted-foreground mt-1">Manual Review</p>
-            </div>
-          </div>
-          <div className="mt-4 p-4 bg-muted/30 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {getStatusIcon(data.finalDetermination.overallStatus, "h-5 w-5")}
-                <span className="font-medium">
-                  {data.finalDetermination.overallStatus === 'pass' && 'All asset verification checks passed — Proceed to Phase 11'}
-                  {data.finalDetermination.overallStatus === 'fail' && 'Asset verification failed — Manual review required'}
-                  {data.finalDetermination.overallStatus === 'review' && 'Asset verification requires manual review'}
-                </span>
-              </div>
-              <span className="text-xs text-muted-foreground">Processed by: {data.processedBy}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Audit Log */}
       <Collapsible open={expandedCards.logs} onOpenChange={() => toggleCard('logs')}>
