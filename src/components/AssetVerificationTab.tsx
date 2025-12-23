@@ -1018,55 +1018,159 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
-            <span>AI Fraud Detection Engine</span>
+            <span>AI Fraud & Manipulation Detection Engine</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-4">
-            {/* Balance Inflation */}
-            <div className="p-4 bg-background rounded-lg border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Balance Inflation</span>
-                {getStatusIcon(data.balanceInflation.status)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {data.balanceInflation.paddingDetected ? 'Same-day patterns detected' : 'No padding detected'}
-              </p>
-            </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[180px]">Fraud Pattern</TableHead>
+                <TableHead>Detection Logic</TableHead>
+                <TableHead className="w-[140px]">Status</TableHead>
+                <TableHead className="w-[140px]">Trigger Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {/* Balance Padding */}
+              <TableRow>
+                <TableCell className="font-medium">Balance Padding</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  Large deposit immediately withdrawn post-statement
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(data.balanceInflation.status)}
+                    <span className={data.balanceInflation.paddingDetected ? 'text-amber-500' : 'text-emerald-500'}>
+                      {data.balanceInflation.paddingDetected ? 'Detected' : 'Clear'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {data.balanceInflation.paddingDetected ? (
+                    <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Manual Review</Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Auto-Pass</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
 
-            {/* Circular Transfers */}
-            <div className="p-4 bg-background rounded-lg border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Circular Transfers</span>
-                {getStatusIcon(data.circularTransfers.status)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {data.circularTransfers.selfFundingLoops ? 'Self-funding loops found' : 'No circular transfers'}
-              </p>
-            </div>
+              {/* Temporary Parking */}
+              <TableRow>
+                <TableCell className="font-medium">Temporary Parking</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  Funds appear only during statement window
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(data.balanceInflation.status)}
+                    <span className={data.balanceInflation.sameDayInflowOutflow.length > 0 ? 'text-amber-500' : 'text-emerald-500'}>
+                      {data.balanceInflation.sameDayInflowOutflow.length > 0 ? 'Detected' : 'Clear'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {data.balanceInflation.sameDayInflowOutflow.length > 0 ? (
+                    <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Manual Review</Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Auto-Pass</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
 
-            {/* Velocity Anomaly */}
-            <div className="p-4 bg-background rounded-lg border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Velocity Anomaly</span>
-                {getStatusIcon(data.velocityAnomaly.status)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Avg: {data.velocityAnomaly.averageTransactionsPerDay}/day | Peak: {data.velocityAnomaly.peakTransactionsPerDay}/day
-              </p>
-            </div>
+              {/* Circular Transfers */}
+              <TableRow>
+                <TableCell className="font-medium">Circular Transfers</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  Funds move between borrower-controlled accounts
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(data.circularTransfers.status)}
+                    <span className={data.circularTransfers.selfFundingLoops ? 'text-amber-500' : 'text-emerald-500'}>
+                      {data.circularTransfers.selfFundingLoops ? 'Detected' : 'Clear'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {data.circularTransfers.selfFundingLoops ? (
+                    <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Manual Review</Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Auto-Pass</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
 
-            {/* Third-Party Funding */}
-            <div className="p-4 bg-background rounded-lg border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Third-Party Funding</span>
-                {getStatusIcon(data.thirdPartyFunding.status)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {data.thirdPartyFunding.hasUndisclosedFunding ? 'Undisclosed sources found' : 'No undisclosed sources'}
-              </p>
-            </div>
-          </div>
+              {/* Velocity Spike */}
+              <TableRow>
+                <TableCell className="font-medium">Velocity Spike</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  Transaction frequency deviates from baseline (Avg: {data.velocityAnomaly.averageTransactionsPerDay}/day, Peak: {data.velocityAnomaly.peakTransactionsPerDay}/day)
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(data.velocityAnomaly.status)}
+                    <span className={data.velocityAnomaly.abnormalActivity ? 'text-amber-500' : 'text-emerald-500'}>
+                      {data.velocityAnomaly.abnormalActivity ? 'Detected' : 'Clear'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {data.velocityAnomaly.abnormalActivity ? (
+                    <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Manual Review</Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Auto-Pass</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
+
+              {/* Third-Party Masking */}
+              <TableRow>
+                <TableCell className="font-medium">Third-Party Masking</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  Funds routed through unrelated entities
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(data.thirdPartyFunding.status)}
+                    <span className={data.thirdPartyFunding.hasUndisclosedFunding ? 'text-amber-500' : 'text-emerald-500'}>
+                      {data.thirdPartyFunding.hasUndisclosedFunding ? 'Detected' : 'Clear'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {data.thirdPartyFunding.hasUndisclosedFunding ? (
+                    <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Manual Review</Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Auto-Pass</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
+
+              {/* Statement Tampering */}
+              <TableRow>
+                <TableCell className="font-medium">Statement Tampering</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  OCR detects altered formatting / inconsistencies (Confidence: {data.ocrConfidence?.toFixed(1)}%)
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon((data.ocrConfidence && data.ocrConfidence < 85) ? 'review' : 'pass')}
+                    <span className={(data.ocrConfidence && data.ocrConfidence < 85) ? 'text-amber-500' : 'text-emerald-500'}>
+                      {(data.ocrConfidence && data.ocrConfidence < 85) ? 'Suspected' : 'Clear'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {(data.ocrConfidence && data.ocrConfidence < 85) ? (
+                    <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Manual Review</Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Auto-Pass</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
