@@ -384,7 +384,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
               <CardTitle className="flex items-center justify-between text-base">
                 <div className="flex items-center gap-2">
                   <Database className="h-4 w-4 text-violet-500" />
-                  <span>Step 10.0 — Data Source & API Status</span>
+                  <span>Data Source & API Status</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {getStatusBadge(data.apiAvailable ? 'pass' : 'review')}
@@ -428,7 +428,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
               <CardTitle className="flex items-center justify-between text-base">
                 <div className="flex items-center gap-2">
                   <FileCheck className="h-4 w-4 text-violet-500" />
-                  <span>Step 10.1 — Core Fields Extraction</span>
+                  <span>Core Fields Extraction</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {getStatusBadge(data.coreFields.status)}
@@ -498,7 +498,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.2 — Account Ownership</span>
+                    <span>Account Ownership</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.accountOwnership.status)}
@@ -539,7 +539,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.3 — Ownership Confidence</span>
+                    <span>Ownership Confidence</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.ownershipConfidence.status)}
@@ -580,7 +580,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.4 — Multiple Account Holders</span>
+                    <span>Multiple Account Holders</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.multipleAccountHolders.status)}
@@ -616,7 +616,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <UserX className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.5 — Spouse Detection</span>
+                    <span>Spouse Detection</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.spouseDetection.status)}
@@ -660,7 +660,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.6 — Statement Completeness</span>
+                    <span>Statement Completeness</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.statementCompleteness.status)}
@@ -694,7 +694,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.7 — Statement Recency</span>
+                    <span>Statement Recency</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.statementRecency.status)}
@@ -733,7 +733,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.8 — Address Validation</span>
+                    <span>Address Validation</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.addressValidation.status)}
@@ -770,7 +770,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <Building2 className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.9 — Subject Property Cross-Check</span>
+                    <span>Subject Property Cross-Check</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.subjectPropertyCrossCheck.status)}
@@ -816,7 +816,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
               <CardTitle className="flex items-center justify-between text-base">
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-violet-500" />
-                  <span>Step 10.10 — Large Deposit Detection</span>
+                  <span>Large Deposit Detection</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {getStatusBadge(data.largeDepositDetection.status)}
@@ -873,7 +873,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.11 — Deposit Source Validation</span>
+                    <span>Deposit Source Validation</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.depositSourceValidation.status)}
@@ -914,7 +914,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <RefreshCw className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.12 — Balance Math Verification</span>
+                    <span>Balance Math Verification</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.balanceMath.status)}
@@ -967,7 +967,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
               <CardTitle className="flex items-center justify-between text-base">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-violet-500" />
-                  <span>Step 10.13 — Cash Flow Consistency</span>
+                  <span>Cash Flow Consistency</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {getStatusBadge(data.cashFlowConsistency.status)}
@@ -1018,7 +1018,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
-            <span>AI Fraud Detection Engine (Steps 10.14-10.17)</span>
+            <span>AI Fraud Detection Engine</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -1079,7 +1079,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <PiggyBank className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.18 — Liquidity Sufficiency</span>
+                    <span>Liquidity Sufficiency</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.liquiditySufficiency.status)}
@@ -1124,7 +1124,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
                 <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center gap-2">
                     <ArrowRightLeft className="h-4 w-4 text-violet-500" />
-                    <span>Step 10.19 — Cross-Document Consistency</span>
+                    <span>Cross-Document Consistency</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(data.crossDocumentConsistency.status)}
@@ -1169,7 +1169,7 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           <CardTitle className="flex items-center justify-between text-base">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-violet-500" />
-              <span>Step 10.20 — Final Asset Determination</span>
+              <span>Final Asset Determination</span>
             </div>
             {getStatusBadge(data.finalDetermination.overallStatus)}
           </CardTitle>
