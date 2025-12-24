@@ -300,9 +300,9 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
         {
           documentType: 'Earthquake Insurance Policy',
           posDocType: 'Earthquake Insurance Policy',
-          isRequired: true,
-          condition: 'Required - Property in CA',
-          isPresent: true,
+          isRequired: false,
+          condition: 'Not Required - Property not in CA/HI',
+          isPresent: false,
           status: 'pass',
         },
       ],
