@@ -423,7 +423,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                 <TableHeader>
                   <TableRow>
                     <TableHead>Document Type</TableHead>
-                    <TableHead>POS Doc Type</TableHead>
                     <TableHead>Condition</TableHead>
                     <TableHead className="text-center">Present</TableHead>
                     <TableHead className="text-right">Status</TableHead>
@@ -433,7 +432,6 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
                   {data.documentRequirements.documents.map((doc, idx) => (
                     <TableRow key={idx}>
                       <TableCell className="font-medium">{doc.documentType}</TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{doc.posDocType}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{doc.condition || '—'}</TableCell>
                       <TableCell className="text-center">
                         {doc.isPresent ? 
