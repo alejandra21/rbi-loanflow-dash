@@ -186,10 +186,82 @@ export interface FloodInsuranceRequirements {
   status: ValidationStatus;
 }
 
+// Condo Insurance Validations
+
+export interface MasterCondoInsuranceValidation {
+  isRequired: boolean;
+  propertyType: string;
+  isHOAProperty: boolean;
+  policyPresent: boolean;
+  addressMatch: {
+    fullAddress: string;
+    unitNumber: string;
+    matches: boolean;
+  };
+  rbiMortgageeClause: {
+    isPresent: boolean;
+    isCorrect: boolean;
+  };
+  totalCoverage: number;
+  totalUnits: number;
+  status: ValidationStatus;
+}
+
+export interface HO6InsuranceValidation {
+  isRequired: boolean;
+  propertyType: string;
+  policyPresent: boolean;
+  addressMatch: {
+    fullAddress: string;
+    unitNumber: string;
+    matches: boolean;
+  };
+  rbiMortgageeClause: {
+    isPresent: boolean;
+    isCorrect: boolean;
+  };
+  coverageAmount: {
+    amount: number;
+    aivValue: number;
+    purchasePrice: number;
+    minimumRequired: number;
+    minimumPercentage: number;
+    meetsRequirement: boolean;
+  };
+  coverageTerm: {
+    termMonths: number;
+    minimumRequired: number;
+    meetsRequirement: boolean;
+  };
+  status: ValidationStatus;
+}
+
+// Document Requirements
+
+export interface DocumentRequirement {
+  documentType: string;
+  posDocType: string;
+  isRequired: boolean;
+  requiredForPrograms?: string[];
+  condition?: string;
+  isPresent: boolean;
+  status: ValidationStatus;
+}
+
+export interface DocumentRequirementsValidation {
+  propertyType: string;
+  loanProgram: string;
+  floodZone: string;
+  isHOAProperty: boolean;
+  documents: DocumentRequirement[];
+  overallStatus: ValidationStatus;
+}
+
 export interface InsurancePolicyData {
   transactionType: 'Purchase' | 'Refinance';
   state: string;
   loanProgram: 'DSCR' | 'Bridge' | 'Fix & Flip' | 'Ground-Up Construction';
+  propertyType: 'Single Family' | 'Multi-Family' | 'Condo' | 'Townhouse' | 'Commercial';
   policyParsing: PolicyParsingValidation;
   insuredNameMatch: InsuredNameMatch;
   lenderLossPayee: LenderLossPayee;
@@ -207,6 +279,11 @@ export interface InsurancePolicyData {
   gucValidation?: GUCValidation;
   fixFlipValidation?: FixFlipValidation;
   floodRequirements?: FloodInsuranceRequirements;
+  // Condo-specific validations
+  masterCondoInsurance?: MasterCondoInsuranceValidation;
+  ho6Insurance?: HO6InsuranceValidation;
+  // Document requirements
+  documentRequirements?: DocumentRequirementsValidation;
   overallStatus: ValidationStatus;
   processedAt: string;
   processedBy: string;

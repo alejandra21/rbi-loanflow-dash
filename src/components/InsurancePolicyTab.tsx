@@ -28,7 +28,7 @@ import {
   Hammer,
   Umbrella
 } from 'lucide-react';
-import { InsurancePolicyData, ValidationStatus, DSCRBridgeValidation, GUCValidation, FixFlipValidation, FloodInsuranceRequirements } from '@/types/insurancePolicy';
+import { InsurancePolicyData, ValidationStatus, DSCRBridgeValidation, GUCValidation, FixFlipValidation, FloodInsuranceRequirements, MasterCondoInsuranceValidation, HO6InsuranceValidation, DocumentRequirementsValidation } from '@/types/insurancePolicy';
 
 
 interface InsurancePolicyTabProps {
@@ -38,6 +38,7 @@ interface InsurancePolicyTabProps {
 
 const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProps) => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
+    documentRequirements: true,
     policyParsing: true,
     insuredName: true,
     lossPayee: true,
@@ -52,6 +53,8 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
     occupancy: true,
     programSpecific: true,
     floodRequirements: true,
+    masterCondo: true,
+    ho6Insurance: true,
     logs: false,
   });
 
@@ -64,6 +67,7 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
     transactionType: 'Purchase',
     state: 'FL',
     loanProgram: 'DSCR',
+    propertyType: 'Condo',
     policyParsing: {
       insuredName: 'ABC Holdings LLC',
       propertyAddress: '123 Main Street, Miami, FL 33101',
@@ -197,6 +201,105 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
       },
       status: 'pass',
     },
+    // Master Condo Insurance (required for condos with HOA)
+    masterCondoInsurance: {
+      isRequired: true,
+      propertyType: 'Condo',
+      isHOAProperty: true,
+      policyPresent: true,
+      addressMatch: {
+        fullAddress: '123 Main Street, Unit 405, Miami, FL 33101',
+        unitNumber: '405',
+        matches: true,
+      },
+      rbiMortgageeClause: {
+        isPresent: true,
+        isCorrect: true,
+      },
+      totalCoverage: 15000000,
+      totalUnits: 120,
+      status: 'pass',
+    },
+    // HO-6 Insurance (required for condos)
+    ho6Insurance: {
+      isRequired: true,
+      propertyType: 'Condo',
+      policyPresent: true,
+      addressMatch: {
+        fullAddress: '123 Main Street, Unit 405, Miami, FL 33101',
+        unitNumber: '405',
+        matches: true,
+      },
+      rbiMortgageeClause: {
+        isPresent: true,
+        isCorrect: true,
+      },
+      coverageAmount: {
+        amount: 100000,
+        aivValue: 450000,
+        purchasePrice: 425000,
+        minimumRequired: 85000,
+        minimumPercentage: 20,
+        meetsRequirement: true,
+      },
+      coverageTerm: {
+        termMonths: 12,
+        minimumRequired: 12,
+        meetsRequirement: true,
+      },
+      status: 'pass',
+    },
+    // Document Requirements
+    documentRequirements: {
+      propertyType: 'Condo',
+      loanProgram: 'DSCR',
+      floodZone: 'AE',
+      isHOAProperty: true,
+      documents: [
+        {
+          documentType: 'Hazard Insurance Policy',
+          posDocType: 'Hazard Insurance Policy',
+          isRequired: true,
+          requiredForPrograms: ['DSCR', 'Bridge'],
+          condition: 'DP-3 Policy for Bridge/DSCR',
+          isPresent: true,
+          status: 'pass',
+        },
+        {
+          documentType: 'Liability Insurance Policy',
+          posDocType: 'Liability Insurance Policy',
+          isRequired: true,
+          condition: 'Required on every loan',
+          isPresent: true,
+          status: 'pass',
+        },
+        {
+          documentType: 'Flood Insurance Policy',
+          posDocType: 'Flood Insurance Policy',
+          isRequired: true,
+          condition: 'Required - Property in Flood Zone AE',
+          isPresent: true,
+          status: 'pass',
+        },
+        {
+          documentType: 'HO-6 Insurance Policy',
+          posDocType: 'HO6 Insurance Policy',
+          isRequired: true,
+          condition: 'Required - Property type is Condo',
+          isPresent: true,
+          status: 'pass',
+        },
+        {
+          documentType: 'HOA Master Insurance',
+          posDocType: 'Copy of HOA Master Insurance',
+          isRequired: true,
+          condition: 'Required - Condo with HOA',
+          isPresent: true,
+          status: 'pass',
+        },
+      ],
+      overallStatus: 'pass',
+    },
     overallStatus: 'pass',
     processedAt: '2024-01-15T10:30:00Z',
     processedBy: 'AI Insurance Validator v2.1',
@@ -271,6 +374,82 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           </div>
         </CardHeader>
       </Card>
+
+      {/* Document Requirements */}
+      {data.documentRequirements && (
+        <Card>
+          <CardHeader className="cursor-pointer" onClick={() => toggleCard('documentRequirements')}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <FileCheck className="h-4 w-4 text-muted-foreground" />
+                Required Documents by Loan Type
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="max-w-xs">
+                      <p className="text-xs">Validates which insurance documents are required based on loan program, property type, and flood zone</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {getStatusBadge(data.documentRequirements.overallStatus)}
+                {expandedCards.documentRequirements ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </div>
+            </div>
+          </CardHeader>
+          {expandedCards.documentRequirements && (
+            <CardContent className="pt-0">
+              <div className="mb-4 flex flex-wrap gap-2 text-sm">
+                <Badge variant="outline">
+                  <span className="text-muted-foreground mr-1">Loan:</span>
+                  {data.documentRequirements.loanProgram}
+                </Badge>
+                <Badge variant="outline">
+                  <span className="text-muted-foreground mr-1">Property:</span>
+                  {data.documentRequirements.propertyType}
+                </Badge>
+                <Badge variant="outline">
+                  <span className="text-muted-foreground mr-1">Flood Zone:</span>
+                  {data.documentRequirements.floodZone}
+                </Badge>
+                {data.documentRequirements.isHOAProperty && (
+                  <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20">HOA Property</Badge>
+                )}
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Document Type</TableHead>
+                    <TableHead>POS Doc Type</TableHead>
+                    <TableHead>Condition</TableHead>
+                    <TableHead className="text-center">Present</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.documentRequirements.documents.map((doc, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell className="font-medium">{doc.documentType}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{doc.posDocType}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{doc.condition || '—'}</TableCell>
+                      <TableCell className="text-center">
+                        {doc.isPresent ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                      <TableCell className="text-right">{getStatusBadge(doc.status)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          )}
+        </Card>
+      )}
 
       {/* 1. Policy Parsing */}
       <Card>
@@ -1079,6 +1258,256 @@ const InsurancePolicyTab = ({ phaseStatus, lastUpdated }: InsurancePolicyTabProp
           </CardContent>
         )}
       </Card>
+
+      {/* Master Condo Insurance (for condos) */}
+      {data.propertyType === 'Condo' && data.masterCondoInsurance && (
+        <Card>
+          <CardHeader className="cursor-pointer" onClick={() => toggleCard('masterCondo')}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                Master Condo Insurance Policy
+                <Badge className="bg-purple-600 hover:bg-purple-600 text-white text-xs">Condo</Badge>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="max-w-xs">
+                      <p className="text-xs">Required if property is a condo and part of an HOA. Source: POS – Copy of HOA Master Insurance</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {getStatusBadge(data.masterCondoInsurance.status)}
+                {expandedCards.masterCondo ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </div>
+            </div>
+          </CardHeader>
+          {expandedCards.masterCondo && (
+            <CardContent className="pt-0 space-y-4">
+              {/* Policy Presence */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Master Policy Present</span>
+                  {data.masterCondoInsurance.policyPresent ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Correct Policy Type</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Missing Master Insurance</Badge>
+                  }
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Validation</TableHead>
+                      <TableHead>Logic</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Policy Present</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">Policy is present in POS</TableCell>
+                      <TableCell className="text-right">
+                        {data.masterCondoInsurance.policyPresent ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Address Match</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        References address including unit number
+                        <div className="text-xs mt-1">Unit: {data.masterCondoInsurance.addressMatch.unitNumber}</div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {data.masterCondoInsurance.addressMatch.matches ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">RBI Mortgagee Clause</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">RBI listed as mortgagee</TableCell>
+                      <TableCell className="text-right">
+                        {data.masterCondoInsurance.rbiMortgageeClause.isPresent && data.masterCondoInsurance.rbiMortgageeClause.isCorrect ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Coverage Details */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Total Coverage:</span>
+                  <span className="font-medium">{formatCurrency(data.masterCondoInsurance.totalCoverage)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Total Units:</span>
+                  <span className="font-medium">{data.masterCondoInsurance.totalUnits} units</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Property Type:</span>
+                  <Badge variant="outline">{data.masterCondoInsurance.propertyType}</Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">HOA Property:</span>
+                  {data.masterCondoInsurance.isHOAProperty ? 
+                    <Badge className="bg-blue-500/10 text-blue-500">Yes</Badge> :
+                    <Badge className="bg-slate-500/10 text-slate-500">No</Badge>
+                  }
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+      )}
+
+      {/* HO-6 Insurance (for condos) */}
+      {data.propertyType === 'Condo' && data.ho6Insurance && (
+        <Card>
+          <CardHeader className="cursor-pointer" onClick={() => toggleCard('ho6Insurance')}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <Home className="h-4 w-4 text-muted-foreground" />
+                HO-6 Insurance Policy
+                <Badge className="bg-purple-600 hover:bg-purple-600 text-white text-xs">Condo</Badge>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="max-w-xs">
+                      <p className="text-xs">Required if property type is a condo. Source: POS – HO6 Insurance Policy</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {getStatusBadge(data.ho6Insurance.status)}
+                {expandedCards.ho6Insurance ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </div>
+            </div>
+          </CardHeader>
+          {expandedCards.ho6Insurance && (
+            <CardContent className="pt-0 space-y-4">
+              {/* HO-6 Policy Present */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">HO-6 Policy Present</span>
+                  {data.ho6Insurance.policyPresent ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Correct Policy Type</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Missing HO-6 Insurance</Badge>
+                  }
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Validation</TableHead>
+                      <TableHead>Logic</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Policy Present</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">HO-6 policy is present in POS</TableCell>
+                      <TableCell className="text-right">
+                        {data.ho6Insurance.policyPresent ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Address Match</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        References address including unit number
+                        <div className="text-xs mt-1">Unit: {data.ho6Insurance.addressMatch.unitNumber}</div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {data.ho6Insurance.addressMatch.matches ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">RBI Mortgagee Clause</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">RBI listed as mortgagee</TableCell>
+                      <TableCell className="text-right">
+                        {data.ho6Insurance.rbiMortgageeClause.isPresent && data.ho6Insurance.rbiMortgageeClause.isCorrect ? 
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" /> : 
+                          <XCircle className="h-4 w-4 text-red-500 inline" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Coverage Amount Validation */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Coverage Amount</span>
+                  {data.ho6Insurance.coverageAmount.meetsRequirement ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Coverage Sufficient</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Insufficient Coverage</Badge>
+                  }
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">Coverage Amount</span>
+                    <span className="font-medium">{formatCurrency(data.ho6Insurance.coverageAmount.amount)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Minimum Required ({data.ho6Insurance.coverageAmount.minimumPercentage}% of AIV/PP)</span>
+                    <span className="font-medium">{formatCurrency(data.ho6Insurance.coverageAmount.minimumRequired)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">AIV Value (Phase 5)</span>
+                    <span className="font-medium">{formatCurrency(data.ho6Insurance.coverageAmount.aivValue)}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Purchase Price (POS)</span>
+                    <span className="font-medium">{formatCurrency(data.ho6Insurance.coverageAmount.purchasePrice)}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 p-2 bg-background/50 rounded">
+                  Requirement: Coverage ≥ {data.ho6Insurance.coverageAmount.minimumPercentage}% of AIV ({formatCurrency(data.ho6Insurance.coverageAmount.aivValue)}) or Purchase Price ({formatCurrency(data.ho6Insurance.coverageAmount.purchasePrice)})
+                </p>
+              </div>
+
+              {/* Coverage Term Validation */}
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Coverage Term</span>
+                  {data.ho6Insurance.coverageTerm.meetsRequirement ? 
+                    <Badge className="bg-emerald-500/10 text-emerald-500"><CheckCircle2 className="h-3 w-3 mr-1" />Term Sufficient</Badge> :
+                    <Badge className="bg-red-500/10 text-red-500"><XCircle className="h-3 w-3 mr-1" />Increase Policy Term</Badge>
+                  }
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">Policy Term</span>
+                    <span className="font-medium">{data.ho6Insurance.coverageTerm.termMonths} months</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Minimum Required</span>
+                    <span className="font-medium">{data.ho6Insurance.coverageTerm.minimumRequired} months</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+      )}
 
       {/* 13. Program-Specific Endorsements */}
       {(data.loanProgram === 'DSCR' || data.loanProgram === 'Bridge') && data.dscrBridgeValidation && (
