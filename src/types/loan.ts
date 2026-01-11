@@ -940,8 +940,8 @@ export const mockLoans: LoanApplication[] = [
                 }
             },
             insurancePolicy: { name: "Insurance Policy Review", status: "passed", completedDate: "2024-01-15" },
-            assetVerification: { name: "Asset Verification", status: "pending" },
-            finalApproval: { name: "Final Approval", status: "pending" }
+            assetVerification: { name: "Asset Verification", status: "passed", completedDate: "2024-01-16" },
+            finalApproval: { name: "Final Approval", status: "passed", completedDate: "2024-01-16" }
         },
         timeline: [
             { phase: "Application", status: "Submitted", date: "2024-01-08", user: "System" },

@@ -17,6 +17,7 @@ import { ClosingProtectionTab } from "@/components/ClosingProtectionTab";
 import { TitleInsuranceTab } from "@/components/TitleInsuranceTab";
 import InsurancePolicyTab from "@/components/InsurancePolicyTab";
 import AssetVerificationTab from "@/components/AssetVerificationTab";
+import FinalApprovalTab from "@/components/FinalApprovalTab";
 import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
 import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
@@ -1665,7 +1666,10 @@ export const LoanDetail = () => {
               </TabsContent>
 
               <TabsContent value="finalApproval" className="mt-0">
-                <PhaseTab phase={loan.phases.finalApproval} phaseName="Final Approval" />
+                <FinalApprovalTab 
+                  phaseStatus={loan.phases.finalApproval.status as 'pending' | 'in_progress' | 'completed' | 'failed'} 
+                  lastUpdated={loan.phases.finalApproval.completedDate} 
+                />
               </TabsContent>
             </div>
           </Tabs>
