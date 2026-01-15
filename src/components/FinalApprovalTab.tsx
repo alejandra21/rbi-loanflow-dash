@@ -1007,41 +1007,56 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
           <CollapsibleContent>
             <CardContent className="pt-0">
               <div className="grid grid-cols-2 gap-3">
-                {data.phaseOutcomes.map((phase) => (
-                  <div 
-                    key={phase.phaseNumber} 
-                    className={`flex items-center justify-between p-3 rounded-lg border ${
-                      phase.status === 'pass' ? 'bg-green-50/50 border-green-100' :
-                      phase.status === 'pass_with_exception' ? 'bg-amber-50/50 border-amber-100' :
-                      phase.status === 'fail' ? 'bg-red-50/50 border-red-100' :
-                      phase.status === 'manual_review_required' ? 'bg-blue-50/50 border-blue-100' :
-                      'bg-muted/30'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-background text-xs font-medium border">
-                        {phase.phaseNumber}
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">{phase.phaseName}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">{getPhaseStateLabel(phase.status)}</Badge>
-                          {phase.exceptionCount > 0 && (
-                            <span className="text-xs text-muted-foreground">
-                              {phase.softExceptionCount} soft, {phase.hardExceptionCount} hard
-                            </span>
-                          )}
+                {data.phaseOutcomes.map((phase) => {
+                  const phaseMap: Record<number, string> = {
+                    1: 'borrowerEligibility',
+                    2: 'experienceTiering',
+                    3: 'creditReview',
+                    4: 'nonOwnerOccupancy',
+                    5: 'collateralReview',
+                    6: 'dscrCashFlow',
+                    7: 'titleInsurance',
+                    8: 'closingProtection',
+                    9: 'insurancePolicy',
+                    10: 'assetVerification'
+                  };
+                  return (
+                    <div 
+                      key={phase.phaseNumber} 
+                      onClick={() => onNavigateToPhase?.(phaseMap[phase.phaseNumber] || 'borrowerEligibility')}
+                      className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
+                        phase.status === 'pass' ? 'bg-green-50/50 border-green-100 hover:border-green-300' :
+                        phase.status === 'pass_with_exception' ? 'bg-amber-50/50 border-amber-100 hover:border-amber-300' :
+                        phase.status === 'fail' ? 'bg-red-50/50 border-red-100 hover:border-red-300' :
+                        phase.status === 'manual_review_required' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300' :
+                        'bg-muted/30 hover:border-muted-foreground/30'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-background text-xs font-medium border">
+                          {phase.phaseNumber}
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">{phase.phaseName}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs">{getPhaseStateLabel(phase.status)}</Badge>
+                            {phase.exceptionCount > 0 && (
+                              <span className="text-xs text-muted-foreground">
+                                {phase.softExceptionCount} soft, {phase.hardExceptionCount} hard
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      <div className="flex items-center gap-2">
+                        {phase.isHardStop && (
+                          <Badge variant="destructive" className="text-xs">Hard Stop</Badge>
+                        )}
+                        {getPhaseStatusIcon(phase.status)}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {phase.isHardStop && (
-                        <Badge variant="destructive" className="text-xs">Hard Stop</Badge>
-                      )}
-                      {getPhaseStatusIcon(phase.status)}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </CardContent>
           </CollapsibleContent>
