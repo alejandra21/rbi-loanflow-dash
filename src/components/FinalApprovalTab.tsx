@@ -892,20 +892,20 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                         <Progress value={(passedValidations / totalValidations) * 100} className="h-2" />
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-green-500" />
-                            Pass: {risk.passCount}
+                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                            PASS: {risk.passCount}
                           </span>
                           <span className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-amber-500" />
-                            Pass w/ Exception: {risk.passWithExceptionCount}
+                            PASS W/ EXCEPTION: {risk.passWithExceptionCount}
                           </span>
                           <span className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-blue-500" />
-                            Manual Review: {risk.manualReviewCount}
+                            MANUAL REVIEW: {risk.manualReviewCount}
                           </span>
                           <span className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-red-500" />
-                            Fail: {risk.failCount}
+                            FAIL: {risk.failCount}
                           </span>
                         </div>
                       </div>
