@@ -419,20 +419,20 @@ const mockFinalApprovalData: FinalApprovalData = {
   },
   
   auditTrail: [
-    { id: 'AUD-001', timestamp: '2024-01-16T08:00:00Z', action: 'Phase 11 Initiated', performedBy: 'System', details: 'Final Approval phase started - consolidating results from phases 1-10', isImmutable: true, step: '11.1' },
-    { id: 'AUD-002', timestamp: '2024-01-16T08:01:00Z', action: 'Phase Completion Gate Passed', performedBy: 'System', details: 'All 10 phases have executed with terminal states', isImmutable: true, step: '11.1' },
-    { id: 'AUD-003', timestamp: '2024-01-16T08:02:00Z', action: 'Exception Aggregation Complete', performedBy: 'System', details: 'Consolidated 1 exception across 6 risk categories', isImmutable: true, step: '11.2' },
-    { id: 'AUD-004', timestamp: '2024-01-16T08:03:00Z', action: 'Hard Stop Check Passed', performedBy: 'System', details: 'No unresolved hard stops detected', isImmutable: true, step: '11.3' },
-    { id: 'AUD-005', timestamp: '2024-01-16T08:04:00Z', action: 'Compensating Factor Evaluated', performedBy: 'System', details: 'Exception EXC-001: Compensators allowed and sufficient', isImmutable: true, step: '11.4' },
-    { id: 'AUD-006', timestamp: '2024-01-16T08:05:00Z', action: 'Authority Routing Determined', performedBy: 'System', details: '1 soft exception - Underwriter approval required', isImmutable: true, step: '11.5' },
-    { id: 'AUD-007', timestamp: '2024-01-16T09:30:00Z', action: 'Exception Approved', performedBy: 'Sarah Johnson', details: 'Exception EXC-001 approved with compensating factors', isImmutable: true, step: '11.4' },
-    { id: 'AUD-008', timestamp: '2024-01-16T10:28:00Z', action: 'Cross-Risk Reconciliation Passed', performedBy: 'System', details: 'No inconsistencies detected across risk categories', isImmutable: true, step: '11.7' },
-    { id: 'AUD-009', timestamp: '2024-01-16T10:30:00Z', action: 'Manual Decision Captured', performedBy: 'Sarah Johnson', details: 'Decision: Approved with Conditions. All required fields present.', isImmutable: true, step: '11.6' },
-    { id: 'AUD-010', timestamp: '2024-01-16T10:30:00Z', action: 'Final Decision Rendered', performedBy: 'Sarah Johnson', details: 'Loan approved with conditions', isImmutable: true, step: '11.8' },
-    { id: 'AUD-011', timestamp: '2024-01-16T10:31:00Z', action: 'Conditions Registered', performedBy: 'System', details: '2 conditions registered (1 prior to funding, 1 prior to closing)', isImmutable: true, step: '11.9' },
-    { id: 'AUD-012', timestamp: '2024-01-16T10:32:00Z', action: 'Data Fields Locked', performedBy: 'System', details: 'Loan amount, borrower entity, property address, appraised value, insurance coverage locked', fieldLocked: 'loanAmount, borrowerEntity, propertyAddress, appraisedValue, insuranceCoverage', isImmutable: true, step: '11.11' },
-    { id: 'AUD-013', timestamp: '2024-01-16T10:35:00Z', action: 'Approval Memo Generated', performedBy: 'System', details: 'Final approval memo generated and stored (version 1.0)', isImmutable: true, step: '11.12' },
-    { id: 'AUD-014', timestamp: '2024-01-16T10:35:00Z', action: 'Clear-to-Close Gate Evaluated', performedBy: 'System', details: 'Status: Pending - 1 condition outstanding', isImmutable: true, step: '11.13' },
+    { id: 'AUD-001', timestamp: '2024-01-16T08:00:00Z', action: 'Final Approval Initiated', performedBy: 'System', details: 'Final Approval phase started - consolidating results from phases 1-10', isImmutable: true },
+    { id: 'AUD-002', timestamp: '2024-01-16T08:01:00Z', action: 'Phase Completion Gate Passed', performedBy: 'System', details: 'All 10 phases have executed with terminal states', isImmutable: true },
+    { id: 'AUD-003', timestamp: '2024-01-16T08:02:00Z', action: 'Exception Aggregation Complete', performedBy: 'System', details: 'Consolidated 1 exception across 6 risk categories', isImmutable: true },
+    { id: 'AUD-004', timestamp: '2024-01-16T08:03:00Z', action: 'Hard Stop Check Passed', performedBy: 'System', details: 'No unresolved hard stops detected', isImmutable: true },
+    { id: 'AUD-005', timestamp: '2024-01-16T08:04:00Z', action: 'Compensating Factor Evaluated', performedBy: 'System', details: 'Exception EXC-001: Compensators allowed and sufficient', isImmutable: true },
+    { id: 'AUD-006', timestamp: '2024-01-16T08:05:00Z', action: 'Authority Routing Determined', performedBy: 'System', details: '1 soft exception - Underwriter approval required', isImmutable: true },
+    { id: 'AUD-007', timestamp: '2024-01-16T09:30:00Z', action: 'Exception Approved', performedBy: 'Sarah Johnson', details: 'Exception EXC-001 approved with compensating factors', isImmutable: true },
+    { id: 'AUD-008', timestamp: '2024-01-16T10:28:00Z', action: 'Cross-Risk Reconciliation Passed', performedBy: 'System', details: 'No inconsistencies detected across risk categories', isImmutable: true },
+    { id: 'AUD-009', timestamp: '2024-01-16T10:30:00Z', action: 'Manual Decision Captured', performedBy: 'Sarah Johnson', details: 'Decision: Approved with Conditions. All required fields present.', isImmutable: true },
+    { id: 'AUD-010', timestamp: '2024-01-16T10:30:00Z', action: 'Final Decision Rendered', performedBy: 'Sarah Johnson', details: 'Loan approved with conditions', isImmutable: true },
+    { id: 'AUD-011', timestamp: '2024-01-16T10:31:00Z', action: 'Conditions Registered', performedBy: 'System', details: '2 conditions registered (1 prior to funding, 1 prior to closing)', isImmutable: true },
+    { id: 'AUD-012', timestamp: '2024-01-16T10:32:00Z', action: 'Data Fields Locked', performedBy: 'System', details: 'Loan amount, borrower entity, property address, appraised value, insurance coverage locked', fieldLocked: 'loanAmount, borrowerEntity, propertyAddress, appraisedValue, insuranceCoverage', isImmutable: true },
+    { id: 'AUD-013', timestamp: '2024-01-16T10:35:00Z', action: 'Approval Memo Generated', performedBy: 'System', details: 'Final approval memo generated and stored (version 1.0)', isImmutable: true },
+    { id: 'AUD-014', timestamp: '2024-01-16T10:35:00Z', action: 'Clear-to-Close Gate Evaluated', performedBy: 'System', details: 'Status: Pending - 1 condition outstanding', isImmutable: true },
   ],
   
   processedAt: '2024-01-16T10:35:00Z',
@@ -566,9 +566,9 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         <div className="flex items-center gap-4">
           <StatusBadge status={phaseStatus === 'completed' ? 'passed' : phaseStatus === 'failed' ? 'failed' : 'pending'} />
           <div>
-            <h2 className="text-xl font-semibold">Phase 11: Final Approval & Exception Management</h2>
+            <h2 className="text-xl font-semibold">Final Approval & Exception Management</h2>
             <p className="text-sm text-muted-foreground">
-              Consolidates all risk data, manages exceptions, and produces the final credit decision
+              Final decision-making phase that consolidates results from all previous phases, manages exceptions, enforces approval authority, and produces the final credit decision
             </p>
           </div>
         </div>
@@ -697,7 +697,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                   ) : (
                     <ShieldX className="h-4 w-4 text-red-600" />
                   )}
-                  Step 11.1: Global Phase Completion Gate
+                  Global Phase Completion Gate
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={data.phaseCompletionGate.gateResult === 'proceed' ? 'default' : 'destructive'} 
@@ -991,7 +991,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertOctagon className="h-4 w-4" />
-                  Step 11.3: Hard Stop Enforcement
+                  Hard Stop Enforcement
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={data.hardStops.length === 0 ? 'default' : 'destructive'} 
@@ -1051,7 +1051,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4" />
-                  Step 11.2: Exception Aggregation & Management
+                  Exception Aggregation & Management
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={data.pendingExceptions > 0 ? 'destructive' : 'secondary'}>
@@ -1131,7 +1131,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                     
                     {exception.compensatingFactors && exception.compensatingFactors.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-xs font-medium text-muted-foreground mb-1">Compensating Factors (Step 11.4):</p>
+                        <p className="text-xs font-medium text-muted-foreground mb-1">Compensating Factors:</p>
                         <ul className="text-sm space-y-1">
                           {exception.compensatingFactors.map((factor) => (
                             <li key={factor.id} className="flex items-center gap-2">
@@ -1175,7 +1175,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Collapsible>
       </Card>
 
-      {/* Compensating Factors (Step 11.4) */}
+      {/* Compensating Factors */}
       <Card>
         <Collapsible open={expandedSections.compensatingFactors} onOpenChange={() => toggleSection('compensatingFactors')}>
           <CollapsibleTrigger asChild>
@@ -1183,7 +1183,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
-                  Step 11.4: Compensating Factor Evaluation
+                  Compensating Factor Evaluation
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">
@@ -1232,7 +1232,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Collapsible>
       </Card>
 
-      {/* Cross-Risk Reconciliation (Step 11.7) */}
+      {/* Cross-Risk Reconciliation */}
       <Card className={data.crossRiskReconciliation.requiresManualReview ? 'border-amber-200' : ''}>
         <Collapsible open={expandedSections.crossRiskReconciliation} onOpenChange={() => toggleSection('crossRiskReconciliation')}>
           <CollapsibleTrigger asChild>
@@ -1240,7 +1240,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Zap className="h-4 w-4" />
-                  Step 11.7: Cross-Risk Reconciliation
+                  Cross-Risk Reconciliation Check
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={data.crossRiskReconciliation.isConsistent ? 'default' : 'destructive'}
@@ -1290,7 +1290,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Collapsible>
       </Card>
 
-      {/* Approval Authority (Step 11.5) */}
+      {/* Approval Authority Routing */}
       <Card>
         <Collapsible open={expandedSections.authority} onOpenChange={() => toggleSection('authority')}>
           <CollapsibleTrigger asChild>
@@ -1298,7 +1298,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Scale className="h-4 w-4" />
-                  Step 11.5: Approval Authority Routing
+                  Approval Authority Routing
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">
@@ -1408,7 +1408,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Collapsible>
       </Card>
 
-      {/* Conditions (Step 11.9) */}
+      {/* Conditions */}
       {data.conditions.length > 0 && (
         <Card>
           <Collapsible open={expandedSections.conditions} onOpenChange={() => toggleSection('conditions')}>
@@ -1417,7 +1417,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                 <CardTitle className="text-base flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ClipboardCheck className="h-4 w-4" />
-                    Step 11.9: Conditional Approval Engine
+                    Conditional Approval Engine
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={data.conditions.some(c => c.status === 'pending') ? 'destructive' : 'default'} className={data.conditions.every(c => c.status === 'satisfied') ? 'bg-green-600' : ''}>
@@ -1504,7 +1504,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Card>
       )}
 
-      {/* Clear-to-Close Gate (Step 11.13) */}
+      {/* Clear-to-Close Gate */}
       <Card className={data.clearToCloseGate.eligibleForPhase12 ? 'border-green-200' : 'border-amber-200'}>
         <Collapsible open={expandedSections.clearToClose} onOpenChange={() => toggleSection('clearToClose')}>
           <CollapsibleTrigger asChild>
@@ -1512,7 +1512,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Flag className="h-4 w-4" />
-                  Step 11.13: Clear-to-Close Eligibility Gate
+                  Clear-to-Close Eligibility Gate
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={data.clearToCloseGate.eligibleForPhase12 ? 'default' : 'secondary'}
@@ -1591,7 +1591,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Collapsible>
       </Card>
 
-      {/* Locked Fields (Step 11.11) */}
+      {/* Locked Fields */}
       {data.lockedFields.length > 0 && (
         <Card className="border-amber-200 bg-amber-50/30">
           <Collapsible open={expandedSections.lockedFields} onOpenChange={() => toggleSection('lockedFields')}>
@@ -1600,7 +1600,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                 <CardTitle className="text-base flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Lock className="h-4 w-4 text-amber-600" />
-                    Step 11.11: Final Data Lock
+                    Final Data Lock
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="border-amber-300">
@@ -1681,9 +1681,6 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm">{entry.action}</span>
-                          {entry.step && (
-                            <Badge variant="outline" className="text-xs">Step {entry.step}</Badge>
-                          )}
                           {entry.isImmutable && (
                             <Lock className="h-3 w-3 text-muted-foreground" />
                           )}
@@ -1712,7 +1709,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </Collapsible>
       </Card>
 
-      {/* Approval Memo (Step 11.12) */}
+      {/* Approval Memo */}
       <Card>
         <Collapsible open={expandedSections.memo} onOpenChange={() => toggleSection('memo')}>
           <CollapsibleTrigger asChild>
@@ -1720,7 +1717,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <CardTitle className="text-base flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  Step 11.12: Approval Memo
+                  Approval Memo
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-7" onClick={(e) => {
