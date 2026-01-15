@@ -44,13 +44,14 @@ import {
   FinalApprovalData, 
   PhaseOutcome, 
   Exception, 
-  RiskSummary, 
+  RiskSummary,
+  RiskValidation, 
   ApprovalCondition,
   AuditTrailEntry,
   getDecisionColor,
   getRiskCategoryLabel,
-  getAuthorityLabel,
   getPhaseStateLabel,
+  getAuthorityLabel,
   getClearToCloseLabel,
   RiskCategory,
   FinalDecision,
@@ -106,12 +107,147 @@ const mockFinalApprovalData: FinalApprovalData = {
   ],
   
   riskSummary: [
-    { category: 'credit', categoryLabel: 'Credit Risk', totalChecks: 15, passedChecks: 15, failedChecks: 0, reviewChecks: 0, hardStops: 0, softExceptions: 0, hardExceptions: 0, status: 'pass' },
-    { category: 'collateral', categoryLabel: 'Collateral Risk', totalChecks: 8, passedChecks: 8, failedChecks: 0, reviewChecks: 0, hardStops: 0, softExceptions: 0, hardExceptions: 0, status: 'pass' },
-    { category: 'legal_title', categoryLabel: 'Legal/Title Risk', totalChecks: 12, passedChecks: 11, failedChecks: 0, reviewChecks: 1, hardStops: 0, softExceptions: 1, hardExceptions: 0, status: 'review' },
-    { category: 'insurance', categoryLabel: 'Insurance Risk', totalChecks: 10, passedChecks: 10, failedChecks: 0, reviewChecks: 0, hardStops: 0, softExceptions: 0, hardExceptions: 0, status: 'pass' },
-    { category: 'fraud_aml', categoryLabel: 'Fraud/AML Risk', totalChecks: 6, passedChecks: 6, failedChecks: 0, reviewChecks: 0, hardStops: 0, softExceptions: 0, hardExceptions: 0, status: 'pass' },
-    { category: 'operational', categoryLabel: 'Operational/Data Integrity', totalChecks: 20, passedChecks: 20, failedChecks: 0, reviewChecks: 0, hardStops: 0, softExceptions: 0, hardExceptions: 0, status: 'pass' },
+    { 
+      category: 'credit', 
+      categoryLabel: 'Credit Risk',
+      contributingPhases: [
+        { phaseNumber: 1, phaseName: 'Borrower Eligibility', status: 'pass', validationCount: 5 },
+        { phaseNumber: 2, phaseName: 'Experience Tiering', status: 'pass', validationCount: 4 },
+        { phaseNumber: 3, phaseName: 'Credit Review', status: 'pass', validationCount: 3 },
+        { phaseNumber: 6, phaseName: 'DSCR Cash Flow', status: 'pass', validationCount: 3 },
+      ],
+      validations: [
+        { id: 'CR-001', name: 'FICO Score Check', description: 'Minimum FICO score requirement (660)', sourcePhase: 3, phaseName: 'Credit Review', status: 'pass' },
+        { id: 'CR-002', name: 'Trade Line Count', description: 'Minimum 3 active trade lines required', sourcePhase: 3, phaseName: 'Credit Review', status: 'pass' },
+        { id: 'CR-003', name: 'Bankruptcy History', description: 'No bankruptcy within 4 years', sourcePhase: 3, phaseName: 'Credit Review', status: 'pass' },
+        { id: 'CR-004', name: 'DSCR Ratio', description: 'Minimum DSCR of 1.0x required', sourcePhase: 6, phaseName: 'DSCR Cash Flow', status: 'pass' },
+        { id: 'CR-005', name: 'Entity Verification', description: 'Borrower entity registered and in good standing', sourcePhase: 1, phaseName: 'Borrower Eligibility', status: 'pass' },
+        { id: 'CR-006', name: 'Experience Level', description: 'Borrower experience tier meets program requirements', sourcePhase: 2, phaseName: 'Experience Tiering', status: 'pass' },
+      ],
+      passCount: 6,
+      passWithExceptionCount: 0,
+      manualReviewCount: 0,
+      failCount: 0,
+      hardExceptions: 0,
+      softExceptions: 0,
+      hardStops: 0,
+      overallStatus: 'pass'
+    },
+    { 
+      category: 'collateral', 
+      categoryLabel: 'Collateral Risk',
+      contributingPhases: [
+        { phaseNumber: 5, phaseName: 'Collateral Review', status: 'pass', validationCount: 5 },
+      ],
+      validations: [
+        { id: 'CO-001', name: 'LTV Ratio', description: 'Loan-to-Value within program limits (80%)', sourcePhase: 5, phaseName: 'Collateral Review', status: 'pass' },
+        { id: 'CO-002', name: 'Appraisal Validity', description: 'Appraisal is current and compliant', sourcePhase: 5, phaseName: 'Collateral Review', status: 'pass' },
+        { id: 'CO-003', name: 'Property Condition', description: 'Property condition meets minimum standards', sourcePhase: 5, phaseName: 'Collateral Review', status: 'pass' },
+        { id: 'CO-004', name: 'Comparable Sales', description: 'Appraisal comps are valid and within range', sourcePhase: 5, phaseName: 'Collateral Review', status: 'pass' },
+        { id: 'CO-005', name: 'Market Trend', description: 'Local market shows stable or increasing values', sourcePhase: 5, phaseName: 'Collateral Review', status: 'pass' },
+      ],
+      passCount: 5,
+      passWithExceptionCount: 0,
+      manualReviewCount: 0,
+      failCount: 0,
+      hardExceptions: 0,
+      softExceptions: 0,
+      hardStops: 0,
+      overallStatus: 'pass'
+    },
+    { 
+      category: 'legal_title', 
+      categoryLabel: 'Legal/Title Risk',
+      contributingPhases: [
+        { phaseNumber: 7, phaseName: 'Title Insurance', status: 'pass', validationCount: 4 },
+        { phaseNumber: 8, phaseName: 'Closing Protection', status: 'pass_with_exception', validationCount: 3 },
+      ],
+      validations: [
+        { id: 'LT-001', name: 'Title Clear', description: 'Property title is clear of encumbrances', sourcePhase: 7, phaseName: 'Title Insurance', status: 'pass' },
+        { id: 'LT-002', name: 'Ownership Match', description: 'Title ownership matches borrower entity', sourcePhase: 7, phaseName: 'Title Insurance', status: 'pass' },
+        { id: 'LT-003', name: 'Lien Position', description: 'Lender will be in first lien position', sourcePhase: 7, phaseName: 'Title Insurance', status: 'pass' },
+        { id: 'LT-004', name: 'Title Commitment', description: 'Title commitment received and reviewed', sourcePhase: 7, phaseName: 'Title Insurance', status: 'pass' },
+        { id: 'LT-005', name: 'CPL Validity', description: 'Closing Protection Letter is valid and active', sourcePhase: 8, phaseName: 'Closing Protection', status: 'pass' },
+        { id: 'LT-006', name: 'CPL Coverage Amount', description: 'CPL coverage amount matches loan amount', sourcePhase: 8, phaseName: 'Closing Protection', status: 'pass_with_exception', severity: 'soft', issue: 'CPL coverage is $495,000 vs loan amount of $500,000 (1% variance)', exceptionId: 'EXC-001', policyReference: 'CPL-001' },
+        { id: 'LT-007', name: 'Agent Verification', description: 'Title agent is on approved agent list', sourcePhase: 8, phaseName: 'Closing Protection', status: 'pass' },
+      ],
+      passCount: 6,
+      passWithExceptionCount: 1,
+      manualReviewCount: 0,
+      failCount: 0,
+      hardExceptions: 0,
+      softExceptions: 1,
+      hardStops: 0,
+      overallStatus: 'pass_with_exception'
+    },
+    { 
+      category: 'insurance', 
+      categoryLabel: 'Insurance Risk',
+      contributingPhases: [
+        { phaseNumber: 9, phaseName: 'Insurance Policy', status: 'pass', validationCount: 5 },
+      ],
+      validations: [
+        { id: 'IN-001', name: 'Coverage Amount', description: 'Insurance coverage meets minimum requirements', sourcePhase: 9, phaseName: 'Insurance Policy', status: 'pass' },
+        { id: 'IN-002', name: 'Policy Effective Date', description: 'Policy effective date aligns with closing', sourcePhase: 9, phaseName: 'Insurance Policy', status: 'pass' },
+        { id: 'IN-003', name: 'Mortgagee Clause', description: 'Lender listed as mortgagee/loss payee', sourcePhase: 9, phaseName: 'Insurance Policy', status: 'pass' },
+        { id: 'IN-004', name: 'Flood Insurance', description: 'Flood insurance obtained if in flood zone', sourcePhase: 9, phaseName: 'Insurance Policy', status: 'pass' },
+        { id: 'IN-005', name: 'Carrier Rating', description: 'Insurance carrier has acceptable AM Best rating', sourcePhase: 9, phaseName: 'Insurance Policy', status: 'pass' },
+      ],
+      passCount: 5,
+      passWithExceptionCount: 0,
+      manualReviewCount: 0,
+      failCount: 0,
+      hardExceptions: 0,
+      softExceptions: 0,
+      hardStops: 0,
+      overallStatus: 'pass'
+    },
+    { 
+      category: 'fraud_aml', 
+      categoryLabel: 'Fraud/AML Risk',
+      contributingPhases: [
+        { phaseNumber: 4, phaseName: 'Non-Owner Occupancy', status: 'pass', validationCount: 3 },
+        { phaseNumber: 10, phaseName: 'Asset Verification', status: 'pass', validationCount: 3 },
+      ],
+      validations: [
+        { id: 'FA-001', name: 'Occupancy Verification', description: 'Property is confirmed non-owner occupied', sourcePhase: 4, phaseName: 'Non-Owner Occupancy', status: 'pass' },
+        { id: 'FA-002', name: 'Income Consistency', description: 'Rental income consistent with market rates', sourcePhase: 4, phaseName: 'Non-Owner Occupancy', status: 'pass' },
+        { id: 'FA-003', name: 'Identity Verification', description: 'Borrower identity verified against documents', sourcePhase: 10, phaseName: 'Asset Verification', status: 'pass' },
+        { id: 'FA-004', name: 'Asset Sourcing', description: 'Funds are properly sourced and documented', sourcePhase: 10, phaseName: 'Asset Verification', status: 'pass' },
+        { id: 'FA-005', name: 'AML/OFAC Check', description: 'No matches on OFAC or sanctions lists', sourcePhase: 10, phaseName: 'Asset Verification', status: 'pass' },
+        { id: 'FA-006', name: 'Wire Fraud Prevention', description: 'Wiring instructions verified through CPL', sourcePhase: 10, phaseName: 'Asset Verification', status: 'pass' },
+      ],
+      passCount: 6,
+      passWithExceptionCount: 0,
+      manualReviewCount: 0,
+      failCount: 0,
+      hardExceptions: 0,
+      softExceptions: 0,
+      hardStops: 0,
+      overallStatus: 'pass'
+    },
+    { 
+      category: 'operational', 
+      categoryLabel: 'Operational/Data Integrity',
+      contributingPhases: [
+        { phaseNumber: 1, phaseName: 'Borrower Eligibility', status: 'pass', validationCount: 2 },
+        { phaseNumber: 10, phaseName: 'Asset Verification', status: 'pass', validationCount: 2 },
+      ],
+      validations: [
+        { id: 'OP-001', name: 'Document Completeness', description: 'All required documents received and valid', sourcePhase: 1, phaseName: 'Borrower Eligibility', status: 'pass' },
+        { id: 'OP-002', name: 'Data Consistency', description: 'Data consistent across all sources', sourcePhase: 1, phaseName: 'Borrower Eligibility', status: 'pass' },
+        { id: 'OP-003', name: 'Account Verification', description: 'Bank accounts verified via Ocrolus/OCR', sourcePhase: 10, phaseName: 'Asset Verification', status: 'pass' },
+        { id: 'OP-004', name: 'Signature Validation', description: 'All signatures verified and consistent', sourcePhase: 10, phaseName: 'Asset Verification', status: 'pass' },
+      ],
+      passCount: 4,
+      passWithExceptionCount: 0,
+      manualReviewCount: 0,
+      failCount: 0,
+      hardExceptions: 0,
+      softExceptions: 0,
+      hardStops: 0,
+      overallStatus: 'pass'
+    },
   ],
   totalHardStops: 0,
   hasUnresolvedHardStops: false,
@@ -389,9 +525,39 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
     });
   };
 
-  const totalChecks = data.riskSummary.reduce((acc, r) => acc + r.totalChecks, 0);
-  const passedChecks = data.riskSummary.reduce((acc, r) => acc + r.passedChecks, 0);
-  const passRate = Math.round((passedChecks / totalChecks) * 100);
+  const totalValidations = data.riskSummary.reduce((acc, r) => acc + r.validations.length, 0);
+  const passedValidations = data.riskSummary.reduce((acc, r) => acc + r.passCount + r.passWithExceptionCount, 0);
+  const passRate = Math.round((passedValidations / totalValidations) * 100);
+
+  const getTerminalStateIcon = (status: string) => {
+    switch (status) {
+      case 'pass':
+        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+      case 'pass_with_exception':
+        return <AlertTriangle className="h-4 w-4 text-amber-600" />;
+      case 'manual_review_required':
+        return <Clock className="h-4 w-4 text-blue-600" />;
+      case 'fail':
+        return <XCircle className="h-4 w-4 text-red-600" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
+
+  const getTerminalStateBadge = (status: string) => {
+    switch (status) {
+      case 'pass':
+        return <Badge className="bg-green-600 text-white text-xs">PASS</Badge>;
+      case 'pass_with_exception':
+        return <Badge className="bg-amber-600 text-white text-xs">PASS WITH EXCEPTION</Badge>;
+      case 'manual_review_required':
+        return <Badge className="bg-blue-600 text-white text-xs">MANUAL REVIEW</Badge>;
+      case 'fail':
+        return <Badge variant="destructive" className="text-xs">FAIL</Badge>;
+      default:
+        return <Badge variant="outline" className="text-xs">NOT RUN</Badge>;
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -442,12 +608,12 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
           {/* Quick Stats */}
           <div className="grid grid-cols-6 gap-3 mt-6">
             <div className="text-center p-3 bg-background rounded-lg border">
-              <p className="text-2xl font-bold text-green-600">{passedChecks}</p>
-              <p className="text-xs text-muted-foreground">Checks Passed</p>
+              <p className="text-2xl font-bold text-green-600">{passedValidations}</p>
+              <p className="text-xs text-muted-foreground">Validations Passed</p>
             </div>
             <div className="text-center p-3 bg-background rounded-lg border">
-              <p className="text-2xl font-bold">{totalChecks}</p>
-              <p className="text-xs text-muted-foreground">Total Checks</p>
+              <p className="text-2xl font-bold">{totalValidations}</p>
+              <p className="text-xs text-muted-foreground">Total Validations</p>
             </div>
             <div className="text-center p-3 bg-background rounded-lg border">
               <p className="text-2xl font-bold text-amber-600">{data.softExceptions}</p>
@@ -677,61 +843,141 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="pt-0 space-y-4">
-              {data.riskSummary.map((risk) => (
-                <div key={risk.category} className="p-4 rounded-lg border bg-muted/20">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      {getRiskCategoryIcon(risk.category)}
-                      <span className="font-medium">{risk.categoryLabel}</span>
+              {data.riskSummary.map((risk) => {
+                const totalValidations = risk.validations.length;
+                const passedValidations = risk.passCount + risk.passWithExceptionCount;
+                
+                return (
+                  <Collapsible key={risk.category}>
+                    <div className={`p-4 rounded-lg border ${
+                      risk.overallStatus === 'fail' ? 'border-red-200 bg-red-50/30' :
+                      risk.overallStatus === 'pass_with_exception' ? 'border-amber-200 bg-amber-50/30' :
+                      risk.overallStatus === 'manual_review_required' ? 'border-blue-200 bg-blue-50/30' :
+                      'bg-muted/20'
+                    }`}>
+                      <CollapsibleTrigger className="w-full">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            {getRiskCategoryIcon(risk.category)}
+                            <span className="font-medium">{risk.categoryLabel}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {risk.hardStops > 0 && (
+                              <Badge variant="destructive" className="text-xs">
+                                {risk.hardStops} Hard Stop{risk.hardStops > 1 ? 's' : ''}
+                              </Badge>
+                            )}
+                            {risk.hardExceptions > 0 && (
+                              <Badge variant="destructive" className="text-xs">
+                                {risk.hardExceptions} Hard
+                              </Badge>
+                            )}
+                            {risk.softExceptions > 0 && (
+                              <Badge className="text-xs bg-amber-600 text-white">
+                                {risk.softExceptions} Soft
+                              </Badge>
+                            )}
+                            {getTerminalStateBadge(risk.overallStatus)}
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        </div>
+                      </CollapsibleTrigger>
+                      
+                      {/* Summary Bar */}
+                      <div className="space-y-2 mb-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Validation Progress</span>
+                          <span className="font-medium">{passedValidations}/{totalValidations} validations passed</span>
+                        </div>
+                        <Progress value={(passedValidations / totalValidations) * 100} className="h-2" />
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            Pass: {risk.passCount}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-amber-500" />
+                            Pass w/ Exception: {risk.passWithExceptionCount}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-blue-500" />
+                            Manual Review: {risk.manualReviewCount}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-red-500" />
+                            Fail: {risk.failCount}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Contributing Phases */}
+                      <div className="mb-3">
+                        <p className="text-xs font-medium text-muted-foreground mb-2">Contributing Phases:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {risk.contributingPhases.map((phase) => (
+                            <div key={phase.phaseNumber} className="flex items-center gap-1 text-xs bg-background rounded px-2 py-1 border">
+                              {getTerminalStateIcon(phase.status)}
+                              <span>Phase {phase.phaseNumber}: {phase.phaseName}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Expandable Validation Details */}
+                      <CollapsibleContent>
+                        <Separator className="my-3" />
+                        <div className="space-y-2">
+                          <p className="text-xs font-medium text-muted-foreground">Validation Details:</p>
+                          <div className="space-y-2">
+                            {risk.validations.map((validation) => (
+                              <div 
+                                key={validation.id} 
+                                className={`p-3 rounded border ${
+                                  validation.status === 'fail' ? 'border-red-200 bg-red-50/50' :
+                                  validation.status === 'pass_with_exception' ? 'border-amber-200 bg-amber-50/50' :
+                                  validation.status === 'manual_review_required' ? 'border-blue-200 bg-blue-50/50' :
+                                  'bg-background'
+                                }`}
+                              >
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-start gap-2 flex-1">
+                                    {getTerminalStateIcon(validation.status)}
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-sm">{validation.name}</span>
+                                        <Badge variant="outline" className="text-xs">{validation.id}</Badge>
+                                      </div>
+                                      <p className="text-xs text-muted-foreground mt-0.5">{validation.description}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        Phase {validation.sourcePhase}: {validation.phaseName}
+                                      </p>
+                                      {validation.issue && (
+                                        <div className="mt-2 p-2 rounded bg-amber-100/50 border border-amber-200">
+                                          <p className="text-xs font-medium text-amber-800">Issue Found:</p>
+                                          <p className="text-xs text-amber-700">{validation.issue}</p>
+                                          {validation.exceptionId && (
+                                            <p className="text-xs text-amber-600 mt-1">Exception: {validation.exceptionId}</p>
+                                          )}
+                                          {validation.policyReference && (
+                                            <p className="text-xs text-amber-600">Policy: {validation.policyReference}</p>
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="ml-2">
+                                    {getTerminalStateBadge(validation.status)}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CollapsibleContent>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {risk.hardStops > 0 && (
-                        <Badge variant="destructive" className="text-xs">
-                          {risk.hardStops} Hard Stop{risk.hardStops > 1 ? 's' : ''}
-                        </Badge>
-                      )}
-                      {risk.hardExceptions > 0 && (
-                        <Badge variant="destructive" className="text-xs">
-                          {risk.hardExceptions} Hard
-                        </Badge>
-                      )}
-                      {risk.softExceptions > 0 && (
-                        <Badge className="text-xs bg-amber-600">
-                          {risk.softExceptions} Soft
-                        </Badge>
-                      )}
-                      {risk.status === 'pass' ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      ) : risk.status === 'fail' ? (
-                        <XCircle className="h-4 w-4 text-red-600" />
-                      ) : (
-                        <AlertTriangle className="h-4 w-4 text-amber-600" />
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Validation Progress</span>
-                      <span className="font-medium">{risk.passedChecks}/{risk.totalChecks} checks passed</span>
-                    </div>
-                    <Progress value={(risk.passedChecks / risk.totalChecks) * 100} className="h-2" />
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                        Passed: {risk.passedChecks}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-red-500" />
-                        Failed: {risk.failedChecks}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-amber-500" />
-                        Review: {risk.reviewChecks}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </Collapsible>
+                );
+              })}
             </CardContent>
           </CollapsibleContent>
         </Collapsible>
