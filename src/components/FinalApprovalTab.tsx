@@ -622,25 +622,25 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
               <p className="text-xs text-muted-foreground">Total Validations</p>
             </div>
 
-            {/* Soft Exceptions - Clickable */}
+            {/* Soft Exceptions - Always Clickable */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.softExceptions > 0 ? 'cursor-pointer hover:border-amber-400 hover:bg-amber-50/50' : ''}`}>
+                <div className="text-center p-3 bg-background rounded-lg border transition-all cursor-pointer hover:border-amber-400 hover:bg-amber-50/50">
                   <p className="text-2xl font-bold text-amber-600">{data.softExceptions}</p>
                   <p className="text-xs text-muted-foreground">Soft Exceptions</p>
                 </div>
               </PopoverTrigger>
-              {data.softExceptions > 0 && (
-                <PopoverContent className="w-96 p-0" align="center">
-                  <div className="p-3 border-b bg-amber-50">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-amber-600" />
-                      Soft Exceptions ({data.softExceptions})
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto">
-                    {data.exceptions.filter(e => e.severity === 'soft').map((exc) => (
+              <PopoverContent className="w-96 p-0" align="center">
+                <div className="p-3 border-b bg-amber-50">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600" />
+                    Soft Exceptions ({data.softExceptions})
+                  </h4>
+                  <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  {data.exceptions.filter(e => e.severity === 'soft').length > 0 ? (
+                    data.exceptions.filter(e => e.severity === 'soft').map((exc) => (
                       <div key={exc.id} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
@@ -679,31 +679,36 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                           )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </PopoverContent>
-              )}
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                      No soft exceptions
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
             </Popover>
 
-            {/* Hard Exceptions - Clickable */}
+            {/* Hard Exceptions - Always Clickable */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.hardExceptions > 0 ? 'cursor-pointer hover:border-red-400 hover:bg-red-50/50' : ''}`}>
+                <div className="text-center p-3 bg-background rounded-lg border transition-all cursor-pointer hover:border-red-400 hover:bg-red-50/50">
                   <p className="text-2xl font-bold text-red-600">{data.hardExceptions}</p>
                   <p className="text-xs text-muted-foreground">Hard Exceptions</p>
                 </div>
               </PopoverTrigger>
-              {data.hardExceptions > 0 && (
-                <PopoverContent className="w-96 p-0" align="center">
-                  <div className="p-3 border-b bg-red-50">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <XCircle className="h-4 w-4 text-red-600" />
-                      Hard Exceptions ({data.hardExceptions})
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto">
-                    {data.exceptions.filter(e => e.severity === 'hard').map((exc) => (
+              <PopoverContent className="w-96 p-0" align="center">
+                <div className="p-3 border-b bg-red-50">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <XCircle className="h-4 w-4 text-red-600" />
+                    Hard Exceptions ({data.hardExceptions})
+                  </h4>
+                  <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  {data.exceptions.filter(e => e.severity === 'hard').length > 0 ? (
+                    data.exceptions.filter(e => e.severity === 'hard').map((exc) => (
                       <div key={exc.id} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
@@ -739,37 +744,42 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                           )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </PopoverContent>
-              )}
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                      No hard exceptions
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
             </Popover>
 
-            {/* Conditions - Clickable */}
+            {/* Conditions - Show only pending, always clickable */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.conditions.length > 0 ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50/50' : ''}`}>
-                  <p className="text-2xl font-bold text-blue-600">{data.conditions.length}</p>
+                <div className="text-center p-3 bg-background rounded-lg border transition-all cursor-pointer hover:border-blue-400 hover:bg-blue-50/50">
+                  <p className="text-2xl font-bold text-blue-600">{data.conditions.filter(c => c.status !== 'satisfied').length}</p>
                   <p className="text-xs text-muted-foreground">Conditions</p>
                 </div>
               </PopoverTrigger>
-              {data.conditions.length > 0 && (
-                <PopoverContent className="w-[420px] p-0" align="center">
-                  <div className="p-3 border-b bg-blue-50">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <ClipboardCheck className="h-4 w-4 text-blue-600" />
-                      Conditions ({data.conditions.length})
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto">
-                    {data.conditions.map((cond) => (
+              <PopoverContent className="w-[420px] p-0" align="center">
+                <div className="p-3 border-b bg-blue-50">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <ClipboardCheck className="h-4 w-4 text-blue-600" />
+                    Pending Conditions ({data.conditions.filter(c => c.status !== 'satisfied').length})
+                  </h4>
+                  <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  {data.conditions.filter(c => c.status !== 'satisfied').length > 0 ? (
+                    data.conditions.filter(c => c.status !== 'satisfied').map((cond) => (
                       <div key={cond.id} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <Badge variant="outline" className="text-xs">Phase {cond.responsiblePhase}</Badge>
-                              <Badge className={`text-xs ${cond.status === 'satisfied' ? 'bg-green-600' : cond.status === 'pending' ? 'bg-amber-600' : 'bg-red-600'}`}>
+                              <Badge className={`text-xs ${cond.status === 'pending' ? 'bg-amber-600' : 'bg-red-600'}`}>
                                 {cond.status.toUpperCase()}
                               </Badge>
                             </div>
@@ -805,31 +815,36 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                           )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </PopoverContent>
-              )}
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                      All conditions satisfied
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
             </Popover>
 
-            {/* Hard Stops - Clickable */}
+            {/* Hard Stops - Always Clickable */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.totalHardStops > 0 ? 'cursor-pointer hover:border-red-400 hover:bg-red-50/50' : ''}`}>
+                <div className="text-center p-3 bg-background rounded-lg border transition-all cursor-pointer hover:border-red-400 hover:bg-red-50/50">
                   <p className="text-2xl font-bold text-red-600">{data.totalHardStops}</p>
                   <p className="text-xs text-muted-foreground">Hard Stops</p>
                 </div>
               </PopoverTrigger>
-              {data.totalHardStops > 0 && (
-                <PopoverContent className="w-96 p-0" align="center">
-                  <div className="p-3 border-b bg-red-50">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <AlertOctagon className="h-4 w-4 text-red-600" />
-                      Hard Stops ({data.totalHardStops})
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">Critical issues blocking approval</p>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto">
-                    {data.hardStops.map((stop, idx) => {
+              <PopoverContent className="w-96 p-0" align="center">
+                <div className="p-3 border-b bg-red-50">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <AlertOctagon className="h-4 w-4 text-red-600" />
+                    Hard Stops ({data.totalHardStops})
+                  </h4>
+                  <p className="text-xs text-muted-foreground mt-1">Critical issues blocking approval</p>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  {data.hardStops.length > 0 ? (
+                    data.hardStops.map((stop, idx) => {
                       const phaseNames: Record<number, string> = {
                         1: 'Borrower Eligibility',
                         2: 'Experience Tiering',
@@ -879,10 +894,15 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                           </div>
                         </div>
                       );
-                    })}
-                  </div>
-                </PopoverContent>
-              )}
+                    })
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                      No hard stops
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
             </Popover>
           </div>
         </CardContent>
