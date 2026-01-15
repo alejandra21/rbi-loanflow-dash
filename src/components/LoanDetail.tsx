@@ -1668,7 +1668,8 @@ export const LoanDetail = () => {
               <TabsContent value="finalApproval" className="mt-0">
                 <FinalApprovalTab 
                   phaseStatus={loan.phases.finalApproval.status as 'pending' | 'in_progress' | 'completed' | 'failed'} 
-                  lastUpdated={loan.phases.finalApproval.completedDate} 
+                  lastUpdated={loan.phases.finalApproval.completedDate}
+                  onNavigateToPhase={(phaseId) => setActiveTab(phaseId)}
                 />
               </TabsContent>
             </div>

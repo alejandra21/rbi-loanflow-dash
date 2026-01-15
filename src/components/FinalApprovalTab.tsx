@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { StatusBadge } from "@/components/StatusBadge";
 import { 
   CheckCircle2, 
@@ -38,7 +39,8 @@ import {
   Ban,
   Target,
   GitBranch,
-  AlertOctagon
+  AlertOctagon,
+  ExternalLink
 } from "lucide-react";
 import { 
   FinalApprovalData, 
@@ -66,6 +68,7 @@ import {
 interface FinalApprovalTabProps {
   phaseStatus: 'pending' | 'in_progress' | 'completed' | 'failed';
   lastUpdated?: string;
+  onNavigateToPhase?: (phaseId: string) => void;
 }
 
 // Enhanced Mock data based on PDF business rules
@@ -491,7 +494,7 @@ const getDecisionIcon = (decision: FinalDecision) => {
   }
 };
 
-const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUpdated }) => {
+const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUpdated, onNavigateToPhase }) => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     crossPhaseInputs: false,
     phaseCompletionGate: false,
@@ -605,32 +608,282 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
             </div>
           </div>
           
-          {/* Quick Stats */}
+          {/* Quick Stats - Clickable with Popovers */}
           <div className="grid grid-cols-6 gap-3 mt-6">
+            {/* Validations Passed */}
             <div className="text-center p-3 bg-background rounded-lg border">
               <p className="text-2xl font-bold text-green-600">{passedValidations}</p>
               <p className="text-xs text-muted-foreground">Validations Passed</p>
             </div>
+
+            {/* Total Validations */}
             <div className="text-center p-3 bg-background rounded-lg border">
               <p className="text-2xl font-bold">{totalValidations}</p>
               <p className="text-xs text-muted-foreground">Total Validations</p>
             </div>
-            <div className="text-center p-3 bg-background rounded-lg border">
-              <p className="text-2xl font-bold text-amber-600">{data.softExceptions}</p>
-              <p className="text-xs text-muted-foreground">Soft Exceptions</p>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg border">
-              <p className="text-2xl font-bold text-red-600">{data.hardExceptions}</p>
-              <p className="text-xs text-muted-foreground">Hard Exceptions</p>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg border">
-              <p className="text-2xl font-bold text-blue-600">{data.conditions.length}</p>
-              <p className="text-xs text-muted-foreground">Conditions</p>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg border">
-              <p className="text-2xl font-bold text-red-600">{data.totalHardStops}</p>
-              <p className="text-xs text-muted-foreground">Hard Stops</p>
-            </div>
+
+            {/* Soft Exceptions - Clickable */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.softExceptions > 0 ? 'cursor-pointer hover:border-amber-400 hover:bg-amber-50/50' : ''}`}>
+                  <p className="text-2xl font-bold text-amber-600">{data.softExceptions}</p>
+                  <p className="text-xs text-muted-foreground">Soft Exceptions</p>
+                </div>
+              </PopoverTrigger>
+              {data.softExceptions > 0 && (
+                <PopoverContent className="w-96 p-0" align="center">
+                  <div className="p-3 border-b bg-amber-50">
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      Soft Exceptions ({data.softExceptions})
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {data.exceptions.filter(e => e.severity === 'soft').map((exc) => (
+                      <div key={exc.id} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline" className="text-xs">Phase {exc.originPhase}</Badge>
+                              <span className="text-xs font-medium">{exc.phaseName}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{exc.description}</p>
+                            <Badge className={`mt-2 text-xs ${exc.status === 'approved' ? 'bg-green-600' : exc.status === 'pending' ? 'bg-amber-600' : 'bg-red-600'}`}>
+                              {exc.status.toUpperCase()}
+                            </Badge>
+                          </div>
+                          {onNavigateToPhase && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="shrink-0"
+                              onClick={() => {
+                                const phaseMap: Record<number, string> = {
+                                  1: 'borrowerEligibility',
+                                  2: 'experienceTiering',
+                                  3: 'creditReview',
+                                  4: 'nonOwnerOccupancy',
+                                  5: 'collateralReview',
+                                  6: 'dscrCashFlow',
+                                  7: 'titleInsurance',
+                                  8: 'closingProtection',
+                                  9: 'insurancePolicy',
+                                  10: 'assetVerification'
+                                };
+                                onNavigateToPhase(phaseMap[exc.originPhase] || 'borrowerEligibility');
+                              }}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              )}
+            </Popover>
+
+            {/* Hard Exceptions - Clickable */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.hardExceptions > 0 ? 'cursor-pointer hover:border-red-400 hover:bg-red-50/50' : ''}`}>
+                  <p className="text-2xl font-bold text-red-600">{data.hardExceptions}</p>
+                  <p className="text-xs text-muted-foreground">Hard Exceptions</p>
+                </div>
+              </PopoverTrigger>
+              {data.hardExceptions > 0 && (
+                <PopoverContent className="w-96 p-0" align="center">
+                  <div className="p-3 border-b bg-red-50">
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <XCircle className="h-4 w-4 text-red-600" />
+                      Hard Exceptions ({data.hardExceptions})
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {data.exceptions.filter(e => e.severity === 'hard').map((exc) => (
+                      <div key={exc.id} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="destructive" className="text-xs">Phase {exc.originPhase}</Badge>
+                              <span className="text-xs font-medium">{exc.phaseName}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{exc.description}</p>
+                          </div>
+                          {onNavigateToPhase && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="shrink-0"
+                              onClick={() => {
+                                const phaseMap: Record<number, string> = {
+                                  1: 'borrowerEligibility',
+                                  2: 'experienceTiering',
+                                  3: 'creditReview',
+                                  4: 'nonOwnerOccupancy',
+                                  5: 'collateralReview',
+                                  6: 'dscrCashFlow',
+                                  7: 'titleInsurance',
+                                  8: 'closingProtection',
+                                  9: 'insurancePolicy',
+                                  10: 'assetVerification'
+                                };
+                                onNavigateToPhase(phaseMap[exc.originPhase] || 'borrowerEligibility');
+                              }}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              )}
+            </Popover>
+
+            {/* Conditions - Clickable */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.conditions.length > 0 ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50/50' : ''}`}>
+                  <p className="text-2xl font-bold text-blue-600">{data.conditions.length}</p>
+                  <p className="text-xs text-muted-foreground">Conditions</p>
+                </div>
+              </PopoverTrigger>
+              {data.conditions.length > 0 && (
+                <PopoverContent className="w-[420px] p-0" align="center">
+                  <div className="p-3 border-b bg-blue-50">
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <ClipboardCheck className="h-4 w-4 text-blue-600" />
+                      Conditions ({data.conditions.length})
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">Click on a phase to view details</p>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {data.conditions.map((cond) => (
+                      <div key={cond.id} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline" className="text-xs">Phase {cond.responsiblePhase}</Badge>
+                              <Badge className={`text-xs ${cond.status === 'satisfied' ? 'bg-green-600' : cond.status === 'pending' ? 'bg-amber-600' : 'bg-red-600'}`}>
+                                {cond.status.toUpperCase()}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{cond.description}</p>
+                            <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                              <span className="capitalize">{cond.category.replace(/_/g, ' ')}</span>
+                              {cond.dueDate && <span>• Due: {cond.dueDate}</span>}
+                            </div>
+                          </div>
+                          {onNavigateToPhase && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="shrink-0"
+                              onClick={() => {
+                                const phaseMap: Record<number, string> = {
+                                  1: 'borrowerEligibility',
+                                  2: 'experienceTiering',
+                                  3: 'creditReview',
+                                  4: 'nonOwnerOccupancy',
+                                  5: 'collateralReview',
+                                  6: 'dscrCashFlow',
+                                  7: 'titleInsurance',
+                                  8: 'closingProtection',
+                                  9: 'insurancePolicy',
+                                  10: 'assetVerification'
+                                };
+                                onNavigateToPhase(phaseMap[cond.responsiblePhase] || 'borrowerEligibility');
+                              }}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              )}
+            </Popover>
+
+            {/* Hard Stops - Clickable */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className={`text-center p-3 bg-background rounded-lg border transition-all ${data.totalHardStops > 0 ? 'cursor-pointer hover:border-red-400 hover:bg-red-50/50' : ''}`}>
+                  <p className="text-2xl font-bold text-red-600">{data.totalHardStops}</p>
+                  <p className="text-xs text-muted-foreground">Hard Stops</p>
+                </div>
+              </PopoverTrigger>
+              {data.totalHardStops > 0 && (
+                <PopoverContent className="w-96 p-0" align="center">
+                  <div className="p-3 border-b bg-red-50">
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <AlertOctagon className="h-4 w-4 text-red-600" />
+                      Hard Stops ({data.totalHardStops})
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">Critical issues blocking approval</p>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {data.hardStops.map((stop, idx) => {
+                      const phaseNames: Record<number, string> = {
+                        1: 'Borrower Eligibility',
+                        2: 'Experience Tiering',
+                        3: 'Credit Review',
+                        4: 'Non-Owner Occupancy',
+                        5: 'Collateral Review',
+                        6: 'DSCR Cash Flow',
+                        7: 'Title Insurance',
+                        8: 'Closing Protection',
+                        9: 'Insurance Policy',
+                        10: 'Asset Verification'
+                      };
+                      return (
+                        <div key={idx} className="p-3 border-b last:border-b-0 hover:bg-muted/50">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="destructive" className="text-xs">Phase {stop.sourcePhase}</Badge>
+                                <span className="text-xs font-medium">{phaseNames[stop.sourcePhase] || 'Unknown'}</span>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{stop.description}</p>
+                            </div>
+                            {onNavigateToPhase && (
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="shrink-0"
+                                onClick={() => {
+                                  const phaseMap: Record<number, string> = {
+                                    1: 'borrowerEligibility',
+                                    2: 'experienceTiering',
+                                    3: 'creditReview',
+                                    4: 'nonOwnerOccupancy',
+                                    5: 'collateralReview',
+                                    6: 'dscrCashFlow',
+                                    7: 'titleInsurance',
+                                    8: 'closingProtection',
+                                    9: 'insurancePolicy',
+                                    10: 'assetVerification'
+                                  };
+                                  onNavigateToPhase(phaseMap[stop.sourcePhase] || 'borrowerEligibility');
+                                }}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </PopoverContent>
+              )}
+            </Popover>
           </div>
         </CardContent>
       </Card>
