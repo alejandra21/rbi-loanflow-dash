@@ -635,55 +635,6 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
         </CardContent>
       </Card>
 
-      {/* Cross-Phase Inputs (Step 11 Dependencies) */}
-      <Card>
-        <Collapsible open={expandedSections.crossPhaseInputs} onOpenChange={() => toggleSection('crossPhaseInputs')}>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-              <CardTitle className="text-base flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <GitBranch className="h-4 w-4" />
-                  Cross-Phase Input Dependencies
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{data.crossPhaseInputs.length} Sources</Badge>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.crossPhaseInputs ? '' : '-rotate-90'}`} />
-                </div>
-              </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent className="pt-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2 px-3 font-medium">Input Data</th>
-                      <th className="text-left py-2 px-3 font-medium">Source Phase</th>
-                      <th className="text-left py-2 px-3 font-medium">Source System</th>
-                      <th className="text-left py-2 px-3 font-medium">Value</th>
-                      <th className="text-left py-2 px-3 font-medium">Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.crossPhaseInputs.map((input, idx) => (
-                      <tr key={idx} className="border-b last:border-b-0 hover:bg-muted/30">
-                        <td className="py-2 px-3 font-medium">{input.dataField}</td>
-                        <td className="py-2 px-3">
-                          <Badge variant="outline" className="text-xs">Phase {input.sourcePhase}</Badge>
-                        </td>
-                        <td className="py-2 px-3 text-muted-foreground">{input.sourceSystem}</td>
-                        <td className="py-2 px-3 font-mono text-xs">{String(input.value)}</td>
-                        <td className="py-2 px-3 text-muted-foreground text-xs">{input.notes}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
 
       {/* Phase Completion Gate (Step 11.1) */}
       <Card className={data.phaseCompletionGate.gateResult === 'proceed' ? 'border-green-200' : 'border-red-200'}>
