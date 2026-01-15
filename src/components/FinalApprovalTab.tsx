@@ -1149,16 +1149,37 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
                         </div>
                       </div>
                       
-                      {/* Contributing Phases */}
+                      {/* Contributing Phases - Clickable */}
                       <div className="mb-3">
                         <p className="text-xs font-medium text-muted-foreground mb-2">Contributing Phases:</p>
                         <div className="flex flex-wrap gap-2">
-                          {risk.contributingPhases.map((phase) => (
-                            <div key={phase.phaseNumber} className="flex items-center gap-1 text-xs bg-background rounded px-2 py-1 border">
-                              {getTerminalStateIcon(phase.status)}
-                              <span>Phase {phase.phaseNumber}: {phase.phaseName}</span>
-                            </div>
-                          ))}
+                          {risk.contributingPhases.map((phase) => {
+                            const phaseMap: Record<number, string> = {
+                              1: 'borrowerEligibility',
+                              2: 'experienceTiering',
+                              3: 'creditReview',
+                              4: 'nonOwnerOccupancy',
+                              5: 'collateralReview',
+                              6: 'dscrCashFlow',
+                              7: 'titleInsurance',
+                              8: 'closingProtection',
+                              9: 'insurancePolicy',
+                              10: 'assetVerification'
+                            };
+                            return (
+                              <button 
+                                key={phase.phaseNumber} 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onNavigateToPhase?.(phaseMap[phase.phaseNumber] || 'borrowerEligibility');
+                                }}
+                                className="flex items-center gap-1 text-xs bg-background rounded px-2 py-1 border hover:border-primary hover:bg-muted/50 transition-all cursor-pointer"
+                              >
+                                {getTerminalStateIcon(phase.status)}
+                                <span>Phase {phase.phaseNumber}: {phase.phaseName}</span>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                       
