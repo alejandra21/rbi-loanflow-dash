@@ -137,17 +137,43 @@ export interface ApprovalCondition {
   blocksCloseToClose: boolean;
 }
 
+// Individual validation within a risk category
+export interface RiskValidation {
+  id: string;
+  name: string;
+  description: string;
+  sourcePhase: number;
+  phaseName: string;
+  status: PhaseTerminalState;
+  severity?: ExceptionSeverity;
+  issue?: string;
+  exceptionId?: string;
+  policyReference?: string;
+}
+
 export interface RiskSummary {
   category: RiskCategory;
   categoryLabel: string;
-  totalChecks: number;
-  passedChecks: number;
-  failedChecks: number;
-  reviewChecks: number;
-  hardStops: number;
-  softExceptions: number;
+  // Contributing phases for this risk category
+  contributingPhases: {
+    phaseNumber: number;
+    phaseName: string;
+    status: PhaseTerminalState;
+    validationCount: number;
+  }[];
+  // Detailed validations
+  validations: RiskValidation[];
+  // Summary counts by terminal state
+  passCount: number;
+  passWithExceptionCount: number;
+  manualReviewCount: number;
+  failCount: number;
+  // Exception counts
   hardExceptions: number;
-  status: 'pass' | 'fail' | 'review';
+  softExceptions: number;
+  hardStops: number;
+  // Overall category status
+  overallStatus: PhaseTerminalState;
 }
 
 export interface ApprovalAuthorityRouting {
