@@ -30,9 +30,13 @@ import {
   AlertTriangle,
   RefreshCw,
   Database,
-  FileText
+  FileText,
+  ExternalLink
 } from 'lucide-react';
-import { AssetVerificationData, ValidationStatus, LargeDeposit, SameDayTransaction, CircularTransfer, ThirdPartySource, AuditLogEntry } from '@/types/assetVerification';
+import { AssetVerificationData, ValidationStatus, LargeDeposit, SameDayTransaction, CircularTransfer, ThirdPartySource, AuditLogEntry, BankStatementData, OcrolusOverviewData, FraudDocumentAnalysis } from '@/types/assetVerification';
+import BankStatementTabs from '@/components/asset-verification/BankStatementTabs';
+import OcrolusOverviewCard from '@/components/asset-verification/OcrolusOverviewCard';
+import FraudDocumentsCard from '@/components/asset-verification/FraudDocumentsCard';
 
 interface AssetVerificationTabProps {
   phaseStatus: 'pending' | 'in_progress' | 'completed' | 'failed';
@@ -40,6 +44,7 @@ interface AssetVerificationTabProps {
 }
 
 const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTabProps) => {
+  const [activeStatementId, setActiveStatementId] = useState<string>('stmt-1');
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     dataSource: true,
     coreFields: true,
@@ -63,178 +68,187 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
     crossDocument: true,
     finalDetermination: true,
     logs: false,
+    ocrolusOverview: true,
+    fraudDocuments: true,
   });
 
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => ({ ...prev, [cardId]: !prev[cardId] }));
   };
 
-  // Mock data
-  const data: AssetVerificationData = {
-    dataSource: 'ocrolus_api',
-    apiAvailable: true,
-    ocrConfidence: 96.5,
-    coreFields: {
-      statementDates: {
-        startDate: '2024-11-01',
-        endDate: '2024-11-30',
-      },
-      beginningBalance: 125000,
-      endingBalance: 142500,
-      totalDeposits: 45000,
-      totalWithdrawals: 27500,
-      accountHolderNames: ['ABC Holdings LLC'],
-      accountAddress: '456 Oak Avenue, Tampa, FL 33602',
-      accountNumber: '****7890',
+  // Mock bank statements data
+  const mockBankStatements: BankStatementData[] = [
+    {
+      statementId: 'stmt-1',
+      accountHolderName: 'Maria Rodriguez',
+      maskedAccountNumber: '5555',
       bankName: 'Chase Bank',
-      status: 'pass',
-      missingFields: [],
-    },
-    accountOwnership: {
-      borrowerEntity: 'ABC Holdings LLC',
-      guarantorName: 'John Smith',
-      accountOwners: ['ABC Holdings LLC'],
-      borrowerListed: true,
-      guarantorListed: false,
-      status: 'pass',
-    },
-    ownershipConfidence: {
-      ocrolusScore: 94,
-      threshold: 80,
-      status: 'pass',
-    },
-    multipleAccountHolders: {
-      detectedOwners: ['ABC Holdings LLC'],
-      authorizedOwners: ['ABC Holdings LLC'],
-      unauthorizedOwners: [],
-      status: 'pass',
-    },
-    spouseDetection: {
-      spouseDetected: false,
-      isGuarantor: false,
-      status: 'pass',
-    },
-    statementCompleteness: {
-      expectedPages: 4,
-      detectedPages: 4,
-      missingPages: [],
-      status: 'pass',
-    },
-    statementRecency: {
-      statementDate: '2024-11-30',
-      daysSinceIssue: 22,
-      maxAllowedDays: 45,
-      status: 'pass',
-    },
-    addressValidation: {
-      statementAddress: '456 Oak Avenue, Tampa, FL 33602',
-      borrowerPrimaryResidence: '456 Oak Avenue, Tampa, FL 33602',
-      addressMatch: true,
-      matchScore: 100,
-      status: 'pass',
-    },
-    subjectPropertyCrossCheck: {
-      subjectPropertyAddress: '123 Main Street, Miami, FL 33101',
-      borrowerResidence: '456 Oak Avenue, Tampa, FL 33602',
-      addressesMatch: false,
-      status: 'pass',
-    },
-    largeDepositDetection: {
-      deposits: [
+      documentUrl: 'https://example.com/statement1.pdf',
+      verificationStatus: 'pass',
+      authenticityPass: true,
+      authenticityScore: 98,
+      ocrolusData: {
+        averageDailyBalance: 45234.56,
+        averageDepositCount: 12,
+        averageMonthlyExpense: 8500.00,
+        averageMonthlyRevenue: 15750.00,
+        debtCoverageRatio: 1.85,
+        minScoreAvailable: 95,
+        totalExpense: 25500.00,
+        totalLoanPayments: 3200.00,
+        totalLoanProceeds: 0.00,
+        totalNSFFeeCount: 0,
+        totalRevenue: 47250.00,
+      },
+      fraudAnalysis: [
         {
-          date: '2024-11-15',
-          amount: 25000,
-          description: 'Wire Transfer - Investment Return',
-          source: 'Investment Account',
-          sourced: true,
-          explanation: 'Quarterly dividend from investment portfolio',
-        },
-        {
-          date: '2024-11-22',
-          amount: 15000,
-          description: 'ACH Deposit - Rent Collection',
-          source: 'Rental Income',
-          sourced: true,
-          explanation: 'Monthly rent from 3 rental properties',
+          documentName: 'chase_statement_nov2024.pdf',
+          pageNumbers: '1-5',
+          score: 98,
+          uploadedDocUUID: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+          reasonCodes: [],
         },
       ],
-      totalLargeDeposits: 40000,
-      allSourced: true,
-      status: 'pass',
+      verificationData: {
+        dataSource: 'ocrolus_api',
+        apiAvailable: true,
+        ocrConfidence: 96.5,
+        coreFields: {
+          statementDates: { startDate: '2024-11-01', endDate: '2024-11-30' },
+          beginningBalance: 125000,
+          endingBalance: 142500,
+          totalDeposits: 45000,
+          totalWithdrawals: 27500,
+          accountHolderNames: ['Maria Rodriguez'],
+          accountAddress: '456 Oak Avenue, Tampa, FL 33602',
+          accountNumber: '****5555',
+          bankName: 'Chase Bank',
+          status: 'pass',
+          missingFields: [],
+        },
+        accountOwnership: {
+          borrowerEntity: 'ABC Holdings LLC',
+          guarantorName: 'Maria Rodriguez',
+          accountOwners: ['Maria Rodriguez'],
+          borrowerListed: false,
+          guarantorListed: true,
+          status: 'pass',
+        },
+        ownershipConfidence: { ocrolusScore: 94, threshold: 80, status: 'pass' },
+        multipleAccountHolders: { detectedOwners: ['Maria Rodriguez'], authorizedOwners: ['Maria Rodriguez'], unauthorizedOwners: [], status: 'pass' },
+        spouseDetection: { spouseDetected: false, isGuarantor: false, status: 'pass' },
+        statementCompleteness: { expectedPages: 4, detectedPages: 4, missingPages: [], status: 'pass' },
+        statementRecency: { statementDate: '2024-11-30', daysSinceIssue: 22, maxAllowedDays: 45, status: 'pass' },
+        addressValidation: { statementAddress: '456 Oak Avenue, Tampa, FL 33602', borrowerPrimaryResidence: '456 Oak Avenue, Tampa, FL 33602', addressMatch: true, matchScore: 100, status: 'pass' },
+        subjectPropertyCrossCheck: { subjectPropertyAddress: '123 Main Street, Miami, FL 33101', borrowerResidence: '456 Oak Avenue, Tampa, FL 33602', addressesMatch: false, status: 'pass' },
+        largeDepositDetection: { deposits: [{ date: '2024-11-15', amount: 25000, description: 'Wire Transfer - Investment Return', source: 'Investment Account', sourced: true, explanation: 'Quarterly dividend' }], totalLargeDeposits: 25000, allSourced: true, status: 'pass' },
+        depositSourceValidation: { knownIncomeSources: ['Rental Income', 'Investment Returns'], alignedDeposits: 45000, unknownSourceDeposits: 0, circularSources: false, status: 'pass' },
+        balanceMath: { beginningBalance: 125000, totalDeposits: 45000, totalWithdrawals: 27500, calculatedEnding: 142500, actualEnding: 142500, variance: 0, variancePercent: 0, status: 'pass' },
+        cashFlowConsistency: { averageMonthlyDeposits: 42000, averageMonthlyWithdrawals: 28000, depositPatternNormal: true, withdrawalPatternNormal: true, spikesDetected: false, irregularPatterns: [], status: 'pass' },
+        balanceInflation: { sameDayInflowOutflow: [], paddingDetected: false, status: 'pass' },
+        circularTransfers: { suspiciousTransfers: [], selfFundingLoops: false, status: 'pass' },
+        velocityAnomaly: { averageTransactionsPerDay: 3.2, peakTransactionsPerDay: 8, anomalyDates: [], abnormalActivity: false, status: 'pass' },
+        thirdPartyFunding: { undisclosedSources: [], hasUndisclosedFunding: false, status: 'pass' },
+        liquiditySufficiency: { availableFunds: 142500, cashToClose: 85000, requiredReserves: 24000, totalRequired: 109000, surplus: 33500, status: 'pass' },
+        crossDocumentConsistency: { posDisclosedAssets: 145000, verifiedAssets: 142500, variance: 2500, discrepancies: [], status: 'pass' },
+        finalDetermination: { totalChecks: 20, passedChecks: 20, failedChecks: 0, reviewChecks: 0, overallStatus: 'pass' },
+        processedAt: '2024-12-20T14:30:00Z',
+        processedBy: 'AI Asset Validator v1.0 + Ocrolus API',
+        overallStatus: 'pass',
+      },
     },
-    depositSourceValidation: {
-      knownIncomeSources: ['Rental Income', 'Investment Returns', 'Business Revenue'],
-      alignedDeposits: 45000,
-      unknownSourceDeposits: 0,
-      circularSources: false,
-      status: 'pass',
+    {
+      statementId: 'stmt-2',
+      accountHolderName: 'Jose Garcia',
+      maskedAccountNumber: '2222',
+      bankName: 'Bank of America',
+      documentUrl: undefined,
+      verificationStatus: 'review',
+      authenticityPass: true,
+      authenticityScore: 75,
+      ocrolusData: {
+        averageDailyBalance: 28500.00,
+        averageDepositCount: 8,
+        averageMonthlyExpense: 12500.00,
+        averageMonthlyRevenue: 18000.00,
+        debtCoverageRatio: 1.44,
+        minScoreAvailable: 72,
+        totalExpense: 37500.00,
+        totalLoanPayments: 4500.00,
+        totalLoanProceeds: 0.00,
+        totalNSFFeeCount: 2,
+        totalRevenue: 54000.00,
+      },
+      fraudAnalysis: [
+        {
+          documentName: 'boa_statement_nov2024.pdf',
+          pageNumbers: '1-4',
+          score: 75,
+          uploadedDocUUID: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+          reasonCodes: ['BALANCE_SPIKE', 'NEW_ACCOUNT'],
+        },
+      ],
+      verificationData: {
+        dataSource: 'ocrolus_api',
+        apiAvailable: true,
+        ocrConfidence: 89.2,
+        coreFields: {
+          statementDates: { startDate: '2024-11-01', endDate: '2024-11-30' },
+          beginningBalance: 45000,
+          endingBalance: 52000,
+          totalDeposits: 22000,
+          totalWithdrawals: 15000,
+          accountHolderNames: ['Jose Garcia'],
+          accountAddress: '789 Pine Street, Orlando, FL 32801',
+          accountNumber: '****2222',
+          bankName: 'Bank of America',
+          status: 'pass',
+          missingFields: [],
+        },
+        accountOwnership: {
+          borrowerEntity: 'ABC Holdings LLC',
+          guarantorName: 'Jose Garcia',
+          accountOwners: ['Jose Garcia'],
+          borrowerListed: false,
+          guarantorListed: true,
+          status: 'pass',
+        },
+        ownershipConfidence: { ocrolusScore: 72, threshold: 80, status: 'review' },
+        multipleAccountHolders: { detectedOwners: ['Jose Garcia'], authorizedOwners: ['Jose Garcia'], unauthorizedOwners: [], status: 'pass' },
+        spouseDetection: { spouseDetected: false, isGuarantor: false, status: 'pass' },
+        statementCompleteness: { expectedPages: 4, detectedPages: 4, missingPages: [], status: 'pass' },
+        statementRecency: { statementDate: '2024-11-30', daysSinceIssue: 22, maxAllowedDays: 45, status: 'pass' },
+        addressValidation: { statementAddress: '789 Pine Street, Orlando, FL 32801', borrowerPrimaryResidence: '789 Pine Street, Orlando, FL 32801', addressMatch: true, matchScore: 100, status: 'pass' },
+        subjectPropertyCrossCheck: { subjectPropertyAddress: '123 Main Street, Miami, FL 33101', borrowerResidence: '789 Pine Street, Orlando, FL 32801', addressesMatch: false, status: 'pass' },
+        largeDepositDetection: { deposits: [{ date: '2024-11-10', amount: 15000, description: 'Transfer from Savings', source: 'Unknown', sourced: false }], totalLargeDeposits: 15000, allSourced: false, status: 'review' },
+        depositSourceValidation: { knownIncomeSources: ['Salary'], alignedDeposits: 7000, unknownSourceDeposits: 15000, circularSources: false, status: 'review' },
+        balanceMath: { beginningBalance: 45000, totalDeposits: 22000, totalWithdrawals: 15000, calculatedEnding: 52000, actualEnding: 52000, variance: 0, variancePercent: 0, status: 'pass' },
+        cashFlowConsistency: { averageMonthlyDeposits: 18000, averageMonthlyWithdrawals: 14000, depositPatternNormal: false, withdrawalPatternNormal: true, spikesDetected: true, irregularPatterns: ['Large deposit spike on Nov 10'], status: 'review' },
+        balanceInflation: { sameDayInflowOutflow: [], paddingDetected: false, status: 'pass' },
+        circularTransfers: { suspiciousTransfers: [], selfFundingLoops: false, status: 'pass' },
+        velocityAnomaly: { averageTransactionsPerDay: 2.5, peakTransactionsPerDay: 6, anomalyDates: [], abnormalActivity: false, status: 'pass' },
+        thirdPartyFunding: { undisclosedSources: [], hasUndisclosedFunding: false, status: 'pass' },
+        liquiditySufficiency: { availableFunds: 52000, cashToClose: 30000, requiredReserves: 12000, totalRequired: 42000, surplus: 10000, status: 'pass' },
+        crossDocumentConsistency: { posDisclosedAssets: 55000, verifiedAssets: 52000, variance: 3000, discrepancies: [], status: 'pass' },
+        finalDetermination: { totalChecks: 20, passedChecks: 16, failedChecks: 0, reviewChecks: 4, overallStatus: 'review' },
+        processedAt: '2024-12-20T14:32:00Z',
+        processedBy: 'AI Asset Validator v1.0 + Ocrolus API',
+        overallStatus: 'review',
+      },
     },
-    balanceMath: {
-      beginningBalance: 125000,
-      totalDeposits: 45000,
-      totalWithdrawals: 27500,
-      calculatedEnding: 142500,
-      actualEnding: 142500,
-      variance: 0,
-      variancePercent: 0,
-      status: 'pass',
-    },
-    cashFlowConsistency: {
-      averageMonthlyDeposits: 42000,
-      averageMonthlyWithdrawals: 28000,
-      depositPatternNormal: true,
-      withdrawalPatternNormal: true,
-      spikesDetected: false,
-      irregularPatterns: [],
-      status: 'pass',
-    },
-    balanceInflation: {
-      sameDayInflowOutflow: [],
-      paddingDetected: false,
-      status: 'pass',
-    },
-    circularTransfers: {
-      suspiciousTransfers: [],
-      selfFundingLoops: false,
-      status: 'pass',
-    },
-    velocityAnomaly: {
-      averageTransactionsPerDay: 3.2,
-      peakTransactionsPerDay: 8,
-      anomalyDates: [],
-      abnormalActivity: false,
-      status: 'pass',
-    },
-    thirdPartyFunding: {
-      undisclosedSources: [],
-      hasUndisclosedFunding: false,
-      status: 'pass',
-    },
-    liquiditySufficiency: {
-      availableFunds: 142500,
-      cashToClose: 85000,
-      requiredReserves: 24000,
-      totalRequired: 109000,
-      surplus: 33500,
-      status: 'pass',
-    },
-    crossDocumentConsistency: {
-      posDisclosedAssets: 145000,
-      verifiedAssets: 142500,
-      variance: 2500,
-      discrepancies: [],
-      status: 'pass',
-    },
-    finalDetermination: {
-      totalChecks: 20,
-      passedChecks: 20,
-      failedChecks: 0,
-      reviewChecks: 0,
-      overallStatus: 'pass',
-    },
-    processedAt: '2024-12-20T14:30:00Z',
-    processedBy: 'AI Asset Validator v1.0 + Ocrolus API',
-    overallStatus: 'pass',
+  ];
+
+  // Get the active statement data
+  const activeStatement = mockBankStatements.find(s => s.statementId === activeStatementId) || mockBankStatements[0];
+  const data = activeStatement.verificationData;
+
+  // Calculate aggregated stats across all statements
+  const aggregatedStats = {
+    totalAvailableFunds: mockBankStatements.reduce((sum, s) => sum + s.verificationData.liquiditySufficiency.availableFunds, 0),
+    totalCashToClose: mockBankStatements.reduce((sum, s) => sum + s.verificationData.liquiditySufficiency.cashToClose, 0),
+    totalSurplus: mockBankStatements.reduce((sum, s) => sum + s.verificationData.liquiditySufficiency.surplus, 0),
+    totalChecks: mockBankStatements.reduce((sum, s) => sum + s.verificationData.finalDetermination.totalChecks, 0),
+    passedChecks: mockBankStatements.reduce((sum, s) => sum + s.verificationData.finalDetermination.passedChecks, 0),
   };
 
   const auditLog: AuditLogEntry[] = [
@@ -328,14 +342,14 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
         </div>
       </div>
 
-      {/* Summary Stats */}
+      {/* Summary Stats - Aggregated */}
       <div className="grid grid-cols-4 gap-4">
         <Card className="bg-card/50">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Available Funds</p>
-                <p className="text-xl font-bold text-foreground">{formatCurrency(data.liquiditySufficiency.availableFunds)}</p>
+                <p className="text-xs text-muted-foreground">Total Available Funds</p>
+                <p className="text-xl font-bold text-foreground">{formatCurrency(aggregatedStats.totalAvailableFunds)}</p>
               </div>
               <DollarSign className="h-8 w-8 text-emerald-500/50" />
             </div>
@@ -345,8 +359,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Cash to Close</p>
-                <p className="text-xl font-bold text-foreground">{formatCurrency(data.liquiditySufficiency.cashToClose)}</p>
+                <p className="text-xs text-muted-foreground">Total Cash to Close</p>
+                <p className="text-xl font-bold text-foreground">{formatCurrency(aggregatedStats.totalCashToClose)}</p>
               </div>
               <PiggyBank className="h-8 w-8 text-blue-500/50" />
             </div>
@@ -356,8 +370,8 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Surplus</p>
-                <p className="text-xl font-bold text-emerald-500">{formatCurrency(data.liquiditySufficiency.surplus)}</p>
+                <p className="text-xs text-muted-foreground">Total Surplus</p>
+                <p className="text-xl font-bold text-emerald-500">{formatCurrency(aggregatedStats.totalSurplus)}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-emerald-500/50" />
             </div>
@@ -368,13 +382,69 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Checks Passed</p>
-                <p className="text-xl font-bold text-foreground">{data.finalDetermination.passedChecks}/{data.finalDetermination.totalChecks}</p>
+                <p className="text-xl font-bold text-foreground">{aggregatedStats.passedChecks}/{aggregatedStats.totalChecks}</p>
               </div>
               <Shield className="h-8 w-8 text-violet-500/50" />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Bank Statement Tabs */}
+      <Card>
+        <CardContent className="pt-6">
+          <BankStatementTabs
+            statements={mockBankStatements}
+            activeStatementId={activeStatementId}
+            onSelectStatement={setActiveStatementId}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Active Statement Info Banner */}
+      <div className="flex items-center justify-between p-4 bg-violet-500/5 rounded-lg border border-violet-500/20">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-violet-500/10 rounded-lg">
+            <Building2 className="h-5 w-5 text-violet-500" />
+          </div>
+          <div>
+            <p className="font-medium text-foreground">{activeStatement.accountHolderName}</p>
+            <p className="text-sm text-muted-foreground">{activeStatement.bankName} • ****{activeStatement.maskedAccountNumber}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {activeStatement.documentUrl ? (
+            <Button variant="outline" size="sm" className="gap-2">
+              <ExternalLink className="h-4 w-4" />
+              View Statement
+            </Button>
+          ) : (
+            <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20">
+              No Document Available
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {/* Ocrolus Overview Card */}
+      {activeStatement.ocrolusData && (
+        <OcrolusOverviewCard
+          ocrolusData={activeStatement.ocrolusData}
+          authenticityPass={activeStatement.authenticityPass}
+          authenticityScore={activeStatement.authenticityScore}
+          isExpanded={expandedCards.ocrolusOverview}
+          onToggle={() => toggleCard('ocrolusOverview')}
+        />
+      )}
+
+      {/* Fraud Documents Analysis Card */}
+      {activeStatement.fraudAnalysis && activeStatement.fraudAnalysis.length > 0 && (
+        <FraudDocumentsCard
+          fraudAnalysis={activeStatement.fraudAnalysis}
+          isExpanded={expandedCards.fraudDocuments}
+          onToggle={() => toggleCard('fraudDocuments')}
+        />
+      )}
 
       {/* Data Source Card */}
       <Collapsible open={expandedCards.dataSource} onOpenChange={() => toggleCard('dataSource')}>
