@@ -234,3 +234,43 @@ export interface AuditLogEntry {
   details: string;
   source: string;
 }
+
+// Ocrolus API overview data
+export interface OcrolusOverviewData {
+  averageDailyBalance: number;
+  averageDepositCount: number;
+  averageMonthlyExpense: number;
+  averageMonthlyRevenue: number;
+  debtCoverageRatio: number | null;
+  minScoreAvailable: number;
+  totalExpense: number;
+  totalLoanPayments: number;
+  totalLoanProceeds: number;
+  totalNSFFeeCount: number;
+  totalRevenue: number;
+}
+
+// Fraud document analysis result
+export interface FraudDocumentAnalysis {
+  documentName: string;
+  pageNumbers: string;
+  score: number;
+  uploadedDocUUID: string;
+  reasonCodes: string[];
+}
+
+// Individual Bank Statement with all verification data
+export interface BankStatementData {
+  statementId: string;
+  accountHolderName: string;
+  maskedAccountNumber: string;
+  bankName: string;
+  documentUrl?: string;
+  verificationStatus: ValidationStatus;
+  ocrolusData?: OcrolusOverviewData;
+  fraudAnalysis?: FraudDocumentAnalysis[];
+  authenticityPass: boolean;
+  authenticityScore?: number;
+  // The full verification data for this statement
+  verificationData: AssetVerificationData;
+}
