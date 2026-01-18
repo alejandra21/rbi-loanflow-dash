@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ interface AssetVerificationTabProps {
 
 const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTabProps) => {
   const [activeStatementId, setActiveStatementId] = useState<string>('stmt-1');
+  const [activeSection, setActiveSection] = useState<'ocrolus' | 'statements'>('statements');
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
     dataSource: true,
     coreFields: true,
@@ -345,86 +347,176 @@ const AssetVerificationTab = ({ phaseStatus, lastUpdated }: AssetVerificationTab
       {/* Summary Stats - Aggregated */}
       <div className="grid grid-cols-4 gap-4">
         <Card className="bg-card/50">
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Total Available Funds</p>
-                <p className="text-xl font-bold text-foreground">{formatCurrency(aggregatedStats.totalAvailableFunds)}</p>
+                <p className="text-xs text-muted-foreground">Available Funds</p>
+                <p className="text-2xl font-bold text-foreground">{formatCurrency(aggregatedStats.totalAvailableFunds)}</p>
               </div>
-              <DollarSign className="h-8 w-8 text-emerald-500/50" />
+              <DollarSign className="h-8 w-8 text-emerald-500/30" />
             </div>
           </CardContent>
         </Card>
         <Card className="bg-card/50">
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Total Cash to Close</p>
-                <p className="text-xl font-bold text-foreground">{formatCurrency(aggregatedStats.totalCashToClose)}</p>
+                <p className="text-xs text-muted-foreground">Cash to Close</p>
+                <p className="text-2xl font-bold text-foreground">{formatCurrency(aggregatedStats.totalCashToClose)}</p>
               </div>
-              <PiggyBank className="h-8 w-8 text-blue-500/50" />
+              <PiggyBank className="h-8 w-8 text-blue-500/30" />
             </div>
           </CardContent>
         </Card>
         <Card className="bg-card/50">
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Total Surplus</p>
-                <p className="text-xl font-bold text-emerald-500">{formatCurrency(aggregatedStats.totalSurplus)}</p>
+                <p className="text-xs text-muted-foreground">Surplus/Deficit</p>
+                <p className="text-2xl font-bold text-emerald-500">{formatCurrency(aggregatedStats.totalSurplus)}</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-emerald-500/50" />
+              <TrendingUp className="h-8 w-8 text-emerald-500/30" />
             </div>
           </CardContent>
         </Card>
         <Card className="bg-card/50">
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 pb-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Checks Passed</p>
-                <p className="text-xl font-bold text-foreground">{aggregatedStats.passedChecks}/{aggregatedStats.totalChecks}</p>
+                <p className="text-2xl font-bold text-foreground">/{aggregatedStats.totalChecks}</p>
               </div>
-              <Shield className="h-8 w-8 text-violet-500/50" />
+              <Shield className="h-8 w-8 text-violet-500/30" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Bank Statement Tabs */}
-      <Card>
-        <CardContent className="pt-6">
-          <BankStatementTabs
-            statements={mockBankStatements}
-            activeStatementId={activeStatementId}
-            onSelectStatement={setActiveStatementId}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Active Statement Info Banner */}
-      <div className="flex items-center justify-between p-4 bg-violet-500/5 rounded-lg border border-violet-500/20">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-violet-500/10 rounded-lg">
-            <Building2 className="h-5 w-5 text-violet-500" />
-          </div>
-          <div>
-            <p className="font-medium text-foreground">{activeStatement.accountHolderName}</p>
-            <p className="text-sm text-muted-foreground">{activeStatement.bankName} • ****{activeStatement.maskedAccountNumber}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          {activeStatement.documentUrl ? (
-            <Button variant="outline" size="sm" className="gap-2">
-              <ExternalLink className="h-4 w-4" />
-              View Statement
-            </Button>
-          ) : (
-            <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20">
-              No Document Available
-            </Badge>
+      {/* Main Section Tabs: Ocrolus Report & Bank Statements */}
+      <div className="grid grid-cols-2 gap-4">
+        <button
+          onClick={() => setActiveSection('ocrolus')}
+          className={cn(
+            "flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all duration-200",
+            activeSection === 'ocrolus'
+              ? "border-primary bg-background shadow-sm"
+              : "border-border bg-card/50 hover:bg-card hover:border-muted-foreground/30"
           )}
-        </div>
+        >
+          <FileText className={cn(
+            "h-5 w-5",
+            activeSection === 'ocrolus' ? "text-primary" : "text-muted-foreground"
+          )} />
+          <span className={cn(
+            "font-medium",
+            activeSection === 'ocrolus' ? "text-foreground" : "text-muted-foreground"
+          )}>Ocrolus Report</span>
+          <Badge variant="secondary" className="text-xs">
+            {data.apiAvailable ? 'Available' : 'Unavailable'}
+          </Badge>
+        </button>
+        
+        <button
+          onClick={() => setActiveSection('statements')}
+          className={cn(
+            "flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all duration-200",
+            activeSection === 'statements'
+              ? "border-primary bg-background shadow-sm"
+              : "border-border bg-card/50 hover:bg-card hover:border-muted-foreground/30"
+          )}
+        >
+          <FileCheck className={cn(
+            "h-5 w-5",
+            activeSection === 'statements' ? "text-primary" : "text-muted-foreground"
+          )} />
+          <span className={cn(
+            "font-medium",
+            activeSection === 'statements' ? "text-foreground" : "text-muted-foreground"
+          )}>Bank Statements</span>
+          <Badge variant="secondary" className="text-xs">
+            {mockBankStatements.length} Statements
+          </Badge>
+        </button>
       </div>
+
+      {/* Bank Statement Selector Cards */}
+      {activeSection === 'statements' && (
+        <div className="grid grid-cols-2 gap-4">
+          {mockBankStatements.map((statement) => (
+            <button
+              key={statement.statementId}
+              onClick={() => setActiveStatementId(statement.statementId)}
+              className={cn(
+                "flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 text-left",
+                activeStatementId === statement.statementId
+                  ? "border-primary bg-background shadow-sm"
+                  : "border-border bg-card/50 hover:bg-card hover:border-muted-foreground/30"
+              )}
+            >
+              <div className={cn(
+                "p-2.5 rounded-lg",
+                activeStatementId === statement.statementId
+                  ? "bg-primary/10"
+                  : "bg-muted"
+              )}>
+                <Building2 className={cn(
+                  "h-5 w-5",
+                  activeStatementId === statement.statementId
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                )} />
+              </div>
+              <div>
+                <p className={cn(
+                  "font-medium",
+                  activeStatementId === statement.statementId
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                )}>
+                  {statement.accountHolderName}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  .... {statement.maskedAccountNumber}
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Bank Statement Document Card */}
+      {activeSection === 'statements' && (
+        <Card className="bg-card/50">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-muted rounded-lg">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">Bank Statement Document</p>
+                  <p className="text-sm text-muted-foreground">
+                    {activeStatement.documentUrl 
+                      ? `${activeStatement.bankName} - ${formatDate(activeStatement.verificationData.coreFields.statementDates.startDate)} to ${formatDate(activeStatement.verificationData.coreFields.statementDates.endDate)}`
+                      : '- Not provided to Not provided'
+                    }
+                  </p>
+                </div>
+              </div>
+              {activeStatement.documentUrl ? (
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ExternalLink className="h-4 w-4" />
+                  View Document
+                </Button>
+              ) : (
+                <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
+                  No Document Available
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Ocrolus Overview Card */}
       {activeStatement.ocrolusData && (
