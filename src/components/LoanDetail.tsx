@@ -18,6 +18,7 @@ import { TitleInsuranceTab } from "@/components/TitleInsuranceTab";
 import InsurancePolicyTab from "@/components/InsurancePolicyTab";
 import AssetVerificationTab from "@/components/AssetVerificationTab";
 import FinalApprovalTab from "@/components/FinalApprovalTab";
+import { CollateralReviewTab } from "@/components/CollateralReviewTab";
 import { BackgroundTasksDrawer, BackgroundTask } from "@/components/BackgroundTasksDrawer";
 import { CompactStepper, StepperPhase } from "@/components/CompactStepper";
 import { mockLoans, Signatory } from "@/types/loan";
@@ -1636,7 +1637,11 @@ export const LoanDetail = () => {
               </TabsContent>
 
               <TabsContent value="collateralReview" className="mt-0">
-                <PhaseTab phase={loan.phases.collateralReview} phaseName="Collateral Review" />
+                <CollateralReviewTab 
+                  data={undefined as any}
+                  phaseStatus={loan.phases.collateralReview.status} 
+                  lastUpdated={loan.phases.collateralReview.completedDate || loan.lastUpdated} 
+                />
               </TabsContent>
 
               <TabsContent value="dscrCashFlow" className="mt-0">
