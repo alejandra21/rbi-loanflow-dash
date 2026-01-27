@@ -111,6 +111,7 @@ export interface LoanApplication {
     overallStatus: OverallStatus;
     lastUpdated: string;
     assignedReviewer?: string;
+    loanApplicationDocumentUrl?: string;
     phases: {
         borrowerEligibility: PhaseStep;
         experienceTiering: PhaseStep;
@@ -144,6 +145,7 @@ export const mockLoans: LoanApplication[] = [
         overallStatus: "In Progress",
         lastUpdated: "2024-01-15",
         assignedReviewer: "Sarah Johnson",
+        loanApplicationDocumentUrl: "https://example.com/documents/LOA-2024-001-application.pdf",
         phases: {
             borrowerEligibility: {
                 name: "Borrower Eligibility",

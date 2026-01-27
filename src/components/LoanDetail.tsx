@@ -1530,12 +1530,23 @@ export const LoanDetail = () => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.id}</h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground flex items-center flex-wrap">
               {loan.phases.borrowerEligibility.eligibilityData?.entityName || loan.applicantName} -{" "}
               {formatCurrency(loan.loanAmount)}
               <Badge variant="outline" className="ml-3">
                 {loan.loanType}
               </Badge>
+              {loan.loanApplicationDocumentUrl && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="ml-3 h-6 px-2 text-xs"
+                  onClick={() => window.open(loan.loanApplicationDocumentUrl, '_blank')}
+                >
+                  <FileText className="h-3 w-3 mr-1" />
+                  Loan Application
+                </Button>
+              )}
             </p>
           </div>
         </div>
