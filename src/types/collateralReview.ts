@@ -106,26 +106,76 @@ export interface RentalConfidenceData {
 }
 
 // Engine 6: Construction Feasibility
+export interface ScopeAssumptionReview {
+  appraiserAssumedItems: string[];
+  posBudgetItems: string[];
+  scopeMatchStatus: 'full_match' | 'partial_match' | 'mismatch';
+  scopeResult: 'Continue' | 'REVIEW' | 'FAIL';
+}
+
+export interface ARVCompsFeasibility {
+  netAdjustmentAvg: number;
+  netAdjustmentThreshold: number;
+  grossAdjustmentAvg: number;
+  grossAdjustmentThreshold: number;
+  compConditionSupportsARV: boolean;
+  compSaleDatesWithin6Months: boolean;
+  arvCompStatus: CheckStatus;
+}
+
+export interface PermitValidation {
+  permitActive: boolean;
+  permitAddressMatch: boolean;
+  permitContractorMatch: boolean;
+  permitScopeMatch: boolean;
+  permitStatus: CheckStatus;
+}
+
 export interface ConstructionFeasibilityData {
   productType: 'FNF' | 'GUC';
+  
+  // Section 1: Appraisal Scope Assumption Review
+  scopeAssumptionReview: ScopeAssumptionReview;
+  
+  // Section 2: AIV/ARV Value Logic Check
   aiv: number;
   arv: number;
   rehabBudget: number;
   arvSupportRatio: number;
   arvSupportStatus: CheckStatus;
+  arvSupportInterpretation: 'Strong' | 'Acceptable' | 'Weak ARV';
+  
+  // Section 3: Comparable Sales Feasibility (ARV Comps)
+  arvCompsFeasibility: ARVCompsFeasibility;
+  
+  // Section 4: POS Budget to BCP Cost Validation
+  posBudget: number;
   bcpEstimate: number;
   budgetVariance: number;
   budgetVarianceStatus: CheckStatus;
+  budgetVarianceResult: 'Pass' | 'Review' | 'Fail';
+  
+  // Section 5: Contractor Feasibility (BCP)
   contractorScore: number;
   contractorStatus: 'Recommended' | 'Recommended w/ Max' | 'Not Recommended';
   bcpMaxSupported?: number;
-  timelineScore: number;
-  timelineMonths: number;
+  tradeCoverage?: string;
+  experienceScore?: number;
+  
+  // Section 6: Timeline vs Appraisal Assumptions
+  bcpTimelineMonths: number;
   appraisalTimelineMonths: number;
-  permitStatus?: 'active' | 'inactive' | 'missing';
-  permitContractorMatch?: boolean;
+  timelineScore: number;
+  timelineResult: 'Pass' | 'Review' | 'High Risk';
+  
+  // Section 7: Permit & Jurisdiction Validation (Refinance only)
+  permitValidation?: PermitValidation;
+  
+  // Section 8: Final Feasibility Score
   feasibilityScore: number;
+  feasibilityResult: 'Feasible' | 'Review' | 'Not Feasible';
   formula: string;
+  
   checks: EngineCheck[];
 }
 
