@@ -17,8 +17,10 @@ import type {
   EngineCheck,
   RedFlag,
   ConfidenceTier,
-  CheckStatus
+  CheckStatus,
+  ConstructionFeasibilityData
 } from "@/types/collateralReview";
+import { ConstructionFeasibilityEngine } from "@/components/collateral-review/ConstructionFeasibilityEngine";
 
 interface CollateralReviewTabProps {
   data: CollateralReviewData;
@@ -31,8 +33,8 @@ const mockCollateralReviewData: CollateralReviewData = {
   loanId: "LOA-2024-001",
   stageCode: "collateralReview",
   status: "pass",
-  productType: "DSCR",
-  transactionType: "Refinance",
+  productType: "FNF",  // Changed to FNF to demonstrate Engine 6
+  transactionType: "Purchase",
 
   appraisalCompleteness: {
     appraiserLicenseValid: true,
@@ -148,17 +150,77 @@ const mockCollateralReviewData: CollateralReviewData = {
   },
 
   avmReconciliation: {
-    appraisalValue: 485000,
-    avmValue: 478000,
+    appraisalValue: 420000,
+    avmValue: 415000,
     avmSource: "Clear Capital",
-    zhviValue: 492000,
-    avmVariance: -1.4,
+    zhviValue: 425000,
+    avmVariance: -1.2,
     avmVarianceStatus: "pass",
     avmTrendSupportsARV: true,
     checks: [
-      { name: "AVM Matches Appraisal ±5%", source: "Clear Capital", status: "pass", value: "-1.4%", threshold: "±5%" },
-      { name: "ZHVI Matches Appraisal ±5%", source: "Zillow", status: "pass", value: "+1.4%", threshold: "±5%" },
+      { name: "AVM Matches Appraisal ±5%", source: "Clear Capital", status: "pass", value: "-1.2%", threshold: "±5%" },
+      { name: "ZHVI Matches Appraisal ±5%", source: "Zillow", status: "pass", value: "+1.2%", threshold: "±5%" },
       { name: "AVM Trend Supports Value", source: "AVM/ZHVI", status: "pass", notes: "Stable/rising trend" }
+    ]
+  },
+
+  constructionFeasibility: {
+    productType: 'FNF',
+    
+    scopeAssumptionReview: {
+      appraiserAssumedItems: ['Full kitchen renovation', 'Bathroom updates (2)', 'Roof replacement', 'HVAC system upgrade'],
+      posBudgetItems: ['Kitchen renovation', 'Bathroom updates (2)', 'Roof replacement', 'HVAC replacement', 'Flooring throughout', 'Exterior paint'],
+      scopeMatchStatus: 'full_match',
+      scopeResult: 'Continue'
+    },
+    
+    aiv: 300000,
+    arv: 420000,
+    rehabBudget: 100000,
+    arvSupportRatio: 95,
+    arvSupportStatus: 'flag',
+    arvSupportInterpretation: 'Weak ARV',
+    
+    arvCompsFeasibility: {
+      netAdjustmentAvg: 12,
+      netAdjustmentThreshold: 15,
+      grossAdjustmentAvg: 22,
+      grossAdjustmentThreshold: 25,
+      compConditionSupportsARV: true,
+      compSaleDatesWithin6Months: true,
+      arvCompStatus: 'pass'
+    },
+    
+    posBudget: 120000,
+    bcpEstimate: 135000,
+    budgetVariance: 12.5,
+    budgetVarianceStatus: 'flag',
+    budgetVarianceResult: 'Review',
+    
+    contractorScore: 85,
+    contractorStatus: 'Recommended w/ Max',
+    bcpMaxSupported: 180000,
+    tradeCoverage: 'Full',
+    experienceScore: 90,
+    
+    bcpTimelineMonths: 8,
+    appraisalTimelineMonths: 6,
+    timelineScore: 80,
+    timelineResult: 'Pass',
+    
+    feasibilityScore: 78,
+    feasibilityResult: 'Review',
+    formula: 'FNF: (100 - 12.5)×0.5 + 85×0.3 + 80×0.2 = 78',
+    
+    checks: [
+      { name: "Scope Match", source: "POS + Appraisal", status: "pass", value: "Full Match", notes: "All items covered" },
+      { name: "ARV Support Ratio", source: "Calculated", status: "flag", value: "95%", threshold: "≤92%", notes: "Weak ARV support" },
+      { name: "Net Adjustments", source: "ARV Comps", status: "pass", value: "12%", threshold: "≤15%" },
+      { name: "Gross Adjustments", source: "ARV Comps", status: "pass", value: "22%", threshold: "≤25%" },
+      { name: "Budget Variance", source: "POS vs BCP", status: "flag", value: "12.5%", threshold: "≤10%", notes: "Requires review" },
+      { name: "Contractor Status", source: "BCP", status: "pass", value: "Recommended w/ Max" },
+      { name: "Timeline Alignment", source: "BCP vs Appraisal", status: "pass", value: "+2 months", notes: "Within tolerance" },
+      { name: "Final Feasibility", source: "Weighted Score", status: "review", value: "78", threshold: "≥80 for auto-pass" }
     ]
   },
 
@@ -176,14 +238,14 @@ const mockCollateralReviewData: CollateralReviewData = {
   },
 
   output: {
-    finalARV: 485000,
-    finalAIV: 485000,
+    finalARV: 420000,
+    finalAIV: 300000,
     confidenceMultiplier: 0.76,
-    rentalConfidenceScore: 100,
+    feasibilityScore: 78,  // Added for FNF product
     compConfidenceScore: 84,
     marketStabilityScore: 70,
     confidenceTier: "Acceptable w/ review",
-    manualReviewRequired: false
+    manualReviewRequired: true
   },
 
   logs: [
@@ -413,6 +475,18 @@ export const CollateralReviewTab = ({
                 </p>
                 <Progress 
                   value={data.output.rentalConfidenceScore} 
+                  className="h-1.5 mt-2" 
+                />
+              </div>
+            )}
+            {data.output.feasibilityScore !== undefined && (
+              <div className="p-4 border rounded-lg bg-muted/20 text-center">
+                <p className="text-xs text-muted-foreground mb-1">Feasibility Score</p>
+                <p className={`text-2xl font-bold ${getScoreColor(data.output.feasibilityScore)}`}>
+                  {data.output.feasibilityScore}
+                </p>
+                <Progress 
+                  value={data.output.feasibilityScore} 
                   className="h-1.5 mt-2" 
                 />
               </div>
@@ -729,45 +803,12 @@ export const CollateralReviewTab = ({
 
       {/* Engine 6: Construction Feasibility (conditional - FNF/GUC only) */}
       {data.constructionFeasibility && (
-        <Card>
-          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toggleCard('constructionFeasibility')}>
-            <CardTitle className="text-base flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Hammer className="h-4 w-4" />
-                Engine 6: Construction Feasibility
-                <Badge variant="outline" className={getScoreColor(data.constructionFeasibility.feasibilityScore)}>
-                  Score: {data.constructionFeasibility.feasibilityScore}
-                </Badge>
-              </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards.constructionFeasibility ? '' : '-rotate-90'}`} />
-            </CardTitle>
-          </CardHeader>
-          {expandedCards.constructionFeasibility && (
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-4 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">AIV</p>
-                  <p className="text-lg font-bold">{formatCurrency(data.constructionFeasibility.aiv)}</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">ARV</p>
-                  <p className="text-lg font-bold">{formatCurrency(data.constructionFeasibility.arv)}</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">Rehab Budget</p>
-                  <p className="text-lg font-bold">{formatCurrency(data.constructionFeasibility.rehabBudget)}</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">ARV Support Ratio</p>
-                  <p className={`text-lg font-bold ${data.constructionFeasibility.arvSupportRatio <= 85 ? 'text-green-600' : data.constructionFeasibility.arvSupportRatio <= 92 ? 'text-amber-600' : 'text-red-600'}`}>
-                    {data.constructionFeasibility.arvSupportRatio}%
-                  </p>
-                </div>
-              </div>
-              <EngineChecksTable checks={data.constructionFeasibility.checks} />
-            </CardContent>
-          )}
-        </Card>
+        <ConstructionFeasibilityEngine
+          data={data.constructionFeasibility}
+          expanded={expandedCards.constructionFeasibility}
+          onToggle={() => toggleCard('constructionFeasibility')}
+          transactionType={data.transactionType}
+        />
       )}
 
       {/* Engine 7: AVM Reconciliation */}
