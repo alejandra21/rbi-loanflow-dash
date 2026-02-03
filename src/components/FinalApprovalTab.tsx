@@ -55,6 +55,8 @@ import {
   getPhaseStateLabel,
   getAuthorityLabel,
   getClearToCloseLabel,
+  getRiskLevelColor,
+  getRiskLevelLabel,
   RiskCategory,
   FinalDecision,
   PhaseTerminalState,
@@ -62,7 +64,9 @@ import {
   CompensatingFactor,
   CrossRiskReconciliation,
   LockedFieldEntry,
-  ClearToCloseGate
+  ClearToCloseGate,
+  RiskScoreData,
+  RiskLevel
 } from "@/types/finalApproval";
 
 interface FinalApprovalTabProps {
@@ -73,6 +77,39 @@ interface FinalApprovalTabProps {
 
 // Enhanced Mock data based on PDF business rules
 const mockFinalApprovalData: FinalApprovalData = {
+  // Risk Score - Rule-Based Loan Scoring
+  riskScore: {
+    overallScore: 78,
+    overallRiskLevel: 'low',
+    scoreBreakdown: [
+      { category: 'credit', categoryLabel: 'Credit Risk', score: 82, weight: 25, weightedScore: 20.5, riskLevel: 'low', contributingFactors: ['FICO 720 (above 700 threshold)', 'DSCR 1.25x (above 1.0x minimum)', 'No bankruptcy history'] },
+      { category: 'collateral', categoryLabel: 'Collateral Risk', score: 85, weight: 20, weightedScore: 17, riskLevel: 'low', contributingFactors: ['LTV 76.9% (below 80% max)', 'Appraisal current and compliant', 'Strong comparable sales support'] },
+      { category: 'legal_title', categoryLabel: 'Legal/Title Risk', score: 72, weight: 15, weightedScore: 10.8, riskLevel: 'moderate', contributingFactors: ['Title clear of encumbrances', 'CPL coverage variance (1%) - soft exception'] },
+      { category: 'insurance', categoryLabel: 'Insurance Risk', score: 88, weight: 15, weightedScore: 13.2, riskLevel: 'low', contributingFactors: ['Coverage meets requirements', 'Carrier A-rated', 'Mortgagee clause confirmed'] },
+      { category: 'fraud_aml', categoryLabel: 'Fraud/AML Risk', score: 90, weight: 15, weightedScore: 13.5, riskLevel: 'low', contributingFactors: ['Identity verified', 'No OFAC matches', 'Assets properly sourced'] },
+      { category: 'operational', categoryLabel: 'Operational Risk', score: 80, weight: 10, weightedScore: 8, riskLevel: 'low', contributingFactors: ['All documents received', 'Data consistency verified'] },
+    ],
+    scoringFactors: [
+      { factor: 'FICO Score', value: 720, impact: 'positive', pointsContributed: 15, sourcePhase: 3 },
+      { factor: 'DSCR Ratio', value: 1.25, impact: 'positive', pointsContributed: 12, sourcePhase: 6 },
+      { factor: 'LTV Ratio', value: '76.9%', impact: 'positive', pointsContributed: 10, sourcePhase: 5 },
+      { factor: 'Borrower Tier', value: 'Tier 2', impact: 'positive', pointsContributed: 8, sourcePhase: 4 },
+      { factor: 'Liquidity Reserves', value: '$125,000', impact: 'positive', pointsContributed: 10, sourcePhase: 3 },
+      { factor: 'Property Condition', value: 'Good', impact: 'positive', pointsContributed: 5, sourcePhase: 5 },
+      { factor: 'CPL Coverage Variance', value: '1%', impact: 'negative', pointsContributed: -3, sourcePhase: 8 },
+      { factor: 'Market Stability', value: 'Stable', impact: 'positive', pointsContributed: 6, sourcePhase: 5 },
+    ],
+    thresholds: {
+      autoApprove: 80,
+      manualReview: 60,
+      decline: 40,
+    },
+    recommendation: 'manual_review',
+    calculatedAt: '2024-01-16T08:00:00Z',
+    calculatedBy: 'AI Risk Scoring Engine v2.1',
+    version: '2.1'
+  },
+
   crossPhaseInputs: [
     { dataField: 'Borrower Entity & Ownership', sourcePhase: 1, sourceSystem: 'POS', notes: 'Entity name (not guarantor)', value: 'Tech Corp Ltd' },
     { dataField: 'Loan Purpose', sourcePhase: 1, sourceSystem: 'POS', notes: 'Purchase vs Refinance', value: 'Purchase' },
@@ -85,6 +122,7 @@ const mockFinalApprovalData: FinalApprovalData = {
     { dataField: 'Title Status', sourcePhase: 7, sourceSystem: 'Title OCR', notes: 'Ownership + lien validation', value: 'Clear' },
     { dataField: 'CPL Status', sourcePhase: 8, sourceSystem: 'CPL OCR', notes: 'Fraud detection in wiring', value: 'Valid' },
     { dataField: 'Insurance Status', sourcePhase: 9, sourceSystem: 'Insurance OCR', notes: 'Coverage validation', value: 'Active' },
+    { dataField: 'Risk Score', sourcePhase: 11, sourceSystem: 'AI Risk Engine', notes: 'Rule-based loan scoring', value: 78 },
   ],
   
   phaseCompletionGate: {
@@ -499,6 +537,7 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
     crossPhaseInputs: false,
     phaseCompletionGate: false,
     phaseOutcomes: true,
+    riskScore: true,
     riskSummary: true,
     hardStops: false,
     exceptions: true,
@@ -906,6 +945,260 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
             </Popover>
           </div>
         </CardContent>
+      </Card>
+
+      {/* Risk Score - Rule-Based Loan Scoring */}
+      <Card className={`border-2 ${data.riskScore.overallRiskLevel === 'low' ? 'border-green-200' : data.riskScore.overallRiskLevel === 'moderate' ? 'border-blue-200' : data.riskScore.overallRiskLevel === 'elevated' ? 'border-amber-200' : 'border-red-200'}`}>
+        <Collapsible open={expandedSections.riskScore} onOpenChange={() => toggleSection('riskScore')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardTitle className="text-base flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Risk Score
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    v{data.riskScore.version}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold">{data.riskScore.overallScore}</span>
+                    <Badge className={getRiskLevelColor(data.riskScore.overallRiskLevel)}>
+                      {getRiskLevelLabel(data.riskScore.overallRiskLevel)}
+                    </Badge>
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.riskScore ? '' : '-rotate-90'}`} />
+                </div>
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-0 space-y-6">
+              {/* Score Overview with Visual Gauge */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-1">
+                  <div className="relative flex flex-col items-center justify-center p-6 rounded-lg bg-gradient-to-br from-muted/50 to-muted/20 border">
+                    <div className="relative w-32 h-32">
+                      {/* Circular progress background */}
+                      <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="42"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          className="text-muted"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="42"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          strokeDasharray={`${(data.riskScore.overallScore / 100) * 264} 264`}
+                          strokeLinecap="round"
+                          className={`${
+                            data.riskScore.overallRiskLevel === 'low' ? 'text-green-500' :
+                            data.riskScore.overallRiskLevel === 'moderate' ? 'text-blue-500' :
+                            data.riskScore.overallRiskLevel === 'elevated' ? 'text-amber-500' :
+                            'text-red-500'
+                          }`}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-3xl font-bold">{data.riskScore.overallScore}</span>
+                        <span className="text-xs text-muted-foreground">/ 100</span>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-sm font-medium">Overall Risk Score</p>
+                    <Badge className={`mt-2 ${getRiskLevelColor(data.riskScore.overallRiskLevel)}`}>
+                      {getRiskLevelLabel(data.riskScore.overallRiskLevel)}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div className="col-span-2 space-y-3">
+                  {/* Thresholds */}
+                  <div className="p-4 rounded-lg border bg-muted/20">
+                    <p className="text-xs font-medium text-muted-foreground mb-3">Score Thresholds</p>
+                    <div className="relative h-8 bg-gradient-to-r from-red-200 via-amber-200 via-blue-200 to-green-200 rounded-full overflow-hidden">
+                      {/* Threshold markers */}
+                      <div className="absolute top-0 bottom-0 left-0" style={{ width: `${data.riskScore.thresholds.decline}%` }}>
+                        <div className="absolute right-0 top-0 bottom-0 w-0.5 bg-red-600" />
+                      </div>
+                      <div className="absolute top-0 bottom-0 left-0" style={{ width: `${data.riskScore.thresholds.manualReview}%` }}>
+                        <div className="absolute right-0 top-0 bottom-0 w-0.5 bg-amber-600" />
+                      </div>
+                      <div className="absolute top-0 bottom-0 left-0" style={{ width: `${data.riskScore.thresholds.autoApprove}%` }}>
+                        <div className="absolute right-0 top-0 bottom-0 w-0.5 bg-green-600" />
+                      </div>
+                      {/* Current score marker */}
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-foreground rounded-full border-2 border-background shadow-lg"
+                        style={{ left: `calc(${data.riskScore.overallScore}% - 8px)` }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span className="text-red-600">Decline &lt;{data.riskScore.thresholds.decline}</span>
+                      <span className="text-amber-600">Manual {data.riskScore.thresholds.manualReview}-{data.riskScore.thresholds.autoApprove}</span>
+                      <span className="text-green-600">Auto &gt;{data.riskScore.thresholds.autoApprove}</span>
+                      <span>100</span>
+                    </div>
+                  </div>
+                  
+                  {/* Recommendation */}
+                  <div className="p-4 rounded-lg border bg-background">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-muted-foreground">AI Recommendation</p>
+                        <p className="font-medium mt-1">
+                          {data.riskScore.recommendation === 'auto_approve' ? 'Eligible for Auto-Approval' :
+                           data.riskScore.recommendation === 'manual_review' ? 'Requires Manual Review' :
+                           'Recommend Decline'}
+                        </p>
+                      </div>
+                      <Badge className={`${
+                        data.riskScore.recommendation === 'auto_approve' ? 'bg-green-600' :
+                        data.riskScore.recommendation === 'manual_review' ? 'bg-amber-600' :
+                        'bg-red-600'
+                      } text-white`}>
+                        {data.riskScore.recommendation.replace(/_/g, ' ').toUpperCase()}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Calculated by {data.riskScore.calculatedBy} at {formatDate(data.riskScore.calculatedAt)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <Separator />
+              
+              {/* Score Breakdown by Category */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <GitBranch className="h-4 w-4" />
+                  Score Breakdown by Risk Category
+                </h4>
+                <div className="space-y-3">
+                  {data.riskScore.scoreBreakdown.map((category) => (
+                    <div key={category.category} className="p-3 rounded-lg border bg-background">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          {getRiskCategoryIcon(category.category)}
+                          <span className="font-medium text-sm">{category.categoryLabel}</span>
+                          <Badge variant="outline" className="text-xs">{category.weight}% weight</Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold">{category.score}</span>
+                          <Badge className={getRiskLevelColor(category.riskLevel)}>
+                            {category.riskLevel}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Progress 
+                        value={category.score} 
+                        className={`h-2 ${
+                          category.riskLevel === 'low' ? '[&>div]:bg-green-500' :
+                          category.riskLevel === 'moderate' ? '[&>div]:bg-blue-500' :
+                          category.riskLevel === 'elevated' ? '[&>div]:bg-amber-500' :
+                          '[&>div]:bg-red-500'
+                        }`}
+                      />
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {category.contributingFactors.map((factor, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs font-normal">
+                            {factor}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Weighted contribution: {category.weightedScore.toFixed(1)} points
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <Separator />
+              
+              {/* Scoring Factors */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <ListChecks className="h-4 w-4" />
+                  Scoring Factors
+                </h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3 font-medium">Factor</th>
+                        <th className="text-left py-2 px-3 font-medium">Value</th>
+                        <th className="text-left py-2 px-3 font-medium">Source</th>
+                        <th className="text-center py-2 px-3 font-medium">Impact</th>
+                        <th className="text-right py-2 px-3 font-medium">Points</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.riskScore.scoringFactors.map((factor, idx) => {
+                        const phaseNames: Record<number, string> = {
+                          1: 'Borrower Eligibility',
+                          2: 'Experience Tiering',
+                          3: 'Credit Review',
+                          4: 'Non-Owner Occupancy',
+                          5: 'Collateral Review',
+                          6: 'DSCR Cash Flow',
+                          7: 'Title Insurance',
+                          8: 'Closing Protection',
+                          9: 'Insurance Policy',
+                          10: 'Asset Verification'
+                        };
+                        return (
+                          <tr key={idx} className="border-b last:border-b-0 hover:bg-muted/50">
+                            <td className="py-2 px-3">{factor.factor}</td>
+                            <td className="py-2 px-3 font-medium">{factor.value}</td>
+                            <td className="py-2 px-3">
+                              <Badge variant="outline" className="text-xs">
+                                Phase {factor.sourcePhase}
+                              </Badge>
+                              <span className="ml-1 text-xs text-muted-foreground">
+                                {phaseNames[factor.sourcePhase]}
+                              </span>
+                            </td>
+                            <td className="py-2 px-3 text-center">
+                              {factor.impact === 'positive' ? (
+                                <Badge className="bg-green-600 text-white text-xs">Positive</Badge>
+                              ) : factor.impact === 'negative' ? (
+                                <Badge className="bg-red-600 text-white text-xs">Negative</Badge>
+                              ) : (
+                                <Badge variant="secondary" className="text-xs">Neutral</Badge>
+                              )}
+                            </td>
+                            <td className={`py-2 px-3 text-right font-bold ${
+                              factor.pointsContributed > 0 ? 'text-green-600' : 
+                              factor.pointsContributed < 0 ? 'text-red-600' : ''
+                            }`}>
+                              {factor.pointsContributed > 0 ? '+' : ''}{factor.pointsContributed}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-muted/30 font-medium">
+                        <td colSpan={4} className="py-2 px-3 text-right">Total Score:</td>
+                        <td className="py-2 px-3 text-right text-lg font-bold">{data.riskScore.overallScore}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
 
