@@ -4,6 +4,38 @@ export type ApprovalAuthority = 'automated' | 'underwriter' | 'senior_underwrite
 export type ExceptionSeverity = 'hard' | 'soft';
 export type PhaseTerminalState = 'pass' | 'pass_with_exception' | 'manual_review_required' | 'fail' | 'not_run';
 export type ClearToCloseStatus = 'eligible' | 'not_eligible' | 'file_closed' | 'pending';
+export type RiskLevel = 'low' | 'moderate' | 'elevated' | 'high';
+
+// Risk Score (Rule-Based Loan Scoring)
+export interface RiskScoreData {
+  overallScore: number; // 0-100 scale
+  overallRiskLevel: RiskLevel;
+  scoreBreakdown: {
+    category: RiskCategory;
+    categoryLabel: string;
+    score: number; // 0-100
+    weight: number; // percentage weight in overall score
+    weightedScore: number;
+    riskLevel: RiskLevel;
+    contributingFactors: string[];
+  }[];
+  scoringFactors: {
+    factor: string;
+    value: string | number;
+    impact: 'positive' | 'negative' | 'neutral';
+    pointsContributed: number;
+    sourcePhase: number;
+  }[];
+  thresholds: {
+    autoApprove: number; // Score above this = auto approve eligible
+    manualReview: number; // Score between this and autoApprove = manual review
+    decline: number; // Score below this = decline
+  };
+  recommendation: 'auto_approve' | 'manual_review' | 'decline';
+  calculatedAt: string;
+  calculatedBy: string;
+  version: string;
+}
 
 // Cross-Phase Input Sources
 export interface CrossPhaseInput {
@@ -276,6 +308,9 @@ export interface LockedFieldEntry {
 }
 
 export interface FinalApprovalData {
+  // Risk Score (Rule-Based Loan Scoring)
+  riskScore: RiskScoreData;
+  
   // Cross-Phase Inputs
   crossPhaseInputs: CrossPhaseInput[];
   
@@ -441,4 +476,36 @@ export const determineApprovalAuthority = (
   if (softExceptions > 2) return 'credit_committee';
   if (softExceptions > 0) return 'underwriter';
   return 'automated';
+};
+
+// Helper function to get risk level color
+export const getRiskLevelColor = (level: RiskLevel): string => {
+  switch (level) {
+    case 'low':
+      return 'bg-green-100 text-green-800 border-green-200';
+    case 'moderate':
+      return 'bg-blue-100 text-blue-800 border-blue-200';
+    case 'elevated':
+      return 'bg-amber-100 text-amber-800 border-amber-200';
+    case 'high':
+      return 'bg-red-100 text-red-800 border-red-200';
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+};
+
+// Helper function to get risk level label
+export const getRiskLevelLabel = (level: RiskLevel): string => {
+  switch (level) {
+    case 'low':
+      return 'Low Risk';
+    case 'moderate':
+      return 'Moderate Risk';
+    case 'elevated':
+      return 'Elevated Risk';
+    case 'high':
+      return 'High Risk';
+    default:
+      return 'Unknown';
+  }
 };
