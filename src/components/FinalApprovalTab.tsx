@@ -1464,23 +1464,81 @@ const FinalApprovalTab: React.FC<FinalApprovalTabProps> = ({ phaseStatus, lastUp
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="pt-0 space-y-4">
-              {/* Risk Score Summary for Compensating Factor Evaluation */}
-              <div className="p-4 rounded-lg border bg-gradient-to-r from-muted/30 to-muted/10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-background border-2 shadow-sm">
-                      <span className="text-lg font-bold">{data.riskScore.overallScore}</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Risk Score</p>
-                      <p className="text-xs text-muted-foreground">
-                        AI evaluates compensating factors based on this score
-                      </p>
+              {/* Risk Score Visual Display */}
+              <div className="p-5 rounded-lg border bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-900/50 dark:to-slate-800/30">
+                <div className="flex items-center gap-6">
+                  {/* Circular Score Gauge */}
+                  <div className="relative">
+                    <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                      {/* Background circle */}
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="42"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        className="text-muted/20"
+                      />
+                      {/* Score arc */}
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="42"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray={`${(data.riskScore.overallScore / 100) * 264} 264`}
+                        className={
+                          data.riskScore.overallRiskLevel === 'low' ? 'text-green-500' :
+                          data.riskScore.overallRiskLevel === 'moderate' ? 'text-blue-500' :
+                          data.riskScore.overallRiskLevel === 'elevated' ? 'text-amber-500' :
+                          'text-red-500'
+                        }
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-bold">{data.riskScore.overallScore}</span>
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Score</span>
                     </div>
                   </div>
-                  <Badge className={getRiskLevelColor(data.riskScore.overallRiskLevel)}>
-                    {getRiskLevelLabel(data.riskScore.overallRiskLevel)}
-                  </Badge>
+                  
+                  {/* Score Details */}
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Risk Score</span>
+                        <Badge className={getRiskLevelColor(data.riskScore.overallRiskLevel)}>
+                          {getRiskLevelLabel(data.riskScore.overallRiskLevel)}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        AI evaluates compensating factors based on this score. Higher scores indicate lower risk.
+                      </p>
+                    </div>
+                    
+                    {/* Threshold Indicators */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Thresholds:</span>
+                      </div>
+                      <div className="relative h-2 rounded-full bg-gradient-to-r from-red-400 via-amber-400 via-blue-400 to-green-400">
+                        {/* Score indicator */}
+                        <div 
+                          className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-foreground border-2 border-background shadow-md"
+                          style={{ left: `calc(${data.riskScore.overallScore}% - 6px)` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <span>0 High</span>
+                        <span>40 Decline</span>
+                        <span>60 Review</span>
+                        <span>80 Auto</span>
+                        <span>100</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
