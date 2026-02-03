@@ -6,35 +6,10 @@ export type PhaseTerminalState = 'pass' | 'pass_with_exception' | 'manual_review
 export type ClearToCloseStatus = 'eligible' | 'not_eligible' | 'file_closed' | 'pending';
 export type RiskLevel = 'low' | 'moderate' | 'elevated' | 'high';
 
-// Risk Score (Rule-Based Loan Scoring)
+// Risk Score (Simplified for Compensating Factor Validation)
 export interface RiskScoreData {
   overallScore: number; // 0-100 scale
   overallRiskLevel: RiskLevel;
-  scoreBreakdown: {
-    category: RiskCategory;
-    categoryLabel: string;
-    score: number; // 0-100
-    weight: number; // percentage weight in overall score
-    weightedScore: number;
-    riskLevel: RiskLevel;
-    contributingFactors: string[];
-  }[];
-  scoringFactors: {
-    factor: string;
-    value: string | number;
-    impact: 'positive' | 'negative' | 'neutral';
-    pointsContributed: number;
-    sourcePhase: number;
-  }[];
-  thresholds: {
-    autoApprove: number; // Score above this = auto approve eligible
-    manualReview: number; // Score between this and autoApprove = manual review
-    decline: number; // Score below this = decline
-  };
-  recommendation: 'auto_approve' | 'manual_review' | 'decline';
-  calculatedAt: string;
-  calculatedBy: string;
-  version: string;
 }
 
 // Cross-Phase Input Sources
