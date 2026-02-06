@@ -417,57 +417,6 @@ export const ConstructionFeasibilityEngineV2 = ({
             </>
           )}
 
-          <Separator />
-
-          {/* Section 8: Final Feasibility Score — styled like AIV/ARV Value Logic */}
-          <div className="space-y-3">
-            <SectionHeader number={8} title="Final Feasibility Score (Partial)" icon={Hammer} />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 border rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">ARV Support Score</p>
-                <p className={`text-lg font-bold ${getScoreColor(data.arvSupportScore)}`}>{data.arvSupportScore}</p>
-                <p className="text-xs text-muted-foreground">Weight: 60%</p>
-              </div>
-              <div className="p-4 border rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Comp Feasibility Score</p>
-                <p className={`text-lg font-bold ${getScoreColor(data.compFeasibilityScore)}`}>{data.compFeasibilityScore}</p>
-                <p className="text-xs text-muted-foreground">Weight: 40%</p>
-              </div>
-              <div className="p-4 border rounded-lg text-center bg-muted/20">
-                <p className="text-xs text-muted-foreground mb-1">Feasibility Score</p>
-                <div className="flex items-center justify-center gap-2">
-                  <p className={`text-lg font-bold ${getScoreColor(data.feasibilityScore)}`}>
-                    {data.feasibilityScore}
-                  </p>
-                  {getFeasibilityResultBadge(data.feasibilityResult)}
-                </div>
-              </div>
-              <div className="p-4 border rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Status</p>
-                <div className="flex items-center justify-center gap-2">
-                  {data.bcpDataPending && (
-                    <Badge variant="outline" className="gap-1 text-xs text-amber-600 border-amber-300">
-                      <Clock className="h-3 w-3" /> BCP Pending
-                    </Badge>
-                  )}
-                  <Badge variant="secondary" className="text-xs">
-                    {data.productType === 'FNF' ? 'Fix & Flip' : 'GUC'}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className="p-3 bg-muted/30 rounded-lg space-y-2">
-              <div className="flex items-center gap-2">
-                <Info className="h-4 w-4 text-muted-foreground" />
-                <code className="text-xs">Formula: {data.formula}</code>
-              </div>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span> ≥80 Feasible</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span> 65-79 Review</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span> &lt;65 Not Feasible</span>
-              </div>
-            </div>
-          </div>
 
           <Separator />
 
