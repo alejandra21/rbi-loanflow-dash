@@ -18,9 +18,11 @@ import type {
   RedFlag,
   ConfidenceTier,
   CheckStatus,
-  ConstructionFeasibilityData
+  ConstructionFeasibilityData,
+  ConstructionFeasibilityV2Data
 } from "@/types/collateralReview";
 import { ConstructionFeasibilityEngine } from "@/components/collateral-review/ConstructionFeasibilityEngine";
+import { ConstructionFeasibilityEngineV2 } from "@/components/collateral-review/ConstructionFeasibilityEngineV2";
 
 interface CollateralReviewTabProps {
   data: CollateralReviewData;
@@ -265,6 +267,45 @@ const mockCollateralReviewData: CollateralReviewData = {
   source: "Appraisal + POS + BCP + AVM APIs"
 };
 
+// V2 Mock Data: Simplified Construction Feasibility (no BCP data)
+const mockConstructionFeasibilityV2: ConstructionFeasibilityV2Data = {
+  productType: 'FNF',
+  scopeAssumptionReview: {
+    appraiserAssumedItems: ['Full kitchen renovation', 'Bathroom updates (2)', 'Roof replacement', 'HVAC system upgrade'],
+    posBudgetItems: ['Kitchen renovation', 'Bathroom updates (2)', 'Roof replacement', 'HVAC replacement', 'Flooring throughout', 'Exterior paint'],
+    scopeMatchStatus: 'full_match',
+    scopeResult: 'Continue'
+  },
+  aiv: 300000,
+  arv: 420000,
+  rehabBudget: 100000,
+  arvSupportRatio: 95,
+  arvSupportStatus: 'flag',
+  arvSupportInterpretation: 'Weak ARV',
+  arvCompsFeasibility: {
+    netAdjustmentAvg: 12,
+    netAdjustmentThreshold: 15,
+    grossAdjustmentAvg: 22,
+    grossAdjustmentThreshold: 25,
+    compConditionSupportsARV: true,
+    compSaleDatesWithin6Months: true,
+    arvCompStatus: 'pass'
+  },
+  posBudget: 120000,
+  feasibilityScore: 70,
+  feasibilityResult: 'Review',
+  formula: 'Partial: ARV Support Score × 0.6 + Comp Feasibility Score × 0.4 = 50 × 0.6 + 100 × 0.4 = 70',
+  bcpDataPending: true,
+  checks: [
+    { name: "Scope Match", source: "POS + Appraisal", status: "pass", value: "Full Match", notes: "All items covered" },
+    { name: "ARV Support Ratio", source: "Calculated", status: "flag", value: "95%", threshold: "≤92%", notes: "Weak ARV support" },
+    { name: "Net Adjustments", source: "ARV Comps", status: "pass", value: "12%", threshold: "≤15%" },
+    { name: "Gross Adjustments", source: "ARV Comps", status: "pass", value: "22%", threshold: "≤25%" },
+    { name: "POS Budget", source: "POS", status: "pass", value: "$120,000", notes: "BCP comparison pending" },
+    { name: "Final Feasibility", source: "Partial Score", status: "review", value: "70", threshold: "≥80 for auto-pass", notes: "BCP data pending" }
+  ]
+};
+
 export const CollateralReviewTab = ({
   phaseStatus,
   lastUpdated
@@ -278,6 +319,7 @@ export const CollateralReviewTab = ({
     marketStability: false,
     rentalConfidence: false,
     constructionFeasibility: false,
+    constructionFeasibilityV2: false,
     avmReconciliation: false,
     riskScoring: true,
     auditLog: false
@@ -810,6 +852,14 @@ export const CollateralReviewTab = ({
           transactionType={data.transactionType}
         />
       )}
+
+      {/* Engine 6 V2: Construction Feasibility - Simplified (No BCP) */}
+      <ConstructionFeasibilityEngineV2
+        data={mockConstructionFeasibilityV2}
+        expanded={expandedCards.constructionFeasibilityV2}
+        onToggle={() => toggleCard('constructionFeasibilityV2')}
+        transactionType={data.transactionType}
+      />
 
       {/* Engine 7: AVM Reconciliation */}
       <Card>
