@@ -179,6 +179,39 @@ export interface ConstructionFeasibilityData {
   checks: EngineCheck[];
 }
 
+// Engine 6 V2: Construction Feasibility (Simplified - No BCP Data)
+export interface ConstructionFeasibilityV2Data {
+  productType: 'FNF' | 'GUC';
+  
+  // Section 1: Appraisal Scope Assumption Review
+  scopeAssumptionReview: ScopeAssumptionReview;
+  
+  // Section 2: AIV/ARV Value Logic Check
+  aiv: number;
+  arv: number;
+  rehabBudget: number;
+  arvSupportRatio: number;
+  arvSupportStatus: CheckStatus;
+  arvSupportInterpretation: 'Strong' | 'Acceptable' | 'Weak ARV';
+  
+  // Section 3: Comparable Sales Feasibility (ARV Comps)
+  arvCompsFeasibility: ARVCompsFeasibility;
+  
+  // Section 4: POS Budget (no BCP comparison)
+  posBudget: number;
+  
+  // Section 7: Permit & Jurisdiction Validation (Refinance only)
+  permitValidation?: PermitValidation;
+  
+  // Section 8: Final Feasibility Score (simplified 2-factor)
+  feasibilityScore: number;
+  feasibilityResult: 'Feasible' | 'Review' | 'Not Feasible';
+  formula: string;
+  bcpDataPending: boolean;
+  
+  checks: EngineCheck[];
+}
+
 // Engine 7: AVM / Multi-Valuation Reconciliation
 export interface AVMReconciliationData {
   appraisalValue: number;
