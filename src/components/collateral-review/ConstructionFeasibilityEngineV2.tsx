@@ -177,7 +177,7 @@ export const ConstructionFeasibilityEngineV2 = ({
           {/* Section 1: Appraisal Scope Assumption Review */}
           <div className="space-y-3">
             <SectionHeader number={1} title="Appraisal Scope Assumption Review" icon={FileCheck} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 border rounded-lg bg-muted/10">
                 <p className="text-xs text-muted-foreground mb-2 font-medium">Appraiser Assumed Scope</p>
                 <ul className="space-y-1.5">
@@ -193,6 +193,17 @@ export const ConstructionFeasibilityEngineV2 = ({
                 <p className="text-xs text-muted-foreground mb-2 font-medium">POS Budget Scope</p>
                 <ul className="space-y-1.5">
                   {data.scopeAssumptionReview.posBudgetItems.map((item, idx) => (
+                    <li key={idx} className="text-sm flex items-start gap-2">
+                      <span className="text-muted-foreground">•</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="p-4 border rounded-lg bg-muted/10">
+                <p className="text-xs text-muted-foreground mb-2 font-medium">BCP Scope</p>
+                <ul className="space-y-1.5">
+                  {data.scopeAssumptionReview.bcpScopeItems.map((item, idx) => (
                     <li key={idx} className="text-sm flex items-start gap-2">
                       <span className="text-muted-foreground">•</span>
                       {item}
@@ -394,62 +405,52 @@ export const ConstructionFeasibilityEngineV2 = ({
 
           <Separator />
 
-          {/* Section 8: Final Feasibility Score with Circular Gauge */}
+          {/* Section 8: Final Feasibility Score — styled like AIV/ARV Value Logic */}
           <div className="space-y-3">
             <SectionHeader number={8} title="Final Feasibility Score (Partial)" icon={Hammer} />
-            <div className="p-6 rounded-lg border bg-gradient-to-r from-muted/30 to-muted/10">
-              <div className="flex items-center gap-8">
-                {/* Circular Gauge */}
-                <div className="relative shrink-0">
-                  <svg className="w-28 h-28 transform -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="none" className="text-muted/30" />
-                    <circle
-                      cx="50" cy="50" r="42"
-                      stroke="currentColor" strokeWidth="8" fill="none"
-                      strokeLinecap="round"
-                      strokeDasharray={`${(data.feasibilityScore / 100) * 264} 264`}
-                      className={getGaugeColor(data.feasibilityScore)}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className={`text-3xl font-bold ${getScoreColor(data.feasibilityScore)}`}>
-                      {data.feasibilityScore}
-                    </span>
-                    <span className="text-xs text-muted-foreground">Partial</span>
-                  </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 border rounded-lg text-center">
+                <p className="text-xs text-muted-foreground mb-1">ARV Support Score</p>
+                <p className={`text-lg font-bold ${getScoreColor(data.arvSupportScore)}`}>{data.arvSupportScore}</p>
+                <p className="text-xs text-muted-foreground">Weight: 60%</p>
+              </div>
+              <div className="p-4 border rounded-lg text-center">
+                <p className="text-xs text-muted-foreground mb-1">Comp Feasibility Score</p>
+                <p className={`text-lg font-bold ${getScoreColor(data.compFeasibilityScore)}`}>{data.compFeasibilityScore}</p>
+                <p className="text-xs text-muted-foreground">Weight: 40%</p>
+              </div>
+              <div className="p-4 border rounded-lg text-center bg-muted/20">
+                <p className="text-xs text-muted-foreground mb-1">Feasibility Score</p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className={`text-lg font-bold ${getScoreColor(data.feasibilityScore)}`}>
+                    {data.feasibilityScore}
+                  </p>
+                  {getFeasibilityResultBadge(data.feasibilityResult)}
                 </div>
-
-                {/* Score Details */}
-                <div className="flex-1 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-sm">
-                      {data.productType === 'FNF' ? 'Fix & Flip' : 'Ground-Up Construction'}
+              </div>
+              <div className="p-4 border rounded-lg text-center">
+                <p className="text-xs text-muted-foreground mb-1">Status</p>
+                <div className="flex items-center justify-center gap-2">
+                  {data.bcpDataPending && (
+                    <Badge variant="outline" className="gap-1 text-xs text-amber-600 border-amber-300">
+                      <Clock className="h-3 w-3" /> BCP Pending
                     </Badge>
-                    {getFeasibilityResultBadge(data.feasibilityResult)}
-                    {data.bcpDataPending && (
-                      <Badge variant="outline" className="gap-1 text-xs text-amber-600 border-amber-300">
-                        <Clock className="h-3 w-3" /> BCP Pending
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="p-2 bg-muted/50 rounded text-xs font-mono">
-                    {data.formula}
-                  </div>
-                  {/* Threshold Bar */}
-                  <div className="space-y-1">
-                    <div className="relative h-2 rounded-full bg-gradient-to-r from-red-400 via-amber-400 to-green-400">
-                      <div
-                        className="absolute w-3 h-3 bg-background border-2 border-foreground rounded-full -top-0.5 transform -translate-x-1/2 shadow-sm"
-                        style={{ left: `${data.feasibilityScore}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>&lt;65 Not Feasible</span>
-                      <span>65-79 Review</span>
-                      <span>≥80 Feasible</span>
-                    </div>
-                  </div>
+                  )}
+                  <Badge variant="secondary" className="text-xs">
+                    {data.productType === 'FNF' ? 'Fix & Flip' : 'GUC'}
+                  </Badge>
                 </div>
+              </div>
+            </div>
+            <div className="p-3 bg-muted/30 rounded-lg space-y-2">
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4 text-muted-foreground" />
+                <code className="text-xs">Formula: {data.formula}</code>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span> ≥80 Feasible</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span> 65-79 Review</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span> &lt;65 Not Feasible</span>
               </div>
             </div>
           </div>

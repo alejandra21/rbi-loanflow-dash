@@ -183,8 +183,14 @@ export interface ConstructionFeasibilityData {
 export interface ConstructionFeasibilityV2Data {
   productType: 'FNF' | 'GUC';
   
-  // Section 1: Appraisal Scope Assumption Review
-  scopeAssumptionReview: ScopeAssumptionReview;
+  // Section 1: Appraisal Scope Assumption Review (includes BCP Scope)
+  scopeAssumptionReview: ScopeAssumptionReview & {
+    bcpScopeItems: string[];
+  };
+  
+  // Section 8 scoring factors
+  arvSupportScore: number;
+  compFeasibilityScore: number;
   
   // Section 2: AIV/ARV Value Logic Check
   aiv: number;
