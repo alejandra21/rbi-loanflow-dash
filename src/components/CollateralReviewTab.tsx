@@ -273,6 +273,7 @@ const mockConstructionFeasibilityV2: ConstructionFeasibilityV2Data = {
   scopeAssumptionReview: {
     appraiserAssumedItems: ['Full kitchen renovation', 'Bathroom updates (2)', 'Roof replacement', 'HVAC system upgrade'],
     posBudgetItems: ['Kitchen renovation', 'Bathroom updates (2)', 'Roof replacement', 'HVAC replacement', 'Flooring throughout', 'Exterior paint'],
+    bcpScopeItems: ['Kitchen demo & install', 'Bath tile & fixtures (2)', 'Roof tear-off & reshingle', 'HVAC unit swap', 'LVP flooring install', 'Exterior prep & paint'],
     scopeMatchStatus: 'full_match',
     scopeResult: 'Continue'
   },
@@ -292,9 +293,11 @@ const mockConstructionFeasibilityV2: ConstructionFeasibilityV2Data = {
     arvCompStatus: 'pass'
   },
   posBudget: 120000,
+  arvSupportScore: 50,
+  compFeasibilityScore: 100,
   feasibilityScore: 70,
   feasibilityResult: 'Review',
-  formula: 'Partial: ARV Support Score × 0.6 + Comp Feasibility Score × 0.4 = 50 × 0.6 + 100 × 0.4 = 70',
+  formula: 'ARV Support Score × 0.6 + Comp Feasibility Score × 0.4 = 50 × 0.6 + 100 × 0.4 = 70',
   bcpDataPending: true,
   checks: [
     { name: "Scope Match", source: "POS + Appraisal", status: "pass", value: "Full Match", notes: "All items covered" },
