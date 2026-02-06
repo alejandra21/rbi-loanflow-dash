@@ -150,20 +150,34 @@ export const ConstructionFeasibilityEngineV2 = ({
       </CardHeader>
       {expanded && (
         <CardContent className="space-y-6">
-          {/* Header Summary */}
-          <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border">
-            <div className="flex items-center gap-4">
-              <Badge variant="secondary" className="text-sm px-3 py-1">
-                {data.productType === 'FNF' ? 'Fix & Flip' : 'Ground-Up Construction'}
-              </Badge>
-              {getFeasibilityResultBadge(data.feasibilityResult)}
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground">Partial Score</p>
-              <p className={`text-2xl font-bold ${getScoreColor(data.feasibilityScore)}`}>
-                {data.feasibilityScore}
+          {/* Score Breakdown */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="p-4 border rounded-lg text-center">
+              <p className="text-xs text-muted-foreground mb-1">ARV Support Score (60%)</p>
+              <p className={`text-xl font-bold ${getScoreColor(data.arvSupportScore)}`}>
+                {data.arvSupportScore}
               </p>
             </div>
+            <div className="p-4 border rounded-lg text-center">
+              <p className="text-xs text-muted-foreground mb-1">Comp Feasibility Score (40%)</p>
+              <p className={`text-xl font-bold ${getScoreColor(data.compFeasibilityScore)}`}>
+                {data.compFeasibilityScore}
+              </p>
+            </div>
+            <div className="p-4 border rounded-lg text-center">
+              <p className="text-xs text-muted-foreground mb-1">Feasibility Score (Partial)</p>
+              <div className="flex items-center justify-center gap-2">
+                <p className={`text-xl font-bold ${getScoreColor(data.feasibilityScore)}`}>
+                  {data.feasibilityScore}
+                </p>
+                {getFeasibilityResultBadge(data.feasibilityResult)}
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 bg-muted/30 rounded-lg">
+            <p className="text-xs text-muted-foreground mb-1">Formula</p>
+            <code className="text-sm">{data.formula}</code>
           </div>
 
           {/* BCP Pending Notice */}
